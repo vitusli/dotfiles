@@ -7,9 +7,8 @@ stow
 ```
 $ cd
 $ git clone git@github.com:vitusli/.dotfiles.git
-$ cd .dotfiles
-$ cp ~/.config/example .
-$ mv ~/.config/example ~/.backup
+$ cd ~/.dotfiles/stowfolder/.config
+$ mv ~/.config/configfolder .
 
 $ cd .dotfiles
 $ stow --adopt .
