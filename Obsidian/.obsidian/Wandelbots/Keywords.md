@@ -1,0 +1,7 @@
+- Agnostik
+- Interoperabel
+- Edge Cases
+- Happy Path
+- Prozesskontrolle
+- Path Finder
+- Neomorphism

@@ -1,0 +1,5 @@
+- Sketches auf einem Whiteboard
+- Fragen gestellt: 
+	- Wie interagieren Nutzende mit dem Setup? Und wann? Und wann nicht?
+- Fokus auf den manuellen Prozessen
+	- nicht auf Datenmanagement

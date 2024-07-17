@@ -1,0 +1,5 @@
+- [ ] Wie Ableton
+- [ ] Stark inspiriert an Tiling Window Managern. 
+- [ ] Es soll einzelne Fenster geben, die in ihrer Größe konfigurierbar sind. 
+- [ ] Es soll Stapel geben, zwischen denen gewechselt werden soll. Immer nur zwei Fenster hintereinander, damit Nutzende den Überblick nicht verlieren. 
+- [ ] Wirklich: wie Ableton, nicht wie Omniverse. Keine Floating Windows. 

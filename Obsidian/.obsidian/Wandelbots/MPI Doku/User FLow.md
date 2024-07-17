@@ -1,0 +1,8 @@
+- Happy Path in der Mitte
+	- Manuelle Schritte
+	- Automatisierte Schritte
+- Errors: What if?
+	- Messages 
+	- Solutions for dealing with errors
+- Signals: How to?
+	- Sensor

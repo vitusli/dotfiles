@@ -1,0 +1,4 @@
+- Nutzende filmen bei der Arbeit 
+	- Besseres Nachvollziehen der Anforderungen ihrer Umgebung an sie
+	- Reflektieren der Lösung-Ansätze
+	- Falls in der Befragung und den Gesprächen Information verloren gegangen ist

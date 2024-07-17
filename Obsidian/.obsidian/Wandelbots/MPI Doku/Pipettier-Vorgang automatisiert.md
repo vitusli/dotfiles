@@ -1,0 +1,10 @@
+- Am UR5e ist eine Kamera befestigt, diese schießt ein Bild des vorliegenden Versuch-Aufbaus
+	- Das Bild wird verarbeitet und gibt dem Roboter die Koordinaten des vorliegenden Versuchaufbaus durch
+	- Der UR5e hat eine Pipette (was für eine?) am Endeffektor befestigt
+	- Der UR5e nimmt mit der Pipette eine Pipettenspitze (welche?) auf
+	- Eine Probe wird aufgenommen (welche Probe?)
+	- Die Probe wird in ein verschließbares Gefäß gefüllt (welches?)
+	- Die Spitze wird vom Roboter in ein Gefäß entsorgt
+	- Ein Schlauch zieht die Probe durch eine Pumpe zum Mikroskop
+	- Das Mikroskop nimmt ein Bild von der Probe und speichert dieses in einer Datenbank
+	- Der Vorgang wird wiederholt 

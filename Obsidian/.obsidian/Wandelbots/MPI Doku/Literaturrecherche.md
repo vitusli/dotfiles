@@ -1,0 +1,6 @@
+- [[Digitaler Zwilling]]
+- [[Automatisierung]]
+- [[Industrieroboter]]
+- [[Cobots]]
+- [[Max Planck Institut]]
+- [[Forschung im Labor]]

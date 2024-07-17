@@ -1,0 +1,2 @@
+ - Formuliere mir folgende Stichpunkte zu einem zusammenhängenden wissenschaftlichen Text. Verwende nüchterne Sprache und halte dich kurz. Hier die Stichpunkte:
+- Sage mir, wo ich eine Quelle einfügen sollte

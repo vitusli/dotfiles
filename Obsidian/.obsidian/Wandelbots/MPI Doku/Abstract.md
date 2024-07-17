@@ -1,0 +1,23 @@
+ Ich muss die Hard facts so informationsreich beschreiben, dass keine Fragen nach Lesen des Textes entstehen. Fachfremde müssen voll abgeholt werden.
+# Hard facts
+- Wandelbots GmbH beschreiben von [[ChatGPT]]
+	- Wandelbots ist ein Software-Unternehmen im Bereich Industrie-Robotik und Automatisierung
+	- Roboter-Agnostik, interoperabel
+- Das MPI möchte vom Wandelbots eine automatisierte Lösung für einen Pipettetier-Vorgang. Die Lösung soll als Demonstrator Oktober 2024 seitens des MPIs auf einer Verteidigung präsentiert werden und anschließend ins Labor überführt werden.
+	- Der Demonstrator soll zeigen, was die aktuelle Technik möglich macht Camera Vision)
+- Es stellen sich einige Fragen:
+	- Wie interagieren Laborant:innen mit dem Roboter
+	- Wie werden die Proben ausgewählt?
+	- Woher wissen die Laborant:innen, dass die Proben richtig kodiert sind?
+	- Wie überwachen Laborant:innen den Pipettier-Prozess?
+	- Was passiert im Falle einer Fehlermeldung?
+- Im Rahmen dieser Arbeit wird die Interaktion zwischen Laborant:innen und dem Roboter konzeptioniert. Dazu wird ein Interview mit den Nutzenden geführt.
+- Um die Konzepte zu prüfen und eine Diskussionsgrundlage zu schaffen, werden zwei digitale Zwillinge erstellt, die zum einen den Demonstrator und zum anderen den tatsächlichen Versuchsaufbau darstellen.
+- Ein digitaler Zwilling ermöglicht
+	- Schnelle Änderungen (pre built)
+	- Echtzeitüberwachung (built)
+	- Kostenersparnisse
+- Was unterscheidet den Demonstrator vom tatsächlichen Versuchsaufbau?
+	- Kein Mikroskop
+	- Keine Pumpe
+	- Großer Bildschirm, der den digitalen Zwilling der Labor-Umgebung zeigt

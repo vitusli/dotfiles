@@ -1,0 +1,12 @@
+{
+  "accentColor": "#9399b4",
+  "cssTheme": "Minimal",
+  "enabledCssSnippets": [
+    "removebuttons"
+  ],
+  "translucency": false,
+  "nativeMenus": false,
+  "baseFontSize": 18,
+  "textFontFamily": "",
+  "showViewHeader": true
+}

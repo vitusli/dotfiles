@@ -1,0 +1,5 @@
+- 6-Achsen-Gelenk-Roboterarm
+- Können schwere und repetitive Aufgaben übernehmen
+- sehr schwer zu kontrollieren (Singularitäten: mathematische Probleme, wenn Achsen koaxial liegen, steckt der Roboter fest)
+- Teuer in der Anschaffung und in der Wartung, da hochausgebildetes Personal nötig ist, um die Roboter zu steuern
+- Jeder Anbieter hat eigene Control-Panel, eigene Programmiersprache 

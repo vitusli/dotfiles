@@ -1,0 +1,15 @@
+- Laborant:in holt Proben aus dem Kühlschrank
+	- Laborant:in baut Versuchsaufbau wie folgt auf
+		- Pipettenspitzen-Bereitsteller-Gefäß
+		- Behandelte Proben
+		- Probengefäß
+		- Mülleimer
+	- Laborant:in nimmt mit der Pipette eine Pipettenspitze auf
+	- Mit der Pipette wird eine Probe aufgenommen
+	- Die genommene Probe wird in ein kleines verschließbares Gefäß gefüllt
+	- Die Pipettenspitze wird in dem dafür vorgesehenen Behälter entsorgt
+	- Die Probe wird über einen Schlauch von einer Pumpe an das Mikroskop weitergeleitet (oder manuell, weiß ich grad noch nicht)
+	- Die Probe wird im Mikroskop untersucht
+	- Eintrag in die Datenbank
+	- Wiederholung
+	- Verstauen der Proben in den Kühlschrank zu Feierabend
