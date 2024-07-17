@@ -1,0 +1,49 @@
+- Tools
+	- CC4
+	- Addons
+		- Human
+			- CC4 
+			  id:: 6651a54e-6b37-4f80-9a89-8e6237791442
+			- Simply Cloth; check Assets
+		- World
+			- G-Scatter
+			- Bagapie Modifier
+		- FX
+			- Flares Wizard
+			- CamFX
+		- Compositor
+			- Render Raw
+			- Luminar Light Groups
+			- VTools (Mist)
+		-
+- Ressourcen
+	- Megascans
+	- Asset Browser
+		- botaniq Trees
+		- ambientCG
+		- Poliigon
+		- Falling Leaves
+		- Real Water
+		- Rope Tools
+		- Fog Overlay
+	- Plant Catalog
+	- PBR MAx
+		- Bike
+		- Borstein
+	-
+- Storyboard
+	- Character mit Referenzen erstellen
+	- Morgenlicht
+	- Pfützen am Boden; den Boden mit Proportional Editing die Vertices verschieben.
+	- Unterschiedliche Böden verwenden
+	- Krasse Kontraste in den Mitten wie im großen Garten. Sehr helles grün in den Blättern; stellenweise.
+	- Mann in Arbeiterklamotten steht da und schaut ins Leere, obwohl er arbeiten soll.
+	- Andere Menschen laufen im Hintergrund vorbei; Motion Blur.
+	- Ein/zwei Autos
+	-
+- Achtung
+	- PC Ressourcen ganz penibel beachten; mir vergeht sonst der Spaß, weil die Szene laggy wird.
+		- 2k Texturen reichen aus; keine 4k Maps.
+	- Referenz-Bilder raussuchen und benutzen
+	- Lichtgruppen benutzen
+-

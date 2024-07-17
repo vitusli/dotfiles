@@ -1,0 +1,7 @@
+@import "fonts/quattro.css";
+@import "mia_base.css";
+
+:root {
+	--content-font-family:  "iA Writer Quattro S";
+	--content-font-feature-settings: "ss04"; /* plain (not dotted) zeros */
+}

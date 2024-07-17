@@ -1,0 +1,116 @@
+:root {
+  --display-recent-pages: none;
+  --display-new-page: none;  
+}
+
+/* hide plugins icon 
+.ti.ti-puzzle::before {
+  content: "";
+}*/
+
+/* .toolbar-plugins-manager .ui__icon {
+    display: none;
+}*/
+
+/* font import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --sans-serif: "Inter", sans;
+  --ls-left-sidebar-width: 200px;
+  --ls-main-content-max-width: 810px;
+}
+
+/* hide scrollbars */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* hide scrollbars */
+::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  border: 16px solid transparent;
+  background-clip: content-box;
+}
+
+/* Hide the Go back button */
+button.nav-left {
+  display: none !important;
+}
+
+/* Hide the Go forward button */
+button.nav-right {
+  display: none !important;
+}
+
+/* hide help button */
+.cp__sidebar-help-btn {
+  display: none;
+} 
+
+/* hide titlebar icons */
+a.nav-left,
+a.nav-right {
+  display: none;
+}
+
+/* Hide the Toggle right sidebar button */
+button.toggle-right-sidebar {
+  display: none !important;
+}
+
+/* Hide the left-sidebar button */
+.cp__header-left-menu {
+    display: none !important;
+}
+
+/* hide new page button */
+.new-page {
+  display: none;
+}
+
+/* Hide new page button */
+footer.px-2.create .new-page-link {
+  display: none !important;
+}
+
+/* Hide the search button */
+#search-button {
+    display: none !important;
+}
+
+button[title="Home"] {
+    display: none !important;
+}
+
+/* hide favorites title */
+.favorites>div>div:first-of-type {
+  display: none !important;
+}
+
+.favorites>li>a {
+  color: var(--text-quarternary) !important;
+}
+
+/* hide favorites icons */
+.page-icon>i {
+  display: none;
+}
+
+/* checkboxes */
+.form-checkbox {
+  border-radius: 4px;
+  border: 1px solid var(--ls-checkbox-border-color);
+  background-color: var(--ls-page-checkbox-color);
+}
+
+.form-checkbox.checked,
+.form-checkbox:checked {
+  background-color: #007aff;
+  border-color: hsl(211, 100%, 40%);
+}
+
+/* hide recents
+.recent {
+  display: none; !important;
+} */

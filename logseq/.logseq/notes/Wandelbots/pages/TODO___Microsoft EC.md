@@ -1,0 +1,23 @@
+- DONE Python Script Node - Shyam?
+  :LOGBOOK:
+  CLOCK: [2024-05-29 Wed 11:29:21]
+  CLOCK: [2024-05-29 Wed 11:36:03]--[2024-05-29 Wed 11:36:04] =>  00:00:01
+  CLOCK: [2024-05-29 Wed 11:36:04]--[2024-05-29 Wed 11:36:05] =>  00:00:01
+  :END:
+- DONE Zeit Verzögerung beim Klicken?
+- DONE Paul ins Boot holen
+  :LOGBOOK:
+  CLOCK: [2024-05-29 Wed 13:50:59]--[2024-05-29 Wed 13:51:00] =>  00:00:01
+  CLOCK: [2024-05-29 Wed 15:45:51]--[2024-05-29 Wed 15:45:51] =>  00:00:00
+  CLOCK: [2024-05-29 Wed 15:45:52]--[2024-05-29 Wed 15:45:53] =>  00:00:01
+  :END:
+	- DONE Action Graph Erfahrung?
+	  :LOGBOOK:
+	  CLOCK: [2024-05-29 Wed 15:38:34]
+	  :END:
+	- DONE Wie animierst du?
+	- DONE Zusammen ans Video setzen?
+- DONE @Stefan @Jan Wo finde ich Buttons?
+- DONE @Frank gibt es Buttons für Wandelbots irgendwo?
+	- Ich kann Bilddateien nehmen statt der Buttons, die ich in OV gestalten kann omg
+-
