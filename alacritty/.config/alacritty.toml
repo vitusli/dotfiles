@@ -3,9 +3,6 @@ live_config_reload = true
 [font]
 size = 18.0
 
-[font.normal]
-family = "MesloLGS Nerd Font Mono"
-style = "Regular"
 
 [window]
 decorations = "buttonless"
