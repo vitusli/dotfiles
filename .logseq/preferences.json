@@ -1,10 +1,5 @@
 {
-  "theme": {
-    "name": "Paper Theme",
-    "url": "assets:///Users/vituspacholleck/.logseq/plugins/logseq-paper-theme/custom.css",
-    "description": "A paper like Logseq theme",
-    "pid": "logseq-paper-theme"
-  },
+  "theme": null,
   "themes": {
     "mode": "light",
     "light": {

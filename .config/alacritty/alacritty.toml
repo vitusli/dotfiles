@@ -4,7 +4,7 @@ live_config_reload = true
 size = 18.0
 
 [font.normal]
-family = "SFMono Nerd Font"
+family = "MesloLGS Nerd Font Mono"
 style = "Regular"
 
 [window]

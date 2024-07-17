@@ -1,4 +1,4 @@
-ctrl + alt + cmd + shift - m : yabai -m config focus_follows_mouse off
+	ctrl + alt + cmd + shift - m : yabai -m config focus_follows_mouse off
 ctrl + alt + cmd - m : yabai -m config focus_follows_mouse autoraise
 
 
@@ -30,8 +30,8 @@ ctrl + alt + cmd + shift - j: yabai -m window --swap south
 #switch
 ctrl + cmd - left : yabai -m window --space prev; yabai -m space --focus prev
 ctrl + cmd - right : yabai -m window --space next; yabai -m space --focus next
-ctrl - left : yabai -m space --focus prev
-ctrl - right : yabai -m space --focus next
+#ctrl - left : yabai -m space --focus prev
+#ctrl - right : yabai -m space --focus next
 
 ctrl + alt + cmd + shift - 1 : yabai -m window --space  1 && yabai -m space --focus 1
 ctrl + alt + cmd + shift - 2 : yabai -m window --space  2 && yabai -m space --focus 2
@@ -57,8 +57,8 @@ cmd - tab : yabai-stack-navigator --next
 
 #switch spaces 
 #but sketchybar does not refresh the space number
-ctrl + alt + cmd + shift - left : yabai -m space --move prev
-ctrl + alt + cmd + shift - right : yabai -m space --move next
+#ctrl + alt + cmd + shift - left : yabai -m space --move prev
+#ctrl + alt + cmd + shift - right : yabai -m space --move next
 
 ctrl + alt + cmd - return : yabai -m space --create
 ctrl + alt + cmd + shift - return : yabai -m space --destroy
@@ -70,7 +70,7 @@ alt - y : yabai -m space --mirror y-axis
 ctrl + alt + cmd - t : open -a Alacritty
 
 #Services
-ctrl + alt + cmd - w : yabai -m window --toggle float
+#ctrl + alt + cmd - w : yabai -m window --toggle float
 ctrl + alt + cmd - e : yabai -m space --balance
 ctrl + alt + cmd - r : yabai --restart-service
 

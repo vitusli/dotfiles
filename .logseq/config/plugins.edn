@@ -6,8 +6,4 @@
  :logseq-luma {:version "0.3.1", :repo "gavinmn/logseq-luma", :effect false, :theme true}
  :logseq-block-calendar {:version "v0.2.10", :repo "vipzhicheng/logseq-plugin-block-calendar", :effect true, :theme false}
  :logseq-reminder {:version "v0.9.1", :repo "sethyuan/logseq-plugin-reminder", :effect true, :theme false}
- :logseq-todo-plugin {:version "v1.21.0", :repo "ahonn/logseq-plugin-todo", :effect true, :theme false}
- :logseq-atlas-theme {:version "v0.3.5", :repo "sethfair/logseq-atlas-theme", :effect false, :theme true}
- :logseq-arc-theme {:version "0.3", :repo "andyburris/logseq-arc-theme", :effect false, :theme true}
- :logseq-mia-theme {:version "v1.6.0", :repo "playerofgames/logseq-mia-theme", :effect false, :theme true}
- :logseq-paper-theme {:version "v0.2.2", :repo "wirtzdan/logseq-paper-theme", :effect false, :theme true}}
+ :logseq-todo-plugin {:version "v1.21.0", :repo "ahonn/logseq-plugin-todo", :effect true, :theme false}}
