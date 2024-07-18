@@ -1,0 +1,2 @@
+Dazu hat Wandelbots bisher die Software Rhinoceros 3D genommen, da diese sehr viele Dateiformate konvertieren kann und eine breite Auswahl an Werkzeugen zur Manipulation von 3D-Modellen bietet.
+	- Da die Möglichkeiten von Rhinoceros 3D zur Bearbeitung jedoch nicht darauf ausgelegt sind, 3D-Modelle schnell und mit maximaler Kontrolle aufzubereiten, wurde ein neuer Workflow entwickelt.

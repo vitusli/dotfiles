@@ -28,19 +28,24 @@
 	- [[Konzepte]] 
 		- [[Konzept 1]] 
 		- [[Konzept 2]]
-	- [[Digitaler Zwilling]]
-		- CAD Modelle (Rhino/InstaLOD)
-		- [[Omniverse Scene]]
-			- 3D-Models
-			- Teaching
-				-  Wandelscript
-			- [[Real World]]
 	- [[Interview]]
 		- [[Bewertung der Konzepte]]
 	- [[Labor-Ablauf filmen]]
 	- [[Zwischenfazit]]
 
+
 - # [[Develop]]
+	- [[Umsetzung Digitaler Zwilling]]
+		- [[CAD Modelle (Rhino, InstaLOD)]]
+			- [[Rhinoceros 3D]]
+			- [[InstaLOD]]
+			- [[Blender]]
+		- [[Omniverse Scene]]
+			- [[Stage]]
+			- [[Physics]]
+			- Teaching
+				-  Wandelscript
+				- [[Real World]]
 	- [[User Interface]]
 		- [[Approach UI]]
 		- [[Figma UI]]
@@ -51,5 +56,6 @@
 	- [[Front End]]
 	- [[Large Language Model]]
 	- [[Demonstrator]]
+		- [[Gegenüberstellung digital/real]]
 	- [[Ausblick: Lab Setup]]
 	- [[Zwischenfazit]]

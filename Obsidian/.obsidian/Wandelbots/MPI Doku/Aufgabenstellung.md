@@ -1,12 +1,8 @@
----
-quickshare-date: 2024-06-17 13:40:35
-quickshare-url: "https://noteshare.space/note/clxiwm3jd758301mw6ymyi6ni#JdjEoCHdTPMovKFzR+68prbnBKl6E3Iv3oV8cCNJ4Oc"
----
 **Ticket Nr**: 2024051741003059
 ## [[Aufgabenstellung]]
 # Verwendung eines digitalen Zwillings zur Entwicklung des User Interfaces eines Pipettier-Roboters
 ### Status Quo
-- Im Labor gibt es, trotz fortschreitender Digitalisierung, weiterhin viele manuelle Prozesse und weniger Roboter-Unterstützung als im Industriellen Umfeld, obwohl viele Aufgaben automatisiert werden könnten
+- Im Labor gibt es, trotz fortschreitender Digitalisierung, weiterhin viele manuelle Prozesse und weniger Roboter-Unterstützung als im industriellen Umfeld, obwohl viele Aufgaben automatisiert werden könnten
 - Die sensiblen Prozesse erfordern hohe Präzision und müssen oft wiederholt werden 
 - Kollaborative Roboter interagieren mit Menschen und können durch einfaches Anlernen repetitive Vorgänge übernehmen
 ### Prozessbeschreibung mit Unterscheidung
@@ -27,4 +23,4 @@ quickshare-url: "https://noteshare.space/note/clxiwm3jd758301mw6ymyi6ni#JdjEoCHd
 	- Erstellung verschiedener Konzepte - Demonstrator und Labor
 	- Bewertung der Konzepte anhand der aufgestellten Anforderungsanalyse - aus Kyles Interview 
 	- Erprobung der Ansätze der UI anhand des Digitalen Zwillings
-	- Methodische Evaluation der Umsetzung
+	- Methodische Evaluation der Umsetzung  (?)

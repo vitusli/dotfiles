@@ -1,3 +1,5 @@
+Aufgabenstellung:: Prüfung der Ansätze anhand eines digitalen Zwillings
+
 # Diskussionsgrundlage
 - Exakte Darstellung der realen Welt im digitalen Raum
 	- Wenn die Kunden und Mitarbeitenden etwas wissen wollen, kann im 3D-Modell alles optimal dargestellt werden

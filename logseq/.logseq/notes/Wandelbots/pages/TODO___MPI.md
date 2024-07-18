@@ -14,7 +14,7 @@
 	- Camera Attach
 	- Suction Gripper at the end of the tip
 	- Groundplane
-- Nina + Shyam - was machen?
+- Nina + Shyam - was machen die?
   :LOGBOOK:
   CLOCK: [2024-07-05 Fri 07:19:42]--[2024-07-05 Fri 07:19:43] =>  00:00:01
   :END:

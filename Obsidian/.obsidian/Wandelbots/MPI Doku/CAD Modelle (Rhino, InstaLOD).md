@@ -1,0 +1,3 @@
+- Die Daten der 3D-Modelle werden aus unterschiedlichen Quellen im Internet bezogen. Die Beschaffung ist ein zeitintensiver Prozess, da die Modelle in stark divergenter Qualität und in den unterschiedlichsten Dateiformaten vorliegen. 
+- Die Daten müssen also zusammengeführt, geprüft, aufgeräumt, optimiert und vorbereitet werden.
+- Zum Beispiel hat das Rack mit den 96 Pipettenspitzen knapp eine Millionen Polygone, da die Geometrie einer Pipettenspitze ganze 10.000 Polygone zählt. Die Pipettenspitzen sind sehr klein und für Betrachtende der Szene kaum zu sehen. Es gilt also den Polycount drastisch zu reduzieren.
