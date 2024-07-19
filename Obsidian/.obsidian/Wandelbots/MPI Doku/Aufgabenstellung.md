@@ -23,4 +23,4 @@
 	- Erstellung verschiedener Konzepte - Demonstrator und Labor
 	- Bewertung der Konzepte anhand der aufgestellten Anforderungsanalyse - aus Kyles Interview 
 	- Erprobung der Ansätze der UI anhand des Digitalen Zwillings
-	- Methodische Evaluation der Umsetzung  (?)
+	- Methodische Evaluation der Umsetzung  (Interner Fragebogen zum Digitalen Zwilling mit Punkteskala)

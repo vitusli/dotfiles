@@ -2,7 +2,11 @@
   :LOGBOOK:
   CLOCK: [2024-06-05 Wed 10:34:10]--[2024-06-05 Wed 10:34:11] =>  00:00:01
   :END:
-- LATER As a lab tech I want (Job to be done) so that (**what in here?**) - the feeling?
+- DONE As a lab tech I want (Job to be done) so that (**what in here?**) - the feeling?
+  :LOGBOOK:
+  CLOCK: [2024-07-19 Fri 10:20:38]--[2024-07-19 Fri 10:20:38] =>  00:00:00
+  CLOCK: [2024-07-19 Fri 10:20:39]--[2024-07-19 Fri 10:20:40] =>  00:00:01
+  :END:
 - DONE Zitierstil aus WhatsApp runterladen
 	- Zotero aktivieren
 	  :LOGBOOK:

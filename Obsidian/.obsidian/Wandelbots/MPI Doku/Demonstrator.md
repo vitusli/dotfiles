@@ -1,0 +1,6 @@
+- Auf der Verteidigung des Exzellenz-Clusters PoL wird ein fahrbarer Demonstrator stehen.
+- Er ist mit mit den Logos der zusammenarbeitenden Institutionen Wandelbots und MPI PoL bedruckt. 
+- Auf der Tischplatte des Demonstrator ist eine Klappe eingelassen, in die der UR5e eingefahren werden kann, um besser transportiert werden zu können. Ebenfalls befestigt auf der Tischplatte ist eine Halterung für die Pipettenspitzen und ein eingelassener Behälter für die Pipettenspitzen.
+- Hinter dem Aufbau sind zwei Monitore befestigt. Auf einem Monitor ist die App zu sehen, die der Nutzende bedient. Auf dem anderen Bildschirm ist der digitale Zwilling zu sehen.
+	- Zeichnung des Aufbaus #Darstellung
+- Der Aufbau ist an den Kanten und unter dem Roboter mit LED Elemente versehen, die durch Farbcodierung #Referenz 

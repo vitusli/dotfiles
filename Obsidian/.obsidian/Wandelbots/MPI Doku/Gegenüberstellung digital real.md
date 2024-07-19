@@ -1,0 +1,1 @@
+Bewertung des Digitaler-Zwillings-Konzepts durch interne Mitarbeitende

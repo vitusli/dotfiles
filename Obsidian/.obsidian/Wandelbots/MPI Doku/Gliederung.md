@@ -12,6 +12,7 @@
 		- [[Max Planck Institut]]
 		- [[Forschung im Labor]]
 	- [[Pipettetier-Vorgang]]
+		- [[Labor-Ablauf filmen]]
 	- [[Camera Vision]]
 	- [[Zwischenfazit]]
 
@@ -30,11 +31,10 @@
 		- [[Konzept 2]]
 	- [[Interview]]
 		- [[Bewertung der Konzepte]]
-	- [[Labor-Ablauf filmen]]
 	- [[Zwischenfazit]]
 
-
 - # [[Develop]]
+	- [[Demonstrator]]
 	- [[Umsetzung Digitaler Zwilling]]
 		- [[CAD Modelle (Rhino, InstaLOD)]]
 			- [[Rhinoceros 3D]]
@@ -53,9 +53,10 @@
 	- [[Zwischenfazit]]
 
 - # [[Deliver]]
-	- [[Front End]]
-	- [[Large Language Model]]
-	- [[Demonstrator]]
-		- [[Gegenüberstellung digital/real]]
+	- [[Make things work]]
+		- [[Hardware Integration]]
+		- [[Front End]]
+		- [[Large Language Model]]
+	- [[Gegenüberstellung digital real]]
 	- [[Ausblick: Lab Setup]]
 	- [[Zwischenfazit]]
