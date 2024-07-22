@@ -11,8 +11,9 @@
 		- [[Wandelbots]]
 		- [[Max Planck Institut]]
 		- [[Forschung im Labor]]
-	- [[Pipettetier-Vorgang]]
+	- [[Pipettier-Vorgang]]
 		- [[Labor-Ablauf filmen]]
+		- [[Exzellenz-Cluster Verteidigung]]
 	- [[Camera Vision]]
 	- [[Zwischenfazit]]
 
@@ -25,12 +26,10 @@
 		- [[Wireframes]]
 		- [[LO-FI]]
 			- [[Testing]]
-		- [[HI-FI]] 
 	- [[Konzepte]] 
 		- [[Konzept 1]] 
 		- [[Konzept 2]]
 	- [[Interview]]
-		- [[Bewertung der Konzepte]]
 	- [[Zwischenfazit]]
 
 - # [[Develop]]

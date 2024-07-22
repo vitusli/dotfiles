@@ -51,7 +51,15 @@
       "key": "L"
     }
   ],
-  "editor:insert-link": [],
+  "editor:insert-link": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "L"
+    }
+  ],
   "switcher:open": [
     {
       "modifiers": [

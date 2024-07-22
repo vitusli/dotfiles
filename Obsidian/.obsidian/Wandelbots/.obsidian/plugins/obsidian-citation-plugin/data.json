@@ -5,5 +5,5 @@
   "literatureNoteContentTemplate": "---\ntitle: {{title}}\nauthors: {{authorString}}\nyear: {{year}}\nurl: {{url}}\n---\n\n[PDF]({{citekey}}.pdf)\n[zotero-link]({{zoteroSelectURI}})\n>[!ABSTRACT]-\n>{{abstract}}\n\n---",
   "markdownCitationTemplate": "([[{{authorString}} {{year}}]])",
   "alternativeMarkdownCitationTemplate": "([[{{authorString}} et al. {{year}}]])",
-  "citationExportPath": "FAP Rechearche.bib"
+  "citationExportPath": "/Users/vituspacholleck/.dotfiles/obsidian/.obsidian/Wandelbots/FAP Rechearche.bib"
 }

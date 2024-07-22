@@ -1,0 +1,3 @@
+- Da das reale Setup das Pipettieren von, mit dem bloßen Augen nicht erkennbaren, Wurmproben in transparenter Flüssigkeit vorsieht und die Zusehenden der Verteidigung diesen diffizilen Prozess nicht nachvollziehen könnten, wird ein alternatives, der Demonstration dienliches, Setup gezeigt.
+- Der Unterschied zum realen Setup ist im Folgenden gelistet:
+	- Der vibrationsisolierte Tisch wird durch einen fahrbaren

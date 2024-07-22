@@ -1,5 +1,7 @@
 # Jobs to be done
 
+([[Fabiano Dalpiaz 2018]])
+
 - In den Nutzenden hineinversetzen um seine Bedürfnisse zu verstehen
 	- Wie fühlt er sich?
 		- Ist er gelangweilt/beschäftigt/gestresst/entspannt?
