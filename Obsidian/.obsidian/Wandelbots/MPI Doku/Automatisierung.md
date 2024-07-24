@@ -1,3 +1,0 @@
-- Happy Path
-- Fehlermeldungen (Errors)
-- Signale

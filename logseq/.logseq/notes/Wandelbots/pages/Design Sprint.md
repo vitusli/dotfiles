@@ -1,9 +1,0 @@
-- User flow - happy path
-- JTBD
-	- As a lab tech I want to - so I don't have to -.
-- Problem Statement
-- Crazy 8s
-- Wireframes
-- LO-FI
-	- Testing
-- HI-FI

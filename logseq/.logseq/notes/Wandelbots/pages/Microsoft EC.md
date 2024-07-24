@@ -1,3 +1,0 @@
-- [[Work in progress]]
-- [[Stored knowledge]]
-- [[Recources]]

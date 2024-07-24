@@ -1,7 +1,0 @@
-/* Hide top bar buttons by their selectors */
-button[data-testid="minimize-button"],
-button[data-testid="maximize-button"],
-button[data-testid="close-button"],
-button[data-tooltip="New page"]{
-    display: none !important;
-}

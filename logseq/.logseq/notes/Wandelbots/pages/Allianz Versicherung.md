@@ -1,4 +1,0 @@
-- Versicherungsbeginn: 11.06.2024
-- Fahrradrechnung immer gleich der Allianz geben
-- Schlüsselverlust
-- MeineAllianz anmelden

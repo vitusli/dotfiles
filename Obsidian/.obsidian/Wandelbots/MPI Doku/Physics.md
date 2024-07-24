@@ -1,6 +1,0 @@
- - DH Parameter
-- Ursprünge
-- Rigging
-- Collider: Plane, Primitives etc
-- TCP Tool Center Point
-- Fixed Joint: Gripper, wie befestigen?

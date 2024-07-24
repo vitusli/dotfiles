@@ -1,1 +1,0 @@
-- [ ] Bilder des Figma Click Dummies
