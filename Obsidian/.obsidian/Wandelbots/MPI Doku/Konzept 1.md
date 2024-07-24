@@ -1,6 +1,0 @@
-- Demonstrator
-- Start
-- Scan
-- Farbeverhältnis bestimmen aus abstrahierter Ansicht
-	- Mixe 100ml blau mit 200ml rot
-- Arbeitsoberfläche mit Chat

@@ -1,1 +1,0 @@
-- [[Nachdenkliche Szene]]

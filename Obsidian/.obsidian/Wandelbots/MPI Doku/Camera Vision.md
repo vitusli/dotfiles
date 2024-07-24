@@ -1,2 +1,0 @@
-- [ ] Maschine kann mit Camera Vision reagieren, im Gegensatz zu einem Skript für jeweils M6/M8 Schraube
--  Sensorpart Camera Vision (Zotero) 

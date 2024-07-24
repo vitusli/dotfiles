@@ -1,2 +1,0 @@
-Die Open-Source 3D-Software Blender bietet durch ihre offene Architektur und die umfangreichen Werkzeuge maximale Kontrolle, um das reduzierte Modell für Omniverse vorzubereiten. 
-Dazu wird das Modell importiert und einheitliche Materialien zugewiesen. Anschließend werden alle Flächen eines Objektes miteinander verbunden und alle überflüssigen Elemente wie etwa doppelte Materialien in der Szene gelöscht. Zuletzt werden alle hinterlegten Dateien in die Datei eingebettet.

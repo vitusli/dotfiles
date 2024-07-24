@@ -1,5 +1,0 @@
-- Der Digitale Zwilling ist in  
-	-  Umgebung (Szene)
-	- Roboter-Workspace
-		- Im Roboter-Workspace ist der Endeffektor hierarchisch untergeordnet
-		- ebenso sind die Pipette und die Kamera im Roboter-Workspace untergebracht
