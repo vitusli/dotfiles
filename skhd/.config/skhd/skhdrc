@@ -1,9 +1,5 @@
-	ctrl + alt + cmd + shift - m : yabai -m config focus_follows_mouse off
+ctrl + alt + cmd + shift - m : yabai -m config focus_follows_mouse off
 ctrl + alt + cmd - m : yabai -m config focus_follows_mouse autoraise
-
-
-# ctrl + alt + cmd - : 
-# ctrl + alt + cmd + shift - :
 
 ctrl + alt + cmd - v : yabai -m window --toggle split
 
