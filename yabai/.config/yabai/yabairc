@@ -6,12 +6,12 @@ yabai -m config layout bsp
 
 yabai -m config window_placement second_child
 
-#padding set to 12px
-yabai -m config top_padding 12
-yabai -m config bottom_padding 12
-yabai -m config left_padding 12
-yabai -m config right_padding 12
-yabai -m config window_gap 12
+#padding 
+yabai -m config top_padding 14
+yabai -m config bottom_padding 14
+yabai -m config left_padding 14
+yabai -m config right_padding 14
+yabai -m config window_gap 14
 
 # floating windows are always on top (default: off)
 yabai -m config window_topmost on
@@ -39,18 +39,15 @@ yabai -m rule --add app="^Blender$" manage=off
 
 # window opacity (default: off)
 # example: render all unfocused windows with 90% opacity 
-# yabai -m config window_opacity on
-# yabai -m config window_opacity_duration 0.05
-# yabai -m config normal_window_opacity 1.0
-# yabai -m config active_window_opacity 1.0
-# yabai -m config active_window_opacity 1.0
+yabai -m config window_opacity on
+yabai -m config window_opacity_duration 0.1
+yabai -m config normal_window_opacity 0.7
+yabai -m config active_window_opacity 1.0
 
 # yabai -m config window_animation_duration   0.25
-
-# signals idk 
-# yabai -m signal --add event=window_destroyed active=yes action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse &> /dev/null || yabai -m window --focus \$(yabai -m query --windows --space | jq .[0].id) &> /dev/null"
-# yabai -m signal --add event=window_minimized active=yes action="if \$(yabai -m query --windows --window \$YABAI_WINDOW_ID | jq -r '.\"is-floating\"'); then yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse &> /dev/null || yabai -m window --focus \$(yabai -m query --windows --space | jq .[0].id) &> /dev/null; fi"
 
 yabai -m config window_shadow off 
 
 # yabai -m config external bar all:32:0
+
+yabai -m config window_animation_duration 0.15

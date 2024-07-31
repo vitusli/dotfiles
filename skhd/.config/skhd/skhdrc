@@ -3,7 +3,7 @@ ctrl + alt + cmd - m : yabai -m config focus_follows_mouse autoraise
 
 ctrl + alt + cmd - v : yabai -m window --toggle split
 
-#zoom
+#resize
 ctrl + cmd - h : yabai -m window west --resize right:-60:0 2> /dev/null || yabai -m window --resize right:-60:0
 ctrl + cmd - j : yabai -m window north --resize bottom:0:60 2> /dev/null || yabai -m window --resize bottom:0:60
 ctrl + cmd - k : yabai -m window south --resize top:0:-60 2> /dev/null || yabai -m window --resize top:0:-60
@@ -16,16 +16,17 @@ ctrl + alt + cmd - k: yabai -m window --focus north
 ctrl + alt + cmd - j: yabai -m window --focus south
 ctrl + alt + cmd - f: yabai -m window --toggle zoom-fullscreen
 
-
 #swap
 ctrl + alt + cmd + shift - l: yabai -m window --swap east
 ctrl + alt + cmd + shift - h: yabai -m window --swap west
 ctrl + alt + cmd + shift - k: yabai -m window --swap north
 ctrl + alt + cmd + shift - j: yabai -m window --swap south
 
-#switch
+#push window to next space
 ctrl + cmd - left : yabai -m window --space prev; yabai -m space --focus prev
 ctrl + cmd - right : yabai -m window --space next; yabai -m space --focus next
+
+#switch current space
 ctrl - left : yabai -m space --focus prev
 ctrl - right : yabai -m space --focus next
 
@@ -38,8 +39,8 @@ ctrl + cmd + shift - 1  : yabai -m window --display 1; yabai -m display --focus 
 ctrl + cmd + shift - 2  : yabai -m window --display 2; yabai -m display --focus 2
 
 #yabai stack navigator
-cmd + shift - tab : yabai-stack-navigator --prev
-cmd - tab : yabai-stack-navigator --next
+cmd + alt + ctrl - h : yabai-stack-navigator --prev
+cmd + alt + ctrl - l : yabai-stack-navigator --next
 
 #switch spaces 
 #but sketchybar does not refresh the space number
@@ -49,17 +50,6 @@ cmd - tab : yabai-stack-navigator --next
 ctrl + alt + cmd - return : yabai -m space --create
 ctrl + alt + cmd + shift - return : yabai -m space --destroy
 
-# create desktop, move window and follow focus - uses jq for parsing json (brew install jq)
-# shift + cmd - n : yabai -m space --create && \
-#                    index="$(yabai -m query --spaces --display | jq 'map(select(."native-fullscreen" == 0))[-1].index')" && \
-#                    yabai -m window --space "${index}" && \
-#                    yabai -m space --focus "${index}"
-
-# create desktop and follow focus - uses jq for parsing json (brew install jq)
-# cmd + alt - n : yabai -m space --create && \
-#                  index="$(yabai -m query --spaces --display | jq 'map(select(."native-fullscreen" == 0))[-1].index')" && \
-#                  yabai -m space --focus "${index}"
- 
 alt - y : yabai -m space --mirror x-axis
 alt - x : yabai -m space --mirror y-axis
 
@@ -71,4 +61,4 @@ ctrl + alt + cmd - t : open -a Alacritty
 ctrl + alt + cmd - e : yabai -m space --balance
 ctrl + alt + cmd - r : yabai --restart-service
 
-
+cmd + ctrl + alt  - space : yabai -m space --layout "$(yabai -m query --spaces --space | jq -r 'if .type == "bsp" then "stack" else "bsp" end')"
