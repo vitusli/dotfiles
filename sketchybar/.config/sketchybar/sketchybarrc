@@ -12,7 +12,7 @@ sketchybar --bar position=top \
   color=0x00000000 \
   corner_radius=8 \
   y_offset=10\
-  margin=-11
+  margin=-9
 
 ##### Changing Defaults #####
 # We now change some default values, which are applied to all further items.
