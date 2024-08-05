@@ -3,7 +3,7 @@ source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 eval "$(starship init zsh)"
 
 alias r="ranger"
-#alias f="vim $(fzf)" does not work, instead use the following
+alias l="lazygit"
 
 f() {
   if [[ -z $1 ]]; then

@@ -27,8 +27,8 @@ ctrl + cmd - left : yabai -m window --space prev; yabai -m space --focus prev
 ctrl + cmd - right : yabai -m window --space next; yabai -m space --focus next
 
 #switch current space
-ctrl - left : yabai -m space --focus prev
-ctrl - right : yabai -m space --focus next
+#ctrl - left : yabai -m space --focus prev
+#ctrl - right : yabai -m space --focus next
 
 # focus monitor
 ctrl + cmd - 1  : yabai -m display --focus 1
