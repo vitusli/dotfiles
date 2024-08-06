@@ -1,7 +1,13 @@
 source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
+# vim bindings
+# bindkey -v
+# but better use the zsh-vi-mode plugin
+source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+
 eval "$(starship init zsh)"
 
+#alias
 alias r="ranger"
 alias l="lazygit"
 
