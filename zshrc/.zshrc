@@ -10,6 +10,7 @@ eval "$(starship init zsh)"
 #alias
 alias r="ranger"
 alias l="lazygit"
+alias z="zellij"
 
 f() {
   if [[ -z $1 ]]; then
