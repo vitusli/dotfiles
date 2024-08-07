@@ -11,6 +11,7 @@ eval "$(starship init zsh)"
 alias r="ranger"
 alias l="lazygit"
 alias z="zellij"
+alias za="zellij a gitup"
 
 f() {
   if [[ -z $1 ]]; then
