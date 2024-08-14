@@ -7,7 +7,17 @@ source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
 eval "$(starship init zsh)"
 
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
+fi
+
 #alias
+alias b="brew install"
+alias v="nvim"
 alias r="ranger"
 alias l="lazygit"
 alias z="zellij"
@@ -15,9 +25,9 @@ alias za="zellij a gitup"
 
 f() {
   if [[ -z $1 ]]; then
-    vim $(fzf)
+    nvim $(fzf)
   else
-    vim $1
+    nvim $1
   fi
 }
 

@@ -43,7 +43,7 @@ yabai -m config window_animation_duration  0.25
 
 yabai -m config window_shadow off 
 
-#! /usr/bin/env zsh
+! /usr/bin/env zsh
 
 # [github](https://github.com/koekeishiya/yabai/issues/475#issuecomment-615167241)
 function focus_under_cursor {
