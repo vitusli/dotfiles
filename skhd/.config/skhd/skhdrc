@@ -1,8 +1,8 @@
 ctrl + alt + cmd + shift - m : yabai -m config focus_follows_mouse off
 ctrl + alt + cmd - m : yabai -m config focus_follows_mouse autoraise
+
 # focus window under cursor
 ctrl + alt + cmd - n : yabai -m window --focus mouse
-
 
 ctrl + alt + cmd - v : yabai -m window --toggle split
 
@@ -13,23 +13,23 @@ ctrl + cmd - k : yabai -m window south --resize top:0:-60 2> /dev/null || yabai 
 ctrl + cmd - l : yabai -m window east --resize left:60:0 2> /dev/null || yabai -m window --resize left:60:0
 
 #focus
-ctrl + alt + cmd - l: yabai -m window --focus east || yabai -m display --focus east
-ctrl + alt + cmd - h: yabai -m window --focus west || yabai -m display --focus west
-ctrl + alt + cmd - k: yabai -m window --focus north || yabai -m display --focus north
-ctrl + alt + cmd - j: yabai -m window --focus south || yabai -m display --focus south
+ctrl + alt + cmd - l: yabai -m window --focus east || yabai -m space --focus next || yabai -m window --focus stack.next #|| yabai -m window --focus stack.first
+ctrl + alt + cmd - h: yabai -m window --focus west || yabai -m space --focus prev || yabai -m window --focus stack.prev #|| yabai -m window --focus stack.last
+ctrl + alt + cmd - k: yabai -m window --focus north || yabai -m display --focus recent
+ctrl + alt + cmd - j: yabai -m window --focus south || yabai -m display --focus recent
 
 ctrl + alt + cmd - f: yabai -m window --toggle zoom-fullscreen
 ctrl + alt + cmd + shift - f: yabai -m window --toggle zoom-parent
 
 #swap windows
-ctrl + alt + cmd + shift - l: yabai -m window --swap east
-ctrl + alt + cmd + shift - h: yabai -m window --swap west
-ctrl + alt + cmd + shift - k: yabai -m window --swap north
-ctrl + alt + cmd + shift - j: yabai -m window --swap south
+ctrl + alt + cmd + shift - l: yabai -m window --swap east || yabai -m window --space next
+ctrl + alt + cmd + shift - h: yabai -m window --swap west || yabai -m window --space prev
+ctrl + alt + cmd + shift - k: yabai -m window --swap north || yabai -m window --display recent; yabai -m display --focus recent
+ctrl + alt + cmd + shift - j: yabai -m window --swap south || yabai -m window --display recent; yabai -m display --focus recent
 
-# send window to next space
-ctrl + cmd - left : yabai -m window --space prev; yabai -m space --focus prev
-ctrl + cmd - right : yabai -m window --space next; yabai -m space --focus next
+# send window to next space and focus it
+# ctrl + cmd - left : yabai -m window --space prev; yabai -m space --focus prev
+# ctrl + cmd - right : yabai -m window --space next; yabai -m space --focus next
 
 # focus space
 #ctrl - left : yabai -m space --focus prev || yabai -m space --focus last
@@ -40,19 +40,6 @@ cmd + alt + ctrl - s : yabai -m space --focus recent || yabai -m space --focus n
 cmd + alt + ctrl - d : labai -m display --focus recent || yabai -m display --focus next
 # move window to display focused before the current one
 cmd + alt + ctrl + shift - d : yabai -m window --display recent || yabai -m window --display next
-
-# focus monitor, switch window and follow focus
-ctrl + cmd + shift - 1  : yabai -m window --display 1; yabai -m display --focus 1
-ctrl + cmd + shift - 2  : yabai -m window --display 2; yabai -m display --focus 2
-
-#yabai stack navigator
-cmd + alt + ctrl - i : yabai-stack-navigator --prev
-cmd + alt + ctrl - o : yabai-stack-navigator --next
-
-#switch spaces 
-#but sketchybar does not refresh the space number
-#ctrl + alt + cmd + shift - left : yabai -m space --move prev
-#ctrl + alt + cmd + shift - right : yabai -m space --move next
 
 ctrl + alt + cmd - return : yabai -m space --create
 ctrl + alt + cmd + shift - return : yabai -m space --destroy
@@ -69,3 +56,17 @@ ctrl + alt + cmd - e : yabai -m space --balance
 ctrl + alt + cmd - r : yabai --restart-service
 
 cmd + ctrl + alt  - space : yabai -m space --layout "$(yabai -m query --spaces --space | jq -r 'if .type == "bsp" then "stack" else "bsp" end')"; space_number=$(yabai -m query --spaces --space | jq -r .index); yabai_mode=$(yabai -m query --spaces --space | jq -r .type)
+
+# focus monitor, switch window and follow focus
+
+# yabai stack navigator
+# https://github.com/sendhil/yabai-stack-navigator
+# first: pip install yabai-stack-navigator
+# cmd + alt + ctrl - i : yabai-stack-navigator --prev
+# cmd + alt + ctrl - o : yabai-stack-navigator --next
+
+#swap spaces 
+#but sketchybar does not refresh the space number
+#ctrl + alt + cmd + shift - left : yabai -m space --move prev
+#ctrl + alt + cmd + shift - right : yabai -m space --move next
+
