@@ -22,18 +22,18 @@ ctrl + alt + cmd - f: yabai -m window --toggle zoom-fullscreen
 ctrl + alt + cmd + shift - f: yabai -m window --toggle zoom-parent
 
 #swap windows
-ctrl + alt + cmd + shift - l: yabai -m window --swap east || yabai -m window --space next
+ctrl + alt + cmd + shift - l: yabai -m window --swap east || yabai -m window --space next || yabai -m space --create; yabai -m window --space next; yabai -m space --focus next
 ctrl + alt + cmd + shift - h: yabai -m window --swap west || yabai -m window --space prev
 ctrl + alt + cmd + shift - k: yabai -m window --swap north || yabai -m window --display recent; yabai -m display --focus recent
 ctrl + alt + cmd + shift - j: yabai -m window --swap south || yabai -m window --display recent; yabai -m display --focus recent
 
 # send window to next space and focus it
-# ctrl + cmd - left : yabai -m window --space prev; yabai -m space --focus prev
-# ctrl + cmd - right : yabai -m window --space next; yabai -m space --focus next
+ctrl + cmd - left : yabai -m window --space prev; yabai -m space --focus prev
+ctrl + cmd - right : yabai -m window --space next; yabai -m space --focus next
 
 # focus space
-#ctrl - left : yabai -m space --focus prev || yabai -m space --focus last
-#ctrl - right : yabai -m space --focus next || yabai -m space --focus first
+ctrl - left : yabai -m space --focus prev || yabai -m space --focus last
+ctrl - right : yabai -m space --focus next || yabai -m space --focus first
 cmd + alt + ctrl - s : yabai -m space --focus recent || yabai -m space --focus next
 
 # alternate focus between displays
@@ -41,7 +41,7 @@ cmd + alt + ctrl - d : labai -m display --focus recent || yabai -m display --foc
 # move window to display focused before the current one
 cmd + alt + ctrl + shift - d : yabai -m window --display recent || yabai -m window --display next
 
-ctrl + alt + cmd - return : yabai -m space --create
+ctrl + alt + cmd - return : yabai -m space --create; yabai -m space --focus last
 ctrl + alt + cmd + shift - return : yabai -m space --destroy
 
 alt - y : yabai -m space --mirror x-axis
