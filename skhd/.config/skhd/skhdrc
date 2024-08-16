@@ -42,8 +42,8 @@ ctrl + cmd - left : yabai -m window --space prev; yabai -m space --focus prev
 ctrl + cmd - right : yabai -m window --space next; yabai -m space --focus next
 
 # focus space
-ctrl - left : yabai -m space --focus prev || yabai -m space --focus last
-ctrl - right : yabai -m space --focus next || yabai -m space --focus first
+#ctrl - left : yabai -m space --focus prev || yabai -m space --focus last
+#ctrl - right : yabai -m space --focus next || yabai -m space --focus first
 cmd + alt + ctrl - s : yabai -m space --focus recent || yabai -m space --focus next
 
 # alternate focus between displays
