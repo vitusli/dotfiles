@@ -32,7 +32,7 @@ ctrl + alt + cmd - f: yabai -m window --toggle zoom-fullscreen
 ctrl + alt + cmd + shift - f: yabai -m window --toggle zoom-parent
 
 #swap windows
-ctrl + alt + cmd + shift - l: yabai -m window --swap east || yabai -m window --space next || yabai -m space --create; yabai -m window --space next; yabai -m space --focus next
+ctrl + alt + cmd + shift - l: yabai -m window --swap east || yabai -m window --space next
 ctrl + alt + cmd + shift - h: yabai -m window --swap west || yabai -m window --space prev
 ctrl + alt + cmd + shift - k: yabai -m window --swap north || yabai -m window --display recent; yabai -m display --focus recent
 ctrl + alt + cmd + shift - j: yabai -m window --swap south || yabai -m window --display recent; yabai -m display --focus recent
