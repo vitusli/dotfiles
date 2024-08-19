@@ -87,34 +87,34 @@ outer.right =      14
 # end tell'
 # '''
 
-]super = 'ctrl-alt-cmd'
+#super = 'ctrl-alt-cmd'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#layout
-super-v = 'layout tiles horizontal vertical'
-super-shift-v = 'layout accordion horizontal vertical'
+alt-v = 'layout tiles horizontal vertical'
+alt-shift-v = 'layout accordion horizontal vertical'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-super-h = ['focus --boundaries-actions stop left', 'move-mouse window-force-center']
-super-j = ['focus --boundaries-actions stop down', 'move-mouse window-force-center']
-super-k = ['focus --boundaries-actions stop up', 'move-mouse window-force-center']
-super-l = ['focus --boundaries-actions stop right', 'move-mouse window-force-center']
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move
-super-shift-h = 'move left'
-super-shift-j = 'move down'
-super-shift-k = 'move up'
-super-shift-l = 'move right'
+alt-shift-h = 'move left'
+alt-shift-j = 'move down'
+alt-shift-k = 'move up'
+alt-shift-l = 'move right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#resize
-super-shift-minus = 'resize smart -50'
-super-shift-equal = 'resize smart +50'
+alt-shift-minus = 'resize smart -50'
+alt-shift-equal = 'resize smart +50'
 
-super-tab = 'workspace-back-and-forth'
+alt-tab = 'workspace-back-and-forth'
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
-super-shift-tab = 'move-workspace-to-monitor --wrap-around next'
+alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
-super-shift-semicolon = 'mode service'
+alt-shift-semicolon = 'mode service'
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -125,10 +125,10 @@ r = ['flatten-workspace-tree', 'mode main'] # reset layout
 f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'mode main']
 
-super-shift-h = ['join-with left', 'mode main']
-super-shift-j = ['join-with down', 'mode main']
-super-shift-k = ['join-with up', 'mode main']
-super-shift-l = ['join-with right', 'mode main']
+alt-shift-h = ['join-with left', 'mode main']
+alt-shift-j = ['join-with down', 'mode main']
+alt-shift-k = ['join-with up', 'mode main']
+alt-shift-l = ['join-with right', 'mode main']
 
 #yabai copy
 #
@@ -148,7 +148,7 @@ super-shift-l = ['join-with right', 'mode main']
 #trl + alt + cmd - i: yabai -m window --focus stack.prev
 
 #trl + alt + cmd - f: yabai -m window --toggle zoom-fullscreen
-super-f = 'fullscreen'
+alt-f = 'fullscreen'
 #trl + alt + cmd + shift - f: yabai -m window --toggle zoom-parent
 
 #swap windows
@@ -167,7 +167,7 @@ super-f = 'fullscreen'
 #md + alt + ctrl - s : yabai -m space --focus recent || yabai -m space --focus next
 
 # alternate focus between displays
-super-d = 'focus-back-and-forth || workspace-back-and-forth'
+# alt-d = 'focus-back-and-forth || workspace-back-and-forth'
 # move window to display focused before the current one
 #md + alt + ctrl + shift - d : yabai -m window --display recent || yabai -m window --display next
 
@@ -198,14 +198,14 @@ super-d = 'focus-back-and-forth || workspace-back-and-forth'
 #ctrl + alt + cmd + shift - right : yabai -m space --move next
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-super-1 = 'workspace 1'
-super-2 = 'workspace 2'
-super-3 = 'workspace 3'
-super-4 = 'workspace 4'
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-super-shift-1 = 'move-node-to-workspace 1'
-super-shift-2 = 'move-node-to-workspace 2'
-super-shift-3 = 'move-node-to-workspace 3'
-super-shift-4 = 'move-node-to-workspace 4'
+alt-shift-1 = 'move-node-to-workspace 1'
+alt-shift-2 = 'move-node-to-workspace 2'
+alt-shift-3 = 'move-node-to-workspace 3'
+alt-shift-4 = 'move-node-to-workspace 4'
 

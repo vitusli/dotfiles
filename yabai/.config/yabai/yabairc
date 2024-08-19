@@ -1,3 +1,5 @@
+! /usr/bin/env zsh
+
 yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 sudo yabai --load-sa
 
@@ -12,6 +14,8 @@ yabai -m config bottom_padding 14
 yabai -m config left_padding 14
 yabai -m config right_padding 14
 yabai -m config window_gap 14
+
+yabai -m config external_bar main : top_padding 46 bottom_padding 40
 
 #Mouse
 # center mouse on window with focus
@@ -42,8 +46,6 @@ yabai -m config active_window_opacity 1.0
 yabai -m config window_animation_duration  0.25
 
 yabai -m config window_shadow off 
-
-! /usr/bin/env zsh
 
 # [github](https://github.com/koekeishiya/yabai/issues/475#issuecomment-615167241)
 function focus_under_cursor {
