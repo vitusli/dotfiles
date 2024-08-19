@@ -23,6 +23,7 @@ alias l="lazygit"
 alias z="zellij"
 alias za="zellij a gitup"
 alias zd="zellij a edit_dotfiles"
+alias dot="cd .dotfiles"
 
 f() {
   if [[ -z $1 ]]; then

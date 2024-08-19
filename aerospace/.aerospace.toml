@@ -94,10 +94,10 @@ super-v = 'layout tiles horizontal vertical'
 super-shift-v = 'layout accordion horizontal vertical'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-super-h = 'focus left' 
-super-j = 'focus down'
-super-k = 'focus up'
-super-l = 'focus right'
+super-h = ['focus --boundaries-actions stop left', 'move-mouse window-force-center']
+super-j = ['focus --boundaries-actions stop down', 'move-mouse window-force-center']
+super-k = ['focus --boundaries-actions stop up', 'move-mouse window-force-center']
+super-l = ['focus --boundaries-actions stop right', 'move-mouse window-force-center']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move
 super-shift-h = 'move left'
