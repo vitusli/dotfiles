@@ -1,0 +1,211 @@
+# disable dispays have seperate spaces
+# defaults write com.apple.spaces spans-displays -bool true && killall SystemUIServer
+
+
+
+# You can use it to add commands that run after login to macOS user session.
+# 'start-at-login' needs to be 'true' for 'after-login-command' to work
+# Available commands: https://nikitabobko.github.io/AeroSpace/commands
+after-login-command = []
+
+# You can use it to add commands that run after AeroSpace startup.
+# 'after-startup-command' is run after 'after-login-command'
+# Available commands : https://nikitabobko.github.io/AeroSpace/commands
+after-startup-command = []
+
+# Start AeroSpace at login
+start-at-login = false
+
+# Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+# See: https://nikitabobko.github.io/AeroSpace/guide#layouts
+# The 'accordion-padding' specifies the size of accordion padding
+# You can set 0 to disable the padding feature
+accordion-padding = 30
+
+# Possible values: tiles|accordion
+default-root-container-layout = 'tiles'
+
+# Possible values: horizontal|vertical|auto
+# 'auto' means: wide monitor (anything wider than high) gets horizontal orientation,
+#               tall monitor (anything higher than wide) gets vertical orientation
+default-root-container-orientation = 'auto'
+
+# Possible values: (qwerty|dvorak)
+# See https://nikitabobko.github.io/AeroSpace/guide#key-mapping
+key-mapping.preset = 'qwerty'
+
+# Mouse follows focus when focused monitor changes
+# Drop it from your config, if you don't like this behavior
+# See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
+# See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
+on-focused-monitor-changed = ['move-mouse window-force-center']
+
+# Gaps between windows (inner-*) and between monitor edges (outer-*).
+# Possible values:
+# - Constant:     gaps.outer.top = 8
+# - Per monitor:  gaps.outer.top = [{ monitor.main = 16 }, { monitor."some-pattern" = 32 }, 24]
+#                 In this example, 24 is a default value when there is no match.
+#                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
+#                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
+[gaps]
+inner.horizontal = 14
+inner.vertical =   14
+outer.left =       14
+outer.bottom =     14
+outer.top =        14
+outer.right =      14
+
+# 'main' binding mode declaration
+# See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
+# 'main' binding mode must be always presented
+[mode.main.binding]
+
+# All possible keys:
+# - Letters.        a, b, c, ..., z
+# - Numbers.        0, 1, 2, ..., 9
+# - Keypad numbers. keypad0, keypad1, keypad2, ..., keypad9
+# - F-keys.         f1, f2, ..., f20
+# - Special keys.   minus, equal, period, comma, slash, backslash, quote, semicolon, backtick,
+#                   leftSquareBracket, rightSquareBracket, space, enter, esc, backspace, tab
+# - Keypad special. keypadClear, keypadDecimalMark, keypadDivide, keypadEnter, keypadEqual,
+#                   keypadMinus, keypadMultiply, keypadPlus
+# - Arrows.         left, down, up, right
+
+# All possible modifiers: cmd, alt, ctrl, shift
+
+# All possible commands: https://nikitabobko.github.io/AeroSpace/commands
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#exec-and-forget
+# You can uncomment the following lines to open up terminal with alt + enter shortcut (like in i3)
+# alt-enter = '''exec-and-forget osascript -e '
+# tell application "Terminal"
+#     do script
+#     activate
+# end tell'
+# '''
+
+]super = 'ctrl-alt-cmd'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#layout
+super-v = 'layout tiles horizontal vertical'
+super-shift-v = 'layout accordion horizontal vertical'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#focus
+super-h = 'focus left' 
+super-j = 'focus down'
+super-k = 'focus up'
+super-l = 'focus right'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#move
+super-shift-h = 'move left'
+super-shift-j = 'move down'
+super-shift-k = 'move up'
+super-shift-l = 'move right'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#resize
+super-shift-minus = 'resize smart -50'
+super-shift-equal = 'resize smart +50'
+
+super-tab = 'workspace-back-and-forth'
+# See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
+super-shift-tab = 'move-workspace-to-monitor --wrap-around next'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#mode
+super-shift-semicolon = 'mode service'
+
+# 'service' binding mode declaration.
+# See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
+[mode.service.binding]
+esc = ['reload-config', 'mode main']
+r = ['flatten-workspace-tree', 'mode main'] # reset layout
+#s = ['layout sticky tiling', 'mode main'] # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
+f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
+backspace = ['close-all-windows-but-current', 'mode main']
+
+super-shift-h = ['join-with left', 'mode main']
+super-shift-j = ['join-with down', 'mode main']
+super-shift-k = ['join-with up', 'mode main']
+super-shift-l = ['join-with right', 'mode main']
+
+#yabai copy
+#
+#trl + alt + cmd + shift - m : yabai -m config focus_follows_mouse off
+#trl + alt + cmd - m : yabai -m config focus_follows_mouse autoraise
+
+#trl + alt + cmd - v : yabai -m window --toggle split
+
+#resize
+#trl + cmd - h : yabai -m window west --resize right:-60:0 2> /dev/null || yabai -m window --resize right:-60:0
+#trl + cmd - j : yabai -m window north --resize bottom:0:60 2> /dev/null || yabai -m window --resize bottom:0:60
+#trl + cmd - k : yabai -m window south --resize top:0:-60 2> /dev/null || yabai -m window --resize top:0:-60
+#trl + cmd - l : yabai -m window east --resize left:60:0 2> /dev/null || yabai -m window --resize left:60:0
+
+# stack
+#trl + alt + cmd - o: yabai -m window --focus stack.next
+#trl + alt + cmd - i: yabai -m window --focus stack.prev
+
+#trl + alt + cmd - f: yabai -m window --toggle zoom-fullscreen
+super-f = 'fullscreen'
+#trl + alt + cmd + shift - f: yabai -m window --toggle zoom-parent
+
+#swap windows
+#trl + alt + cmd + shift - l: yabai -m window --swap east || yabai -m window --space next
+#trl + alt + cmd + shift - h: yabai -m window --swap west || yabai -m window --space prev
+#trl + alt + cmd + shift - k: yabai -m window --swap north || yabai -m window --display recent; yabai -m display --focus recent
+#trl + alt + cmd + shift - j: yabai -m window --swap south || yabai -m window --display recent; yabai -m display --focus recent
+
+# send window to next space and focus it
+#trl + cmd - left : yabai -m window --space prev; yabai -m space --focus prev
+#trl + cmd - right : yabai -m window --space next; yabai -m space --focus next
+
+# focus space
+#ctrl - left : yabai -m space --focus prev || yabai -m space --focus last
+#ctrl - right : yabai -m space --focus next || yabai -m space --focus first
+#md + alt + ctrl - s : yabai -m space --focus recent || yabai -m space --focus next
+
+# alternate focus between displays
+super-d = 'focus-back-and-forth || workspace-back-and-forth'
+# move window to display focused before the current one
+#md + alt + ctrl + shift - d : yabai -m window --display recent || yabai -m window --display next
+
+#trl + alt + cmd - return : yabai -m space --create; yabai -m space --focus last
+#trl + alt + cmd + shift - return : yabai -m space --destroy
+
+#lt - y : yabai -m space --mirror x-axis
+#lt - x : yabai -m space --mirror y-axis
+
+#Services
+#ctrl + alt + cmd - w : yabai -m window --toggle float
+#trl + alt + cmd - e : yabai -m space --balance
+#trl + alt + cmd - r : yabai --restart-service
+
+#md + ctrl + alt  - space : yabai -m space --layout "$(yabai -m query --spaces --space | jq -r 'if .type == "bsp" then "stack" else "bsp" end')"; space_number=$(yabai -m query --spaces --space | jq -r .index); yabai_mode=$(yabai -m query --spaces --space | jq -r .type)
+
+# focus monitor, switch window and follow focus
+
+# yabai stack navigator
+# https://github.com/sendhil/yabai-stack-navigator
+# first: pip install yabai-stack-navigator
+# cmd + alt + ctrl - i : yabai-stack-navigator --prev
+# cmd + alt + ctrl - o : yabai-stack-navigator --next
+#
+#swap spaces 
+#but sketchybar does not refresh the space number
+#ctrl + alt + cmd + shift - left : yabai -m space --move prev
+#ctrl + alt + cmd + shift - right : yabai -m space --move next
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#workspace
+super-1 = 'workspace 1'
+super-2 = 'workspace 2'
+super-3 = 'workspace 3'
+super-4 = 'workspace 4'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
+super-shift-1 = 'move-node-to-workspace 1'
+super-shift-2 = 'move-node-to-workspace 2'
+super-shift-3 = 'move-node-to-workspace 3'
+super-shift-4 = 'move-node-to-workspace 4'
+
