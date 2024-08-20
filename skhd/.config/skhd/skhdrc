@@ -12,7 +12,7 @@ ctrl + cmd - j : yabai -m window north --resize bottom:0:60 2> /dev/null || yaba
 ctrl + cmd - k : yabai -m window south --resize top:0:-60 2> /dev/null || yabai -m window --resize top:0:-60
 ctrl + cmd - l : yabai -m window east --resize left:60:0 2> /dev/null || yabai -m window --resize left:60:0
 
-#focus
+#focus (same for bsp and stack)
 #ctrl + alt + cmd - l: yabai -m window --focus east  || yabai -m window --focus stack.next|| yabai -m space --focus next || yabai -m space --focus first
 #ctrl + alt + cmd - h: yabai -m window --focus west  || yabai -m window --focus stack.prev|| yabai -m space --focus prev || yabai -m space --focus last
 #ctrl + alt + cmd - k: yabai -m window --focus north || yabai -m display --focus recent
@@ -45,11 +45,13 @@ ctrl + cmd - right : yabai -m window --space next; yabai -m space --focus next
 #ctrl - left : yabai -m space --focus prev || yabai -m space --focus last
 #ctrl - right : yabai -m space --focus next || yabai -m space --focus first
 cmd + alt + ctrl - s : yabai -m space --focus recent || yabai -m space --focus next
+# move window to recent space
+cmd + alt + ctrl + shift - s : yabai -m window --display recent ; yabai -m space --focus recent
 
-# alternate focus between displays
-cmd + alt + ctrl - d : labai -m display --focus recent || yabai -m display --focus next
+# alternate focus between displays (doesn't work)
+cmd + alt + ctrl - d : yabai -m display --focus recent
 # move window to display focused before the current one
-cmd + alt + ctrl + shift - d : yabai -m window --display recent || yabai -m window --display next
+cmd + alt + ctrl + shift - d : yabai -m window --display recent ; yabai -m display --focus recent
 
 ctrl + alt + cmd - return : yabai -m space --create; yabai -m space --focus last
 ctrl + alt + cmd + shift - return : yabai -m space --destroy
