@@ -24,7 +24,11 @@ alias z="zellij"
 alias za="zellij a gitup"
 alias zd="zellij a edit_dotfiles"
 alias dot="cd .dotfiles"
+alias wm="yabai --start-service && skhd --start-service"
+alias wmend="yabai --stop-service && skhd --stop-service"
+alias wmre="yabai --restart-service && skhd --restart-service"
 
+# f alias
 f() {
   if [[ -z $1 ]]; then
     nvim $(fzf)
@@ -33,13 +37,22 @@ f() {
   fi
 }
 
+# zsh-abbr completions
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh-abbr:$FPATH
 
-# zsh fzf
-source <(fzf --zsh)
+  autoload -Uz compinit
+    compinit
+fi
+
 
 bindkey "^[[1;3D" backward-word # ALT-left-arrow  ⌥ + ←
 bindkey "^[[1;3C" forward-word  # ALT-right-arrow ⌥ + →
 
+# zsh fzf
+source <(fzf --zsh)
+
+source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
 
 source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 

@@ -57,9 +57,6 @@ ctrl + alt + cmd + shift - return : yabai -m space --destroy
 alt - y : yabai -m space --mirror x-axis
 alt - x : yabai -m space --mirror y-axis
 
-#Apps
-ctrl + alt + cmd - t : open -a Alacritty
-
 #Services
 #ctrl + alt + cmd - w : yabai -m window --toggle float
 ctrl + alt + cmd - e : yabai -m space --balance
