@@ -4,12 +4,12 @@
 # You can use it to add commands that run after login to macOS user session.
 # 'start-at-login' needs to be 'true' for 'after-login-command' to work
 # Available commands: https://nikitabobko.github.io/AeroSpace/commands
-after-login-command = []
+after-login-command = ['mode stacked']
 
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
-after-startup-command = ['mode stacked']
+after-startup-command = []
 
 # Start AeroSpace at login
 start-at-login = true
@@ -30,11 +30,10 @@ default-root-container-orientation = 'auto'
 key-mapping.preset = 'qwerty'
 
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
-# See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
 on-focused-monitor-changed = ['move-mouse window-force-center']
 on-focus-changed = ['move-mouse window-force-center']
 # Hier festlegen, dass bei workspace change geguckt werden soll, ob das layout stacked oder tiled ist
-#on-event = ['mode stacked']
+#on-event = ['mode stacked/tiled']
 
 
 # Gaps between windows (inner-*) and between monitor edges (outer-*).
@@ -54,9 +53,7 @@ outer.top =        14
 outer.right =      14
 
 # 'main' binding mode declaration
-# See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 # 'main' binding mode must be always presented
-
 
 [mode.main.binding]
 ctrl-alt-cmd-space = 'mode stacked'
@@ -74,11 +71,12 @@ ctrl-alt-cmd-shift-j = 'move down'
 ctrl-alt-cmd-shift-k = 'move up'
 ctrl-alt-cmd-shift-l = 'move right'
 
-ctrl-alt-cmd-shift-minus = 'resize smart -50'
-ctrl-alt-cmd-shift-equal = 'resize smart +50'
-
 #to escape the space because super h/l is used for focus
 ctrl-alt-cmd-s = ['workspace-back-and-forth', 'mode stacked']
+
+ctrl-alt-cmd-i = ['resize smart -50', 'mode tiled']
+ctrl-alt-cmd-o = ['resize smart +50', 'mode tiled']
+
 
 #to return to all modes
 ctrl-alt-cmd-space = ['layout h_accordion', 'mode stacked']
@@ -95,6 +93,8 @@ ctrl-alt-cmd-o = 'focus --boundaries-action stop right'
 # when I end up in an tiled workspace the keybindings are still stack mode 
 # I need to restart (exec?) each time I jump to next workspace
 ctrl-alt-cmd-h = ['workspace prev']
+ctrl-alt-cmd-j = ['focus-monitor --wrap-around next', 'mode stacked']
+ctrl-alt-cmd-k = ['focus-monitor --wrap-around next', 'mode stacked']
 ctrl-alt-cmd-l = ['workspace next']
 
 #swap, soon with || operator for send to next screen - before that use transform mode
@@ -104,6 +104,7 @@ ctrl-alt-cmd-shift-k = 'move up'
 ctrl-alt-cmd-shift-l = 'move right'
 
 #to escape the space because super h/l is used for focus
+ctrl-alt-cmd-d = ['focus-monitor --wrap-around next', 'mode stacked']
 ctrl-alt-cmd-s = ['workspace-back-and-forth', 'mode tiled']
 
 #to return to all modes
@@ -116,20 +117,20 @@ ctrl-alt-cmd-slash = 'mode service'
 
 
 [mode.transform.binding]
-#should send all to next workspace so I dont fuck up my stack/tile mode (instead of joining)
+# I should alwways send all to next workspace so I dont fuck up my stack/tile mode (instead of joining)
 h = ['move-node-to-workspace --wrap-around prev', 'workspace prev', 'mode stacked']
 j = ['move-node-to-monitor --wrap-around prev', 'mode stacked']
 k = ['move-node-to-monitor --wrap-around next', 'mode stacked']
 l = ['move-node-to-workspace --wrap-around next', 'workspace next', 'mode stacked']
 
-#add: swap windows
+d = ['move-node-to-monitor --wrap-around next']
+s = ['move-workspace-to-monitor --wrap-around next', 'mode stacked']
 
-# add: switch focus between displays
-ctrl-alt-cmd-shift-d = ['move-workspace-to-monitor --wrap-around next', 'mode stacked']
-# aerospace move-node-to-monitor [-h|--help] [--wrap-around] (left|down|up|right)
-# aerospace move-node-to-monitor [-h|--help] [--wrap-around] (next|prev)
-# aerospace move-node-to-monitor [-h|--help] <monitor-pattern>...
-#
+shift-h = ['move-node-to-monitor left', 'mode stacked']
+shift-j = ['move-node-to-monitor down', 'mode stacked']
+shift-k = ['move-node-to-monitor up', 'mode stacked']
+shift-l = ['move-node-to-monitor right', 'mode stacked']
+
 #to return to all modes
 ctrl-alt-cmd-space =  ['layout h_tiles ', 'mode tiled']
 ctrl-alt-cmd-0 = 'mode main'
@@ -138,7 +139,7 @@ ctrl-alt-cmd-2 = 'mode stacked'
 ctrl-alt-cmd-enter = 'mode transform'
 ctrl-alt-cmd-slash = 'mode service'
 
-# 'service' binding mode declaration.
+
 [mode.service.binding]
 
 esc = ['reload-config', 'mode stacked']
@@ -148,7 +149,6 @@ e = ['flatten-workspace-tree', 'mode stacked'] # reset layout
 f = ['layout floating tiling', 'mode stacked'] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'mode stacked']
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 alt-1 = ['workspace 1', 'mode stacked']
 alt-2 = ['workspace 2', 'mode stacked']
 alt-3 = ['workspace 3', 'mode stacked']
