@@ -57,6 +57,7 @@ outer.right =      14
 
 [mode.main.binding]
 ctrl-alt-cmd-space = 'mode stacked'
+ctrl-alt-cmd-slash = 'mode service'
 
 
 [mode.tiled.binding]
@@ -79,13 +80,7 @@ ctrl-alt-cmd-o = ['resize smart +50', 'mode tiled']
 
 
 #to return to all modes
-ctrl-alt-cmd-space = ['layout h_accordion', 'mode stacked']
-ctrl-alt-cmd-0 = 'mode main'
-ctrl-alt-cmd-1 = 'mode tiled'
-ctrl-alt-cmd-2 = 'mode stacked'
-ctrl-alt-cmd-enter = 'mode transform'
 ctrl-alt-cmd-slash = 'mode service'
-
 
 [mode.stacked.binding]
 ctrl-alt-cmd-i = 'focus --boundaries-action stop left'
@@ -108,23 +103,17 @@ ctrl-alt-cmd-d = ['focus-monitor --wrap-around next', 'mode stacked']
 ctrl-alt-cmd-s = ['workspace-back-and-forth', 'mode tiled']
 
 #to return to all modes
-ctrl-alt-cmd-space =  ['layout h_tiles ', 'mode tiled']
-ctrl-alt-cmd-0 = 'mode main'
-ctrl-alt-cmd-1 = 'mode tiled'
-ctrl-alt-cmd-2 = 'mode stacked'
-ctrl-alt-cmd-enter = 'mode transform'
 ctrl-alt-cmd-slash = 'mode service'
-
 
 [mode.transform.binding]
 # I should alwways send all to next workspace so I dont fuck up my stack/tile mode (instead of joining)
-h = ['move-node-to-workspace --wrap-around prev', 'workspace prev', 'mode stacked']
-j = ['move-node-to-monitor --wrap-around prev', 'mode stacked']
-k = ['move-node-to-monitor --wrap-around next', 'mode stacked']
-l = ['move-node-to-workspace --wrap-around next', 'workspace next', 'mode stacked']
+h = ['move-node-to-workspace --wrap-around prev', 'focus-monitor --wrap-around next', 'workspace prev', 'mode stacked']
+j = ['move-node-to-monitor --wrap-around prev', 'focus-monitor --wrap-around next', 'mode stacked']
+k = ['move-node-to-monitor --wrap-around next', 'focus-monitor --wrap-around next', 'mode stacked']
+l = ['move-node-to-workspace --wrap-around next', 'focus-monitor --wrap-around next', 'workspace next', 'mode stacked']
 
-d = ['move-node-to-monitor --wrap-around next']
-s = ['move-workspace-to-monitor --wrap-around next', 'mode stacked']
+d = ['move-node-to-monitor --wrap-around next','focus-monitor --wrap-around next', 'mode stacked']
+s = ['move-workspace-to-monitor --wrap-around next','focus-monitor --wrap-around next', 'mode stacked']
 
 shift-h = ['move-node-to-monitor left', 'mode stacked']
 shift-j = ['move-node-to-monitor down', 'mode stacked']
@@ -132,11 +121,6 @@ shift-k = ['move-node-to-monitor up', 'mode stacked']
 shift-l = ['move-node-to-monitor right', 'mode stacked']
 
 #to return to all modes
-ctrl-alt-cmd-space =  ['layout h_tiles ', 'mode tiled']
-ctrl-alt-cmd-0 = 'mode main'
-ctrl-alt-cmd-1 = 'mode tiled'
-ctrl-alt-cmd-2 = 'mode stacked'
-ctrl-alt-cmd-enter = 'mode transform'
 ctrl-alt-cmd-slash = 'mode service'
 
 
@@ -148,6 +132,12 @@ e = ['flatten-workspace-tree', 'mode stacked'] # reset layout
 #s = ['layout sticky tiling', 'mode main'] # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
 f = ['layout floating tiling', 'mode stacked'] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'mode stacked']
+
+#to return to all modes
+m = 'mode main'
+t = 'mode tiled'
+s = 'mode stacked'
+enter = 'mode transform'
 
 alt-1 = ['workspace 1', 'mode stacked']
 alt-2 = ['workspace 2', 'mode stacked']
