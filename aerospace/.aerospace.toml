@@ -87,8 +87,8 @@ ctrl-alt-cmd-o = 'focus --boundaries-action stop right'
 # when I end up in an tiled workspace the keybindings are still stack mode 
 # I need to restart (exec?) each time I jump to next workspace
 ctrl-alt-cmd-h = ['workspace prev']
-ctrl-alt-cmd-j = ['focus-monitor --wrap-around next', 'mode stacked']
-ctrl-alt-cmd-k = ['focus-monitor --wrap-around next', 'mode stacked']
+ctrl-alt-cmd-j = ['focus-monitor down', 'mode stacked']
+ctrl-alt-cmd-k = ['focus-monitor up', 'mode stacked']
 ctrl-alt-cmd-l = ['workspace next']
 
 #swap, soon with || operator for send to next screen - before that use transform mode
@@ -107,8 +107,8 @@ ctrl-alt-cmd-space = ['layout h_tiles', 'mode tiled']
 [mode.transform.binding]
 # I should alwways send all to next workspace so I dont fuck up my stack/tile mode (instead of joining)
 h = ['move-node-to-workspace --wrap-around prev', 'workspace prev', 'mode stacked']
-j = ['move-node-to-monitor --wrap-around prev', 'focus-monitor --wrap-around next', 'mode stacked']
-k = ['move-node-to-monitor --wrap-around next', 'focus-monitor --wrap-around next', 'mode stacked']
+j = ['move-node-to-monitor down', 'focus-monitor --wrap-around next', 'mode stacked']
+k = ['move-node-to-monitor up', 'focus-monitor --wrap-around next', 'mode stacked']
 l = ['move-node-to-workspace --wrap-around next', 'workspace next', 'mode stacked']
 
 s = ['move-workspace-to-monitor --wrap-around next','focus-monitor --wrap-around next', 'mode stacked']
