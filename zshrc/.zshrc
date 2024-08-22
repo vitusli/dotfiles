@@ -20,7 +20,7 @@ alias b="brew install"
 alias v="nvim"
 alias r="ranger"
 alias l="lazygit"
-alias z="zellij"
+alias zz="zellij"
 alias za="zellij a gitup"
 alias zd="zellij a edit_dotfiles"
 alias dot="cd .dotfiles && f"
@@ -45,12 +45,17 @@ if type brew &>/dev/null; then
     compinit
 fi
 
+#z
+zstyle ':completion:*' menu select
 
 bindkey "^[[1;3D" backward-word # ALT-left-arrow  ⌥ + ←
 bindkey "^[[1;3C" forward-word  # ALT-right-arrow ⌥ + →
 
 # zsh fzf
 source <(fzf --zsh)
+
+#source /opt/homebrew/share/zsh-z.plugin.zsh
+source /opt/homebrew/etc/profile.d/z.sh
 
 source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
 
