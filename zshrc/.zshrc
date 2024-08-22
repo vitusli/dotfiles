@@ -23,7 +23,7 @@ alias l="lazygit"
 alias z="zellij"
 alias za="zellij a gitup"
 alias zd="zellij a edit_dotfiles"
-alias dot="cd .dotfiles"
+alias dot="cd .dotfiles && f"
 alias wm="yabai --start-service && skhd --start-service"
 alias wmend="yabai --stop-service && skhd --stop-service"
 alias wmre="yabai --restart-service && skhd --restart-service"
@@ -31,7 +31,7 @@ alias wmre="yabai --restart-service && skhd --restart-service"
 # f alias
 f() {
   if [[ -z $1 ]]; then
-    nvim $(fzf)
+    nvim $(fzf --preview="bat --color=always {}")
   else
     nvim $1
   fi
