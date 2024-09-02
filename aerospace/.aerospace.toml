@@ -47,7 +47,7 @@ inner.horizontal = 14
 inner.vertical =   14
 outer.left =       14
 outer.bottom =     14
-outer.top =        [{ monitor.main = 16 }, { monitor.C34H89x = 48 }, 24]
+outer.top =        [{ monitor.main = 16 }, { monitor.C34H89x = 48 }, { monitor.BenQ GW2765 = 58 }, 24]
 outer.right =      14
 
 # 'main' binding mode declaration
