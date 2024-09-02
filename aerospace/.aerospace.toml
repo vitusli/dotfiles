@@ -7,7 +7,12 @@ after-login-command = []
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
-after-startup-command = ['layout h_accordion', 'mode stacked']
+after-startup-command = ['layout h_accordion', 'mode stacked', 'exec-and-forget sketchybar']
+
+# Notify Sketchybar about workspace change
+exec-on-workspace-change = ['/bin/bash', '-c',
+    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
+]
 
 # Start AeroSpace at login
 start-at-login = true
@@ -47,7 +52,7 @@ inner.horizontal = 14
 inner.vertical =   14
 outer.left =       14
 outer.bottom =     14
-outer.top =        [{ monitor.main = 16 }, { monitor.C34H89x = 48 }, { monitor.BenQ GW2765 = 58 }, 24]
+outer.top =        [{ monitor.main = 16 }, { monitor.C34H89x = 48 }, { monitor."BenQ GW2765"= 52 }, 24]
 outer.right =      14
 
 # 'main' binding mode declaration
@@ -124,8 +129,7 @@ ctrl-alt-cmd-slash = 'mode service'
 
 [mode.service.binding]
 
-esc = ['reload-config', 'mode stacked']
-r = ['flatten-workspace-tree', 'mode stacked']
+r = ['reload-config', 'mode stacked']
 e = ['flatten-workspace-tree', 'mode stacked'] # reset layout
 #s = ['layout sticky tiling', 'mode main'] # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
 f = ['layout floating tiling', 'mode stacked'] # Toggle between floating and tiling layout
