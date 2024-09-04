@@ -9,11 +9,6 @@ after-login-command = []
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = ['layout h_accordion', 'mode stacked', 'exec-and-forget sketchybar']
 
-# Notify Sketchybar about workspace change
-exec-on-workspace-change = ['/bin/bash', '-c',
-    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
-]
-
 # Start AeroSpace at login
 start-at-login = true
 
@@ -35,8 +30,27 @@ key-mapping.preset = 'qwerty'
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
 on-focused-monitor-changed = ['move-mouse monitor-force-center']
 on-focus-changed = ['move-mouse window-force-center']
+# Notify Sketchybar about workspace change
+exec-on-workspace-change = ['/bin/bash', '-c',
+    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
+]
 # Hier festlegen, dass bei workspace change geguckt werden soll, ob das layout stacked oder tiled ist
-#on-event = ['mode stacked/tiled']
+# skipt schreiben undgefaehr so:
+# #!/bin/bash
+
+# Command to get the current layout
+# current_layout=$(aerospace get_layout)
+
+# if [ "$current_layout" = "layout h_accordion" ]; then
+#     aerospace config --set stack mode --keys main service
+#     echo "Mode set to stacked for layout h_accordion"
+# elif [ "$current_layout" = "layout h_tiles" ]; then
+#     aerospace config --set tiled mode --keys main service
+#     echo "Mode set to tiled for layout h_tiles"
+# else
+#     echo "Unknown layout or no action needed"
+# fi
+
 
 
 # Gaps between windows (inner-*) and between monitor edges (outer-*).
@@ -52,8 +66,37 @@ inner.horizontal = 14
 inner.vertical =   14
 outer.left =       14
 outer.bottom =     14
-outer.top =        [{ monitor.main = 16 }, { monitor.C34H89x = 48 }, { monitor."BenQ GW2765"= 52 }, 24]
+outer.top =        [{ monitor.main = 16 }, { monitor.secondary = 48 }, { monitor."BenQ GW2765"= 52 }, 24]
 outer.right =      14
+
+# aersospace list-apps
+[[on-window-detected]]
+if.app-id = 'org.alacritty'
+run = 'move-node-to-workspace 1'
+[[on-window-detected]]
+if.app-id = 'org.mozilla.com.zen.browser'
+run = 'move-node-to-workspace 1'
+[[on-window-detected]]
+if.app-id = 'md.obsidian'
+run = 'move-node-to-workspace 2'
+[[on-window-detected]]
+if.app-id = 'com.electron.logseq'
+run = 'move-node-to-workspace 2'
+[[on-window-detected]]
+if.app-id = 'com.microsoft.Outlook'
+run = 'move-node-to-workspace 4'
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = 'move-node-to-workspace 4'
+[[on-window-detected]]
+if.app-id = 'com.apple.iCal'
+run = 'move-node-to-workspace 4'
+[[on-window-detected]]
+if.app-id = 'com.apple.mail'
+run = 'move-node-to-workspace 4'
+[[on-window-detected]]
+if.app-id = 'com.microsoft.teams2'
+run = 'move-node-to-workspace 4'
 
 # 'main' binding mode declaration
 # 'main' binding mode must be always presented
@@ -141,9 +184,13 @@ t = 'mode tiled'
 s = 'mode stacked'
 enter = 'mode transform'
 
-alt-1 = ['workspace 1', 'mode stacked']
-alt-2 = ['workspace 2', 'mode stacked']
-alt-3 = ['workspace 3', 'mode stacked']
-alt-4 = ['workspace 4', 'mode stacked']
+1 = ['workspace 1', 'mode stacked']
+2 = ['workspace 2', 'mode stacked']
+3 = ['workspace 3', 'mode stacked']
+4 = ['workspace 4', 'mode stacked']
 
-
+[workspace-to-monitor-force-assignment]
+1 = 'secondary'
+2 = 'secondary'
+3 = 'main'
+4 = 'main'

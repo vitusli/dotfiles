@@ -17,7 +17,7 @@ bar=(
 )
 sketchybar --bar "${bar[@]}"
 
-#default
+#default settings for shown items
 default=(
   padding_left=5
   padding_right=5
@@ -52,8 +52,8 @@ sketchybar --default "${default[@]}"
 #done
 
 # aerospace setting
-AEROSPACE_FOCUSED_MONITOR_NO=$(aerospace list-workspaces --focused)
-AEROSPACE_LIST_OF_WINDOWS_IN_FOCUSED_MONITOR=$(aerospace list-windows --workspace $AEROSPACE_FOCUSED_MONITOR_NO | awk -F'|' '{gsub(/^ *| *$/, "", $2); print $2}')
+#AEROSPACE_FOCUSED_MONITOR_NO=$(aerospace list-workspaces --focused)
+#AEROSPACE_LIST_OF_WINDOWS_IN_FOCUSED_MONITOR=$(aerospace list-windows --workspace $AEROSPACE_FOCUSED_MONITOR_NO | awk -F'|' '{gsub(/^ *| *$/, "", $2); print $2}')
 
 # Aerospace Workspace Indicators
 sketchybar --add event aerospace_workspace_change
@@ -63,8 +63,7 @@ for sid in $(aerospace list-workspaces --all); do
     --set space.$sid \
     background.color=0x44ffffff \
     background.corner_radius=8 \
-    background.height=25 \
-    background.drawing=off \
+    background.height=22 \
     label.drawing=on \
     label="$sid" \
     icon.padding_right=0 \
