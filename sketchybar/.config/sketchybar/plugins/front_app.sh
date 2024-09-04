@@ -7,7 +7,6 @@
 
 
 if [ "$SENDER" = "front_app_switched" ]; then
-  #echo name:$NAME INFO: $INFO SENDER: $SENDER, SID: $SID >> ~/aaaa
   sketchybar --set "$NAME" label="$INFO" icon.background.image="app.$INFO" icon.background.image.scale=0.7 label.drawing=off
 
   apps=$AEROSPACE_LIST_OF_WINDOWS_IN_FOCUSED_MONITOR
