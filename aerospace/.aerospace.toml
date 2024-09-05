@@ -83,6 +83,9 @@ run = 'move-node-to-workspace 2'
 if.app-id = 'com.electron.logseq'
 run = 'move-node-to-workspace 2'
 [[on-window-detected]]
+if.app-id = 'org.zotero.zotero'
+run = 'move-node-to-workspace 3'
+[[on-window-detected]]
 if.app-id = 'com.microsoft.Outlook'
 run = 'move-node-to-workspace 4'
 [[on-window-detected]]

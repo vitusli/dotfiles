@@ -82,6 +82,7 @@ source $ITEM_DIR/mic_status.sh
 #sketchybar --add alias Raycast right
 source $ITEM_DIR/clock.sh
 source $ITEM_DIR/stack.sh #yabai stack indicator
+source $ITEM_DIR/pomodoro.sh
 
 # autoupdate when saving the file
 sketchybar --hotload on
