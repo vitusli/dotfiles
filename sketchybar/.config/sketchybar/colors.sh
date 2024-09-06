@@ -22,7 +22,8 @@ export ACCENT_COLOR=0xffffffff
 
 ### Catppuccin
 export BLACK=0xff181926
-export WHITE=0xffcad3f5
+#export WHITE=0xffcad3f5
+export WHITE=0xffffffff
 export RED=0xffed8796
 export GREEN=0xffa6da95
 export BLUE=0xff8aadf4
@@ -46,7 +47,7 @@ export BAR_COLOR=$BG0
 export BAR_BORDER_COLOR=$BG2
 export BACKGROUND_1=$BG1
 export BACKGROUND_2=$BG2
-export ICON_COLOR=$WHITE # Color of all icons
+export ICON_COLOR=$WHITE  # Color of all icons
 export LABEL_COLOR=$WHITE # Color of all labels
 export POPUP_BACKGROUND_COLOR=$BAR_COLOR
 export POPUP_BORDER_COLOR=$WHITE
