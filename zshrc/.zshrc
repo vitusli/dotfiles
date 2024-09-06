@@ -54,11 +54,10 @@ bindkey "^[[1;3C" forward-word  # ALT-right-arrow ⌥ + →
 # zsh fzf
 source <(fzf --zsh)
 
-#source /opt/homebrew/share/zsh-z.plugin.zsh
 source /opt/homebrew/etc/profile.d/z.sh
 
 source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
 
-source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /opt/homebrew//share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /opt/homebrew//share/zsh-autosuggestions/zsh-autosuggestions.zsh
