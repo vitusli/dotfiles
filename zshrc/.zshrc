@@ -27,7 +27,7 @@ fi
 # alias wm="yabai --start-service && skhd --start-service"
 # alias wmend="yabai --stop-service && skhd --stop-service"
 # alias wmre="yabai --restart-service && skhd --restart-service"
-# alias wmc="yabai --stop-service && skhd --stop-service && brew service restart sketchybar"
+# alias wmc="yabai --start-service && skhd --start-service && yabai --stop-service && skhd --stop-service && brew services restart sketchybar"
 
 # f alias
 f() {
