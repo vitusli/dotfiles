@@ -16,24 +16,25 @@ then
 fi
 
 #alias
-alias b="brew install"
-alias v="nvim"
-alias r="ranger"
-alias l="lazygit"
-alias zz="zellij"
-alias za="zellij a gitup"
-alias zd="zellij a edit_dotfiles"
-alias dot="cd && cd .dotfiles && f"
-alias wm="yabai --start-service && skhd --start-service"
-alias wmend="yabai --stop-service && skhd --stop-service"
-alias wmre="yabai --restart-service && skhd --restart-service"
+# alias b="brew install"
+# alias v="nvim"
+# alias r="ranger"
+# alias l="lazygit"
+# alias zz="zellij"
+# alias za="zellij a gitup"
+# alias zd="zellij a edit_dotfiles"
+# alias dot="cd && cd .dotfiles && f"
+# alias wm="yabai --start-service && skhd --start-service"
+# alias wmend="yabai --stop-service && skhd --stop-service"
+# alias wmre="yabai --restart-service && skhd --restart-service"
+# alias wmc="yabai --stop-service && skhd --stop-service && brew service restart sketchybar"
 
 # f alias
 f() {
   if [[ -z $1 ]]; then
     nvim $(fzf --preview="bat --color=always {}")
   else
-    nvim $1
+    echo ":)"
   fi
 }
 
