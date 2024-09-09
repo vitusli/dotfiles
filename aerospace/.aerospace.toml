@@ -7,7 +7,7 @@ after-login-command = ['exec-and-forget skhd --start-service', 'exec-and-forget 
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
-after-startup-command = ['layout h_accordion', 'mode stacked', 'exec-and-forget sketchybar']
+after-startup-command = ['layout h_accordion', 'mode stacked', 'exec-and-forget sketchybar', 'workspace 1']
 
 # Start AeroSpace at login
 start-at-login = true
