@@ -5,11 +5,11 @@ PHASE=$(osascript -e "tell application \"Flow\" to getPhase")
 TIME=$(osascript -e "tell application \"Flow\" to getTime")
 
 # Set default icon
-ICON="􁛅"
+ICON="􀴪"
 
 # Check the phase and adjust the icon if necessary
 if [ "$PHASE" = "Break" ]; then
-  ICON="􁛋"
+  ICON="􁃅"
 fi
 
 # Debugging output
@@ -17,6 +17,7 @@ echo "PHASE: $PHASE"
 echo "ICON: $ICON"
 echo "TIME: $TIME"
 
+# label="$PHASE • $TIME"
 # Ensure the item exists before setting the icon
 if sketchybar --query "$NAME" >/dev/null 2>&1; then
   echo "Item '$NAME' found. Setting icon..."
