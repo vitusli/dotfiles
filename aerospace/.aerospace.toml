@@ -108,6 +108,33 @@ run = 'move-node-to-workspace 4'
 ctrl-alt-cmd-space = ['layout h_accordion', 'mode stacked']
 ctrl-alt-cmd-slash = 'mode service'
 
+[mode.stacked.binding]
+ctrl-alt-cmd-i = 'focus --boundaries-action stop left'
+ctrl-alt-cmd-o = 'focus --boundaries-action stop right'
+# when I end up in an tiled workspace the keybindings are still stack mode 
+# I need to restart (exec a script) each time I jump to next workspace
+ctrl-alt-cmd-h = ['workspace prev']
+ctrl-alt-cmd-j = ['focus-monitor down', 'mode stacked']
+ctrl-alt-cmd-k = ['focus-monitor up', 'mode stacked']
+ctrl-alt-cmd-l = ['workspace next']
+
+ctrl-alt-cmd-1 = 'workspace 1'
+ctrl-alt-cmd-2 = 'workspace 2'
+ctrl-alt-cmd-3 = 'workspace 3'
+ctrl-alt-cmd-4 = 'workspace 4'
+
+#swap, soon with || operator for send to next screen - before that use transform mode
+ctrl-alt-cmd-shift-h = 'move left'
+ctrl-alt-cmd-shift-j = 'move down'
+ctrl-alt-cmd-shift-k = 'move up'
+ctrl-alt-cmd-shift-l = 'move right'
+
+#auch hier muss eigentlich ein exec skript laufen um zu gucken was fuer ein Layout vorliegt
+ctrl-alt-cmd-s = ['workspace-back-and-forth', 'mode stacked']
+
+#to return to all modes
+ctrl-alt-cmd-slash = 'mode service'
+ctrl-alt-cmd-space = ['layout h_tiles', 'mode tiled']
 
 [mode.tiled.binding]
 ctrl-alt-cmd-h = 'focus --boundaries-action stop left'
@@ -127,33 +154,9 @@ ctrl-alt-cmd-s = ['workspace-back-and-forth', 'mode stacked']
 ctrl-alt-cmd-i = ['resize smart -50', 'mode tiled']
 ctrl-alt-cmd-o = ['resize smart +50', 'mode tiled']
 
-
 #to return to all modes
 ctrl-alt-cmd-slash = 'mode service'
 ctrl-alt-cmd-space = ['layout h_accordion', 'mode stacked']
-
-[mode.stacked.binding]
-ctrl-alt-cmd-i = 'focus --boundaries-action stop left'
-ctrl-alt-cmd-o = 'focus --boundaries-action stop right'
-# when I end up in an tiled workspace the keybindings are still stack mode 
-# I need to restart (exec?) each time I jump to next workspace
-ctrl-alt-cmd-h = ['workspace prev']
-ctrl-alt-cmd-j = ['focus-monitor down', 'mode stacked']
-ctrl-alt-cmd-k = ['focus-monitor up', 'mode stacked']
-ctrl-alt-cmd-l = ['workspace next']
-
-#swap, soon with || operator for send to next screen - before that use transform mode
-ctrl-alt-cmd-shift-h = 'move left'
-ctrl-alt-cmd-shift-j = 'move down'
-ctrl-alt-cmd-shift-k = 'move up'
-ctrl-alt-cmd-shift-l = 'move right'
-
-#to escape the space because super h/l is used for focus
-ctrl-alt-cmd-s = ['workspace-back-and-forth', 'mode tiled']
-
-#to return to all modes
-ctrl-alt-cmd-slash = 'mode service'
-ctrl-alt-cmd-space = ['layout h_tiles', 'mode tiled']
 
 [mode.transform.binding]
 # I should alwways send all to next workspace so I dont fuck up my stack/tile mode (instead of joining)
@@ -161,6 +164,11 @@ h = ['move-node-to-workspace --wrap-around prev', 'workspace prev', 'mode stacke
 j = ['move-node-to-monitor down', 'focus-monitor --wrap-around next', 'mode stacked']
 k = ['move-node-to-monitor up', 'focus-monitor --wrap-around next', 'mode stacked']
 l = ['move-node-to-workspace --wrap-around next', 'workspace next', 'mode stacked']
+
+1 = ['move-node-to-workspace 1', 'workspace 1', 'mode stacked']
+2 = ['move-node-to-workspace 2', 'workspace 2', 'mode stacked']
+3 = ['move-node-to-workspace 3', 'workspace 3', 'mode stacked']
+4 = ['move-node-to-workspace 4', 'workspace 4', 'mode stacked']
 
 s = ['move-workspace-to-monitor --wrap-around next','focus-monitor --wrap-around next', 'mode stacked']
 
