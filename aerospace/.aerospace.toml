@@ -106,7 +106,10 @@ run = 'move-node-to-workspace 4'
 
 [mode.main.binding]
 ctrl-alt-cmd-space = ['layout h_accordion', 'mode stacked']
-ctrl-alt-cmd-slash = 'mode service'
+ctrl-alt-cmd-slash = [
+  'mode service',
+  'exec-and-forget sketchybar --add item service left --set service icon=􂇓 icon.color=0xffffffff'
+]
 
 [mode.stacked.binding]
 ctrl-alt-cmd-i = 'focus --boundaries-action stop left'
@@ -133,8 +136,13 @@ ctrl-alt-cmd-shift-l = 'move right'
 ctrl-alt-cmd-s = ['workspace-back-and-forth', 'mode stacked']
 
 #to return to all modes
-ctrl-alt-cmd-slash = 'mode service'
+ctrl-alt-cmd-slash = [
+  'mode service',
+  'exec-and-forget sketchybar --add item service left --set service icon=􂇓 icon.color=0xffffffff'
+]
+
 ctrl-alt-cmd-space = ['layout h_tiles', 'mode tiled']
+
 
 [mode.tiled.binding]
 ctrl-alt-cmd-h = 'focus --boundaries-action stop left'
@@ -155,45 +163,55 @@ ctrl-alt-cmd-i = ['resize smart -50', 'mode tiled']
 ctrl-alt-cmd-o = ['resize smart +50', 'mode tiled']
 
 #to return to all modes
-ctrl-alt-cmd-slash = 'mode service'
+ctrl-alt-cmd-slash = [
+  'mode service',
+  'exec-and-forget sketchybar --add item service left --set service icon=􂇓 icon.color=0xffffffff'
+]
+
 ctrl-alt-cmd-space = ['layout h_accordion', 'mode stacked']
 
 [mode.transform.binding]
 # I should alwways send all to next workspace so I dont fuck up my stack/tile mode (instead of joining)
-h = ['move-node-to-workspace --wrap-around prev', 'workspace prev', 'mode stacked']
-j = ['move-node-to-monitor down', 'focus-monitor --wrap-around next', 'mode stacked']
-k = ['move-node-to-monitor up', 'focus-monitor --wrap-around next', 'mode stacked']
-l = ['move-node-to-workspace --wrap-around next', 'workspace next', 'mode stacked']
+h = ['move-node-to-workspace --wrap-around prev', 'workspace prev', 'exec-and-forget sketchybar --remove transform', 'mode stacked']
+j = ['move-node-to-monitor down', 'focus-monitor --wrap-around next', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
+k = ['move-node-to-monitor up', 'focus-monitor --wrap-around next', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
+l = ['move-node-to-workspace --wrap-around next', 'workspace next', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
 
-1 = ['move-node-to-workspace 1', 'workspace 1', 'mode stacked']
-2 = ['move-node-to-workspace 2', 'workspace 2', 'mode stacked']
-3 = ['move-node-to-workspace 3', 'workspace 3', 'mode stacked']
-4 = ['move-node-to-workspace 4', 'workspace 4', 'mode stacked']
+1 = ['move-node-to-workspace 1', 'workspace 1', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
+2 = ['move-node-to-workspace 2', 'workspace 2', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
+3 = ['move-node-to-workspace 3', 'workspace 3', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
+4 = ['move-node-to-workspace 4', 'workspace 4', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
 
-s = ['move-workspace-to-monitor --wrap-around next','focus-monitor --wrap-around next', 'mode stacked']
+s = ['move-workspace-to-monitor --wrap-around next','focus-monitor --wrap-around next', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
 
-shift-h = ['move-node-to-monitor left', 'mode stacked']
-shift-j = ['move-node-to-monitor down', 'mode stacked']
-shift-k = ['move-node-to-monitor up', 'mode stacked']
-shift-l = ['move-node-to-monitor right', 'mode stacked']
+shift-h = ['move-node-to-monitor left', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
+shift-j = ['move-node-to-monitor down', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
+shift-k = ['move-node-to-monitor up', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
+shift-l = ['move-node-to-monitor right', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
 
 #to return to all modes
-ctrl-alt-cmd-slash = 'mode service'
-
+ctrl-alt-cmd-slash = [
+  'mode service',
+  'exec-and-forget sketchybar --add item service left --set service icon=􂇓 icon.color=0xffffffff'
+]
 
 [mode.service.binding]
 
-r = ['reload-config', 'mode stacked']
-e = ['flatten-workspace-tree', 'mode stacked'] # reset layout
+r = ['reload-config', 'exec-and-forget sketchybar --remove service', 'mode stacked']
+e = ['flatten-workspace-tree', 'exec-and-forget sketchybar --remove service', 'mode stacked'] # reset layout
 #s = ['layout sticky tiling', 'mode main'] # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
 f = ['layout floating tiling', 'mode stacked'] # Toggle between floating and tiling layout
-backspace = ['close-all-windows-but-current', 'mode stacked']
+backspace = ['close-all-windows-but-current', 'exec-and-forget sketchybar --remove service', 'mode stacked']
 
 #to return to all modes
 m = 'mode main'
-t = 'mode tiled'
-s = 'mode stacked'
-enter = 'mode transform'
+t = ['mode tiled', 'exec-and-forget sketchybar --remove service']
+s = ['mode stacked', 'exec-and-forget sketchybar --remove service']
+enter = [
+  'mode transform',
+  'exec-and-forget sketchybar --remove service',
+  'exec-and-forget sketchybar --add item transform left --set transform icon=􁼌 icon.color=0xffffffff'
+]
 
 1 = ['workspace 1', 'mode stacked']
 2 = ['workspace 2', 'mode stacked']
