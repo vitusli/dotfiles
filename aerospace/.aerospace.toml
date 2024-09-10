@@ -171,7 +171,6 @@ ctrl-alt-cmd-slash = [
 ctrl-alt-cmd-space = ['layout h_accordion', 'mode stacked']
 
 [mode.transform.binding]
-# I should alwways send all to next workspace so I dont fuck up my stack/tile mode (instead of joining)
 h = ['move-node-to-workspace --wrap-around prev', 'workspace prev', 'exec-and-forget sketchybar --remove transform', 'mode stacked']
 j = ['move-node-to-monitor down', 'focus-monitor --wrap-around next', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
 k = ['move-node-to-monitor up', 'focus-monitor --wrap-around next', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
@@ -189,10 +188,9 @@ shift-j = ['move-node-to-monitor down', 'exec-and-forget sketchybar --remove tra
 shift-k = ['move-node-to-monitor up', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
 shift-l = ['move-node-to-monitor right', 'exec-and-forget sketchybar --remove transform',  'mode stacked']
 
-#to return to all modes
-ctrl-alt-cmd-slash = [
-  'mode service',
-  'exec-and-forget sketchybar --add item service left --set service icon=􂇓 icon.color=0xffffffff'
+esc = [
+  'mode stacked',
+  'exec-and-forget sketchybar --remove transform'
 ]
 
 [mode.service.binding]
@@ -204,13 +202,15 @@ f = ['layout floating tiling', 'mode stacked'] # Toggle between floating and til
 backspace = ['close-all-windows-but-current', 'exec-and-forget sketchybar --remove service', 'mode stacked']
 
 #to return to all modes
-m = 'mode main'
 t = ['mode tiled', 'exec-and-forget sketchybar --remove service']
-s = ['mode stacked', 'exec-and-forget sketchybar --remove service']
 enter = [
   'mode transform',
   'exec-and-forget sketchybar --remove service',
   'exec-and-forget sketchybar --add item transform left --set transform icon=􁼌 icon.color=0xffffffff'
+]
+esc = [
+  'mode stacked',
+  'exec-and-forget sketchybar --remove service'
 ]
 
 1 = ['workspace 1', 'mode stacked']
@@ -218,6 +218,7 @@ enter = [
 3 = ['workspace 3', 'mode stacked']
 4 = ['workspace 4', 'mode stacked']
 
+#this are no commands, they are rules
 [workspace-to-monitor-force-assignment]
 1 = 'secondary'
 2 = 'secondary'
