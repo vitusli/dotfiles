@@ -1,7 +1,7 @@
 #!/bin/bash
 
 front_app=(
-  icon.font="sketchybar-app-font:Regular:16.0"
+  icon.font="sketchybar-app-font:Regular:14.0"
   icon.background.drawing=on
   icon.padding_left=12
   label.padding_right=12
