@@ -50,7 +50,7 @@ done
 
 # Left Items
 #source $ITEM_DIR/ms_spaces.sh
-#source $ITEM_DIR/front_app.sh
+source $ITEM_DIR/front_app.sh
 
 #sketchybar --add item test left \
 #  --set test icon="test" \

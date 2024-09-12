@@ -29,7 +29,7 @@ key-mapping.preset = 'qwerty'
 
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
 on-focused-monitor-changed = ['move-mouse monitor-force-center']
-on-focus-changed = ['move-mouse window-force-center']
+#on-focus-changed = ['move-mouse window-force-center']
 # Notify Sketchybar about workspace change
 exec-on-workspace-change = ['/bin/bash', '-c',
     'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
@@ -66,7 +66,7 @@ inner.horizontal = 14
 inner.vertical =   14
 outer.left =       14
 outer.bottom =     14
-outer.top =        [{ monitor.main = 16 }, { monitor.secondary = 48 }, { monitor."BenQ GW2765"= 52 }, 24]
+outer.top =        [{ monitor.main = 12 }, { monitor.secondary = 48 }, { monitor."BenQ GW2765"= 52 }, 24]
 outer.right =      14
 
 # aersospace list-apps

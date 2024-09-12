@@ -5,13 +5,13 @@ source "$CONFIG_DIR/colors.sh"
 echo \$FOCUSED_WORKSPACE: $FOCUSED_WORKSPACE, \$NAME: $NAME \$1: $1 >>~/aaaa
 
 if [ "$1" = "$FOCUSED_WORKSPACE" ]; then
-  sketchybar --animate circ 10 --set $NAME \
+  sketchybar --animate circ 5 --set $NAME \
     \
     icon.drawing=on \
     icon.y_offset=1 \
     \
     icon.padding_left=9 \
-    icon.padding_right=55 \
+    icon.padding_right=35 \
     icon.highlight=on \
     \
     background.drawing=on \

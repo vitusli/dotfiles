@@ -1,15 +1,13 @@
 #!/bin/bash
 
-# mine
-# sketchybar --add item front_app left \
-#  --set front_app icon.font="sketchybar-app-font:Regular:16.0" \
-#  script="$PLUGIN_DIR/front_app.sh" \
-#  --subscribe front_app front_app_switched
-
 front_app=(
-  label.font="$FONT:Black:12.0"
+  icon.font="sketchybar-app-font:Regular:16.0"
   icon.background.drawing=on
+  icon.padding_left=12
+  label.padding_right=12
   background.padding_left=15
+  background.color=0x30d5d5d5
+  background.corner_radius=25
   display=active
   script="$PLUGIN_DIR/front_app.sh"
   click_script="open -a 'Mission Control'"
