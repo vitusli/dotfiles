@@ -134,6 +134,7 @@ ctrl-alt-cmd-shift-l = 'move right'
 
 #auch hier muss eigentlich ein exec skript laufen um zu gucken was fuer ein Layout vorliegt
 ctrl-alt-cmd-s = ['workspace-back-and-forth', 'mode stacked']
+ctrl-alt-cmd-d = ['workspace-back-and-forth', 'mode tiled']
 
 #to return to all modes
 ctrl-alt-cmd-slash = [
