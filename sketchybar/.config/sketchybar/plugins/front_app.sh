@@ -1,11 +1,15 @@
 #!/bin/sh
 
-mine
 if [ "$SENDER" = "front_app_switched" ]; then
-  sketchybar --set "$NAME" label.drawing=on \
-    label="$INFO" \
+  sketchybar --set "$NAME" \
+    label.drawing=on \
+    icon.padding_right=0 \
+    --set "$NAME" label="$INFO" \
     icon="$($CONFIG_DIR/plugins/icon_map_fn.sh "$INFO")"
 fi
+
+sleep 1
+sketchybar --set "$NAME" label.drawing=off icon.padding_right=12
 
 #Image of the app
 # if [ "$SENDER" = "front_app_switched" ]; then

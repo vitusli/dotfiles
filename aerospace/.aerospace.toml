@@ -28,8 +28,10 @@ default-root-container-orientation = 'auto'
 key-mapping.preset = 'qwerty'
 
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
-on-focused-monitor-changed = ['move-mouse monitor-force-center']
-#on-focus-changed = ['move-mouse window-force-center']
+on-focused-monitor-changed = []
+#'move-mouse monitor-force-center'
+on-focus-changed = []
+#'move-mouse window-force-center'
 # Notify Sketchybar about workspace change
 exec-on-workspace-change = ['/bin/bash', '-c',
     'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
@@ -56,7 +58,7 @@ exec-on-workspace-change = ['/bin/bash', '-c',
 # Gaps between windows (inner-*) and between monitor edges (outer-*).
 # Possible values:
 # - Constant:     gaps.outer.top = 8
-# - Per monitor:  gaps.outer.top = [{ monitor.main = 16 }, { monitor."some-pattern" = 32 }, 24]
+# - Per monitor:  gaps.outer.top = [{  }, { monitor."some-pattern" = 32 }, 24]
 #                 In this example, 24 is a default value when there is no match.
 #                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
 #                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
@@ -65,9 +67,9 @@ exec-on-workspace-change = ['/bin/bash', '-c',
 inner.horizontal = 14
 inner.vertical =   14
 outer.left =       14
-outer.bottom =     14
-outer.top =        [{ monitor.main = 12 }, { monitor.secondary = 48 }, { monitor."BenQ GW2765"= 52 }, 24]
-outer.right =      14
+outer.bottom =     15
+outer.top =        [{ monitor.main = 14 }, { monitor.secondary = 48 }, { monitor."BenQ GW2765"= 52 }, 24]
+outer.right =      15
 
 # aersospace list-apps
 [[on-window-detected]]
@@ -199,7 +201,7 @@ esc = [
 r = ['reload-config', 'exec-and-forget sketchybar --remove service', 'mode stacked']
 e = ['flatten-workspace-tree', 'exec-and-forget sketchybar --remove service', 'mode stacked'] # reset layout
 #s = ['layout sticky tiling', 'mode main'] # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
-f = ['layout floating tiling', 'mode stacked'] # Toggle between floating and tiling layout
+f = ['layout floating tiling', 'exec-and-forget sketchybar --remove service', 'mode stacked'] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'exec-and-forget sketchybar --remove service', 'mode stacked']
 
 #to return to all modes

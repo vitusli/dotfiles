@@ -8,7 +8,7 @@ front_app=(
   background.padding_left=15
   background.color=0x30d5d5d5
   background.corner_radius=25
-  display=active
+  #display=active
   script="$PLUGIN_DIR/front_app.sh"
   click_script="open -a 'Mission Control'"
 )
