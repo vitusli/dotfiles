@@ -1,12 +1,9 @@
-
 # You can use it to add commands that run after login to macOS user session.
 # 'start-at-login' needs to be 'true' for 'after-login-command' to work
-# Available commands: https://nikitabobko.github.io/AeroSpace/commands
-after-login-command = ['exec-and-forget skhd --start-service', 'exec-and-forget skhd --stop-service', 'exec-and-forget brew services restart sketchybar', 'workspace 1']
+after-login-command = ['exec-and-forget skhd --start-service', 'exec-and-forget skhd --stop-service', 'exec-and-forget brew services restart sketchybar']
 
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
-# Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = ['layout h_accordion', 'mode stacked', 'exec-and-forget sketchybar']
 
 # Start AeroSpace at login
@@ -28,10 +25,8 @@ default-root-container-orientation = 'auto'
 key-mapping.preset = 'qwerty'
 
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
-on-focused-monitor-changed = []
-#'move-mouse monitor-force-center'
-on-focus-changed = []
-#'move-mouse window-force-center'
+on-focused-monitor-changed = ['move-mouse monitor-force-center']
+#on-focus-changed = ['move-mouse window-force-center']
 # Notify Sketchybar about workspace change
 exec-on-workspace-change = ['/bin/bash', '-c',
     'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
@@ -53,16 +48,7 @@ exec-on-workspace-change = ['/bin/bash', '-c',
 #     echo "Unknown layout or no action needed"
 # fi
 
-
-
-# Gaps between windows (inner-*) and between monitor edges (outer-*).
-# Possible values:
-# - Constant:     gaps.outer.top = 8
-# - Per monitor:  gaps.outer.top = [{  }, { monitor."some-pattern" = 32 }, 24]
 #                 In this example, 24 is a default value when there is no match.
-#                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
-#                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
-
 [gaps]
 inner.horizontal = 14
 inner.vertical =   14
@@ -101,6 +87,9 @@ if.app-id = 'com.apple.mail'
 run = 'move-node-to-workspace 4'
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'
+run = 'move-node-to-workspace 4'
+[[on-window-detected]]
+if.app-id = 'ru.keepcoder.Telegram'
 run = 'move-node-to-workspace 4'
 
 # 'main' binding mode declaration
