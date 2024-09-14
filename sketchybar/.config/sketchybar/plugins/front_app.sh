@@ -8,7 +8,7 @@ if [ "$SENDER" = "front_app_switched" ]; then
     icon="$($CONFIG_DIR/plugins/icon_map_fn.sh "$INFO")"
 fi
 
-sleep 1
+sleep 5
 sketchybar --set "$NAME" label.drawing=off icon.padding_right=12
 
 #Image of the app
