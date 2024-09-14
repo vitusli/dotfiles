@@ -30,10 +30,17 @@ else
     background.color=0x20000000
 fi
 
+# am liebsten sowas wie:
+# if $DID = 2; then
+#   set "$1" = "1" on $SID = 2
+# else
+#   set "$1" = "1" on $SID = 1
+# fi
+
 if [ "$1" = "1" ]; then
-  sketchybar --set $NAME icon="􁇲" display=1
+  sketchybar --set $NAME icon="􁇲" display=2
 elif [ "$1" = "2" ]; then
-  sketchybar --set $NAME icon="􀈎" display=1
+  sketchybar --set $NAME icon="􀈎" display=2
 elif [ "$1" = "3" ]; then
   sketchybar --set $NAME icon="􀈕" display=1
 elif [ "$1" = "4" ]; then
