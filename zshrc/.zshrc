@@ -64,3 +64,11 @@ source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
 source /opt/homebrew//share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 source /opt/homebrew//share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+if [[ $- == *i* ]]; then
+    # Check if zellij is already running
+    if ! pgrep -x "zellij" > /dev/null; then
+        zellij
+    fi
+fi
+

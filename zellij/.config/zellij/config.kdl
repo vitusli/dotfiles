@@ -25,6 +25,13 @@ keybinds {
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
+        bind "Ctrl k" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+            SwitchToMode "Normal"
+        }
     }
     shared_except "normal" "locked" {
         bind "Enter" "Esc" { SwitchToMode "Normal"; }
@@ -36,16 +43,16 @@ keybinds {
         bind "Ctrl n" { SwitchToMode "Resize"; }
     }
     shared_except "scroll" "locked" {
-        bind "Ctrl o" { SwitchToMode "Scroll"; }
+        bind "Ctrl s" { SwitchToMode "Scroll"; }
     }
     shared_except "session" "locked" {
-        bind "Ctrl s" { SwitchToMode "Session"; }
+        bind "Ctrl o" { SwitchToMode "Session"; }
     }
     shared_except "tab" "locked" {
         bind "Ctrl p" { SwitchToMode "Tab"; }
     }
     shared_except "move" "locked" {
-        bind "Ctrl h" { SwitchToMode "Move"; }
+        bind "Ctrl y" { SwitchToMode "Move"; }
     }
     shared_except "tmux" "locked" {
         bind "Ctrl b" { SwitchToMode "Tmux"; }
@@ -81,7 +88,7 @@ keybinds {
         bind "c" { SwitchToMode "RenamePane"; PaneNameInput 0;}
     }
     move {
-        bind "Ctrl h" { SwitchToMode "Normal"; }
+        bind "Ctrl y" { SwitchToMode "Normal"; }
         bind "n" "Tab" { MovePane; }
         bind "p" { MovePaneBackwards; }
         bind "h" "Left" { MovePane "Left"; }

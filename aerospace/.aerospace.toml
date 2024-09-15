@@ -48,7 +48,7 @@ exec-on-workspace-change = ['/bin/bash', '-c',
 #     echo "Unknown layout or no action needed"
 # fi
 
-#                 In this example, 24 is a default value when there is no match.
+# In this example, 24 is a default value when there is no match.
 [gaps]
 inner.horizontal = 14
 inner.vertical =   14

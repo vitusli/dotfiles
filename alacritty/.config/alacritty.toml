@@ -3,6 +3,11 @@ live_config_reload = true
 [font]
 size = 18.0
 
+[shell]
+program = "/bin/zsh"
+args = ["-l", "-c", "zellij attach --index 0 --create"]
+# args = ["-l", "-c", "zellij -l welcome"]
+
 
 [window]
 decorations = "buttonless"
