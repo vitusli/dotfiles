@@ -38,9 +38,9 @@ fi
 # fi
 
 if [ "$1" = "1" ]; then
-  sketchybar --set $NAME icon="􁇲" display=2
+  sketchybar --set $NAME icon="􁇲" display=1
 elif [ "$1" = "2" ]; then
-  sketchybar --set $NAME icon="􀈎" display=2
+  sketchybar --set $NAME icon="􀈎" display=1
 elif [ "$1" = "3" ]; then
   sketchybar --set $NAME icon="􀈕" display=1
 elif [ "$1" = "4" ]; then
