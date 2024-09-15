@@ -5,9 +5,9 @@ size = 18.0
 
 [shell]
 program = "/bin/zsh"
-args = ["-l", "-c", "zellij attach --index 0 --create"]
+args = ["-l", "-c", "zellij"]
 # args = ["-l", "-c", "zellij -l welcome"]
-
+# does weird things args = ["-l", "-c", "zellij attach --index 0 --create"]
 
 [window]
 decorations = "buttonless"
