@@ -140,6 +140,7 @@ keybinds {
         bind "o" { SearchToggleOption "WholeWord"; }
     }
     entersearch {
+        bind "Ctrl s" { SwitchToMode "Normal"; }
         bind "Ctrl c" "Esc" { SwitchToMode "Scroll"; }
         bind "Enter" { SwitchToMode "Search"; }
     }
