@@ -29,7 +29,7 @@ fi
 # alias wmre="yabai --restart-service && skhd --restart-service"
 # alias wmc="yabai --start-service && skhd --start-service && yabai --stop-service && skhd --stop-service && brew services restart sketchybar"
 # alias od="cd && cd ./Library/Application\ Support/obsidian && nvim Custom\ Dictionary.txt"
-# alias as="cd && nvim ./.dotfiles/sketchybar/.config/sketchybar/plugins/as_space.sh"
+# alias ae="cd && nvim ./.dotfiles/sketchybar/.config/sketchybar/plugins/as_space.sh"
 
 # f alias
 f() {
