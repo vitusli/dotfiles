@@ -15,16 +15,16 @@ keybinds clear-defaults=true{
         bind "Alt x" { CloseFocus; SwitchToMode "Normal"; }
         bind "Alt t" { NewTab; SwitchToMode "Normal"; }
         bind "Alt w" { CloseTab; SwitchToMode "Normal"; }
-        bind "Alt i" { MoveTab "Left"; }
-        bind "Alt o" { MoveTab "Right"; }
+        bind "Alt [" { MoveTab "Left"; }
+        bind "Alt ]" { MoveTab "Right"; }
         bind "Alt h" "Alt Left" { MoveFocusOrTab "Left"; }
         bind "Alt l" "Alt Right" { MoveFocusOrTab "Right"; }
         bind "Alt j" "Alt Down" { MoveFocus "Down"; }
         bind "Alt k" "Alt Up" { MoveFocus "Up"; }
         bind "Alt =" "Alt +" { Resize "Increase"; }
         bind "Alt -" { Resize "Decrease"; }
-        bind "Alt [" { PreviousSwapLayout; }
-        bind "Alt ]" { NextSwapLayout; }
+        bind "Alt i" { PreviousSwapLayout; }
+        bind "Alt o" { NextSwapLayout; }
         bind "Ctrl k" {
             LaunchOrFocusPlugin "session-manager" {
                 floating true
@@ -88,6 +88,8 @@ keybinds clear-defaults=true{
         bind "c" { SwitchToMode "RenamePane"; PaneNameInput 0;}
     }
     move {
+        bind "Alt i" { PreviousSwapLayout; }
+        bind "Alt o" { NextSwapLayout; }
         bind "Ctrl y" { SwitchToMode "Normal"; }
         bind "n" "Tab" { MovePane; }
         bind "p" { MovePaneBackwards; }
@@ -246,7 +248,7 @@ pane_frames false
 //   - true (default)
 //   - false
 //
-// auto_layout true
+auto_layout false
 
 // Whether sessions should be serialized to the cache folder (including their tabs/panes, cwds and running commands) so that they can later be resurrected
 // Options:
