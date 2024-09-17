@@ -24,7 +24,7 @@ if sketchybar --query "$NAME" >/dev/null 2>&1; then
   # Set the icon for the SketchyBar item
   sketchybar --set "$NAME" \
     icon="$ICON" \
-    label="$PHASE • $TIME"
+    label="• $TIME"
 else
   echo "Item '$NAME' not found"
 fi
