@@ -49,8 +49,18 @@ for sid in $(aerospace list-workspaces --all); do
 done
 
 # Left Items
-#source $ITEM_DIR/ms_spaces.sh
 source $ITEM_DIR/front_app.sh
+
+# Right Items
+source $ITEM_DIR/mic_status.sh
+source $ITEM_DIR/clock.sh
+source $ITEM_DIR/pomodoro.sh
+
+# autoupdate when saving the file
+sketchybar --hotload on
+
+# Force all scripts to run the first time (never do this in a script)
+sketchybar --update
 
 #sketchybar --add item test left \
 #  --set test icon="test" \
@@ -58,19 +68,10 @@ source $ITEM_DIR/front_app.sh
 #  --subscribe test hover mouse.entered mouse.exited \
 #  script="$PLUGIN_DIR/test.sh"
 
-# Right Items
-source $ITEM_DIR/mic_status.sh
-source $ITEM_DIR/clock.sh
-source $ITEM_DIR/pomodoro.sh
+#source $ITEM_DIR/ms_spaces.sh
 #sketchybar --add alias Raycast right
 #source $ITEM_DIR/stack.sh
 #source $ITEM_DIR/yabai_mode.sh
-
-# autoupdate when saving the file
-sketchybar --hotload on
-
-# Force all scripts to run the first time (never do this in a script)
-sketchybar --update
 
 #dynamic-island-sketchybar
 

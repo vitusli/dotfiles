@@ -31,18 +31,23 @@ on-focused-monitor-changed = ['move-mouse monitor-force-center']
 exec-on-workspace-change = ['/bin/bash', '-c',
     'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
 ]
-# Hier festlegen, dass bei workspace change geguckt werden soll, ob das layout stacked oder tiled ist
-# skipt schreiben undgefaehr so:
+
+# Specify here that the system should check whether the layout is stacked or tiled on workspace change
+# write skipt and like this:
+# first command of each mode must be the actual triggering of that mode like 'mode stacked'
+# so the 'head -1' triggers it
+# Would that work? How do I get the current layout? I do not find anything in the documentation
+
 # #!/bin/bash
 
 # Command to get the current layout
 # current_layout=$(aerospace get_layout)
 
 # if [ "$current_layout" = "layout h_accordion" ]; then
-#     aerospace config --set stack mode --keys main service
+#     aerospace config --get mode.stacked.binding --keys | head -1
 #     echo "Mode set to stacked for layout h_accordion"
 # elif [ "$current_layout" = "layout h_tiles" ]; then
-#     aerospace config --set tiled mode --keys main service
+#     aerospace config --get mode.tiled.binding --keys | head -1
 #     echo "Mode set to tiled for layout h_tiles"
 # else
 #     echo "Unknown layout or no action needed"
@@ -67,6 +72,7 @@ run = 'move-node-to-workspace 1'
 [[on-window-detected]]
 if.app-id = 'md.obsidian'
 run = 'move-node-to-workspace 2'
+
 [[on-window-detected]]
 if.app-id = 'com.electron.logseq'
 run = 'move-node-to-workspace 2'
@@ -186,10 +192,8 @@ esc = [
 ]
 
 [mode.service.binding]
-
 r = ['reload-config', 'exec-and-forget sketchybar --remove service', 'mode stacked']
 e = ['flatten-workspace-tree', 'exec-and-forget sketchybar --remove service', 'mode stacked'] # reset layout
-#s = ['layout sticky tiling', 'mode main'] # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
 f = ['layout floating tiling', 'exec-and-forget sketchybar --remove service', 'mode stacked'] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'exec-and-forget sketchybar --remove service', 'mode stacked']
 
