@@ -1,18 +1,32 @@
-require("hs.ipc")
-hs.ipc.cliInstall()
+--require("hs.ipc")
+--hs.ipc.cliInstall()
 
--- works
--- hs.hotkey.bind({ "cmd", "alt", "ctrl" }, "E", function()
--- 	hs.alert.show("Hello World!")
--- end)
-
-hs.hotkey.bind({ "cmd", "alt", "ctrl" }, "W", function()
+hs.hotkey.bind({ "cmd", "alt", "ctrl" }, "q", function()
 	hs.notify.new({ title = "Hammerspoon", informativeText = "Hello World" }):send()
 end)
 
-hs.hotkey.bind({ "cmd", "alt", "ctrl" }, "Q", function()
-	hs.console.clearConsole()
-end)
+--------------
+-- Send command(s) to Aerospace (way to complicated for me)
+local function aerospace_cli(commands)
+	for _, cmd in ipairs(commands) do
+		local args = {}
+		for arg in string.gmatch(cmd, "%S+") do
+			table.insert(args, arg)
+		end
+		hs.task.new("/opt/homebrew/bin/aerospace", nil, args):start()
+	end
+end
 
--- ich sollte das floating window komplett ueber hammerspoon klaeren
--- hotkey: super - f = aerospace floating, scale x% und center, mode stacked, notify
+-- [ ] TODO I also want to feed functions not related to aerospace into to cli (draw mode into sketchybar)
+-- bestimmt: if mode $var then $drawiconVAR
+-- irgendwie den mode auslesen
+-- define super key
+local function super(key, commands)
+	hs.hotkey.bind({ "cmd", "alt", "ctrl" }, key, function()
+		aerospace_cli(commands)
+	end)
+end
+
+--------------
+-- dependend on super key
+super("w", { "layout floating tiling", "mode stacked" })
