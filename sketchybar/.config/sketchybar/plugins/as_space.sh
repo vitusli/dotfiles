@@ -16,7 +16,7 @@ if [ "$1" = "$FOCUSED_WORKSPACE" ]; then
     icon.highlight=on \
     \
     background.drawing=on \
-    background.height=15 \
+    background.height=13 \
     background.color=0xffffffff
 else
   sketchybar --animate circ 30 --set $NAME \
