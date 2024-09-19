@@ -9,33 +9,35 @@ if [ "$1" = "$FOCUSED_WORKSPACE" ]; then
     \
     icon.drawing=on \
     icon.y_offset=1 \
+    icon.font.size=16 \
     \
-    icon.padding_left=9 \
-    icon.padding_right=35 \
+    icon.padding_left=20 \
+    icon.padding_right=0 \
     icon.highlight=on \
     \
     background.drawing=on \
+    background.height=15 \
     background.color=0xffffffff
 else
   sketchybar --animate circ 30 --set $NAME \
     \
     icon.drawing=on \
     icon.y_offset=1 \
+    icon.font.size=1 \
     \
-    icon.padding_left=9 \
-    icon.padding_right=25 \
+    icon.padding_left=0 \
+    icon.padding_right=0 \
     icon.highlight=off \
     \
     background.drawing=on \
+    background.height=10 \
     background.color=0x20000000
 fi
 
-if [ "$1" = "1" ]; then
-  sketchybar --set $NAME icon="􁇲" display=1
-elif [ "$1" = "2" ]; then
-  sketchybar --set $NAME icon="􀈎" display=1
-elif [ "$1" = "3" ]; then
-  sketchybar --set $NAME icon="􀈕" display=1
-elif [ "$1" = "4" ]; then
-  sketchybar --set $NAME icon="􀉹" display=1
-fi
+# if [ "$1" = "1" ]; then
+#   sketchybar --set $NAME icon="􁇲" display=1
+# elif [ "$1" = "2" ]; then
+#   sketchybar --set $NAME icon="􀈎" display=1
+# elif [ "$1" = "3" ]; then
+#   sketchybar --set $NAME icon="􀉹" display=1
+# fi

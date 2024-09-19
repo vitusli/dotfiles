@@ -1,13 +1,16 @@
 #!/bin/bash
 
+source "$CONFIG_DIR/colors.sh"
+
 front_app=(
   icon.font="sketchybar-app-font:Regular:14.0"
   icon.background.drawing=on
   icon.padding_left=12
   label.padding_right=12
   background.padding_left=15
-  background.color=0x30d5d5d5
-  background.corner_radius=25
+  background.color=$TRANSPARENT
+  #background.color=0x30d5d5d5
+  background.corner_radius=10
   #display=active
   script="$PLUGIN_DIR/front_app.sh"
   click_script="open -a 'Mission Control'"

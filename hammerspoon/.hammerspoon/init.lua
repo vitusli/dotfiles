@@ -1,9 +1,11 @@
+hs.hotkey.bind({ "cmd", "alt", "ctrl" }, "R", function()
+	hs.reload()
+end)
+hs.notify.new({ title = "Hammerspoon", informativeText = "Config relaod" }):send()
+-- [ ] TODO sketchybar script
+
 --require("hs.ipc")
 --hs.ipc.cliInstall()
-
-hs.hotkey.bind({ "cmd", "alt", "ctrl" }, "q", function()
-	hs.notify.new({ title = "Hammerspoon", informativeText = "Hello World" }):send()
-end)
 
 --------------
 -- Send command(s) to Aerospace (way to complicated for me)
@@ -19,7 +21,7 @@ end
 
 -- [ ] TODO I also want to feed functions not related to aerospace into to cli (draw mode into sketchybar)
 -- bestimmt: if mode $var then $drawiconVAR
--- irgendwie den mode auslesen
+-- irgendwie den mode auslesen mit ner Variable oder ner eigenen Funktion
 -- define super key
 local function super(key, commands)
 	hs.hotkey.bind({ "cmd", "alt", "ctrl" }, key, function()
@@ -29,4 +31,4 @@ end
 
 --------------
 -- dependend on super key
-super("w", { "layout floating tiling", "mode stacked" })
+super("w", { "layout floating tiling", "mode main" })
