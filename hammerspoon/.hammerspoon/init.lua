@@ -2,7 +2,7 @@ hs.hotkey.bind({ "cmd", "alt", "ctrl" }, "R", function()
 	hs.reload()
 end)
 hs.notify.new({ title = "Hammerspoon", informativeText = "Config relaod" }):send()
--- [ ] TODO sketchybar script
+-- [ ] TODO sketchybar script statt system nachricht
 
 --require("hs.ipc")
 --hs.ipc.cliInstall()
@@ -32,3 +32,7 @@ end
 --------------
 -- dependend on super key
 super("w", { "layout floating tiling", "mode main" })
+
+--------------
+-- ich will unbedingt super h/l fuer space wechseln und focus wechseln. Entweder PR bei Aerospace oder in Lua hardcoden
+-- if there is no right window then focus next workspace
