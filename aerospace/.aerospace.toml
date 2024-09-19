@@ -93,9 +93,11 @@ ctrl-alt-cmd-shift-i = ['resize smart -50']
 ctrl-alt-cmd-shift-o = ['resize smart +50']
 
 ctrl-alt-cmd-h = 'focus --boundaries-action stop left'
-ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors down'
-ctrl-alt-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors up'
+ctrl-alt-cmd-j = 'focus --boundaries-action stop down'
+ctrl-alt-cmd-k = 'focus --boundaries-action stop up'
 ctrl-alt-cmd-l = 'focus --boundaries-action stop right'
+# ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors down'
+# ctrl-alt-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors up'
 
 ctrl-alt-cmd-1 = 'workspace 1'
 ctrl-alt-cmd-2 = 'workspace 2'
@@ -108,6 +110,7 @@ ctrl-alt-cmd-shift-k = 'move up'
 ctrl-alt-cmd-shift-l = 'move right'
 
 ctrl-alt-cmd-s = ['workspace-back-and-forth']
+ctrl-alt-cmd-d = ['focus-monitor --wrap-around next']
 
 
 [mode.transform.binding]
@@ -163,8 +166,8 @@ esc = [
 2 = ['workspace 2', 'mode main']
 3 = ['workspace 3', 'mode main']
 
-#this are no commands, they are rules
+#this are no commands, they are rules (main or secondary)
 [workspace-to-monitor-force-assignment]
 1 = 'secondary'
 2 = 'secondary'
-3 = 'main'
+3 = 'secondary'
