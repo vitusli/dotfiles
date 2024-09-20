@@ -54,6 +54,7 @@ source $ITEM_DIR/front_app.sh
 source $ITEM_DIR/mic_status.sh
 source $ITEM_DIR/clock.sh
 source $ITEM_DIR/pomodoro.sh
+#sketchybar --add alias kindaVim right --set kindaVim y_offset=-1
 
 # autoupdate when saving the file
 sketchybar --hotload on
