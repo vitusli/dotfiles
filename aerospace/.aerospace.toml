@@ -25,8 +25,8 @@ default-root-container-orientation = 'auto'
 key-mapping.preset = 'qwerty'
 
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
-on-focused-monitor-changed = ['move-mouse monitor-force-center']
-#on-focus-changed = ['move-mouse window-force-center']
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+on-focus-changed = ['move-mouse window-lazy-center']
 # Notify Sketchybar about workspace change
 exec-on-workspace-change = ['/bin/bash', '-c',
     'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'

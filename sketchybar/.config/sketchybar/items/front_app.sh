@@ -4,7 +4,7 @@ source "$CONFIG_DIR/colors.sh"
 
 front_app=(
   icon.font="sketchybar-app-font:Regular:14.0"
-  icon.background.drawing=on
+  icon.background.drawing=on #makes no sense?
   icon.padding_left=12
   label.padding_right=12
   background.padding_left=15
