@@ -135,7 +135,7 @@ ctrl-alt-cmd-j = ['join-with up', 'exec-and-forget sketchybar --remove transform
 ctrl-alt-cmd-k = ['join-with down', 'exec-and-forget sketchybar --remove transform', 'mode main']
 ctrl-alt-cmd-l = ['join-with right', 'exec-and-forget sketchybar --remove transform', 'mode main']
 
-esc = [
+q = [
   'mode main',
   'exec-and-forget sketchybar --remove transform'
 ]
@@ -157,7 +157,7 @@ enter = [
   'exec-and-forget sketchybar --remove service',
   'exec-and-forget sketchybar --add item transform left --set transform icon=􁼌 icon.color=0xffffffff'
 ]
-esc = [
+q = [
   'mode main',
   'exec-and-forget sketchybar --remove service'
 ]
