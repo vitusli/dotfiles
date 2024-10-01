@@ -112,6 +112,7 @@ ctrl-alt-cmd-shift-l = 'move right'
 ctrl-alt-cmd-s = ['workspace-back-and-forth']
 ctrl-alt-cmd-d = ['focus-monitor --wrap-around next']
 
+ctrl-alt-cmd-space = 'layout tiles accordion'
 
 [mode.transform.binding]
 h = ['move-node-to-workspace --wrap-around prev', 'workspace prev', 'exec-and-forget sketchybar --remove transform', 'mode main']
@@ -146,8 +147,7 @@ e = ['flatten-workspace-tree', 'exec-and-forget sketchybar --remove service', 'm
 f = ['layout floating tiling', 'exec-and-forget sketchybar --remove service', 'mode main'] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'exec-and-forget sketchybar --remove service', 'mode main']
 
-h = ['layout h_accordion', 'exec-and-forget sketchybar --remove service', 'mode main']
-v = ['layout v_accordion', 'exec-and-forget sketchybar --remove service', 'mode main']
+h = ['layout horizontal vertical', 'exec-and-forget sketchybar --remove service', 'mode main']
 shift-h = ['layout h_tiles', 'exec-and-forget sketchybar --remove service', 'mode main']
 shift-v = ['layout v_tiles', 'exec-and-forget sketchybar --remove service', 'mode main']
 
