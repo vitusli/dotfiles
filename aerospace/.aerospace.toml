@@ -147,9 +147,7 @@ e = ['flatten-workspace-tree', 'exec-and-forget sketchybar --remove service', 'm
 f = ['layout floating tiling', 'exec-and-forget sketchybar --remove service', 'mode main'] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'exec-and-forget sketchybar --remove service', 'mode main']
 
-h = ['layout horizontal vertical', 'exec-and-forget sketchybar --remove service', 'mode main']
-shift-h = ['layout h_tiles', 'exec-and-forget sketchybar --remove service', 'mode main']
-shift-v = ['layout v_tiles', 'exec-and-forget sketchybar --remove service', 'mode main']
+space = ['layout horizontal vertical', 'exec-and-forget sketchybar --remove service', 'mode main']
 
 #to return to all modes
 enter = [

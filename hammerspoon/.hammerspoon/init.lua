@@ -19,7 +19,7 @@ local function aerospace_cli(commands)
 	end
 end
 
--- [ ] TODO I also want to feed functions not related to aerospace into to cli (draw mode into sketchybar)
+-- [ ] TODO I also want to feed functions not related to aerospace into cli (draw mode into sketchybar)
 -- bestimmt: if mode $var then $drawiconVAR
 -- irgendwie den mode auslesen mit ner Variable oder ner eigenen Funktion
 -- define super key
