@@ -16,20 +16,22 @@ then
 fi
 
 #alias
-# alias b="brew install"
-# alias v="nvim"
-# alias r="ranger"
-# alias l="lazygit"
-# alias zz="zellij"
-# alias za="zellij a gitup"
-# alias zd="zellij a edit_dotfiles"
-# alias dot="cd && cd .dotfiles && f"
-# alias wm="yabai --start-service && skhd --start-service"
-# alias wmend="yabai --stop-service && skhd --stop-service"
-# alias wmre="yabai --restart-service && skhd --restart-service"
-# alias wmc="yabai --start-service && skhd --start-service && yabai --stop-service && skhd --stop-service && brew services restart sketchybar"
-# alias od="cd && cd ./Library/Application\ Support/obsidian && nvim Custom\ Dictionary.txt"
-# alias ae="cd && nvim ./.dotfiles/sketchybar/.config/sketchybar/plugins/as_space.sh"
+alias b="brew install"
+alias v="nvim"
+alias r="ranger"
+alias l="lazygit"
+alias zz="zellij"
+alias za="zellij a gitup"
+alias zd="zellij a edit_dotfiles"
+alias dot="cd && cd .dotfiles && f"
+alias wm="yabai --start-service && skhd --start-service"
+alias wmend="yabai --stop-service && skhd --stop-service"
+alias wmre="yabai --restart-service && skhd --restart-service"
+alias wmc="yabai --start-service && skhd --start-service && yabai --stop-service && skhd --stop-service && brew services restart sketchybar"
+alias od="cd && cd ./Library/Application\ Support/obsidian && nvim Custom\ Dictionary.txt"
+alias ae="cd && nvim ./.dotfiles/sketchybar/.config/sketchybar/plugins/as_space.sh"
+alias ff="fzf | pbcopy"
+
 
 # f alias
 f() {
