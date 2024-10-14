@@ -1,5 +1,5 @@
 abbr "ae"="cd && nvim ./.dotfiles/sketchybar/.config/sketchybar/plugins/as_space.sh"
-abbr "b"="brew install"
+abbr "b"="/Applications/Blender.app/Contents/MacOS/Blender"
 abbr "dot"="cd && cd .dotfiles && f"
 abbr "ff"="fzf | pbcopy"
 abbr "l"="lazygit"

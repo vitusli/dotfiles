@@ -16,7 +16,7 @@ then
 fi
 
 #alias
-alias b="brew install"
+alias b="/Applications/Blender.app/Contents/MacOS/Blender"
 alias v="nvim"
 alias r="ranger"
 alias l="lazygit"
