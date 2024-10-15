@@ -95,8 +95,8 @@ ctrl-alt-cmd-shift-i = ['resize smart -50']
 ctrl-alt-cmd-shift-o = ['resize smart +50']
 
 ctrl-alt-cmd-h = 'focus --boundaries-action stop left'
-ctrl-alt-cmd-j = 'focus --boundaries-action stop down'
-ctrl-alt-cmd-k = 'focus --boundaries-action stop up'
+ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors down'
+ctrl-alt-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors up'
 ctrl-alt-cmd-l = 'focus --boundaries-action stop right'
 # ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors down'
 # ctrl-alt-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors up'
