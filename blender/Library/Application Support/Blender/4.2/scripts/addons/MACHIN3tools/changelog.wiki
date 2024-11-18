@@ -1,0 +1,194 @@
+#
+
+## 1.9
+> 2024-05-23
+
+* MaterialPicker tool
+  - add `RIGHTMOUSE` keymap
+    - for now disabled by default, so please enable manually in addon prefs
+    - if you use `RIGHTMOUSE` for the context menu, you can add a mod key in the MACHIN3tools keymap prefs for RMB-material-picking/assigning
+    - I highly recommend you try this, IMO it's a game changer
+  - the tool is only active on views that show materials: MATERIAL shading, RENDERED shading, and SOLID shading IF MATERIAL is chosen as the `color_type`
+    - NOTE: in SOLID shading make use of the Colorize Materials tool in the Shading pie, if all your materials show as white
+  - the tool existing in 3 *modes*: PICK, ASSIGN, ASSIGN_FROM_ASSETBROWSER
+    - which one of these are available, depends on presence of material editor, asset browser, object or face selection
+    - for instance, without a material editor or asset browser on the workspace, but with an object selection present, the tool will invoke into ASSIGN mode automatically
+  - with an object or face selection present, support clearing materials using `X`
+  - when appending material from assetbrowser attempt to set the material's viewport color
+  - support assigning material from asset browser to entire object selection using `ALT`
+    - as opposed to just the object the mouse is over via `LEFTMOUSE`
+  - in the HUD
+    - try to draw picked or to-be-assigned material's color under its name, fetched from the *Base Color* input of the last node
+    - in object mode list objects that are to be assigned a material and lightly draw object wires
+    - in edit mode indicate if material is to be assigned to face selection
+  - fix button not appearing in RENDERED viewport (even though enabled in addon prefs)
+
+* Filebrowser tools, Assetbrowser tools, AssetBrowser Bookmarks, Toggle Region tool
+  - support asset browser `display_type` cycling + storage
+    - NOTE: this is not natively exposed in the Blender UI, but internally the asset browser is still just a Filebrowser in Blender, and so the `display_type` can still be changed
+    - cycle between display types:
+      - THUMBNAIL
+      - LIST_VERTICAL
+      - LIST_HORIZONTAL
+  - use the `2` key, just as in the Filebrowser (same keymap item in fact) for asset browser `display_type` cycling
+  - use previously unused (in asset browser) `4` keymap to cycle asset import method now
+  - also draw button to cycle through Assetbrowser `display_types` in asset browser header
+
+* Shading pie
+  - 4.1 Auto Smooth
+    - expose and make the auto smooth angle accessible, even on meshes with custom normals
+    - expose setting in addon prefs to keep Auto Smooth mod expanded in mod stack, not collapsed
+    - if not found itn he file already, append *Smooth by Angle* nodegroup from ESSENTIALS lib, without relying native op
+    - when opening the pie look for invalid auto smooth mod and remove it
+      - Blender can *sometimes* create these, especially when pasting or appending objects from legacy files
+      - terminal will complain about missing *Angle* or *Ignore Sharps* inputs in that case
+  - in SOLID shading with MATERIAL `color_type` chosen, expose active object's active material's viewport color
+   - support wireframe toggling and wireframe opacity adjustment in SCULPT mode
+  - BevelShader setup
+    - prevent exception when materials without node_tree are encounted, like Blender's Fur Material
+  - Shade Smooth tool
+    - update description to mention sharp edges are based on operator prop, not auto smooth angle any longer
+
+* Modes pie
+  - support EDIT_CURVES + SCULPT_CURVES modes
+  - disable "SurfaceDraw"-pseudo-mode, use Annotate tools from tools pie instead!
+
+* Tools pie
+  - add annotate buttons at the bottom
+  - remove out Hops/BC buttons, I don't think anybody uses the pie for these?
+  - simplify HyperCursor / Select Box alternation
+    - this now allows easy switching from HC to annotating, and back
+    - avoid always force-enabling HC gizmos, when swithing into HC tool too
+
+* Workspace Pie
+  - add Geo Nodes workspace to bottom left
+
+* SelectHierachy tool
+  - support selecting geo nodes mod objects
+
+* ToggleSmooth tool
+  - use `SHIFT + TAB` as the default on Windows
+
+* ApplyTransform tool
+  - ensure object has data block, so transform can actually be applied
+
+* addon preferences
+  - mention Bevel Shader in Render tools description
+    - it is exposed through the Shading pie, but enabled through the Render tools
+  - add ResetKeymaps and RestoreKeymaps buttons in keymaps tab IF there are user modified keymaps or missingkeymaps (due to user removal, accidental or not)
+  - improve how keymap items are drawn
+
+* Customize tool
+  - M3 theme
+    - define compliant colors for Attribute Editor/Spreadsheet space
+    - use fully transparent color for front-facing face orientation color
+    - lower the alpha of the back-facing face orientation color (red)
+  - overlays
+    - when the M3 thme is being installed enable the face orientation overlays
+  - startup file
+    - set (annotate) stroke placement to SURFACE and set eraser size to 50px
+  - keymaps
+    - disable `node.select` keymappings in *Node Tool: Select Box* keymap
+    - in 2.7x keymap
+      - set `node.select` keymappings in *Node Editor* keymap from `RIGHTMOUSE` to `LEFGMOUSE` using `PRESS` events
+      - this allows for additive and subtractive node selection using `SHIFT + LMB` without delay
+  - system
+    - enable experimental asset debug info
+
+
+## 1.8
+> 2024-03-22
+
+
+### DeusEx
+
+* SetupGroupGizmos tool
+  - add option to lock axes, that don't carry a gizmo
+    - this then allows for easy and lazy group rotation using the native op, without having to pick the right axis, and even with the rotation gizmo(s) disabled
+    - disable locking via `R` or `L` keys
+
+
+### Prime <sup>previously Standard</sup>
+
+* Assetbrowser tools
+  - add Assetbrowser Bookmarks
+    - draw buttons for 10 bookmarks in the asset browser header
+    - support jumping to library/catalog via click, saving via `SHIFT` click, and clearing bookmarks via `CTRL` click
+      - see tooltips
+    - support jumping to library/catalog via new `ALT + 0` to `ALT + 0` keymaps
+    - bookmarks store and recall library, catalog and thumbnail size
+    - bookmarks are stored on disk in `assetbrowser_bookmarks.json` in Blender's config folder
+  - with the catalog sidebar closed, display the library and catalog in the asset browser header
+  - support maintaining bookmarks, across Library renames (Blender restart required)
+  - NOTE: you can't bookmark any catalog in the 'Current File' library
+  	- and you can't bookmark any library's 'Unassigned' catalog either
+
+* Shading Pie
+  - BevelShader
+    - support toggling it per-object
+    - add arrow buttons to increase or decrease the global or per-object radius
+      - halve and double the curretn value by default
+      - with SHIFT held down, do -25% or +33% instead for smaller adjustments
+  - Smooth, Flat, ToggleAutoSmooth tools
+    - redo them completely, and maintain the same look and UX in 4.1 as before
+    - in Blender 4.1
+      - support auto smooth toggling by adding/removing geo node mod
+        - sort it at the end of the stack, but before mirror and array mods
+        - support intanced objects
+      - support Auto Smooth for CURVE objects
+    - support SURFACE objects in object mode (Blender does too, so why not)
+    - properly deal with hidden children and mod objects when in local view and when either or both are included in a Smooth or Flat shading operation
+    - when shading Smooth, optionally (but by default) enable Auto Smooth for objects carrying boolean mods
+    - when shading Smooth with `ALT` pressed, sharpen edges via new operator angle property, not via a mesh's auto smooth angle prop as before
+    - when Flat shading with `ALT` pressed to clear sharps, seams, etc, also disable Auto Smooth, if enabled, or present
+    - limit options, that are exposed in redo panel, depending on context, hide what doesn't apply
+    - when Flat shading and removing creases, make option, that avoids removal of creases while subd mods with `use_crease` are present, work per-object not globally or entire selection
+    - add object mode fading HUD summarizing the shading changes
+  - display Clear Custom Normals op, independently of Auto Smooth being enabled in 4.1
+    - neither custom normals nor sharp edges require Auto Smooth anymore
+
+* MaterialPicker tool
+  - support fetching materials from and assigning them to CURVE objects
+
+* SelectHierarchy tool
+  - indicate number of hidden parents/children in fading HUD
+
+* Group Add/Remove tools
+  - add little fading HUD to visually confirm what happened
+
+* ToggleRegion tool
+  - avoid exception when library stored asset browser settings, is no longer registered
+
+* Thread, ToggleSmooth and QuadSphere tools
+  - deal with Auto Smooth changes in 4.1
+
+* CreateAssemblyAsset tool
+  - fix issues caused by 1.7's change to UUID based catalog storage
+
+* Modes Pie
+  - Surface Slide tool
+    - support instanced meshes
+  - avoid exception when trying to mode change a linked object with library override
+
+* addon preferences
+  - add GetSupport tool, placed at the top of the addon prefs
+  - add custom updater 
+    - NOTE: since it's only introduced now in 1.8, it will only be of use for upcoming releases, so can't be used to install this very  1.8 update yet
+    - allows for very easy addon update installation from .zip file, and from inside of Blender, instead of manually from the file browser
+    - finds matching .zip file(s) in home and Downloads folder
+    - allows selecting one of them them or manually selecing a file in any other location
+    - extracts the file to a temporary location, and installs update when quitting Blender
+    - like a manual update installation from the filebrowser, this maintains previous addon settings and custom keys
+    - see installation instructions for details  
+
+* Customize tool
+  - tweak M3 theme
+    - adjust to edit mode color changes in 4.1
+    - make crease edges green
+  - when customizing the startup file, while the Shading Pie has been activated, disable native cursor display and activate custom cursor and object axes drawing instead
+  - fix issues modifying keymap in 4.1
+  - add hidden Toolbar Popup keymaps
+    - set Annotate to D
+    - set Annotate Erase to E
+    - without deliberately creating these keymaps, the default keymaps will change depending on the active tool, now they are consistent
+  - invert Transform Modal Map's proportional editing keymaps, so increasing the size is done by scrolling up and decreasing by scrolling down

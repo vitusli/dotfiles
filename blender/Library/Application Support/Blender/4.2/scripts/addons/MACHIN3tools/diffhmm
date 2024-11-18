@@ -1,0 +1,647 @@
+diff --git a/operators/material_picker.py b/operators/material_picker.py
+index 4781625..cd168c1 100644
+--- a/operators/material_picker.py
++++ b/operators/material_picker.py
+@@ -1,7 +1,7 @@
+ import bpy
+ from bpy.props import BoolProperty
+ import bmesh
+-from bpy.types import OBJECT_PT_bDampTrackConstraint
++from bpy.types import OBJECT_PT_bDampTrackConstraint, TOPBAR_MT_file_defaults
+ from mathutils import Vector
+ import os
+ from .. utils.asset import get_asset_details_from_space
+@@ -11,7 +11,7 @@ from .. utils.material import get_last_node
+ from .. utils.mesh import get_coords
+ from .. utils.raycast import cast_obj_ray_from_mouse, cast_bvh_ray_from_mouse
+ from .. utils.system import printd
+-from .. utils.ui import force_ui_update, init_cursor, init_status, finish_status, get_scale
++from .. utils.ui import force_ui_update, get_mouse_pos, init_cursor, init_status, finish_status, get_scale
+ from .. items import alt, ctrl, shift
+ from .. colors import white, yellow, green, red, blue, orange
+ 
+@@ -77,165 +77,171 @@ class MaterialPicker(bpy.types.Operator):
+         if context.mode in ['OBJECT', 'EDIT_MESH']:
+             return context.area.type == 'VIEW_3D'
+ 
++
++    # DRAW
++
+     def draw_HUD(self, context):
+-        draw_init(self, None)
++        if context.area in [area['area'] for area in self.areas['VIEW_3D']]:
++            draw_init(self, None)
+ 
+-        title, color = ("Assign", yellow) if self.assign or self.assign_from_assetbrowser else ("Pick", white)
+-        dims = draw_label(context, title=title, coords=Vector((self.HUD_x, self.HUD_y)), color=color, center=False)
++            title, color = ("Assign", yellow) if self.assign or self.assign_from_assetbrowser else ("Pick", white)
++            dims = draw_label(context, title=title, coords=Vector((self.HUD_x, self.HUD_y)), color=color, center=False)
+ 
+-        # ASSET BROWSER ASSIGN
++            # ASSET BROWSER ASSIGN
+ 
+-        if self.assign_from_assetbrowser:
++            if self.assign_from_assetbrowser:
+ 
+-            dims2 = draw_label(context, title=" from Asset Browser ", coords=Vector((self.HUD_x + dims[0], self.HUD_y)), color=green, center=False)
++                dims2 = draw_label(context, title=" from Asset Browser ", coords=Vector((self.HUD_x + dims[0], self.HUD_y)), color=green, center=False)
+ 
+-            if self.asset['error']:
+-                self.offset += 18
+-                draw_label(context, title=self.asset['error'], coords=Vector((self.HUD_x, self.HUD_y)), offset=self.offset, center=False, color=red, alpha=1)
++                if self.asset['error']:
++                    self.offset += 18
++                    draw_label(context, title=self.asset['error'], coords=Vector((self.HUD_x, self.HUD_y)), offset=self.offset, center=False, color=red, alpha=1)
+ 
+-            else:
+-                draw_label(context, title=self.asset['import_type'], coords=Vector((self.HUD_x + dims[0] + dims2[0], self.HUD_y)), center=False, color=white, alpha=0.3)
++                else:
++                    draw_label(context, title=self.asset['import_type'], coords=Vector((self.HUD_x + dims[0] + dims2[0], self.HUD_y)), center=False, color=white, alpha=0.3)
+ 
+-                self.offset += 18
++                    self.offset += 18
+ 
+-                title = f"{self.asset['library']} • {self.asset['blend_name']} • "
+-                dims = draw_label(context, title=title, coords=Vector((self.HUD_x, self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.5)
++                    title = f"{self.asset['library']} • {self.asset['blend_name']} • "
++                    dims = draw_label(context, title=title, coords=Vector((self.HUD_x, self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.5)
+ 
+-                title = f"{self.asset['material_name']}"
+-                draw_label(context, title=title, coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=white)
++                    title = f"{self.asset['material_name']}"
++                    draw_label(context, title=title, coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=white)
+ 
+ 
+-                # ASSIGN to ?
++                    # ASSIGN to ?
+ 
+-                # if self.assign_from_assetbrowser_to_selection or self.hit_object_name or context.mode == 'EDIT_MESH':
+-                self.offset += 18
++                    # if self.assign_from_assetbrowser_to_selection or self.hit_object_name or context.mode == 'EDIT_MESH':
++                    self.offset += 18
+ 
+-                dims = draw_label(context, title="to: ", coords=Vector((self.HUD_x, self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.25)
++                    dims = draw_label(context, title="to: ", coords=Vector((self.HUD_x, self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.25)
+ 
+-                if context.mode == 'OBJECT':
++                    if context.mode == 'OBJECT':
+ 
+-                    # ASSIGN to OBJECT SELECTION
++                        # ASSIGN to OBJECT SELECTION
+ 
+-                    if self.assign_from_assetbrowser_to_selection:
+-                        for idx, obj in enumerate(self.sel):
+-                            if idx > 0:
+-                                self.offset += 18
++                        if self.assign_from_assetbrowser_to_selection:
++                            for idx, obj in enumerate(self.sel):
++                                if idx > 0:
++                                    self.offset += 18
+ 
+-                            draw_label(context, title=obj.name, coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.5)
++                                draw_label(context, title=obj.name, coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.5)
+ 
+ 
+-                    # ASSIGN to HITOBJ
++                        # ASSIGN to HITOBJ
+ 
+-                    else:
+-                        color, alpha = (red, 1) if self.hit_object_name is None else (white, 0.5)
+-                        dims2 = draw_label(context, title=str(self.hit_object_name), coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=color, alpha=alpha)
++                        else:
++                            color, alpha = (red, 1) if self.hit_object_name is None else (white, 0.5)
++                            dims2 = draw_label(context, title=str(self.hit_object_name), coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=color, alpha=alpha)
+ 
+ 
+-                # ASSIGN to FACE SELECTION
++                    # ASSIGN to FACE SELECTION
+ 
+-                elif context.mode == 'EDIT_MESH':
+-                    draw_label(context, title="Face Selection", coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=blue, alpha=1)
++                    elif context.mode == 'EDIT_MESH':
++                        draw_label(context, title="Face Selection", coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=blue, alpha=1)
+ 
+ 
+-        # PICK / ASSIGN
++            # PICK / ASSIGN
+ 
+-        else:
+-            self.offset += 18
++            else:
++                self.offset += 18
+ 
+-            color = white if self.hit_material_name else red
++                color = white if self.hit_material_name else red
+ 
+-            dims = draw_label(context, title='Material: ', coords=Vector((self.HUD_x, self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.5)
+-            dims2 = draw_label(context, title=str(self.hit_material_name), coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=color, alpha=1)
++                dims = draw_label(context, title='Material: ', coords=Vector((self.HUD_x, self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.5)
++                dims2 = draw_label(context, title=str(self.hit_material_name), coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=color, alpha=1)
+ 
+-            if self.assign and self.hit_material_name and self.hit_object_name:
+-                dims3 = draw_label(context, title=' from: ', coords=Vector((self.HUD_x + dims[0] + dims2[0], self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.25)
+-                draw_label(context, title=self.hit_object_name, coords=Vector((self.HUD_x + dims[0] + dims2[0] + dims3[0], self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.5)
++                if self.assign and self.hit_material_name and self.hit_object_name:
++                    dims3 = draw_label(context, title=' from: ', coords=Vector((self.HUD_x + dims[0] + dims2[0], self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.25)
++                    draw_label(context, title=self.hit_object_name, coords=Vector((self.HUD_x + dims[0] + dims2[0] + dims3[0], self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.5)
+ 
+ 
+-            if self.hit_material_color:
+-                scale = get_scale(context)
++                if self.hit_material_color:
++                    scale = get_scale(context)
+ 
+-                draw_line([Vector((self.HUD_x + dims[0] - 1, self.HUD_y - dims[1] * 3, 0)), Vector((self.HUD_x + dims[0] + dims2[0] + 1, self.HUD_y - dims[1] * 3, 0))], color=white, width=12 * scale, alpha=0.1)
+-                draw_line([Vector((self.HUD_x + dims[0], self.HUD_y - dims[1] * 3, 0)), Vector((self.HUD_x + dims[0] + dims2[0], self.HUD_y - dims[1] * 3, 0))], color=self.hit_material_color, width=10 * scale)
++                    draw_line([Vector((self.HUD_x + dims[0] - 1, self.HUD_y - dims[1] * 3, 0)), Vector((self.HUD_x + dims[0] + dims2[0] + 1, self.HUD_y - dims[1] * 3, 0))], color=white, width=12 * scale, alpha=0.1)
++                    draw_line([Vector((self.HUD_x + dims[0], self.HUD_y - dims[1] * 3, 0)), Vector((self.HUD_x + dims[0] + dims2[0], self.HUD_y - dims[1] * 3, 0))], color=self.hit_material_color, width=10 * scale)
+ 
+-                self.offset += 18
++                    self.offset += 18
+ 
+ 
+-            # ASSIGN to ?
++                # ASSIGN to ?
+ 
+-            if self.assign and self.hit_material_name:
+-                self.offset += 18
++                if self.assign and self.hit_material_name:
++                    self.offset += 18
+ 
+-                dims = draw_label(context, title="to: ", coords=Vector((self.HUD_x, self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.25)
++                    dims = draw_label(context, title="to: ", coords=Vector((self.HUD_x, self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.25)
+ 
+-                if context.mode == 'OBJECT':
+-                    for idx, obj in enumerate(self.sel):
+-                        if idx > 0:
+-                            self.offset += 18
++                    if context.mode == 'OBJECT':
++                        for idx, obj in enumerate(self.sel):
++                            if idx > 0:
++                                self.offset += 18
+ 
+-                        draw_label(context, title=obj.name, coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.5)
++                            draw_label(context, title=obj.name, coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=white, alpha=0.5)
+ 
+-                elif context.mode == 'EDIT_MESH':
+-                    draw_label(context, title="Face Selection", coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=blue, alpha=1)
++                    elif context.mode == 'EDIT_MESH':
++                        draw_label(context, title="Face Selection", coords=Vector((self.HUD_x + dims[0], self.HUD_y)), offset=self.offset, center=False, color=blue, alpha=1)
+ 
+     def draw_VIEW3D(self, context):
++        if context.area in [area['area'] for area in self.areas['VIEW_3D']]:
++            if context.mode == 'OBJECT':
++                alpha = 0.2
+ 
+-        if context.mode == 'OBJECT':
+-            alpha = 0.2
++                # ASSIGN from ASSETBROWSER
+ 
+-            # ASSIGN from ASSETBROWSER
++                if self.assign_from_assetbrowser and not self.asset['error']:
+ 
+-            if self.assign_from_assetbrowser and not self.asset['error']:
++                    # draw selection wire in green
++                    if self.assign_from_assetbrowser_to_selection:
++                        for obj in self.sel:
+ 
+-                # draw selection wire in green
+-                if self.assign_from_assetbrowser_to_selection:
+-                    for obj in self.sel:
++                            batch = self.batches.get(obj.name, None)
+ 
+-                        batch = self.batches.get(obj.name, None)
++                            if batch:
++                                draw_mesh_wire(batch, color=green, alpha=alpha)
++
++                    # draw hitobj in green
++                    elif self.hit_object_name:
++                        batch = self.batches.get(self.hit_object_name, None)
+ 
+                         if batch:
+                             draw_mesh_wire(batch, color=green, alpha=alpha)
+ 
+-                # draw hitobj in green
+-                elif self.hit_object_name:
+-                    batch = self.batches.get(self.hit_object_name, None)
+ 
+-                    if batch:
+-                        draw_mesh_wire(batch, color=green, alpha=alpha)
++                # ASSIGN
+ 
++                elif self.assign and self.hit_material_name:
+ 
+-            # ASSIGN
++                    # draw selected objects (except hit object, which may be among selection, but will be skipped if so) in blue
++                    for obj in self.sel:
+ 
+-            elif self.assign and self.hit_material_name:
++                        if obj.name != self.hit_object_name:
++                            batch = self.batches.get(obj.name, None)
+ 
+-                # draw selected objects (except hit object, which may be among selection, but will be skipped if so) in blue
+-                for obj in self.sel:
++                            if batch:
++                                draw_mesh_wire(batch, color=blue, alpha=alpha)
+ 
+-                    if obj.name != self.hit_object_name:
+-                        batch = self.batches.get(obj.name, None)
++                    # # draw hit obj in yellow
++                    # NOTE: leaving it off now, I find it distracting
++                    # batch = self.batches.get(self.hit_object_name, None)
++                    #
++                    # if batch:
++                    #     draw_mesh_wire(batch, color=yellow, alpha=0.01)
+ 
+-                        if batch:
+-                            draw_mesh_wire(batch, color=blue, alpha=alpha)
+ 
+-                # # draw hit obj in yellow
+-                # NOTE: leaving it off now, I find it distracting
+-                # batch = self.batches.get(self.hit_object_name, None)
+-                #
+-                # if batch:
+-                #     draw_mesh_wire(batch, color=yellow, alpha=0.01)
++    # CORE
+ 
+     def modal(self, context, event):
+         context.area.tag_redraw()
+ 
+         # update mouse for HUD and raycasting
+         if event.type == 'MOUSEMOVE':
+-            update_HUD_location(self, event)
++            get_mouse_pos(self, context, event, window=True)
+ 
+-            self.mouse_pos = Vector((event.mouse_region_x, event.mouse_region_y))
+-            self.mouse_pos_window = Vector((event.mouse_x, event.mouse_y))
+ 
+         # check what area is under the mouse
+         area_under_mouse = self.get_area_under_mouse(self.mouse_pos_window)
++        print(area_under_mouse)
+ 
+         # restore mouse eyedropper mouse cursor, and fetch the selected asset from the asset browser
+         if self.passthrough and area_under_mouse != 'ASSET_BROWSER':
+@@ -495,7 +501,8 @@ class MaterialPicker(bpy.types.Operator):
+         self.sel = [obj for obj in context.selected_objects if obj.type in ['MESH', 'CURVE']]
+ 
+         # check the active screen and fetch all areas and their position/dimensions
+-        self.areas, self.asset_browser = self.get_areas(context)
++        self.areas = self.get_areas(context)
++        # return {'FINISHED'}
+ 
+         self.has_material_editor = 'MATERIAL_EDITOR' in self.areas
+         self.has_asset_browser = 'ASSET_BROWSER' in self.areas
+@@ -521,10 +528,9 @@ class MaterialPicker(bpy.types.Operator):
+             self.populate_batches(self.sel)
+ 
+         # init mouse + cursor
+-        self.mouse_pos = Vector((event.mouse_region_x, event.mouse_region_y))
+-        self.mouse_pos_window = Vector((event.mouse_x, event.mouse_y))
++        get_mouse_pos(self, context, event, window=True)
+ 
+-        init_cursor(self, event, offsetx=20, offsety=20)
++        # init_cursor(self, event, offsetx=20, offsety=20)
+         context.window.cursor_set("EYEDROPPER" if 'PICK' in self.modes else 'PAINT_CROSS')
+ 
+         # get a first hit, so you don't require a mouse move event for it
+@@ -542,8 +548,8 @@ class MaterialPicker(bpy.types.Operator):
+         # int statusbar
+         init_status(self, context, func=draw_material_pick_status(self))
+ 
+-        if context.visible_objects:
+-            context.visible_objects[0].select_set(context.visible_objects[0].select_get())
++        # force statusbar update (via selection event)
++        force_ui_update(context)
+ 
+         # handlers
+         self.HUD = bpy.types.SpaceView3D.draw_handler_add(self.draw_HUD, (context, ), 'WINDOW', 'POST_PIXEL')
+@@ -615,19 +621,25 @@ class MaterialPicker(bpy.types.Operator):
+                 mesh_eval = obj_eval.to_mesh()
+                 self.batches[obj.name] = get_coords(mesh_eval, mx=obj.matrix_world, indices=True)
+ 
++
++    # AREA UTILS
++
+     def get_areas(self, context):
+         '''
+         check the active screen and fetch all areas and their position/dimenension
+         run special checks for find ASSET_BROWSER and MATERIAL_EDITOR
++
++        for asset browsers, try to fetch the asset in each one
++        and with multiple asset browsers, mark each one as inactive, requiring later mouse movement over an asset browser area to help selecting the right asset 
+         '''
+ 
+         areas = {}
+-        asset_browser = None
+ 
+         for area in context.screen.areas:
++            # print("area type:", area.type)
++
+             if area.type == 'FILE_BROWSER' and area.ui_type == 'ASSETS':
+                 area_type = 'ASSET_BROWSER'
+-                asset_browser = area.spaces.active
+ 
+             elif area.type == 'NODE_EDITOR':
+                 area_type = area.type
+@@ -647,16 +659,49 @@ class MaterialPicker(bpy.types.Operator):
+             # print(" width:", area.width)
+             # print("height:", area.height)
+ 
+-            areas[area_type] = {'x': (area.x, area.x + area.width),
+-                                'y': (area.y, area.y + area.height)}
++            # get universal area data
++            data = {'area': area,
++                    'x': (area.x, area.x + area.width),
++                    'y': (area.y, area.y + area.height)}
++
++            # get additional details on asset browsers
++            if area_type == 'ASSET_BROWSER':
++
++                # collect the space, for later re-evaluation
++                space = area.spaces.active
++                data['space'] = space
++
++                # collect the selected asset, and/or the error message
++                asset = self.get_asset_data_from_asset_browser_space(context, space)
++                data['asset'] = asset
++
+ 
+-        return areas, asset_browser
++            # TODO: you may need to mark(and change accordingly) the active view3d area too
++
++
++
++            if area_type in areas:
++                areas[area_type].append(data)
++
++            else:
++                areas[area_type] = [data]
++
++        # in a second pass, mark the active asset browser - with multiple ones present, the users needs to actually move over one to let MACHIN3tools know that this is the active one
++        if 'ASSET_BROWSER' in areas:
++            for data in (browsers := areas['ASSET_BROWSER']):
++                data['is_active'] = len(browsers) == 1
++
++        # printd(areas)
++        return areas
+ 
+     def get_area_under_mouse(self, mouse_pos):
+         '''
+         return name of area, under ther mouse
+         '''
+ 
++        # TODO: make view3d and asset browser areas active
++
++
+         for areaname, coords in self.areas.items():
+             if coords['x'][0] <= mouse_pos.x <= coords['x'][1]:
+                 # print(" in x of", areaname)
+@@ -665,13 +710,125 @@ class MaterialPicker(bpy.types.Operator):
+                     # print(" in y of", areaname, "too")
+                     return areaname
+ 
++    # ASSET BROWSER UTILS
++    # TODO: update assetbrowser
++    # ####: udate the areaws dict to repupulate the asset browsers
++
++    def get_asset_data_from_asset_browser_space(self, context, space):
++        '''
++        from the passed in asset browser space, fetch the asset, and return it as a dict
++        '''
++
++        libname, libpath, filename, import_type = get_asset_details_from_space(context, space, asset_type='MATERIAL', debug=False)
++        # print("", libname, libpath, filename, import_type)
++
++        if filename:
++            if libpath:
++                # NOTE: the filename (path) will look different on Windows and Linux, it will mix \\ and / on Windows, lol
++
++                # Linux
++                # path: Insets.blend/Object/Cross
++                # split path: ['Insets.blend', 'Cross']
++
++                # Windows
++                # path: Insets.blend\Object/Assembly Asset
++                # split path: ['Insets.blend\\Object/Cross']
++
++                # so replace that shit
++                path = filename.replace('\\', '/')
++                # print(path)
++
++                # split relative path into blend path and materialname
++                blendname, matname = path.split('/Material/')
++                # print("blendname:", blendname)
++                # print("matname:", matname)
++
++                # check if the blend path actually exists, if you switch libraries without making a new selection, it's possible to have get a libpath and blend file that don't match
++                if os.path.exists(os.path.join(libpath, blendname)):
++                    directory = os.path.join(libpath, blendname, 'Material')
++                    # print(" found:", libname, directory, blendname, matname)
++
++                    asset = {'error': None,
++                             'import_type': import_type.title().replace('_', ' ') if import_type else None,
++                             'library': libname,
++                             'directory': directory,
++                             'blend_name': blendname.replace('.blend', ''),
++                             'material_name': matname}
++
++                else:
++                    msg = f".blend file does not exist: {os.path.join(libpath, blendname)}"
++                    # print("WARNING:", msg)
++                    asset = {'error': msg}
++
++            else:
++                msg = "LOCAL or unsupported library chosen!"
++                # print("WARNING:", msg)
++                asset = {'error': msg}
++
++        # no filename, and so no asset selected
++        else:
++            msg = f"No Material selected in asset browser!"
++            # print("WARNING:", msg)
++            asset = {'error': msg}
++
++        return asset
++
+     def get_selected_asset(self, context, debug=False):
+         '''
+-        from the asset browser, fetch the selected asset
++        from the asset browser(s), fetch the selected asset
+         '''
+ 
++        if self.has_asset_browser:
++            browsers = self.areas['ASSET_BROWSER']
++
++            # always require the asset browser area to be active, which will not be the case with muiltiple ones present, unless the mouse it move over one and so made active, otherwise its not clear from which browser an asset is imported as blender often doesnt show the highlighted asset
++            # and even when then manually highlighted, in one of multiple asset browsers, the first one (with multiple selected across mulitple browsers) may very well be not the one blender highlights in one browser
++            if any(ab['is_active'] for ab in browsers):
++                selected = [area['asset'] for area in browsers if area['is_active'] and not area['asset']['error']]
++                # print(" selected assets in inactive browsers:", selected)
++
++                if selected:
++                    asset = selected[0]
++
++                else:
++                    msg = f"There is no selected Material asset in {'any' if len(browsers) > 1 else 'the'} asset browser on this workspace"
++                    # print("WARNING:", msg)
++                    asset = {'error': msg}
++
++            # no active assetbrowser
++            else:
++                msg = "There is no active asset browser in this workspace, move the mouse over one to make it active"
++                # print("WARNING:", msg)
++                asset = {'error': msg}
++        
++        # no asset browser present
++        else:
++            msg = "There is no asset browser in this workspace"
++            # print("WARNING:", msg)
++            asset = {'error': msg}
++
++        # printd(asset)
++        return asset
++
++
++        return
++
+         if self.asset_browser:
+-            libname, libpath, filename, import_type = get_asset_details_from_space(context, self.asset_browser, debug=debug)
++
++            debug = True
++            print()
++            print("----")
++
++            for ab in self.asset_browser:
++                print(ab)
++
++                libname, libpath, filename, import_type = get_asset_details_from_space(context, ab, debug=debug)
++
++
++
++
++            return
++
+ 
+             if libpath:
+                 # NOTE: the filename (path) will look different on Windows and Linux, it will mix \\ and / on Windows, lol
+@@ -736,6 +893,9 @@ class MaterialPicker(bpy.types.Operator):
+ 
+         return asset
+ 
++
++    # MATERIAL UTILS
++
+     def get_material_hit(self, context, mousepos, debug=False):
+         '''
+         cat ray in object or edit mode and return the hit object and material index
+@@ -850,7 +1010,7 @@ class MaterialPicker(bpy.types.Operator):
+                 matcolor = last_node.inputs.get('Base Color', None)
+ 
+                 # fallback, find first RGBA input
+-                # TODO: different fallback when that failes too? move furthr into the tree if there are connected nodes
++                # TODO: different fallback when that fails too? move furthr into the tree if there are connected nodes
+                 if not matcolor:
+                     for i in last_node.inputs:
+                         if i.type == 'RGBA':
+diff --git a/utils/asset.py b/utils/asset.py
+index 671959c..7debcb1 100644
+--- a/utils/asset.py
++++ b/utils/asset.py
+@@ -138,12 +138,14 @@ def update_asset_catalogs(self, context):
+ 
+ # ASSET
+ 
+-def get_asset_details_from_space(context, space, debug=False):
++def get_asset_details_from_space(context, space, asset_type='OBJECT', debug=False):
+     '''
+     fetch details of selected asset from the file/assetbrowser's space_data
+     deal with ALL asset_library_ref, in which case the libpath (space.directory) will not be set, and the libname is not clear
+         fetch both from the asset catalogs using the catalog_id in that case
+ 
++    supports passing in an optional asset_type that filters for what we need, can be None, and will be ignored then
++
+     return libname, libpath, filename and import_method
+     '''
+ 
+@@ -168,26 +170,45 @@ def get_asset_details_from_space(context, space, debug=False):
+         print()
+ 
+ 
+-    # ESSENTIALS
++    # NO ASSET SELECTED
++
++    if not filename:
++        if debug:
++            print(" WARNING: no asset selected!")
++
++        return None, None, '', None
++
++
++    # UNSUPPORTED ASSET TYPE SELECTED
++
++    elif asset_type and f"{asset_type.title()}/" not in filename:
++        if debug:
++            print(f" WARNING: unsupported asset type selected, expected '{asset_type}'")
++
++        return None, None, '', None
++
++
++    # ESSENTIALS LIBRARY - IGNORING
+ 
+-    if libname == 'ESSENTIALS':
++    elif libname == 'ESSENTIALS':
+         return None, None, '', None
+ 
+ 
+     # LOCAL library
+ 
+-    elif libname == 'LOCAL':
+-        if 'Object/' in filename:
++    elif asset_type and libname == 'LOCAL':
++        if f"{asset_type.title()}/" in filename:
+             return libname, libpath, filename, import_method
+ 
+ 
+     # also LOCAL library, but ALL or the actual library is chosen!
++    # NOTE: this may be outdated and no longer occur since 4.1 or earlier
+ 
+-    elif not '.blend' in filename:
++    elif asset_type and not '.blend' in filename:
+         if debug:
+             print(" WARNING: LOCAL library, but ALL or library is chosen (instead of current file)!")
+ 
+-        if 'Object/' in filename:
++        if f"{asset_type.title()}/" in filename:
+             return 'LOCAL', '', filename, import_method
+ 
+ 
+diff --git a/utils/ui.py b/utils/ui.py
+index d04fc92..3e00a03 100644
+--- a/utils/ui.py
++++ b/utils/ui.py
+@@ -22,18 +22,22 @@ def get_icon(name):
+ 
+ # MOUSE
+ 
+-def get_mouse_pos(self, context, event, hud=True, hud_offset=(20, 20)):
++def get_mouse_pos(self, context, event, window=False, hud=True, hud_offset=(20, 20)):
+     '''
+     get and set the current mouse position (region space)
+     optionally
+-        create an offset vector too, based on the wm.HC_mouse_pos_region prop, this would be used in an operator's invoke() only
++        get and set the current window space mouse position
++        create an offset vector too, based on the wm.HC_mouse_pos_region prop, so based on invokation from a pie menu, this would be used in an operator's invoke() only
+         set HUD_x and HUD_y props for HUD drawing
+     '''
+ 
+     self.mouse_pos = Vector((event.mouse_region_x, event.mouse_region_y))
+ 
++    if window:
++        self.mouse_pos_window = Vector((event.mouse_x, event.mouse_y))
++
+     if hud:
+-        scale = context.preferences.system.ui_scale * get_prefs().modal_hud_scale
++        scale = get_scale(context)
+ 
+         self.HUD_x = self.mouse_pos.x + hud_offset[0] * scale
+         self.HUD_y = self.mouse_pos.y + hud_offset[1] * scale

@@ -1,0 +1,22 @@
+schema_version = "1.0.0"
+
+id = "renderset_personal"
+version = "2.0.1"
+name = "renderset_personal"
+tagline = "Render manager, create views and store properties per view"
+maintainer = "polygoniq <ahoy@polygoniq.com>"
+type = "add-on"
+
+website = "https://docs.polygoniq.com/renderset/2.0.1/"
+tags = ["Animation", "Render", "Pipeline", "Scene", "User Interface"]
+blender_version_min = "4.2.0"
+
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+copyright = [
+  "2018- polygoniq xyz s.r.o",
+]
+
+[permissions]
+files = "Outputs render results"
