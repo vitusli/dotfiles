@@ -13,8 +13,7 @@ class ResetKeymaps(bpy.types.Operator):
         if modified:
             for km, kmi in modified:
                 km.restore_item_to_default(kmi)
-                print(f"INFO: Keymap item: '{kmi_to_string(kmi, compact=True)}, active: {kmi.active}' has been restored")
-
+                print(f"INFO: Modified keymap item: '{kmi_to_string(kmi, compact=True)}, active: {kmi.active}' has been restored to default")
         return {'FINISHED'}
 
 class RestoreKeymaps(bpy.types.Operator):
@@ -28,7 +27,7 @@ class RestoreKeymaps(bpy.types.Operator):
 
         if missing:
             wm = bpy.context.window_manager
-            kc = wm.keyconfigs.addon  # NOTE: even though the keymap has been removed from the user keyconfig, we have to re-add it here to the addon keymap, which then seems to restore it in the user keyconfig too
+            kc = wm.keyconfigs.addon  # NOTE: even though the keymap has been removed from the user keyconfig, we have to re-add it here from the addon keymap, which then seems to restore it in the user keyconfig too
 
             for item in missing:
                 keymap = item.get("keymap")
@@ -60,5 +59,7 @@ class RestoreKeymaps(bpy.types.Operator):
 
                             active = item.get("active", True)
                             kmi.active = active
+
+                        print(f"INFO: Missing keymap item: '{kmi_to_string(kmi, compact=True)}, active: {kmi.active}' has been re-created")
 
         return {'FINISHED'}

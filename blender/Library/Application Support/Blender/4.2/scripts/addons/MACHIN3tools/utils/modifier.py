@@ -1,5 +1,5 @@
 import bpy
-from math import radians
+from math import radians, degrees
 import os
 from . import registration as r
 from . append import append_nodetree
@@ -55,7 +55,7 @@ def add_boolean(obj, operator, method='DIFFERENCE', solver='FAST'):
 
     return boolean
 
-def add_auto_smooth(obj, angle=20):
+def add_auto_smooth(obj, angle=20, ignore_sharpness=False):
     smooth_by_angles = [tree for tree in bpy.data.node_groups if tree.name.startswith('Smooth by Angle')]
 
     if smooth_by_angles:
@@ -76,10 +76,18 @@ def add_auto_smooth(obj, angle=20):
     mod.node_group = ng
     mod.show_expanded = r.get_prefs().auto_smooth_show_expanded
 
-    if angle is not None:
+    if angle is None:
+        set_mod_input(mod, 'Angle', radians(20))
+
+    else:
         set_mod_input(mod, 'Angle', radians(angle))
 
+    if ignore_sharpness:
+        set_mod_input(mod, 'Ignore Sharpness', ignore_sharpness)
+
+    if angle is not None or ignore_sharpness:
         mod.id_data.update_tag()
+
     return mod
 
 def get_auto_smooth(obj):
@@ -145,10 +153,6 @@ def is_radial_array(mod):
 def is_auto_smooth(mod):
     return mod.type == 'NODES' and (ng := mod.node_group) and (ng.name.startswith('Smooth by Angle') or ng.name.startswith('Auto Smooth'))
 
-def is_invalid_auto_smooth(mod):
-    if is_auto_smooth(mod):
-        return get_mod_input(mod, 'Ignore Sharpness') is None or get_mod_input(mod, 'Angle') is None
-
 def remove_mod(mod):
     obj = mod.id_data
 
@@ -159,7 +163,7 @@ def remove_mod(mod):
         obj.grease_pencil_modifiers.remove(mod)
 
     else:
-        print(f"WARNING: Could not remove modiifer {mod.name} of type {mod.type}")
+        print(f"WARNING: Could not remove modiifer {mod.name} of type {mod.type} on object {obj.name} of type {obj.type}")
 
 def remove_triangulate(obj):
     lastmod = obj.modifiers[-1] if obj.modifiers else None
@@ -205,7 +209,7 @@ def apply_mod(modname):
     bpy.ops.object.modifier_apply(modifier=modname)
 
 def get_mod_obj(mod):
-    if mod.type in ['BOOLEAN', 'HOOK', 'LATTICE', 'DATA_TRANSFER', 'GP_MIRROR']:
+    if mod.type in ['BOOLEAN', 'HOOK', 'LATTICE', 'DATA_TRANSFER', 'GP_MIRROR', 'GREASE_PENCIL_MIRROR']:
         return mod.object
 
     elif mod.type == 'MIRROR':
@@ -260,11 +264,41 @@ def get_mod_input(mod, name):
         identifier, socket_type = get_nodegroup_input_identifier(ng, name)
 
         if identifier:
-            return mod[identifier]
+            try:
+                return mod[identifier]
+            except:
+                return None
 
 def set_mod_input(mod, name, value):
     
     if ng := mod.node_group:
         identifier, socket_type = get_nodegroup_input_identifier(ng, name)
 
-        mod[identifier] = value
+        if identifier:
+            try:
+                mod[identifier] = value
+            except:
+                pass
+
+def is_invalid_auto_smooth(mod):
+    if is_auto_smooth(mod):
+        return get_mod_input(mod, 'Ignore Sharpness') is None or get_mod_input(mod, 'Angle') is None
+
+def replace_invalid_auto_smooth_mods(objects):
+    if bpy.app.version >= (4, 1, 0):
+        for obj in objects:
+            if (mod := get_auto_smooth(obj)) and is_invalid_auto_smooth(mod):
+                angle = degrees(angle) if (angle := get_mod_input(mod, "Angle")) else 20
+                ignore_sharpness = bool(get_mod_input(mod, "Ignore Sharpness"))
+                show_expanded = mod.show_expanded
+                use_pin_to_last = mod.use_pin_to_last
+
+                index = list(obj.modifiers).index(mod)
+                remove_mod(mod)
+
+                mod = add_auto_smooth(obj, angle=angle, ignore_sharpness=ignore_sharpness)
+                move_mod(mod, index)
+                mod.show_expanded = show_expanded
+                mod.use_pin_to_last = use_pin_to_last
+
+                print("WARNING: Replaced invalid auto smooth mod on", obj.name)

@@ -1,8 +1,8 @@
 import bpy
 from bpy.props import BoolProperty
 from mathutils import Vector, Quaternion
-from .. utils.registration import get_addon
 from .. utils.math import flatten_matrix, get_loc_matrix, get_rot_matrix, get_sca_matrix
+from .. utils.registration import get_addon
 
 decalmachine = None
 

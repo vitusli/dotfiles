@@ -1,14 +1,14 @@
 import bpy
 from mathutils import Vector, Matrix, Quaternion
 from math import sin, cos, pi
-from typing import Tuple
 import gpu
 from gpu_extras.batch import batch_for_shader
 import blf
-from . wm import get_last_operators
+from . math import get_world_space_normal
 from . registration import get_prefs, get_addon
-from . ui import get_zoom_factor
 from . tools import get_active_tool
+from . ui import get_zoom_factor
+from . wm import get_last_operators
 from .. colors import red, green, blue, black, white, orange, normal, yellow
 
 def get_builtin_shader_name(name, prefix='3D'):
@@ -171,8 +171,6 @@ def draw_vectors(vectors, origins, mx=Matrix(), color=(1, 1, 1), width=1, alpha=
                 coords.append(mx @ o + mx.to_3x3() @ v)
 
             colors.extend([(*color, alpha), (*color, alpha / 10 if fade else alpha)])
-
-        indices = [(i, i + 1) for i in range(0, len(coords), 2)]
 
         gpu.state.depth_test_set('NONE' if xray else 'LESS_EQUAL')
         gpu.state.blend_set('ALPHA')
@@ -583,8 +581,6 @@ def draw_focus_HUD(context, color=(1, 1, 1), alpha=1, width=2):
 
             font = 1
             fontsize = int(12 * scale)
-
-            dims = blf.dimensions(font, text)
 
             blf.size(font, fontsize)
             blf.color(font, *color, alpha)

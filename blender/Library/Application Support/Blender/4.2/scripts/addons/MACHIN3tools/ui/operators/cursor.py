@@ -3,10 +3,10 @@ import bmesh
 from mathutils import Vector, Quaternion
 from ... utils.math import get_center_between_verts, average_locations, create_rotation_matrix_from_vertex, create_rotation_matrix_from_edge, create_rotation_matrix_from_face
 from ... utils.math import get_loc_matrix, get_rot_matrix, get_sca_matrix
+from ... utils.object import compensate_children
+from ... utils.registration import get_prefs
 from ... utils.scene import set_cursor
 from ... utils.ui import popup_message
-from ... utils.registration import get_prefs
-from ... utils.object import compensate_children
 
 cursor = None
 

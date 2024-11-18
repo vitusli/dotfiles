@@ -144,7 +144,7 @@ def get_incremented_paths(currentblend):
         return os.path.join(path, incrname), os.path.join(path, name + '_01.blend')
 
 def remove_folder(path):
-    if (exists := os.path.exists(path)) and (isfolder := os.path.isdir(path)):
+    if (exists := os.path.exists(path)) and os.path.isdir(path):
         try:
             rmtree(path)
             return True
@@ -252,7 +252,7 @@ def get_bl_info_from_file(path):
                     return blinfo
 
                 else:
-                    print(f"WARNING: Versions are identical, an update would be pointless")
+                    print("WARNING: Versions are identical, an update would be pointless")
 
             else:
                 print(f"WARNING: Addon Mismatch, you can't update {bl_info['name']} to {name}")

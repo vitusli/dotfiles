@@ -2,13 +2,12 @@ import bpy
 from bpy.props import BoolProperty
 from mathutils import Matrix
 import bmesh
-from ... utils.math import get_loc_matrix, get_rot_matrix, get_sca_matrix, create_rotation_matrix_from_vertex, create_rotation_matrix_from_edge, get_center_between_verts, create_rotation_matrix_from_face
-from ... utils.math import average_locations
-from ... utils.ui import popup_message
-from ... utils.object import set_obj_origin, get_eval_bbox
-from ... utils.mesh import get_bbox
 from ... utils.draw import draw_point 
+from ... utils.math import get_loc_matrix, get_rot_matrix, get_sca_matrix, create_rotation_matrix_from_vertex, create_rotation_matrix_from_edge, get_center_between_verts, create_rotation_matrix_from_face, average_locations
+from ... utils.mesh import get_bbox
+from ... utils.object import set_obj_origin, get_eval_bbox
 from ... utils.registration import get_addon
+from ... utils.ui import popup_message
 from ... colors import yellow
 
 decalmachine = None
@@ -248,6 +247,8 @@ class OriginToBottomBounds(bpy.types.Operator):
     def execute(self, context):
         global decalmachine, meshmachine
 
+        context.evaluated_depsgraph_get()
+
         debug = False
 
         if debug:
@@ -266,7 +267,6 @@ class OriginToBottomBounds(bpy.types.Operator):
                 if debug:
                     print(" getting evaluated bottom center")
 
-                dg = context.evaluated_depsgraph_get()
                 bbox = get_eval_bbox(obj)
                 bottom_center = mx @ average_locations([bbox[0], bbox[3], bbox[4], bbox[7]])
 

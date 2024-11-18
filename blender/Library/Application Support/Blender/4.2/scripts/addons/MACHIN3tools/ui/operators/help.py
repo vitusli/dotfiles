@@ -1,7 +1,6 @@
 import bpy
 import os
 import sys
-import socket
 from ... utils.registration import get_path, get_prefs
 from ... utils.system import makedir, open_folder
 from ... import bl_info
@@ -68,6 +67,15 @@ class GetSupport(bpy.types.Operator):
 
                         new = []
 
+                        filters = [ws for ws in bpy.data.workspaces if ws.use_filter_by_owner]
+
+                        if filters:
+                            new.append("")
+                            new.append("Workspace Addon Filters")
+
+                            for ws in filters:
+                                new.append(f"  {'🚫'} Addon Filtering enabled on '{ws.name}' Workspace")
+
                         prefs = get_prefs()
 
                         tools = []
@@ -84,11 +92,12 @@ class GetSupport(bpy.types.Operator):
                                 else:
                                     name = p.replace('activate_', '').replace('_', ' ').title()
 
-                                    if not 'Tools' in name:
+                                    if 'Tools' not in name:
                                         name += " Tool"
 
                                     tools.append((name, status))
 
+                        new.append("")
                         new.append("Tools")
 
                         for tool, status in tools:
@@ -103,6 +112,8 @@ class GetSupport(bpy.types.Operator):
                             icon = "✔ " if status else "❌"
 
                             new.append(f"  {icon} {pie}")
+
+                        new.append("")
 
                         for n in new:
                             idx += 1

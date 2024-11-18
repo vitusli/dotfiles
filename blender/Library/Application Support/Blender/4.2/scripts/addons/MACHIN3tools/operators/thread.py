@@ -83,7 +83,7 @@ class Thread(bpy.types.Operator):
 
                     if smooth:
                         if bpy.app.version >= (4, 1, 0):
-                            if not (mod := get_auto_smooth(active)):
+                            if not get_auto_smooth(active):
                                 add_auto_smooth(active)
                         else:
                             active.data.use_auto_smooth = True

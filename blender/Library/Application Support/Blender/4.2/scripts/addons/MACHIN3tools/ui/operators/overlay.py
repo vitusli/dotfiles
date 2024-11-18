@@ -55,7 +55,7 @@ class ToggleWireframe(bpy.types.Operator):
         elif context.mode == 'EDIT_MESH':
             return "Toggle X-Ray, resembling how edit mode wireframes worked in Blender 2.79"
         elif context.mode == 'SCULPT':
-            return "Toggle Wireframe display for the active obeject"
+            return "Toggle Wireframe display for the active object"
 
     def execute(self, context):
         overlay = context.space_data.overlay

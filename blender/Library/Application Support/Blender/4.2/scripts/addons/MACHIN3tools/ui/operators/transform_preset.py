@@ -14,6 +14,9 @@ class SetTransformPreset(bpy.types.Operator):
         layout = self.layout
         column = layout.column()
 
+        column.label(text=f"Pivot: {self.pivot}")
+        column.label(text=f"Orientation: {self.orientation}")
+
     @classmethod
     def poll(cls, context):
         return context.space_data.type == 'VIEW_3D'

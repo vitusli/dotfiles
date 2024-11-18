@@ -1,13 +1,14 @@
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatProperty
 from mathutils import Matrix, Vector, Euler, Quaternion
+from mathutils.geometry import intersect_line_plane
 from math import radians
-from .. utils.math import get_loc_matrix, get_rot_matrix, get_sca_matrix, average_locations
-from .. utils.object import compensate_children, parent, unparent
 from .. utils.draw import draw_mesh_wire, draw_label, update_HUD_location
+from .. utils.math import get_loc_matrix, get_rot_matrix, get_sca_matrix
 from .. utils.mesh import get_coords
-from .. utils.ui import init_cursor, init_status, finish_status
+from .. utils.object import compensate_children, parent, unparent
 from .. utils.system import printd
+from .. utils.ui import init_cursor, init_status, finish_status
 from .. items import obj_align_mode_items
 from .. colors import green, blue
 
@@ -21,6 +22,7 @@ class Align(bpy.types.Operator):
     inbetween_flip: BoolProperty(name="Flip", default=False)
     mode: EnumProperty(name='Mode', items=obj_align_mode_items, default='ACTIVE')
     location: BoolProperty(name='Align Location', default=True)
+    location_local: BoolProperty(name='Align Location Locally', description="Align Selection on Active's or Cursor's Local Axes", default=False)
     rotation: BoolProperty(name='Align Rotation', default=True)
     scale: BoolProperty(name='Align Scale', default=False)
     loc_x: BoolProperty(name='X', default=True)
@@ -34,39 +36,49 @@ class Align(bpy.types.Operator):
     sca_z: BoolProperty(name='Z', default=True)
     parent_to_bone: BoolProperty(name='Parent to Bone', default=True)
     align_z_to_y: BoolProperty(name='Align Z to Y', default=True)
-    roll: BoolProperty(name='Roll', default=False)
-    roll_amount: FloatProperty(name='Roll Amount in Degrees', default=90)
+    roll_amount: FloatProperty(name='Roll Amount in Degrees', min=-360, max=360, default=0)
+    slide_amount: FloatProperty(name='Relative Distance between First and Last Object', min=0, max=1, default=0.5, step=0.1)
+    @classmethod
+    def poll(cls, context):
+        return context.selected_objects and context.mode in ['OBJECT', 'POSE']
+
     def draw(self, context):
         layout = self.layout
 
-        column = layout.column()
+        column = layout.column(align=True)
 
         if not self.inbetween or not self.is_inbetween:
-            row = column.split(factor=0.3)
+            is_bone_align = self.mode == 'ACTIVE' and context.active_bone
+
+            row = column.split(factor=0.35)
             row.label(text='Align to', icon='BONE_DATA' if self.mode == 'ACTIVE' and context.active_bone else 'BLANK1')
+
             r = row.row()
             r.prop(self, 'mode', expand=True)
 
-            if self.mode == 'ACTIVE' and context.active_bone:
-                row = column.split(factor=0.3)
-                row.label(text='Parent to Bone')
-                row.prop(self, 'parent_to_bone', text='True' if self.parent_to_bone else 'False', toggle=True)
+            column.separator()
 
-                row = column.split(factor=0.3)
-                row.label(text='Align Z to Y')
-                row.prop(self, 'align_z_to_y', text='True' if self.align_z_to_y else 'False', toggle=True)
+            if is_bone_align:
 
-                row = column.split(factor=0.3)
-                row.prop(self, 'roll', text='Roll')
+                row = column.row(align=True)
+                row.prop(self, 'parent_to_bone', toggle=True)
+                row.prop(self, 'align_z_to_y', toggle=True)
 
-                r = row.row(align=True)
-                r.active = self.roll
-                r.prop(self, 'roll_amount', text='')
+                row = column.row(align=True)
+                row.prop(self, 'roll_amount', text='Angle')
+                row.prop(self, 'slide_amount', text='Distance')
 
             else:
                 if self.mode in ['ORIGIN', 'CURSOR', 'ACTIVE']:
-                    row = column.split(factor=0.3)
-                    row.prop(self, 'location', text='Location')
+                    row = column.split(factor=0.35, align=True)
+                    r = row.row(align=True)
+                    r.prop(self, 'location', text='Location', toggle=True)
+
+                    if self.mode in ['ACTIVE', 'CURSOR']:
+                        if self.mode == 'ACTIVE' and self.is_inbetween:
+                            r.prop(self, 'inbetween', text='', icon="ARROW_LEFTRIGHT", toggle=True)
+
+                        r.prop(self, 'location_local', text='', icon="ORIENTATION_LOCAL", toggle=True)
 
                     r = row.row(align=True)
                     r.active = self.location
@@ -75,8 +87,8 @@ class Align(bpy.types.Operator):
                     r.prop(self, 'loc_z', toggle=True)
 
                 if self.mode in ['CURSOR', 'ACTIVE']:
-                    row = column.split(factor=0.3)
-                    row.prop(self, 'rotation', text='Rotation')
+                    row = column.split(factor=0.35, align=True)
+                    row.prop(self, 'rotation', text='Rotation', toggle=True)
 
                     r = row.row(align=True)
                     r.active = self.rotation
@@ -85,8 +97,8 @@ class Align(bpy.types.Operator):
                     r.prop(self, 'rot_z', toggle=True)
 
                 if self.mode == 'ACTIVE':
-                    row = column.split(factor=0.3)
-                    row.prop(self, 'scale', text='Scale')
+                    row = column.split(factor=0.35, align=True)
+                    row.prop(self, 'scale', text='Scale', toggle=True)
 
                     r = row.row(align=True)
                     r.active = self.scale
@@ -94,22 +106,21 @@ class Align(bpy.types.Operator):
                     r.prop(self, 'sca_y', toggle=True)
                     r.prop(self, 'sca_z', toggle=True)
 
-        if self.is_inbetween:
-            row = column.split(factor=0.3)
-            row.label(text='Align in between')
-            r = row.row(align=True)
-            r.prop(self, 'inbetween', toggle=True)
+        if self.is_inbetween and self.inbetween:
+            row = column.row( align=True)
+            row.prop(self, 'inbetween', toggle=True)
+            row.prop(self, 'inbetween_flip', toggle=True)
 
-            if self.inbetween:
-                r.prop(self, 'inbetween_flip', toggle=True)
-
-    @classmethod
-    def poll(cls, context):
-        return context.selected_objects and context.mode in ['OBJECT', 'POSE']
+            row = column.row( align=True)
+            row.prop(self, 'roll_amount', text='Angle', toggle=True)
+            row.prop(self, 'slide_amount', text='Distance', toggle=True)
 
     def execute(self, context):
         active = context.active_object
         sel = context.selected_objects
+
+        if bpy.app.version >= (4, 2, 0):
+            context.evaluated_depsgraph_get()
 
         self.is_inbetween = len(sel) == 3 and active and active in sel
 
@@ -180,6 +191,9 @@ class Align(bpy.types.Operator):
         cursor = context.scene.cursor
         cursor.rotation_mode = 'XYZ'
 
+        cmx = cursor.matrix
+        cloc = cursor.location
+
         for obj in sel:
             omx = obj.matrix_world
             oloc, orot, osca = omx.decompose()
@@ -189,11 +203,44 @@ class Align(bpy.types.Operator):
             oscax, oscay, oscaz = osca
 
             if self.location:
-                locx = cursor.location.x if self.loc_x else olocx
-                locy = cursor.location.y if self.loc_y else olocy
-                locz = cursor.location.z if self.loc_z else olocz
 
-                loc = get_loc_matrix(Vector((locx, locy, locz)))
+                if self.location_local:
+                    x_offset = Vector()
+                    y_offset = Vector()
+                    z_offset = Vector()
+
+                    if self.loc_x:
+                        x_axis = cmx.to_3x3() @ Vector((1, 0, 0))
+
+                        i = intersect_line_plane(oloc, oloc + x_axis, cloc, x_axis)
+
+                        if i:
+                            x_offset = i - oloc
+
+                    if self.loc_y:
+                        y_axis = cmx.to_3x3() @ Vector((0, 1, 0))
+
+                        i = intersect_line_plane(oloc, oloc + y_axis, cloc, y_axis)
+
+                        if i:
+                            y_offset = i - oloc
+
+                    if self.loc_z:
+                        z_axis = cmx.to_3x3() @ Vector((0, 0, 1))
+
+                        i = intersect_line_plane(oloc, oloc + z_axis, cloc, z_axis)
+
+                        if i:
+                            z_offset = i - oloc
+
+                    loc = get_loc_matrix(oloc + x_offset + y_offset + z_offset)
+
+                else:
+                    locx = cursor.location.x if self.loc_x else olocx
+                    locy = cursor.location.y if self.loc_y else olocy
+                    locz = cursor.location.z if self.loc_z else olocz
+
+                    loc = get_loc_matrix(Vector((locx, locy, locz)))
 
             else:
                 loc = get_loc_matrix(oloc)
@@ -232,11 +279,44 @@ class Align(bpy.types.Operator):
             oscax, oscay, oscaz = osca
 
             if self.location:
-                locx = alocx if self.loc_x else olocx
-                locy = alocy if self.loc_y else olocy
-                locz = alocz if self.loc_z else olocz
 
-                loc = get_loc_matrix(Vector((locx, locy, locz)))
+                if self.location_local:
+                    x_offset = Vector()
+                    y_offset = Vector()
+                    z_offset = Vector()
+
+                    if self.loc_x:
+                        x_axis = amx.to_3x3() @ Vector((1, 0, 0))
+
+                        i = intersect_line_plane(oloc, oloc + x_axis, aloc, x_axis)
+
+                        if i:
+                            x_offset = i - oloc
+
+                    if self.loc_y:
+                        y_axis = amx.to_3x3() @ Vector((0, 1, 0))
+
+                        i = intersect_line_plane(oloc, oloc + y_axis, aloc, y_axis)
+
+                        if i:
+                            y_offset = i - oloc
+
+                    if self.loc_z:
+                        z_axis = amx.to_3x3() @ Vector((0, 0, 1))
+
+                        i = intersect_line_plane(oloc, oloc + z_axis, aloc, z_axis)
+
+                        if i:
+                            z_offset = i - oloc
+
+                    loc = get_loc_matrix(oloc + x_offset + y_offset + z_offset)
+
+                else:
+                    locx = alocx if self.loc_x else olocx
+                    locy = alocy if self.loc_y else olocy
+                    locz = alocz if self.loc_z else olocz
+
+                    loc = get_loc_matrix(Vector((locx, locy, locz)))
 
             else:
                 loc = get_loc_matrix(oloc)
@@ -276,9 +356,14 @@ class Align(bpy.types.Operator):
                 obj.parent_bone = bonename
 
             if self.align_z_to_y:
-                obj.matrix_world = armature.matrix_world @ bone.matrix @ Matrix.Rotation(radians(-90), 4, 'X') @ Matrix.Rotation(radians(self.roll_amount if self.roll else 0), 4, 'Z')
+                rot = Matrix.Rotation(radians(-90), 4, 'X') @ Matrix.Rotation(radians(self.roll_amount), 4, 'Z')
             else:
-                obj.matrix_world = armature.matrix_world @ bone.matrix @ Matrix.Rotation(radians(self.roll_amount if self.roll else 0), 4, 'Y')
+                rot = Matrix.Rotation(radians(self.roll_amount), 4, 'Y')
+
+            bloc, brot, bsca = bone.matrix.decompose()
+            bonemx = Matrix.LocRotScale(bloc + (bone.tail - bloc) * self.slide_amount, brot, bsca)
+
+            obj.matrix_world = armature.matrix_world @ bonemx @ rot 
 
     def drop_to_floor(self, context, selection):
         for obj in selection:
@@ -303,7 +388,11 @@ class Align(bpy.types.Operator):
 
         active_up = rot @ Vector((0, 0, 1))
         sel_up = locations[0] - locations[1]
-        mx = get_loc_matrix(average_locations(locations)) @ get_rot_matrix(active_up.rotation_difference(sel_up) @ rot @ Quaternion((1, 0, 0), radians(180 if self.inbetween_flip else 0))) @ get_sca_matrix(sca)
+
+        rot = active_up.rotation_difference(sel_up) @ rot @ Quaternion((1, 0, 0), radians(180 if self.inbetween_flip else 0)) @  Quaternion((0, 0, 1), radians(self.roll_amount))
+        loc = locations[1] + sel_up * self.slide_amount
+
+        mx = Matrix.LocRotScale(loc, rot, sca)
 
         active.matrix_world = mx
 

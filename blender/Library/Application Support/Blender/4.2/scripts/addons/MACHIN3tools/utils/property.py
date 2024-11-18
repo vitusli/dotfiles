@@ -1,3 +1,5 @@
+import re
+
 def step_list(current, list, step, loop=True):
     item_idx = list.index(current)
 
@@ -59,3 +61,8 @@ def rotate_list(list, amount):
             list.insert(0, list.pop(-1))
 
     return list
+
+def get_biggest_index_among_names(names):
+    if names:
+        indexRegex = re.compile(r".*([\d]{3}).*")
+        return max([int(indexRegex.match(name).group(1)) if indexRegex.match(name) else 0 for name in names])

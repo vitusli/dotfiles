@@ -1,8 +1,8 @@
 import bpy
 from mathutils import Vector
-from . registration import get_addon
 from . math import get_sca_matrix
 from . mesh import get_bbox
+from . registration import get_addon
 
 decalmachine = None
 

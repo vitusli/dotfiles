@@ -157,7 +157,7 @@ class ToggleSmooth(bpy.types.Operator):
             is_smooth = obj.M3.has_smoothed or bm.faces[0].smooth
 
         else:
-            is_smooth = obj.M3.has_smoothed or (degrees(angle) == 180 and fm.faces[0].smooth)
+            is_smooth = obj.M3.has_smoothed or (degrees(angle) == 180 and bm.faces[0].smooth)
 
         if not is_smooth:
             if toggle_type in ['TOGGLE', 'ENABLE']:

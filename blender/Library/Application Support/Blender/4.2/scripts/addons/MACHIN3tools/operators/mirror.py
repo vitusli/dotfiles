@@ -2,15 +2,14 @@ import bpy
 from bpy.props import BoolProperty, EnumProperty
 from bpy_extras.view3d_utils import region_2d_to_location_3d, region_2d_to_origin_3d, region_2d_to_vector_3d
 from mathutils import Vector
-from .. utils.registration import get_addon, get_prefs
-from .. utils.tools import get_active_tool
-from .. utils.object import get_eval_bbox
+from .. utils.draw import draw_vector, draw_circle, draw_point, draw_label, draw_bbox, draw_cross_3d
 from .. utils.math import compare_matrix
 from .. utils.modifier import get_mod_obj, move_mod, remove_mod
-from .. utils.ui import get_zoom_factor, get_flick_direction, init_status, finish_status
-from .. utils.draw import draw_vector, draw_circle, draw_point, draw_label, draw_bbox, draw_cross_3d
-from .. utils.system import printd
+from .. utils.object import get_eval_bbox
 from .. utils.property import step_list
+from .. utils.registration import get_addon, get_prefs
+from .. utils.system import printd
+from .. utils.ui import get_zoom_factor, get_flick_direction, init_status, finish_status
 from .. utils.view import get_loc_2d
 from .. colors import red, green, blue, white, yellow
 from .. items import axis_items, axis_index_mapping
@@ -49,7 +48,7 @@ def draw_mirror(op):
             row.separator(factor=1)
 
             row.label(text="", icon='EVENT_A')
-            row.label(text=f"Remove All + Finish")
+            row.label(text="Remove All + Finish")
 
         if op.mirror_mods:
             row.separator(factor=1)
@@ -344,8 +343,6 @@ class Mirror(bpy.types.Operator):
 
         scene = context.scene
 
-        active_tool = get_active_tool(context).idname
-
         self.active = context.active_object
         self.sel = context.selected_objects
         self.meshes_present = True if any([obj for obj in self.sel if obj.type == 'MESH']) else False
@@ -449,6 +446,9 @@ class Mirror(bpy.types.Operator):
             if obj.type == 'GPENCIL':
                 mods.extend([mod for mod in obj.grease_pencil_modifiers if mod.type == 'GP_MIRROR'])
 
+            elif obj.type == 'GREASEPENCIL':
+                mods.extend([mod for mod in obj.modifiers if mod.type == 'GREASE_PENCIL_MIRROR'])
+
             else:
                 mods.extend([mod for mod in obj.modifiers if mod.type == 'MIRROR'])
 
@@ -497,7 +497,7 @@ class Mirror(bpy.types.Operator):
                 if obj.type in ["MESH", "CURVE"]:
                     self.mirror_mesh_obj(context, obj, mirror_object=empty if self.cursor else active)
 
-                elif obj.type == "GPENCIL":
+                elif obj.type in ["GPENCIL", "GREASEPENCIL"]:
                     self.mirror_gpencil_obj(context, obj, mirror_object=empty if self.cursor else active)
 
                 elif obj.type == "EMPTY" and obj.instance_collection:
@@ -524,7 +524,12 @@ class Mirror(bpy.types.Operator):
                     move_mod(nrmtransfer, len(obj.modifiers) - 1)
 
     def mirror_gpencil_obj(self, context, obj, mirror_object=None):
-        mirror = obj.grease_pencil_modifiers.new(name="Mirror", type="GP_MIRROR")
+        if bpy.app.version < (4, 3, 0):
+            mirror = obj.grease_pencil_modifiers.new(name="Mirror", type="GP_MIRROR")
+
+        else:
+            mirror = obj.modifiers.new(name="Mirror", type="GREASE_PENCIL_MIRROR")
+
         mirror.use_axis_x = self.use_x
         mirror.use_axis_y = self.use_y
         mirror.use_axis_z = self.use_z
@@ -571,21 +576,23 @@ class Mirror(bpy.types.Operator):
         axis = self.flick_direction.split('_')[1]
 
         if self.misaligned and self.use_misalign:
-            if obj.type == 'GPENCIL':
+            if obj.type in ['GPENCIL', 'GREASEPENCIL']:
                 mods = [mod for mod in self.misaligned['object_mods'][self.mirror_obj] if getattr(mod, f'use_axis_{axis.lower()}')]
+
             else:
                 mods = [mod for mod in self.misaligned['object_mods'][self.mirror_obj] if mod.use_axis[axis_index_mapping[axis]]]
 
         else:
-            if obj.type == 'GPENCIL':
+            if obj.type in ['GPENCIL', 'GREASEPENCIL']:
                 mods = [mod for mod in self.aligned if getattr(mod, f'use_axis_{axis.lower()}')]
+
             else:
                 mods = [mod for mod in self.aligned if mod.use_axis[axis_index_mapping[axis]]]
 
         if mods:
             mod = mods[-1]
 
-            mod_object = mod.object if mod.type == 'GP_MIRROR' else mod.mirror_object
+            mod_object = get_mod_obj(mod)
 
             if mod_object:
                 if mod_object.type == 'EMPTY':
@@ -655,18 +662,17 @@ class Unmirror(bpy.types.Operator):
     bl_description = "Removes the last modifer in the stack of the selected objects"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def draw(self, context):
-        layout = self.layout
-
-        column = layout.column()
-
     @classmethod
     def poll(cls, context):
         mirror_meshes = [obj for obj in context.selected_objects if obj.type == "MESH" and any(mod.type == "MIRROR" for mod in obj.modifiers)]
         if mirror_meshes:
             return True
 
-        mirror_gpencils = [obj for obj in context.selected_objects if obj.type == "GPENCIL" and any(mod.type == "GP_MIRROR" for mod in obj.grease_pencil_modifiers)]
+        if bpy.app.version < (4, 3, 0):
+            mirror_gpencils = [obj for obj in context.selected_objects if obj.type == "GPENCIL" and any(mod.type == "GP_MIRROR" for mod in obj.grease_pencil_modifiers)]
+        else:
+            mirror_gpencils = [obj for obj in context.selected_objects if obj.type == "GREASEPENCIL" and any(mod.type == "GREASE_PENCIL_MIRRORP_MIRROR" for mod in obj.modifiers)]
+
         if mirror_gpencils:
             return True
 
@@ -680,7 +686,7 @@ class Unmirror(bpy.types.Operator):
                 if target and target.type == "EMPTY" and not target.children:
                     targets.add(target)
 
-            elif obj.type == "GPENCIL":
+            elif obj.type in ["GPENCIL", 'GREASEPENCIL']:
                 self.unmirror_gpencil_obj(obj)
 
             elif obj.type == "EMPTY" and obj.instance_collection:
@@ -716,7 +722,14 @@ class Unmirror(bpy.types.Operator):
             return target
 
     def unmirror_gpencil_obj(self, obj):
-        mirrors = [mod for mod in obj.grease_pencil_modifiers if mod.type == "GP_MIRROR"]
+        if bpy.app.version < (4, 3, 0):
+            mirrors = [mod for mod in obj.grease_pencil_modifiers if mod.type == "GP_MIRROR"]
 
-        if mirrors:
-            obj.grease_pencil_modifiers.remove(mirrors[-1])
+            if mirrors:
+                obj.grease_pencil_modifiers.remove(mirrors[-1])
+
+        else:
+            mirrors = [mod for mod in obj.modifiers if mod.type == "GREASE_PENCIL_MIRROR"]
+
+            if mirrors:
+                obj.mirrors.remove(mirrors[-1])

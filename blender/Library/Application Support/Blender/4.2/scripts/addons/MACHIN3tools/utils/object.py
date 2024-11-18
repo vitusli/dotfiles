@@ -5,10 +5,46 @@ from mathutils import Vector
 from uuid import uuid4
 from . math import flatten_matrix
 from . modifier import get_mod_obj
-from . view import ensure_visibility
+from . view import ensure_visibility, is_on_viewlayer
 
 def is_valid_object(obj):
-    return obj and not ' invalid>' in str(obj)
+    return obj and ' invalid>' not in str(obj)
+
+def is_instance_collection(obj):
+    if obj.type == 'EMPTY' and obj.instance_type == 'COLLECTION' and obj.instance_collection:
+        return obj.instance_collection
+
+def is_linked_object(obj, debug=False):
+
+    if debug:
+        print("\nchecking if", obj.name, "is linked")
+
+    linked = []
+
+    if obj.library:
+        linked.append(obj)
+
+    if data := obj.data:
+        if data.library:
+            linked.append(data)
+
+    elif icol := is_instance_collection(obj):
+
+        if icol.library:
+            linked.append(icol)
+
+        for ob in icol.objects:
+            if ob.library:
+                linked.append(ob)
+
+            if data := ob.data:
+                if data.library:
+                    linked.append(data)
+    if debug:
+        for id in linked:
+            print(type(id), id.name, id.library)
+
+    return linked
 
 def get_active_object(context) -> Union[bpy.types.Object, None]:
     
@@ -32,6 +68,18 @@ def get_visible_objects(context, local_view=False) -> list[bpy.types.Object]:
     if objects:
         return [obj for obj in objects if obj and obj.visible_get(view_layer=view_layer)]
     return []
+
+def get_eval_object(context, obj, depsgraph=None):
+    if not obj:
+        return
+    
+    if not depsgraph:
+        depsgraph = context.evaluated_depsgraph_get()
+
+    return obj.evaluated_get(depsgraph)
+
+def has_bbox(obj):
+    return obj.bound_box and not all(Vector(co) == Vector() for co in obj.bound_box)
 
 def get_eval_bbox(obj):
     return [Vector(co) for co in obj.bound_box]
@@ -155,14 +203,15 @@ def get_parent(obj, recursive=False, debug=False):
     if recursive:
         parents = []
 
-        while obj.parent:
+        while obj.parent and is_on_viewlayer(obj.parent):
             parents.append(obj.parent)
             obj = obj.parent
 
         return parents
 
     else:
-        return obj.parent
+        if obj.parent and is_on_viewlayer(obj.parent):
+            return obj.parent
 
 def unparent(obj):
     if obj.parent:
@@ -221,9 +270,6 @@ def get_object_hierarchy_layers(context, debug=False):
 
 def get_object_tree(obj, obj_tree, mod_objects=True, mod_dict=None, mod_type_ignore=[], depth=0, find_disabled_mods=False, check_if_on_viewlayer=False, debug=False):
 
-    if check_if_on_viewlayer:
-        view_layer = bpy.context.view_layer
-
     depthstr = " " * depth
 
     if debug:
@@ -233,17 +279,17 @@ def get_object_tree(obj, obj_tree, mod_objects=True, mod_dict=None, mod_type_ign
 
     for child in obj.children:
         if debug:
-            print(f" {depthstr}child: {child.name}")
+            print(f" {depthstr}child: {child.name}", "is on viewlayer:", is_on_viewlayer(child))
 
         if child not in obj_tree:
-            if check_if_on_viewlayer and child.name not in view_layer.objects:
+            if check_if_on_viewlayer and not is_on_viewlayer(child):
                 if debug:
                     print(f"  {depthstr}! ignoring child '{child.name}' as it's not on the view layer")
                 continue
 
             obj_tree.append(child)
 
-            get_object_tree(child, obj_tree, mod_objects=mod_objects, mod_dict=mod_dict, mod_type_ignore=mod_type_ignore, depth=depth + 1, find_disabled_mods=find_disabled_mods, debug=debug)
+            get_object_tree(child, obj_tree, mod_objects=mod_objects, mod_dict=mod_dict, mod_type_ignore=mod_type_ignore, depth=depth + 1, find_disabled_mods=find_disabled_mods, check_if_on_viewlayer=check_if_on_viewlayer, debug=debug)
 
     if mod_objects:
         for mod in obj.modifiers:
@@ -252,10 +298,14 @@ def get_object_tree(obj, obj_tree, mod_objects=True, mod_dict=None, mod_type_ign
                 mod_obj = get_mod_obj(mod)
 
                 if debug:
-                    print(f" {depthstr}mod: {mod.name} | obj: {mod_obj.name if mod_obj else mod_obj}")
+                    if mod_obj:
+                        print(f" {depthstr}mod: {mod.name} | obj: {mod_obj.name}", "is on viewlayer:", is_on_viewlayer(mod_obj))
+
+                    else:
+                        print(f" {depthstr}mod: {mod.name} | obj: None")
 
                 if mod_obj:
-                    if check_if_on_viewlayer and mod_obj.name not in view_layer.objects:
+                    if check_if_on_viewlayer and not is_on_viewlayer(mod_obj):
                         if debug:
                             print(f"  {depthstr}! ignoring mod object '{mod_obj.name}' as it's not on the view layer")
                         continue
@@ -269,4 +319,19 @@ def get_object_tree(obj, obj_tree, mod_objects=True, mod_dict=None, mod_type_ign
                     if mod_obj not in obj_tree:
                         obj_tree.append(mod_obj)
 
-                        get_object_tree(mod_obj, obj_tree, mod_objects=mod_objects, mod_dict=mod_dict, mod_type_ignore=mod_type_ignore, depth=depth + 1, find_disabled_mods=find_disabled_mods, debug=debug)
+                        get_object_tree(mod_obj, obj_tree, mod_objects=mod_objects, mod_dict=mod_dict, mod_type_ignore=mod_type_ignore, depth=depth + 1, find_disabled_mods=find_disabled_mods, check_if_on_viewlayer=check_if_on_viewlayer, debug=debug)
+
+def hide_render(objects, state):
+    if isinstance(objects, bpy.types.Object):
+        objects = [objects]
+
+    if isinstance(objects, list):
+        for obj in objects:
+            obj.hide_render = state
+
+            obj.visible_camera = not state
+            obj.visible_diffuse = not state
+            obj.visible_glossy = not state
+            obj.visible_transmission = not state
+            obj.visible_volume_scatter = not state
+            obj.visible_shadow = not state

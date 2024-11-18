@@ -1,9 +1,9 @@
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty
 import random
-from ... utils.registration import get_addon
 from ... utils.color import lighten
 from ... utils.material import get_last_node
+from ... utils.registration import get_addon
 from ... colors import group_colors
 
 class ColorizeMaterials(bpy.types.Operator):

@@ -3,9 +3,10 @@ import re
 from math import degrees
 from mathutils import Vector, Quaternion, Matrix
 from uuid import uuid4
-from . object import parent, unparent
 from . math import average_locations, get_loc_matrix, get_rot_matrix
 from . mesh import get_coords
+from . object import parent, unparent
+from . property import get_biggest_index_among_names
 from . import registration as r
 
 def group(context, sel, location='AVERAGE', rotation='WORLD'):
@@ -219,52 +220,25 @@ def get_group_root_empty(empty):
 
     return top_empty
 
-def get_group_default_name():
+def get_group_default_name(basename=None):
     p = r.get_prefs()
+
+    if not basename:
+        basename = p.group_basename
 
     if r.get_prefs().group_auto_name:
-        name = f"{p.group_prefix}{p.group_basename + '_001'}{p.group_suffix}"
-
-        c = 0
-        while name in bpy.data.objects:
-            c += 1
-            name = f"{p.group_prefix}{p.group_basename + '_' + str(c).zfill(3)}{p.group_suffix}"
-
-        return name
+        name = f"{p.group_prefix}{basename}{p.group_suffix}"
 
     else:
-        name = f"{p.group_basename}_001"
+        name = basename
 
-        c = 0
-        while name in bpy.data.objects:
-            c += 1
-            name = f"{p.group_basename + '_' + str(c).zfill(3)}"
-
-        return name
+    if bpy.data.objects.get(name):
+        idx = get_biggest_index_among_names([obj.name for obj in bpy.data.objects if obj.name.startswith(name)])
+        return f"{name}.{str(idx + 1).zfill(3)}"
+    return name
 
 def update_group_name(group):
-    p = r.get_prefs()
-    prefix = p.group_prefix
-    suffix = p.group_suffix
-
-    name = group.name
-    newname = name
-
-    if not name.startswith(prefix):
-        newname = prefix + newname
-
-    if not name.endswith(suffix):
-        newname = newname + suffix
-
-    if name == newname:
-        return
-
-    c = 0
-    while newname in bpy.data.objects:
-        c += 1
-        newname = f"{p.group_prefix}{name + '_' + str(c).zfill(3)}{p.group_suffix}"
-
-    group.name = newname
+    group.name = get_group_default_name(basename=group.name)
    
 def get_group_base_name(name, debug=False):
     p = r.get_prefs()

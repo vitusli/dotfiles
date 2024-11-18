@@ -127,7 +127,7 @@ class SelectHierarchy(bpy.types.Operator):
         if self.direction == 'UP':
             ret = self.select_up(context, context.selected_objects, layers)
 
-            if type(ret) == tuple:
+            if type(ret) is tuple:
                 position, hidden_parents_count = ret
 
                 if position == 'TOP':
@@ -166,7 +166,7 @@ class SelectHierarchy(bpy.types.Operator):
         elif self.direction == 'DOWN':
             ret = self.select_down(context, context.selected_objects, layers)
 
-            if type(ret) == tuple:
+            if type(ret) is tuple:
                 position, hidden_children_count = ret
 
                 if position == 'BOTTOM':

@@ -3,6 +3,7 @@ import bmesh
 from bpy.props import BoolProperty, EnumProperty
 from .. utils.registration import get_prefs 
 from .. utils.view import update_local_view
+from .. utils.modifier import is_mirror, is_array
 from .. items import focus_method_items, focus_levels_items
 
 class Focus(bpy.types.Operator):
@@ -14,6 +15,7 @@ class Focus(bpy.types.Operator):
     levels: EnumProperty(name="Levels", items=focus_levels_items, description="Switch between single-level Blender native Local View and multi-level MACHIN3 Focus", default="MULTIPLE")
     unmirror: BoolProperty(name="Un-Mirror", default=True)
     ignore_mirrors: BoolProperty(name="Ignore Mirrors", default=True)
+    ignore_arrays: BoolProperty(name="Ignore Arrays", default=True)
     invert: BoolProperty(name="Inverted Focus", default=False)
     def draw(self, context):
         layout = self.layout
@@ -23,7 +25,9 @@ class Focus(bpy.types.Operator):
         column = box.column()
 
         if self.method == 'VIEW_SELECTED':
-            column.prop(self, "ignore_mirrors", toggle=True)
+            row = column.row(align=True)
+            row.prop(self, "ignore_mirrors", toggle=True)
+            row.prop(self, "ignore_arrays", toggle=True)
 
         elif self.method == 'LOCAL_VIEW':
             row = column.row()
@@ -47,6 +51,7 @@ class Focus(bpy.types.Operator):
 
     def view_selected(self, context):
         mirrors = []
+        arrays = []
 
         nothing_selected = False
 
@@ -60,9 +65,15 @@ class Focus(bpy.types.Operator):
                 return
 
             if self.ignore_mirrors:
-                mirrors = [mod for obj in sel for mod in obj.modifiers if mod.type == 'MIRROR' and mod.show_viewport and mod.mirror_object]
+                mirrors = [mod for obj in sel for mod in obj.modifiers if is_mirror(mod) and mod.show_viewport and mod.mirror_object]
 
                 for mod in mirrors:
+                    mod.show_viewport = False
+
+            if self.ignore_arrays:
+                arrays = [mod for obj in sel for mod in obj.modifiers if is_array(mod) and mod.show_viewport]
+
+                for mod in arrays:
                     mod.show_viewport = False
 
         elif mode == 'EDIT_MESH':
@@ -79,7 +90,7 @@ class Focus(bpy.types.Operator):
 
         bpy.ops.view3d.view_selected('INVOKE_DEFAULT') if get_prefs().focus_view_transition else bpy.ops.view3d.view_selected()
 
-        for mod in mirrors:
+        for mod in mirrors + arrays:
             mod.show_viewport = True
 
         if nothing_selected:

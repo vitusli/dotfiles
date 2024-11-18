@@ -4,14 +4,14 @@ from bpy_extras.view3d_utils import region_2d_to_origin_3d, region_2d_to_vector_
 import bmesh
 from mathutils import Vector
 from mathutils.geometry import intersect_point_line, intersect_line_line, intersect_line_plane
-from .. utils.graph import get_shortest_path
-from .. utils.ui import popup_message, init_status, finish_status
 from .. utils.draw import draw_lines, draw_point, draw_tris
-from .. utils.snap import Snap
+from .. utils.graph import get_shortest_path
 from .. utils.math import average_locations, get_center_between_verts, get_face_center
-from .. utils.selection import get_edges_vert_sequences, get_selection_islands
-from .. utils.registration import get_addon
 from .. utils.property import step_enum
+from .. utils.registration import get_addon
+from .. utils.selection import get_edges_vert_sequences, get_selection_islands
+from .. utils.snap import Snap
+from .. utils.ui import popup_message, init_status, finish_status
 from .. items import smartvert_mode_items, smartvert_merge_type_items, smartvert_path_type_items, ctrl, alt
 from .. colors import white
 
@@ -500,7 +500,7 @@ class SmartVert(bpy.types.Operator):
 
                 elif len(verts) >= 2:
                     if self.validate_history(active, bm, lazy=True):
-                        bpy.ops.mesh.merge(type='LAST')
+                        bpy.ops.mesh.merge(type='LAST', uvs=True)
 
                     else:
                         self.mouse_merge(context, active, bm, verts=verts, edges=None)
@@ -515,7 +515,7 @@ class SmartVert(bpy.types.Operator):
                     self.center_merge(active, bm, verts, edges=edges)
 
                 elif len(verts) >= 2:
-                    bpy.ops.mesh.merge(type='CENTER')
+                    bpy.ops.mesh.merge(type='CENTER', uvs=True)
 
                 return True
 

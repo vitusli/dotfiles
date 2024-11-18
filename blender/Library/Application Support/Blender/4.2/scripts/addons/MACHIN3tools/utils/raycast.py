@@ -219,9 +219,12 @@ def get_closest(origin, candidates=[], depsgraph=None, debug=False):
 
     return None, None, None, None, None, None
 
-def cast_scene_ray_from_mouse(mousepos, depsgraph, exclude=[], exclude_wire=False, unhide=[], debug=False):
-    region = bpy.context.region
-    region_data = bpy.context.region_data
+def cast_scene_ray_from_mouse(mousepos, depsgraph, exclude=[], exclude_wire=False, unhide=[], region=None, debug=False):
+    if region:
+        region_data = region.data
+    else:
+        region = bpy.context.region
+        region_data = bpy.context.region_data
 
     view_origin = region_2d_to_origin_3d(region, region_data, mousepos)
     view_dir = region_2d_to_vector_3d(region, region_data, mousepos)

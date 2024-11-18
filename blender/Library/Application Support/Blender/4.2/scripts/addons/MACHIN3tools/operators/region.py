@@ -1,10 +1,10 @@
 import bpy
+from .. utils.asset import get_asset_ids, get_asset_import_method, get_asset_library_reference, get_libref_and_catalog, get_registered_library_references, set_asset_import_method, set_asset_library_reference
 from .. utils.draw import draw_fading_label
-from .. utils.ui import get_mouse_pos, warp_mouse, get_window_space_co2d
-from .. utils.system import printd
 from .. utils.registration import get_prefs
+from .. utils.system import printd
+from .. utils.ui import get_mouse_pos, warp_mouse, get_window_space_co2d
 from .. utils.workspace import is_fullscreen
-from .. utils.asset import get_asset_import_method, get_asset_library_reference, get_registered_library_references, set_asset_import_method, set_asset_library_reference
 from .. colors import red, yellow, green
 
 supress_assetbrowser_toggle = False
@@ -203,7 +203,7 @@ class ToggleVIEW3DRegion(bpy.types.Operator):
                     area_height = stored_asset_browser_height + 3
 
                     if debug:
-                        print("  smaller than 37.5%, compensating with", 3, "pixels")
+                        print("  smaller than 12%, compensating with", 3, "pixels")
 
                 elif stored_asset_browser_height / total_height <= 0.375:
                     area_height = stored_asset_browser_height + 2
@@ -471,7 +471,6 @@ class ToggleVIEW3DRegion(bpy.types.Operator):
                     return
 
             if is_fullscreen(context.screen):
-                coords = (context.region.width / 2, 100 * scale if region_type == 'ASSET_BOTTOM' else context.region.height - 100 * scale)
                 draw_fading_label(context, text="We can't Split this Area in Fullscreen ;(", y=100 if region_type == 'ASSET_BOTTOM' else context.region.height - 100, color=red, time=2)
 
             else:
@@ -480,8 +479,6 @@ class ToggleVIEW3DRegion(bpy.types.Operator):
 
     def toggle_area(self, context, areas, region_type, screen_name, scale):
 
-        below_area_split = 'ASSET_BROWSER'
-        top_area_split = 'ASSET_BROWSER'
         is_bottom = region_type == 'ASSET_BOTTOM'
 
         close_area = areas['BOTTOM' if is_bottom else 'TOP']
@@ -743,5 +740,19 @@ class AreaDumper(bpy.types.Operator):
 
                     for d in dir(space.params):
                         print("", d, getattr(space.params, d))
+
+        asset, asset_type, local_id = get_asset_ids(context)#
+
+        print()
+        print("asset:", asset)
+        print(" type:", asset_type)
+        print("   id:", local_id)
+
+        libref, catalog_id, catalog = get_libref_and_catalog(context)
+
+        print()
+        print("libref:", libref)
+        print("catalog_id:", catalog_id)
+        print("   catalog:", catalog)
 
         return {'FINISHED'}

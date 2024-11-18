@@ -1,5 +1,3 @@
-from . utils.math import tween
-
 black = (0, 0, 0)
 white = (1, 1, 1)
 grey = (0.5, 0.5, 0.5)

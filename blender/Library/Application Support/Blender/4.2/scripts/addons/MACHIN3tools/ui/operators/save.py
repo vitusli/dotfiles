@@ -61,14 +61,10 @@ class SaveAs(bpy.types.Operator):
     bl_idname = "machin3.save_as"
     bl_label = "MACHIN3: Save As"
     bl_description = "Save the current file in the desired location\nALT: Save as Copy\nCTRL: Save as Asset"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER'}
 
     copy: BoolProperty(name="Save as Copy", default=False)
     asset: BoolProperty(name="Save as Asset", default=False)
-    def draw(self, context):
-        layout = self.layout
-        column = layout.column()
-
     def invoke(self, context, event):
         self.asset = event.ctrl
         self.copy = event.alt
@@ -78,7 +74,7 @@ class SaveAs(bpy.types.Operator):
         assets = [obj for obj in bpy.data.objects if obj.asset_data]
 
         if self.asset and assets:
-            print(f"\nINFO: Saving as Asset!")
+            print("\nINFO: Saving as Asset!")
             print(f"      Found {len(assets)} root Object/Assembly Assets in the current file")
 
             keep = set()
@@ -176,7 +172,7 @@ class SaveVersionedStartupFile(bpy.types.Operator):
         else:
             bpy.ops.wm.save_homefile()
 
-            self.report({'INFO'}, f'Initial Startup File saved')
+            self.report({'INFO'}, 'Initial Startup File saved')
 
         return {'FINISHED'}
 
@@ -209,7 +205,7 @@ class LoadMostRecent(bpy.types.Operator):
 
 class LoadPrevious(bpy.types.Operator):
     bl_idname = "machin3.load_previous"
-    bl_label = "MACHIN3: Load previous file"
+    bl_label = "Load previous file? File has unsaved Changes!"
     bl_options = {'REGISTER'}
 
     load_ui: BoolProperty()
@@ -238,6 +234,9 @@ class LoadPrevious(bpy.types.Operator):
         return desc
 
     def invoke(self, context, event):
+        if bpy.data.is_dirty:
+            return context.window_manager.invoke_confirm(self, event)
+
         self.load_ui = not event.alt
         self.include_backups = event.ctrl
         return self.execute(context)
@@ -261,7 +260,7 @@ class LoadPrevious(bpy.types.Operator):
 
 class LoadNext(bpy.types.Operator):
     bl_idname = "machin3.load_next"
-    bl_label = "MACHIN3: Load next file"
+    bl_label = "Load next file? File has unsaved Changes!"
     bl_options = {'REGISTER'}
 
     load_ui: BoolProperty()
@@ -290,6 +289,9 @@ class LoadNext(bpy.types.Operator):
         return desc
 
     def invoke(self, context, event):
+        if bpy.data.is_dirty:
+            return context.window_manager.invoke_confirm(self, event)
+
         self.load_ui = not event.alt
         self.include_backups = event.ctrl
         return self.execute(context)
@@ -383,6 +385,11 @@ class Purge(bpy.types.Operator):
             bpy.ops.machin3.remove_decal_orphans()
 
         bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=self.recursive)
+
+        empty_collections = [col for col in bpy.data.collections if not col.objects and not col.children and col.users == 1 and not col.use_fake_user]
+
+        if empty_collections:
+            bpy.data.batch_remove(empty_collections)
 
         after_meshes_count = len(bpy.data.meshes)
         after_curves_count = len(bpy.data.curves)
@@ -527,9 +534,14 @@ class Clean(bpy.types.Operator):
         bpy.data.batch_remove(bpy.data.node_groups)
 
         if annotations := bpy.data.grease_pencils.get('Annotations'):
-            annotations.clear()
+            if bpy.app.version < (4, 3, 0):
+                annotations.clear()
 
-            annotations.layers.new('Note')
+                annotations.layers.new('Note')
+                
+            else:
+                bpy.data.grease_pencils.remove(annotations)
+                bpy.ops.gpencil.annotation_add()
 
         bpy.data.batch_remove(bpy.data.libraries)
 
@@ -545,6 +557,12 @@ class Clean(bpy.types.Operator):
 
         if context.space_data.local_view:
             bpy.ops.view3d.localview(frame_selected=False)
+
+        context.space_data.shading.use_scene_world = False
+        context.space_data.shading.use_scene_world_render = False
+
+        context.space_data.shading.use_scene_lights = False
+        context.space_data.shading.use_scene_lights_render = False
 
         return {'FINISHED'}
 
@@ -721,7 +739,6 @@ class ScreenCast(bpy.types.Operator):
                 if other:
                     context.window.workspace = other[0]
                     context.window.workspace = current
-                    print("hello")
 
                 bpy.ops.wm.sk_screencast_keys('INVOKE_DEFAULT')
 

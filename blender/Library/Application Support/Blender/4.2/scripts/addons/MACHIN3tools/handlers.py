@@ -494,7 +494,6 @@ def pre_undo_save():
             global last_active_operator
 
             C = bpy.context
-            bprefs =  bpy.context.preferences
             
             if debug:
                 print("   active operator:", C.active_operator)

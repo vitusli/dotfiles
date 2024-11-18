@@ -1,7 +1,9 @@
 import bpy
 import os
-from . system import printd, save_json, load_json
+from . object import is_instance_collection
 from . registration import get_prefs
+from . system import printd, save_json, load_json
+from . ui import get_scale
 from .. items import asset_browser_bookmark_props
 
 def get_registered_library_references(context):
@@ -52,6 +54,23 @@ def get_asset_ids(context):
         return active, active.id_type, active.local_id
 
     return None, None, None
+
+def get_display_size_from_area(context):
+    scale = get_scale(context)
+
+    gap = 5 if scale < 2 else 10
+    label = 18
+
+    for region in context.area.regions:
+        if region.type == 'WINDOW':
+
+            if region.width > region.height:
+                return int(((region.height - (gap * 2)) / scale) - label)
+
+            else:
+                return int((region.width - (gap * 2)) / scale)
+
+    return 64
 
 def get_catalogs_from_asset_libraries(context, debug=False):
     asset_libraries = context.preferences.filepaths.asset_libraries
@@ -104,6 +123,26 @@ def update_asset_catalogs(self, context):
     default = get_prefs().preferred_default_catalog if get_prefs().preferred_default_catalog in catalog_names else 'NONE'
     bpy.types.WindowManager.M3_asset_catalogs = bpy.props.EnumProperty(name="Asset Categories", items=items, default=default)
 
+def get_most_used_local_catalog_id():
+    id_types = [bpy.data.collections,
+                bpy.data.materials,
+                bpy.data.node_groups,
+                bpy.data.objects,
+                bpy.data.worlds]
+
+    catalog_ids = {}
+
+    for id_type in id_types:
+        for id in id_type:
+            if id.asset_data:
+                if (catalog_id := id.asset_data.catalog_id) in catalog_ids:
+                    catalog_ids[catalog_id] += 1
+                else:
+                    catalog_ids[catalog_id] = 1
+
+    if catalog_ids:
+        return max(catalog_ids, key=lambda x: catalog_ids[x])
+
 def get_asset_details_from_space(context, space, asset_type='OBJECT', debug=False):
 
     lib_reference = get_asset_library_reference(space.params)
@@ -143,7 +182,7 @@ def get_asset_details_from_space(context, space, asset_type='OBJECT', debug=Fals
         if f"{asset_type.title()}/" in filename:
             return libname, libpath, filename, import_method
 
-    elif asset_type and not '.blend' in filename:
+    elif asset_type and '.blend' not in filename:
         if debug:
             print(" WARNING: LOCAL library, but ALL or library is chosen (instead of current file)!")
 
@@ -191,8 +230,12 @@ def get_libref_and_catalog(context, bookmark=None):
         catalogs = get_catalogs_from_asset_libraries(context, debug=False)
         catalog = catalogs.get(catalog_id, None)
 
-        return libref, catalog_id, catalog
+        if catalog:
 
+            if libref == catalog['libname'] or libref in ['ALL', 'LOCAL']:
+                return libref, catalog_id, catalog
+
+        return libref, None, None
     return None, None, None
 
 def validate_libref_and_catalog(context, libref, catalog_id):
@@ -205,6 +248,12 @@ def validate_libref_and_catalog(context, libref, catalog_id):
 
         return catalog_id in catalogs
 
+    return False
+
+def is_local_assembly_asset(obj):
+    if col := is_instance_collection(obj):
+        if (local_assets := [obj for obj in bpy.data.objects if not obj.library and obj.asset_data and is_instance_collection(obj) and obj.instance_collection == col]):
+            return local_assets[0]
     return False
 
 bookmarks = None

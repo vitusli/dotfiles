@@ -1,18 +1,21 @@
 import bpy
-from bpy.props import StringProperty, BoolProperty
+from bpy.props import StringProperty, BoolProperty, FloatProperty
 import os
-from .. utils.draw import draw_fading_label
-from .. utils.system import abspath, open_folder
+from mathutils import Vector
+from .. utils.asset import get_asset_library_reference, get_most_used_local_catalog_id, get_registered_library_references, set_asset_library_reference, get_asset_import_method, set_asset_import_method, get_asset_details_from_space, get_asset_ids
+from .. utils.draw import draw_fading_label, draw_init, draw_label, draw_tris
 from .. utils.property import step_list
-from .. utils.asset import get_asset_library_reference, get_registered_library_references, set_asset_library_reference, get_asset_import_method, set_asset_import_method, get_asset_details_from_space, get_asset_ids
-from .. utils.workspace import get_window_region_from_area, get_3dview_area
 from .. utils.registration import get_prefs
-from .. colors import red
+from .. utils.system import abspath, open_folder
+from .. utils.ui import get_mouse_pos, get_scale, ignore_events, warp_mouse, wrap_mouse
+from .. utils.workspace import get_window_region_from_area, get_3dview_area
+from .. colors import red, white
 
 class Open(bpy.types.Operator):
     bl_idname = "machin3.filebrowser_open"
     bl_label = "MACHIN3: Open in System's filebrowser"
     bl_description = "Open the current location in the System's own filebrowser\nALT: Open .blend file"
+    bl_options = {'REGISTER'}
 
     path: StringProperty(name="Path")
     blend_file: BoolProperty(name="Open .blend file")
@@ -69,6 +72,7 @@ class Toggle(bpy.types.Operator):
     bl_idname = "machin3.filebrowser_toggle"
     bl_label = "MACHIN3: Toggle Filebrowser"
     bl_description = ""
+    bl_options = {'INTERNAL'}
 
     type: StringProperty()
 
@@ -81,7 +85,7 @@ class Toggle(bpy.types.Operator):
     def description(cls, context, properties):
         if context.area.ui_type == 'ASSETS' and properties.type == 'DISPLAY_TYPE':
             return f"Cycle Display Type: {context.space_data.params.display_type}"
-        return f"Toggle/Cycle SORT, DISPLAY_TYPE, HIDDEN"
+        return "Toggle/Cycle SORT, DISPLAY_TYPE, HIDDEN"
 
     def execute(self, context):
         params = context.space_data.params
@@ -100,7 +104,12 @@ class Toggle(bpy.types.Operator):
 
                 current = get_asset_library_reference(params)
                 next = step_list(current, asset_libraries, 1)
+
                 set_asset_library_reference(params, next)
+
+                if next == 'LOCAL':
+                    if catalog_id := get_most_used_local_catalog_id():
+                        params.catalog_id = catalog_id
 
         elif self.type == 'DISPLAY_TYPE':
 
@@ -127,49 +136,260 @@ class Toggle(bpy.types.Operator):
                 params.use_filter_backup = params.show_hidden
 
             elif context.area.ui_type == 'ASSETS':
-
                 current = get_asset_library_reference(params)
 
                 if current != 'LOCAL':
-                    import_methods = ['LINK', 'APPEND', 'APPEND_REUSE']
+                    if context.region.width > context.region.height:
+                        bpy.ops.machin3.set_asset_import_method('INVOKE_DEFAULT')
 
-                    if bpy.app.version >= (3, 5, 0):
-                        import_methods.insert(0, 'FOLLOW_PREFS')
+                    else:
+                        if current != 'LOCAL':
+                            import_methods = ['LINK', 'APPEND', 'APPEND_REUSE', 'FOLLOW_PREFS']
 
-                    current = get_asset_import_method(params)
-                    next = step_list(current, import_methods, 1)
-                    set_asset_import_method(params, next)
+                            current = get_asset_import_method(params)
+                            next = step_list(current, import_methods, 1)
+                            set_asset_import_method(params, next)
 
         return {'FINISHED'}
 
-class CycleThumbs(bpy.types.Operator):
-    bl_idname = "machin3.filebrowser_cycle_thumbnail_size"
-    bl_label = "MACHIN3: Cycle Thumbnail Size"
+class AdjustThumbnailSize(bpy.types.Operator):
+    bl_idname = "machin3.filebrowser_adjust_thumbnail_size"
+    bl_label = "MACHIN3: Adjust Thumbnail Size"
     bl_description = ""
     bl_options = {'REGISTER', 'UNDO'}
 
-    reverse: BoolProperty(name="Reverse Cycle Diretion")
+    size: FloatProperty(name="Thumbnail Size", min=24, max=256)
 
     @classmethod
     def poll(cls, context):
         if context.area:
-            return context.area.type == 'FILE_BROWSER' and context.space_data.params.display_type == 'THUMBNAIL'
 
-    def execute(self, context):
-        params = context.space_data.params
+            if context.area.type == 'FILE_BROWSER' and context.space_data.params.display_type == 'THUMBNAIL':
+                return True
 
-        if bpy.app.version >= (4, 0, 0):
-            if params.display_size == 256 and not self.reverse:
-                params.display_size = 16
+            elif context.region.type == 'ASSET_SHELF':
+                return True
 
-            elif params.display_size == 16 and self.reverse:
-                params.display_size = 256
+    def draw_HUD(self, context):
+        if context.area == self.area:
+            draw_init(self, None)
+
+            scale_compensate = context.preferences.system.ui_scale * get_prefs().modal_hud_scale
+            title = f"{int(self.size)}"
+
+            if self.shelf:
+                text_size = int(self.size * scale_compensate)
+
+                x = (self.window_size.x / 2)
+
+                if self.shelf_region.alignment == "BOTTOM":
+                    y = self.shelf_region.y - context.region.y + self.shelf_region.height + 10 * scale_compensate
+                else:
+                    y = context.region.height - self.shelf_region.height - text_size
 
             else:
-                params.display_size += -20 if self.reverse else 20
+                text_size = int(self.window_size.y * 0.75 / scale_compensate)
+
+                x = (self.window_size.x / 2)
+                y = (self.window_size.y / 2) - ((text_size * scale_compensate) / 3)  # not sure why 3, but 2 does not center it properly
+
+            draw_label(context, title=title, coords=Vector((x, y)), center=True, size=text_size, color=white, alpha=0.5)
+
+            if not self.shelf:
+                if self.size == 24:
+                    draw_label(context, title="very smol", coords=Vector((x, y)), offset=text_size / 4, center=True, size=12 / scale_compensate, color=white, alpha=0.25)
+                elif self.size == 256:
+                    draw_label(context, title="very big", coords=Vector((x, y)), offset=text_size / 4, center=True, size=12 / scale_compensate, color=white, alpha=0.25)
+
+    def modal(self, context, event):
+        if ignore_events(event):
+            return {'RUNNING_MODAL'}
+
+        context.area.tag_redraw()
+
+        if event.type == 'MOUSEMOVE':
+            get_mouse_pos(self, context, event)
+            wrap_mouse(self, context, x=True, y=False)
+
+            deltax = self.mouse_pos.x - self.last_mouse.x
+            sensitivity = 0.1 * self.scale
+
+            self.size += deltax * sensitivity
+            self.set_thumbnail_size(context, int(self.size))
+
+        if event.value == 'RELEASE' or event.type in ['LEFTMOUSE', 'SPACE']:
+            self.finish(context)#
+            return {'FINISHED'}
+
+        elif event.type in ['RIGHTMOUSE', 'ESC']:
+            self.finish(context)
+
+            context.space_data.params.display_size = self.init_size
+            return {'CANCELLED'}
+
+        self.last_mouse = self.mouse_pos
+        return {'RUNNING_MODAL'}
+
+    def finish(self, context):
+        if self.shelf:
+            bpy.types.SpaceView3D.draw_handler_remove(self.HUD, 'WINDOW')
+        else:
+            bpy.types.SpaceFileBrowser.draw_handler_remove(self.HUD, 'WINDOW')
+
+        context.window.cursor_set('DEFAULT')
+
+    def invoke(self, context, event):
+        self.shelf, self.shelf_region, self.shelf_space = self.get_asset_shelf(context)
+
+        self.size = self.get_thumbnail_size(context)
+        self.init_size = self.size
+
+        get_mouse_pos(self, context, event)
+        context.window.cursor_set('SCROLL_X')
+        self.last_mouse = self.mouse_pos
+
+        self.scale = get_scale(context)
+
+        for region in context.area.regions:
+            if region.type == 'WINDOW':
+                self.window_size = Vector((region.width, region.height))
+                break
+
+        self.area = context.area
+
+        if self.shelf:
+            self.HUD = bpy.types.SpaceView3D.draw_handler_add(self.draw_HUD, (context, ), 'WINDOW', 'POST_PIXEL')
+        else:
+            self.HUD = bpy.types.SpaceFileBrowser.draw_handler_add(self.draw_HUD, (context, ), 'WINDOW', 'POST_PIXEL')
+
+        warp_mouse(self, context, self.mouse_pos)
+
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}
+
+    def get_thumbnail_size(self, context):
+        if context.region.type == 'ASSET_SHELF':
+            return context.asset_shelf.preview_size
 
         else:
-            sizes = ['TINY', 'SMALL', 'NORMAL', 'LARGE']
-            params.display_size = step_list(params.display_size, sizes, -1 if self.reverse else 1, loop=True)
+            return context.space_data.params.display_size
 
-        return {'FINISHED'}
+    def set_thumbnail_size(self, context, size):
+        if context.region.type == 'ASSET_SHELF':
+            context.asset_shelf.preview_size = size
+
+        else:
+            context.space_data.params.display_size = size
+
+    def get_asset_shelf(self, context):
+        if context.region.type == 'ASSET_SHELF':
+            for space in context.area.spaces:
+                if space.type == "FILE_BROWSER":
+                    return context.asset_shelf, context.region, space
+
+        return None, None, None
+
+class SetAssetImportMethod(bpy.types.Operator):
+    bl_idname = "machin3.set_asset_import_method"
+    bl_label = "MACHIN3: Set Asset Import Method"
+    bl_description = "Set Asset Import Method"
+    bl_options = {'REGISTER'}
+
+    @classmethod
+    def poll(cls, context):
+        if context.area:
+            if context.area.type == 'FILE_BROWSER' and context.area.ui_type == 'ASSETS':
+                params = context.space_data.params
+                return get_asset_library_reference(params) != 'LOCAL'
+
+    def draw_HUD(self, context):
+        if context.area == self.area:
+            indices = ((0, 1, 2), (0, 2, 3))
+
+            bgcolor = context.preferences.themes['Default'].file_browser.space.back
+
+            for method, field in self.fields.items():
+                is_hover = method == self.method
+
+                color = (0.1, 0.1, 0.1) if is_hover else bgcolor
+                draw_tris(field['coords'], indices, color=color, alpha=0.9)
+
+                alpha = 1 if is_hover else 0.5
+                title = method.replace('_', ' ').title()
+                size = 14 if is_hover else 12
+                draw_label(context, title=title, coords=field['center'], size=size, alpha=alpha)
+
+    def modal(self, context, event):
+        if ignore_events(event):
+            return {'RUNNING_MODAL'}
+
+        context.area.tag_redraw()
+
+        if event.type == 'MOUSEMOVE':
+            get_mouse_pos(self, context, event)
+
+            for method, field in self.fields.items():
+                if self.mouse_pos.x > field['coords'][0].x and self.mouse_pos.x <= field['coords'][1].x:
+                    if self.mouse_pos.y > field['coords'][0].y and self.mouse_pos.y <= field['coords'][3].y:
+                        self.method = method
+
+                        if (method := get_asset_import_method(context.space_data.params)) != self.method:
+                            set_asset_import_method(context.space_data.params, self.method)
+
+                        break
+
+        if event.value == 'RELEASE' or event.type in ['LEFTMOUSE', 'SPACE']:
+            self.finish(context)
+
+            return {'FINISHED'}
+
+        elif event.type in ['RIGHTMOUSE', 'ESC']:
+            self.finish(context)
+
+            set_asset_import_method(context.space_data.params, self.init_method)
+            return {'CANCELLED'}
+
+        return {'RUNNING_MODAL'}
+
+    def finish(self, context):
+        bpy.types.SpaceFileBrowser.draw_handler_remove(self.HUD, 'WINDOW')
+        context.window.cursor_set('DEFAULT')
+
+    def invoke(self, context, event):
+        params = context.space_data.params
+        import_methods = ['LINK', 'APPEND', 'APPEND_REUSE', 'FOLLOW_PREFS']
+
+        self.method = get_asset_import_method(params)
+        self.init_method = self.method
+
+        get_mouse_pos(self, context, event)
+        context.window.cursor_set('SCROLL_X')
+        self.last_mouse = self.mouse_pos
+
+        self.scale = get_scale(context)
+
+        for region in context.area.regions:
+            if region.type == 'WINDOW':
+                self.fields = {}
+
+                for idx, method in enumerate(import_methods):
+                    width = region.width / len(import_methods)
+
+                    coords = [Vector((width * idx, 0, 0)), Vector((width * (idx + 1) , 0, 0)), Vector((width * (idx + 1), region.height, 0)), Vector((width * idx, region.height, 0))]
+                    center = Vector((width * idx + width / 2, region.height / 2))
+
+                    data = {'index': idx,
+                            'coords': coords,
+                            'center': center}
+
+                    self.fields[method] = data
+
+                break
+
+        self.area = context.area
+        self.HUD = bpy.types.SpaceFileBrowser.draw_handler_add(self.draw_HUD, (context, ), 'WINDOW', 'POST_PIXEL')
+
+        warp_mouse(self, context, self.mouse_pos)
+
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}

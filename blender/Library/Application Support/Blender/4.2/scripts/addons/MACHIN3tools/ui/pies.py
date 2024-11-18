@@ -1,22 +1,27 @@
+import importlib
+import os
+
 import bpy
 from bpy.types import Menu
-import os
-import importlib
-from .. utils.registration import get_prefs, get_addon
-from .. utils.ui import get_icon
-from .. utils.collection import get_scene_collections
-from .. utils.system import abspath, get_temp_dir
-from .. utils.tools import get_tools_from_context, get_active_tool
-from .. utils.light import get_area_light_poll
-from .. utils.modifier import get_auto_smooth
-from .. utils.view import get_shading_type
-from .. utils.render import get_user_presets, is_eevee_view, is_volume, is_cycles_view
-from .. utils.scene import get_composite_dispersion, get_composite_glare
-from .. utils.world import get_use_world, get_world_surface_inputs, is_image_world
+
+from ..utils.asset import is_local_assembly_asset
+from ..utils.collection import get_scene_collections
+from ..utils.light import get_area_light_poll
+from ..utils.modifier import get_auto_smooth
+from ..utils.object import is_instance_collection, is_linked_object
+from ..utils.registration import get_addon, get_prefs
+from ..utils.render import get_user_presets, is_cycles_view, is_eevee_view, is_volume
+from ..utils.scene import get_composite_dispersion, get_composite_glare
+from ..utils.system import abspath, get_temp_dir
+from ..utils.tools import get_active_tool, get_tool_options, get_tools_from_context
+from ..utils.ui import get_icon
+from ..utils.view import get_shading_type
+from ..utils.world import get_use_world, get_world_surface_inputs, is_image_world
 
 hardops = None
 boxcutter = None
-hops_name = 'Hops'
+hops_name = None
+hops_tool_names = ['Hops', 'Hopsedit']
 bc_name = 'BC'
 
 batchops = None
@@ -25,6 +30,10 @@ guidemesh = None
 decalmachine = None
 hypercursor = None
 hypercursor_version = None
+
+has_fbx = None
+has_better_fbx = None
+has_gltf = None
 
 class PieModes(Menu):
     bl_idname = "MACHIN3_MT_modes_pie"
@@ -48,7 +57,11 @@ class PieModes(Menu):
         pie = layout.menu_pie()
 
         if active:
-            if context.mode in ['OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'POSE', 'EDIT_CURVE', 'EDIT_TEXT', 'EDIT_SURFACE', 'EDIT_METABALL', 'EDIT_LATTICE', 'EDIT_GPENCIL', 'PAINT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL', 'EDIT_CURVES', 'SCULPT_CURVES']:
+            if context.mode in ['OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'POSE', 'EDIT_CURVE', 'EDIT_TEXT', 'EDIT_SURFACE', 'EDIT_METABALL', 'EDIT_LATTICE', *self.get_grease_pencil_modes(), 'EDIT_CURVES', 'SCULPT_CURVES']:
+
+                if context.mode == 'OBJECT' and (linked := is_linked_object(active)):
+                    self.draw_linked(context, active, linked, pie)
+                    return
 
                 if active.type == 'MESH':
                     self.draw_mesh(context, active, toolsettings, pie, dual_mesh, hypercursor_version)
@@ -62,14 +75,14 @@ class PieModes(Menu):
                 elif active.type == 'CURVES':
                     self.draw_curves(context, active, pie)
 
-                elif active.type == 'GPENCIL':
-                    self.draw_gpencil(context, active, toolsettings, pie)
+                elif active.type in ['GPENCIL', 'GREASEPENCIL']:
+                    self.draw_grease_pencil(context, active, toolsettings, pie)
 
                 elif active.type == 'EMPTY':
-                    self.draw_empty(active, pie)
+                    self.draw_empty(active, None, pie)
 
             elif context.mode == "SCULPT":
-                self.draw_sculpt(context, pie)
+                self.draw_sculpt(context, active, pie)
 
             elif context.mode == "PAINT_TEXTURE":
                 self.draw_paint_texture(context, active, pie)
@@ -81,114 +94,120 @@ class PieModes(Menu):
                 self.draw_paint_vertex(context, active, pie)
 
             elif context.mode == "PARTICLE":
-                self.draw_particle(context, toolsettings, pie)
+                self.draw_particle(context, active, toolsettings, pie)
 
         else:
             self.draw_no_active(dual_mesh, pie)
 
-    def draw_mesh(self, context, active, toolsettings, pie, dual_mesh, hypercursor_version):
-        def draw_mesh_in_view3d():
-            if active.library:
-                blendpath = abspath(active.library.filepath)
-                library = active.library.name
+    def draw_linked(self, context, active, linked, pie):
+        if active.type == 'EMPTY' and get_prefs().activate_assetbrowser_tools:
+            self.draw_empty(active, linked, pie)
 
-                pie.separator()
+        else:
+            blendpath = abspath(linked[0].library.filepath)
+            library = linked[0].library.name
 
-                pie.separator()
+            pie.separator()
 
-                pie.operator("object.make_local", text=f"Make Local").type = 'SELECT_OBDATA_MATERIAL'
+            pie.separator()
 
-                op = pie.operator("machin3.open_library_blend", text=f" {os.path.basename(blendpath)}", icon='FILE_BLEND')
-                op.blendpath = blendpath
-                op.library = library
-
-                pie.separator()
-
-                pie.separator()
-
-                pie.separator()
-
-                pie.separator()
+            if get_prefs().activate_assetbrowser_tools:
+                pie.operator("machin3.make_id_local", text="Make Local")
 
             else:
+                pie.operator("object.make_local", text="Make Local").type = 'SELECT_OBDATA'
 
-                depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[0]
-                pie.operator("machin3.mesh_mode", text="Vertex", depress=depress, icon_value=get_icon('vertex')).mode = 'VERT'
+            op = pie.operator("machin3.open_library_blend", text=f"Open {os.path.basename(blendpath)}", icon='FILE_BLEND')
+            op.blendpath = blendpath
+            op.library = library
 
-                depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[2]
-                pie.operator("machin3.mesh_mode", text="Face", depress=depress, icon_value=get_icon('face')).mode = 'FACE'
+            pie.separator()
 
-                depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[1]
-                pie.operator("machin3.mesh_mode", text="Edge", depress=depress, icon_value=get_icon('edge')).mode = 'EDGE'
+            pie.separator()
 
-                if dual_mesh:
-                    pie.operator("object.dual_mesh_edit", text="Dual Mesh Edit", icon="ARROW_LEFTRIGHT")
+            pie.separator()
 
-                else:
-                    text, icon = ("Edit", get_icon('edit_mesh')) if active.mode == "OBJECT" else ("Object", get_icon('object'))
-                    pie.operator("machin3.edit_mode", text=text, icon_value=icon)
+            pie.separator()
 
-                self.draw_mesh_tiny(context, pie)
+    def draw_mesh(self, context, active, toolsettings, pie, dual_mesh, hypercursor_version):
+        def draw_mesh_in_view3d():
+            depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[0]
+            pie.operator("machin3.mesh_mode", text="Vertex", depress=depress, icon_value=get_icon('vertex')).mode = 'VERT'
 
-                if context.mode == 'EDIT_MESH' and hypercursor:
+            depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[2]
+            pie.operator("machin3.mesh_mode", text="Face", depress=depress, icon_value=get_icon('face')).mode = 'FACE'
+
+            depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[1]
+            pie.operator("machin3.mesh_mode", text="Edge", depress=depress, icon_value=get_icon('edge')).mode = 'EDGE'
+
+            if dual_mesh:
+                pie.operator("object.dual_mesh_edit", text="Dual Mesh Edit", icon="ARROW_LEFTRIGHT")
+
+            else:
+                text, icon = ("Edit", get_icon('edit_mesh')) if active.mode == "OBJECT" else ("Object", get_icon('object'))
+                pie.operator("machin3.edit_mode", text=text, icon_value=icon)
+
+            self.draw_mesh_tiny(context, pie)
+
+            if context.mode == 'EDIT_MESH' and hypercursor:
+                box = pie.split()
+                column = box.column()
+
+                row = column.row(align=True)
+                row.scale_y = 1.2
+
+                row.label(text="Gizmos")
+
+                depress = active.HC.show_geometry_gizmo_previews if hypercursor_version < (0, 9, 16) else active.HC.geometry_gizmos_show_previews
+                row.operator("machin3.toggle_gizmo_data_layer_preview", text="Preview", depress=depress)
+
+                if tuple(bpy.context.scene.tool_settings.mesh_select_mode) in [(False, True, False), (False, False, True)]:
+                    row.operator("machin3.toggle_gizmo", text="Toggle")
+
+            else:
+                pie.separator()
+
+            if get_prefs().activate_surface_slide:
+                hassurfaceslide = [mod for mod in active.modifiers if mod.type == 'SHRINKWRAP' and 'SurfaceSlide' in mod.name]
+
+                if context.mode == 'EDIT_MESH':
                     box = pie.split()
-                    column = box.column()
+                    column = box.column(align=True)
 
                     row = column.row(align=True)
                     row.scale_y = 1.2
 
-                    row.label(text="Gizmos")
-
-                    depress = active.HC.show_geometry_gizmo_previews if hypercursor_version < (0, 9, 16) else active.HC.geometry_gizmos_show_previews
-                    row.operator("machin3.toggle_gizmo_data_layer_preview", text="Preview", depress=depress)
-
-                    if tuple(bpy.context.scene.tool_settings.mesh_select_mode) in [(False, True, False), (False, False, True)]:
-                        row.operator("machin3.toggle_gizmo", text="Toggle")
-
-                else:
-                    pie.separator()
-
-                if get_prefs().activate_surface_slide:
-                    hassurfaceslide = [mod for mod in active.modifiers if mod.type == 'SHRINKWRAP' and 'SurfaceSlide' in mod.name]
-
-                    if context.mode == 'EDIT_MESH':
-                        box = pie.split()
-                        column = box.column(align=True)
-
-                        row = column.row(align=True)
-                        row.scale_y = 1.2
-
-                        if hassurfaceslide:
-                            row.operator("machin3.finish_surface_slide", text='Finish Surface Slide', icon='OUTLINER_DATA_SURFACE')
-                        else:
-                            row.operator("machin3.surface_slide", text='Surface Slide', icon='OUTLINER_DATA_SURFACE')
-
-                    elif hassurfaceslide:
-                        box = pie.split()
-                        column = box.column(align=True)
-
-                        row = column.row(align=True)
-                        row.scale_y = 1.2
+                    if hassurfaceslide:
                         row.operator("machin3.finish_surface_slide", text='Finish Surface Slide', icon='OUTLINER_DATA_SURFACE')
-
                     else:
-                        pie.separator()
+                        row.operator("machin3.surface_slide", text='Surface Slide', icon='OUTLINER_DATA_SURFACE')
 
-                else:
-                    pie.separator()
-
-                if context.mode == "EDIT_MESH":
+                elif hassurfaceslide:
                     box = pie.split()
-                    column = box.column()
+                    column = box.column(align=True)
 
-                    row = column.row()
+                    row = column.row(align=True)
                     row.scale_y = 1.2
-                    row.prop(context.scene.M3, "pass_through", text="Pass Through" if context.scene.M3.pass_through else "Occlude", icon="XRAY")
-
-                    column.prop(toolsettings, "use_mesh_automerge", text="Auto Merge")
+                    row.operator("machin3.finish_surface_slide", text='Finish Surface Slide', icon='OUTLINER_DATA_SURFACE')
 
                 else:
                     pie.separator()
+
+            else:
+                pie.separator()
+
+            if context.mode == "EDIT_MESH":
+                box = pie.split()
+                column = box.column()
+
+                row = column.row()
+                row.scale_y = 1.2
+                row.prop(context.scene.M3, "pass_through", text="Pass Through" if context.scene.M3.pass_through else "Occlude", icon="XRAY")
+
+                column.prop(toolsettings, "use_mesh_automerge", text="Auto Merge")
+
+            else:
+                pie.separator()
 
         def draw_mesh_in_image_editor():
             if context.mode == "OBJECT":
@@ -308,96 +327,184 @@ class PieModes(Menu):
 
         pie.separator()
 
-    def draw_gpencil(self, context, active, toolsettings, pie):
-        gpd = context.gpencil_data
+    def draw_grease_pencil(self, context, active, toolsettings, pie):
 
-        pie.operator("object.mode_set", text="Edit Mode", icon='EDITMODE_HLT').mode = "EDIT_GPENCIL"
+        def draw_4_2_and_earlier():
+            gpd = context.gpencil_data
 
-        pie.operator("object.mode_set", text="Sculpt", icon='SCULPTMODE_HLT').mode = "SCULPT_GPENCIL"
+            pie.operator("object.mode_set", text="Edit Mode", icon='EDITMODE_HLT').mode = "EDIT_GPENCIL"
 
-        pie.operator("object.mode_set", text="Draw", icon='GREASEPENCIL').mode = "PAINT_GPENCIL"
+            pie.operator("object.mode_set", text="Sculpt", icon='SCULPTMODE_HLT').mode = "SCULPT_GPENCIL"
 
-        text, icon = ("Draw", "GREASEPENCIL") if active.mode == "OBJECT" else ("Object", "OBJECT_DATAMODE")
+            pie.operator("object.mode_set", text="Draw", icon='GREASEPENCIL').mode = "PAINT_GPENCIL"
 
-        if active.mode == "WEIGHT_GPENCIL":
-            pie.operator("gpencil.weightmode_toggle", text=text, icon=icon)
-        elif active.mode == "EDIT_GPENCIL":
-            pie.operator("gpencil.editmode_toggle", text=text, icon=icon)
-        elif active.mode == "SCULPT_GPENCIL":
-            pie.operator("gpencil.sculptmode_toggle", text=text, icon=icon)
+            if context.mode == 'OBJECT':
+                pie.separator()
+
+            else:
+                pie.operator("object.mode_set", text="Object", icon='OBJECT_DATAMODE').mode = "OBJECT"
+
+            self.draw_grease_pencil_tiny(context, pie)
+
+            pie.separator()
+
+            box = pie.split()
+            column = box.column()
+            column.scale_y = 1.2
+            column.scale_x = 1.2
+
+            if context.mode in ["EDIT_GPENCIL"]:
+                row = column.row(align=True)
+                row.prop(toolsettings, "gpencil_selectmode_edit", text="", expand=True)
+
+                row.prop(active.data, "use_curve_edit", text="", icon='IPO_BEZIER')
+
+            elif context.mode == "PAINT_GPENCIL":
+                row = column.row(align=True)
+                row.prop(toolsettings, "use_gpencil_draw_onback", text="", icon="MOD_OPACITY")
+                row.prop(toolsettings, "use_gpencil_automerge_strokes", text="", icon="AUTOMERGE_OFF")
+                row.prop(toolsettings, "use_gpencil_weight_data_add", text="", icon="WPAINT_HLT")
+                row.prop(toolsettings, "use_gpencil_draw_additive", text="", icon="FREEZE")
+
+                row.separator()
+                row.prop(active.data, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
+
+            box = pie.split()
+            column = box.column(align=True)
+
+            if context.mode in "EDIT_GPENCIL":
+                row = column.row(align=True)
+                row.prop(gpd, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
+
+                r = row.row(align=True)
+                r.active = gpd.use_multiedit
+                r.popover(panel="VIEW3D_PT_gpencil_multi_frame", text="Multiframe")
+
+            elif context.mode == "SCULPT_GPENCIL":
+                row = column.row(align=True)
+                row.prop(toolsettings, "use_gpencil_select_mask_point", text="")
+                row.prop(toolsettings, "use_gpencil_select_mask_stroke", text="")
+                row.prop(toolsettings, "use_gpencil_select_mask_segment", text="")
+
+                row.separator()
+                row.prop(gpd, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
+
+                r = row.row(align=True)
+                r.active = gpd.use_multiedit
+                r.popover(panel="VIEW3D_PT_gpencil_multi_frame", text="Multiframe")
+
+            elif context.mode == "PAINT_GPENCIL":
+                row = column.row(align=True)
+                row.prop_with_popover(toolsettings, "gpencil_stroke_placement_view3d", text="", panel="VIEW3D_PT_gpencil_origin")
+
+        def draw_4_3():
+
+            pie.operator("object.mode_set", text="Edit Mode", icon='EDITMODE_HLT').mode = "EDIT"
+
+            pie.operator("object.mode_set", text="Sculpt", icon='SCULPTMODE_HLT').mode = "SCULPT_GREASE_PENCIL"
+
+            pie.operator("object.mode_set", text="Draw", icon='GREASEPENCIL').mode = "PAINT_GREASE_PENCIL"
+
+            if context.mode == 'OBJECT':
+                pie.separator()
+
+            else:
+                pie.operator("object.mode_set", text="Object", icon='OBJECT_DATAMODE').mode = "OBJECT"
+
+            self.draw_grease_pencil_tiny(context, pie)
+
+            pie.separator()
+
+            box = pie.split()
+            column = box.column()
+            column.scale_y = 1.2
+            column.scale_x = 1.2
+
+            if context.mode == "EDIT_GREASE_PENCIL":
+                row = column.row(align=True)
+
+                modes = ['POINT', 'STROKE', 'SEGMENT']
+                icons = ['GP_SELECT_POINTS', 'GP_SELECT_STROKES', 'GP_SELECT_BETWEEN_STROKES']
+
+                for mode, icon in zip(modes, icons):
+                    row.operator( "grease_pencil.set_selection_mode", text="", icon=icon, depress=toolsettings.gpencil_selectmode_edit == mode).mode = mode
+
+            elif context.mode == "PAINT_GREASE_PENCIL":
+                row = column.row(align=True)
+                row.prop(toolsettings, "use_gpencil_draw_onback", text="", icon="MOD_OPACITY")
+                row.prop(toolsettings, "use_gpencil_automerge_strokes", text="", icon="AUTOMERGE_OFF")
+                row.prop(toolsettings, "use_gpencil_weight_data_add", text="", icon="WPAINT_HLT")
+                row.prop(toolsettings, "use_gpencil_draw_additive", text="", icon="FREEZE")
+
+                row.separator()
+                row.prop(toolsettings, "use_grease_pencil_multi_frame_editing", text="", icon='GP_MULTIFRAME_EDITING')
+
+            box = pie.split()
+            column = box.column(align=True)
+
+            if context.mode in "EDIT_GREASE_PENCIL":
+                row = column.row(align=True)
+                row.prop(toolsettings, "use_grease_pencil_multi_frame_editing", text="", icon='GP_MULTIFRAME_EDITING')
+
+                r = row.row(align=True)
+                r.active = toolsettings.use_grease_pencil_multi_frame_editing
+                r.popover(panel="VIEW3D_PT_grease_pencil_multi_frame", text="Multiframe")
+
+            elif context.mode in ["SCULPT_GREASE_PENCIL", "VERTEX_GREASE_PENCIL"]:
+                row = column.row(align=True)
+                row.prop(toolsettings, "use_gpencil_select_mask_point", text="")
+                row.prop(toolsettings, "use_gpencil_select_mask_stroke", text="")
+                row.prop(toolsettings, "use_gpencil_select_mask_segment", text="")
+
+                row.separator()
+                row.prop(toolsettings, "use_grease_pencil_multi_frame_editing", text="", icon='GP_MULTIFRAME_EDITING')
+
+                r = row.row(align=True)
+                r.active = toolsettings.use_grease_pencil_multi_frame_editing
+                r.popover(panel="VIEW3D_PT_grease_pencil_multi_frame", text="Multiframe")
+
+            elif context.mode == "WEIGHT_GREASE_PENCIL":
+                row = column.row(align=True)
+                row.prop(toolsettings, "use_grease_pencil_multi_frame_editing", text="", icon='GP_MULTIFRAME_EDITING')
+
+                r = row.row(align=True)
+                r.active = toolsettings.use_grease_pencil_multi_frame_editing
+                r.popover(panel="VIEW3D_PT_grease_pencil_multi_frame", text="Multiframe")
+
+            elif context.mode == "PAINT_GREASE_PENCIL":
+                row = column.row(align=True)
+                row.prop_with_popover(toolsettings, "gpencil_stroke_placement_view3d", text="", panel="VIEW3D_PT_grease_pencil_origin")
+
+        if bpy.app.version < (4, 3, 0):
+            draw_4_2_and_earlier()
+
         else:
-            pie.operator("gpencil.paintmode_toggle", text=text, icon=icon)
+            draw_4_3()
 
-        self.draw_gpencil_tiny(context, pie)
-
-        self.draw_gpencil_extra(active, pie)
-
-        box = pie.split()
-        column = box.column()
-        column.scale_y = 1.2
-        column.scale_x = 1.2
-
-        if context.mode == "PAINT_GPENCIL":
-            row = column.row(align=True)
-            row.prop(toolsettings, "use_gpencil_draw_onback", text="", icon="MOD_OPACITY")
-            row.prop(toolsettings, "use_gpencil_weight_data_add", text="", icon="WPAINT_HLT")
-            row.prop(toolsettings, "use_gpencil_draw_additive", text="", icon="FREEZE")
-
-        elif context.mode == "EDIT_GPENCIL":
-            row = column.row(align=True)
-            row.prop(toolsettings, "gpencil_selectmode_edit", text="", expand=True)
-            row.prop(active.data, "use_curve_edit", text="", icon='IPO_BEZIER')
-
-        box = pie.split()
-        column = box.column(align=True)
-
-        if context.mode == "EDIT_GPENCIL":
-            row = column.row(align=True)
-            row.prop(gpd, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
-
-            r = row.row(align=True)
-            r.active = gpd.use_multiedit
-            r.popover(panel="VIEW3D_PT_gpencil_multi_frame", text="Multiframe")
-
-            row = column.row(align=True)
-            row.popover(panel="VIEW3D_PT_tools_grease_pencil_interpolate", text="Interpolate")
-
-        elif context.mode == "SCULPT_GPENCIL":
-            row = column.row(align=True)
-            row.prop(toolsettings, "use_gpencil_select_mask_point", text="")
-            row.prop(toolsettings, "use_gpencil_select_mask_stroke", text="")
-            row.prop(toolsettings, "use_gpencil_select_mask_segment", text="")
-
-            row.separator()
-            row.prop(gpd, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
-
-            r = row.row(align=True)
-            r.active = gpd.use_multiedit
-            r.popover(panel="VIEW3D_PT_gpencil_multi_frame", text="Multiframe")
-
-    def draw_empty(self, active, pie):
+    def draw_empty(self, active, linked, pie):
         if get_prefs().activate_assetbrowser_tools:
-            is_instance_collection = active.instance_collection and active.instance_type == 'COLLECTION'
-            is_linked = bool(active.library)
+            is_linked = bool(linked)
+            is_assembly = bool(is_instance_collection(active))
+            is_local_asset = bool(is_local_assembly_asset(active))
 
             if is_linked:
-                blendpath = abspath(active.library.filepath)
-                library = active.library.name
+                blendpath = abspath(linked[0].library.filepath)
+                library = linked[0].library.name
 
-            if is_instance_collection:
-                pie.operator("machin3.disassemble_asset", text="Disassemble Asset", icon='NETWORK_DRIVE')
+            if is_assembly:
+                pie.operator("machin3.disassemble_assembly", text="Disassemble", icon='PARTICLE_DATA')
 
             else:
                 pie.separator()
 
-            if is_instance_collection:
-                pie.operator("machin3.remove_assembly_asset", text="Remove Asset", icon='TRASH')
+            if is_assembly and not is_local_asset:
+                pie.operator("machin3.remove_assembly_asset", text="Remove Assembly", icon='TRASH').remove_asset = False
 
             else:
                 pie.separator()
 
             if is_linked:
-                pie.operator("machin3.make_asset_local", text=f"Make Local")
+                pie.operator("machin3.make_id_local", text="Make Local")
 
             else:
                 pie.separator()
@@ -412,34 +519,40 @@ class PieModes(Menu):
 
             pie.separator()
 
-            pie.separator()
+            if is_local_asset:
+                pie.operator("machin3.remove_assembly_asset", text="Remove Assembly", icon='TRASH').remove_asset = False
+
+            else:
+                pie.separator()
 
             pie.separator()
 
-            pie.separator()
+            if is_local_asset:
+                pie.operator("machin3.remove_assembly_asset", text="Remove Asset", icon_value=get_icon('cancel')).remove_asset = True
 
-    def draw_gpencil_tiny(self, context, pie):
+            else:
+                pie.separator()
+
+    def draw_grease_pencil_tiny(self, context, pie):
         box = pie.split()
         column = box.column()
         column.scale_y = 1.5
         column.scale_x = 1.5
 
         row = column.row(align=True)
-        r = row.row(align=True)
-        r.active = False if context.mode == "WEIGHT_GPENCIL" else True
-        r.operator("object.mode_set", text="", icon="WPAINT_HLT").mode = 'WEIGHT_GPENCIL'
-        r = row.row(align=True)
-        r.active = False if context.mode == "PAINT_GPENCIL" else True
-        r.operator("object.mode_set", text="", icon="GREASEPENCIL").mode = 'PAINT_GPENCIL'
-        r = row.row(align=True)
-        r.active = False if context.mode == "SCULPT_GPENCIL" else True
-        r.operator("object.mode_set", text="", icon="SCULPTMODE_HLT").mode = 'SCULPT_GPENCIL'
-        r = row.row(align=True)
-        r.active = False if context.mode == "OBJECT" else True
-        r.operator("object.mode_set", text="", icon="OBJECT_DATA").mode = 'OBJECT'
-        r = row.row(align=True)
-        r.active = False if context.mode == 'EDIT_GPENCIL' else True
-        r.operator("object.mode_set", text="", icon="EDITMODE_HLT").mode = 'EDIT_GPENCIL'
+
+        if bpy.app.version < (4, 3, 0):
+            modes = ['WEIGHT_GPENCIL', 'VERTEX_GPENCIL', 'PAINT_GPENCIL', 'SCULPT_GPENCIL', 'OBJECT', 'EDIT_GPENCIL']
+
+        else:
+            modes = ['WEIGHT_GREASE_PENCIL', 'VERTEX_GREASE_PENCIL', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'OBJECT', 'EDIT']
+
+        icons = ['WPAINT_HLT', 'VPAINT_HLT', 'GREASEPENCIL', 'SCULPTMODE_HLT', 'OBJECT_DATA', 'EDITMODE_HLT']
+
+        for mode, icon in zip(modes, icons):
+            r = row.row(align=True)
+            r.active = context.mode != mode
+            r.operator("object.mode_set", text="", icon=icon).mode = mode
 
     def draw_mesh_tiny(self, context, pie):
         box = pie.split()
@@ -449,26 +562,21 @@ class PieModes(Menu):
 
         row = column.row(align=True)
 
-        if False:
-            r = row.row(align=True)
-            r.active = False if context.mode == 'PAINT_GPENCIL' else True
-            r.operator("machin3.surface_draw_mode", text="", icon="GREASEPENCIL")
-
         if context.active_object.particle_systems:
             r = row.row(align=True)
-            r.active = False if context.mode == 'TEXTURE_PAINT' else True
+            r.active = False if context.mode == 'PARTICLE' else True
             r.operator("object.mode_set", text="", icon="PARTICLEMODE").mode = 'PARTICLE_EDIT'
 
         r = row.row(align=True)
-        r.active = False if context.mode == 'TEXTURE_PAINT' else True
+        r.active = False if context.mode == 'PAINT_TEXTURE' else True
         r.operator("object.mode_set", text="", icon="TPAINT_HLT").mode = 'TEXTURE_PAINT'
 
         r = row.row(align=True)
-        r.active = False if context.mode == 'WEIGHT_PAINT' else True
+        r.active = False if context.mode == 'PAINT_WEIGHT' else True
         r.operator("object.mode_set", text="", icon="WPAINT_HLT").mode = 'WEIGHT_PAINT'
 
         r = row.row(align=True)
-        r.active = False if context.mode == 'VERTEX_PAINT' else True
+        r.active = False if context.mode == 'PAINT_VERTEX' else True
         r.operator("object.mode_set", text="", icon="VPAINT_HLT").mode = 'VERTEX_PAINT'
 
         r = row.row(align=True)
@@ -499,7 +607,7 @@ class PieModes(Menu):
         r.active = False if context.mode == 'OBJECT' else True
         r.operator("object.mode_set", text="", icon="OBJECT_DATA").mode = 'OBJECT'
 
-    def draw_gpencil_extra(self, active, pie):
+    def draw_grease_pencil_extra(self, active, toolsettings, pie):
         box = pie.split()
         column = box.column(align=True)
 
@@ -507,27 +615,49 @@ class PieModes(Menu):
         row.scale_y = 1.5
 
         row.operator('machin3.shrinkwrap_grease_pencil', text='Shrinkwrap')
-        row.prop(active.data, 'zdepth_offset', text='')
 
-        opacity = [mod for mod in active.grease_pencil_modifiers if mod.type == 'GP_OPACITY']
-        thickness = [mod for mod in active.grease_pencil_modifiers if mod.type == 'GP_THICK']
+        if bpy.app.version < (4, 3, 0):
+            row.prop(active.data, "zdepth_offset", text='')
+
+        else:
+            row.prop(toolsettings, "gpencil_surface_offset", text='')
+
+        if bpy.app.version < (4, 3, 0):
+            opacity = [mod for mod in active.grease_pencil_modifiers if mod.type == 'GP_OPACITY']
+            thickness = [mod for mod in active.grease_pencil_modifiers if mod.type == 'GP_THICK']
+
+        else:
+            opacity = [mod for mod in active.modifiers if mod.type == 'GREASE_PENCIL_OPACITY']
+            thickness = [mod for mod in active.modifiers if mod.type == 'GREASE_PENCIL_THICKNESS']
 
         if opacity:
             row = column.row(align=True)
-            row.prop(opacity[0], 'factor', text='Opacity')
+
+            factor = 'factor' if bpy.app.version < (4, 3, 0) else 'color_factor'
+            row.prop(opacity[0], factor, text='Opacity')
 
         if thickness:
             row = column.row(align=True)
             row.prop(thickness[0], 'thickness_factor', text='Thickness')
 
-    def draw_sculpt(self, context, pie):
-        pie.separator()
+    def get_grease_pencil_modes(self):
+        if bpy.app.version < (4, 3, 0):
+            return ['EDIT_GPENCIL', 'PAINT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL', 'VERTEX_GPENCIL']
 
-        pie.separator()
+        else:
+            return ['EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'WEIGHT_GREASE_PENCIL', 'VERTEX_GREASE_PENCIL']
 
-        pie.separator()
+    def draw_sculpt(self, context, active, pie):
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[0]
+        pie.operator("machin3.mesh_mode", text="Vertex", depress=depress, icon_value=get_icon('vertex')).mode = 'VERT'
 
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[2]
+        pie.operator("machin3.mesh_mode", text="Face", depress=depress, icon_value=get_icon('face')).mode = 'FACE'
+
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[1]
+        pie.operator("machin3.mesh_mode", text="Edge", depress=depress, icon_value=get_icon('edge')).mode = 'EDGE'
+
+        pie.operator("object.mode_set", text="Object", icon="OBJECT_DATA").mode = 'OBJECT'
 
         self.draw_mesh_tiny(context, pie)
 
@@ -538,13 +668,16 @@ class PieModes(Menu):
         pie.separator()
 
     def draw_paint_texture(self, context, active, pie):
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[0]
+        pie.operator("machin3.mesh_mode", text="Vertex", depress=depress, icon_value=get_icon('vertex')).mode = 'VERT'
 
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[2]
+        pie.operator("machin3.mesh_mode", text="Face", depress=depress, icon_value=get_icon('face')).mode = 'FACE'
 
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[1]
+        pie.operator("machin3.mesh_mode", text="Edge", depress=depress, icon_value=get_icon('edge')).mode = 'EDGE'
 
-        pie.separator()
+        pie.operator("object.mode_set", text="Object", icon="OBJECT_DATA").mode = 'OBJECT'
 
         self.draw_mesh_tiny(context, pie)
 
@@ -561,13 +694,16 @@ class PieModes(Menu):
         pie.separator()
 
     def draw_paint_weight(self, context, active, pie):
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[0]
+        pie.operator("machin3.mesh_mode", text="Vertex", depress=depress, icon_value=get_icon('vertex')).mode = 'VERT'
 
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[2]
+        pie.operator("machin3.mesh_mode", text="Face", depress=depress, icon_value=get_icon('face')).mode = 'FACE'
 
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[1]
+        pie.operator("machin3.mesh_mode", text="Edge", depress=depress, icon_value=get_icon('edge')).mode = 'EDGE'
 
-        pie.separator()
+        pie.operator("object.mode_set", text="Object", icon="OBJECT_DATA").mode = 'OBJECT'
 
         self.draw_mesh_tiny(context, pie)
 
@@ -585,13 +721,16 @@ class PieModes(Menu):
         pie.separator()
 
     def draw_paint_vertex(self, context, active, pie):
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[0]
+        pie.operator("machin3.mesh_mode", text="Vertex", depress=depress, icon_value=get_icon('vertex')).mode = 'VERT'
 
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[2]
+        pie.operator("machin3.mesh_mode", text="Face", depress=depress, icon_value=get_icon('face')).mode = 'FACE'
 
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[1]
+        pie.operator("machin3.mesh_mode", text="Edge", depress=depress, icon_value=get_icon('edge')).mode = 'EDGE'
 
-        pie.separator()
+        pie.operator("object.mode_set", text="Object", icon="OBJECT_DATA").mode = 'OBJECT'
 
         self.draw_mesh_tiny(context, pie)
 
@@ -608,14 +747,17 @@ class PieModes(Menu):
 
         pie.separator()
 
-    def draw_particle(self, context, toolsettings, pie):
-        pie.separator()
+    def draw_particle(self, context, active, toolsettings, pie):
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[0]
+        pie.operator("machin3.mesh_mode", text="Vertex", depress=depress, icon_value=get_icon('vertex')).mode = 'VERT'
 
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[2]
+        pie.operator("machin3.mesh_mode", text="Face", depress=depress, icon_value=get_icon('face')).mode = 'FACE'
 
-        pie.separator()
+        depress = active.mode == 'EDIT' and context.scene.tool_settings.mesh_select_mode[1]
+        pie.operator("machin3.mesh_mode", text="Edge", depress=depress, icon_value=get_icon('edge')).mode = 'EDGE'
 
-        pie.separator()
+        pie.operator("object.mode_set", text="Object", icon="OBJECT_DATA").mode = 'OBJECT'
 
         self.draw_mesh_tiny(context, pie)
 
@@ -687,7 +829,8 @@ class PieSave(Menu):
         scene = context.scene
         wm = context.window_manager
 
-        is_export = any(getattr(get_prefs(), f"save_pie_show_{ext}_export") for ext in ['obj', 'plasticity', 'fbx', 'usd', 'stl'])
+        is_export = any(getattr(get_prefs(), f"save_pie_show_{ext}_export") for ext in ['obj', 'plasticity', 'fbx', 'usd', 'stl', 'gltf'])
+
         is_saved = bpy.data.filepath
         is_saved_in_temp_dir = is_saved and get_temp_dir(context) == os.path.dirname(bpy.data.filepath)
 
@@ -760,21 +903,34 @@ class PieSave(Menu):
     def draw_center_column_top(self, context, layout):
         column = layout.column(align=True)
 
+        global has_fbx, has_better_fbx, has_gltf
+
+        if has_fbx is None:
+            has_fbx = get_addon("FBX format")[0]
+
+        if has_better_fbx is None:
+            has_better_fbx = get_addon("Better FBX Importer & Exporter")[0]
+
+        if has_gltf is None:
+            has_gltf = get_addon("glTF 2.0 format")[0]
+
+        factor = 0.3 if has_better_fbx and get_prefs().save_pie_show_better_fbx_export else 0.25 if get_prefs().save_pie_show_plasticity_export else 0.15
+
         if get_prefs().save_pie_show_obj_export:
-            row = column.split(factor=0.25, align=True)
+            row = column.split(factor=factor, align=True)
             row.label(text="OBJ")
             r = row.row(align=True)
 
             r.operator("wm.obj_import", text="Import", icon_value=get_icon('import'))
 
             op = r.operator("wm.obj_export", text="Export", icon_value=get_icon('export'))
-            op.export_selected_objects = True if context.selected_objects else False
+            op.export_selected_objects = bool(context.selected_objects)
 
             if path := get_prefs().save_pie_obj_folder:
                 op.filepath = os.path.join(path, 'untitled.obj')
 
         if get_prefs().save_pie_show_plasticity_export:
-            row = column.split(factor=0.25, align=True)
+            row = column.split(factor=factor, align=True)
             row.label(text="Plasticity")
             r = row.row(align=True)
 
@@ -783,21 +939,21 @@ class PieSave(Menu):
             op.forward_axis = 'Y'
 
             op = r.operator("wm.obj_export", text="Export", icon_value=get_icon('export'))
-            op.export_selected_objects = True if context.selected_objects else False
+            op.export_selected_objects = bool(context.selected_objects)
             op.up_axis = 'Z'
             op.forward_axis = 'Y'
 
             if path := get_prefs().save_pie_plasticity_folder:
                 op.filepath = os.path.join(path, 'untitled.obj')
 
-        if get_prefs().save_pie_show_fbx_export:
-            row = column.split(factor=0.25, align=True)
+        if has_fbx and get_prefs().save_pie_show_fbx_export:
+            row = column.split(factor=factor, align=True)
             row.label(text="FBX")
             r = row.row(align=True)
             r.operator("import_scene.fbx", text="Import", icon_value=get_icon('import'))
 
             op = r.operator("export_scene.fbx", text="Export", icon_value=get_icon('export'))
-            op.use_selection = True if context.selected_objects else False
+            op.use_selection = bool(context.selected_objects)
 
             if get_prefs().fbx_export_apply_scale_all:
                 op.apply_scale_options='FBX_SCALE_ALL'
@@ -805,40 +961,55 @@ class PieSave(Menu):
             if path := get_prefs().save_pie_fbx_folder:
                 op.filepath = os.path.join(path, 'untitled.fbx')
 
-        if get_prefs().save_pie_show_usd_export:
-            row = column.split(factor=0.25, align=True)
+        if has_better_fbx and get_prefs().save_pie_show_better_fbx_export:
+            row = column.split(factor=factor, align=True)
+            row.label(text="Better FBX")
+            r = row.row(align=True)
+            r.operator("better_import.fbx", text="Import", icon_value=get_icon('import'))
+
+            op = r.operator("better_export.fbx", text="Export", icon_value=get_icon('export'))
+            op.use_selection = bool(context.selected_objects)
+
+            if path := get_prefs().save_pie_better_fbx_folder:
+                op.filepath = os.path.join(path, 'untitled.fbx')
+
+        if get_prefs().save_pie_show_usd_export and getattr(bpy.ops.wm, 'usd_import', False):
+            row = column.split(factor=factor, align=True)
             row.label(text="USD")
             r = row.row(align=True)
             r.operator("wm.usd_import", text="Import", icon_value=get_icon('import'))
 
             op = r.operator("wm.usd_export", text="Export", icon_value=get_icon('export'))
-            op.selected_objects_only = True if context.selected_objects else False
+            op.selected_objects_only = bool(context.selected_objects)
 
             if path := get_prefs().save_pie_usd_folder:
                 op.filepath = os.path.join(path, 'untitled.usdc')
 
         if get_prefs().save_pie_show_stl_export:
-            row = column.split(factor=0.25, align=True)
+            row = column.split(factor=factor, align=True)
             row.label(text="STL")
             r = row.row(align=True)
 
-            if bpy.app.version >= (4, 2, 0):
-                r.operator("wm.stl_import", text="Import", icon_value=get_icon('import'))
+            r.operator("wm.stl_import", text="Import", icon_value=get_icon('import'))
 
-                op = r.operator("wm.stl_export", text="Export", icon_value=get_icon('export'))
-                op.export_selected_objects = True if context.selected_objects else False
+            op = r.operator("wm.stl_export", text="Export", icon_value=get_icon('export'))
+            op.export_selected_objects = bool(context.selected_objects)
 
-                if path := get_prefs().save_pie_stl_folder:
-                    op.filepath = os.path.join(path, 'untitled.stl')
+            if path := get_prefs().save_pie_stl_folder:
+                op.filepath = os.path.join(path, 'untitled.stl')
 
-            else:
-                r.operator("import_mesh.stl", text="Import", icon_value=get_icon('import'))
+        if has_gltf and get_prefs().save_pie_show_gltf_export:
+            row = column.split(factor=factor, align=True)
+            row.label(text="glTF")
+            r = row.row(align=True)
 
-                op = r.operator("export_mesh.stl", text="Export", icon_value=get_icon('export'))
-                op.use_selection = True if context.selected_objects else False
+            r.operator("import_scene.gltf", text="Import", icon_value=get_icon('import'))
 
-                if path := get_prefs().save_pie_stl_folder:
-                    op.filepath = os.path.join(path, 'untitled.stl')
+            op = r.operator("export_scene.gltf", text="Export", icon_value=get_icon('export'))
+            op.use_selection = bool(context.selected_objects)
+
+            if path := get_prefs().save_pie_gltf_folder:
+                op.filepath = os.path.join(path, 'untitled.gltf')
 
     def draw_center_column_bottom(self, layout, is_in_temp_dir=False):
         column = layout.column(align=True)
@@ -866,6 +1037,10 @@ class PieSave(Menu):
         r = row.row(align=True)
         r.operator("wm.call_menu", text='', icon_value=get_icon('external_data')).name = "TOPBAR_MT_file_external_data"
         r.operator("machin3.purge_orphans", text="Purge")
+
+        if bpy.data.libraries:
+            row = column.row(align=True)
+            row.operator("machin3.reload_libraries", text="Reload Libraries", icon='LINK_BLEND')
 
         if get_prefs().activate_assetbrowser_tools and get_prefs().show_assembly_asset_creation_in_save_pie:
             column.separator()
@@ -959,6 +1134,8 @@ class PieShading(Menu):
 
         overlay = context.space_data.overlay
         perspective_type = view.region_3d.view_perspective
+
+        sel = context.selected_objects
         is_sel_wire = any(obj.show_wire for obj in context.selected_objects)
 
         column = layout.column(align=True)
@@ -1016,11 +1193,11 @@ class PieShading(Menu):
 
             if context.mode in 'OBJECT':
                 depress = overlay.show_wireframes or is_sel_wire
-                text = 'Wireframe (all + selection)' if overlay.show_wireframes and is_sel_wire else 'Wireframe (all)' if overlay.show_wireframes else 'Wireframe (selection)' if is_sel_wire else 'Wireframe'
+                text = 'Wireframe (all + selection)' if overlay.show_wireframes and is_sel_wire else 'Wireframe (all)' if (overlay.show_wireframes or not sel) else 'Wireframe (selection)' if (is_sel_wire or sel or active) else 'Wireframe'
 
             elif context.mode == 'EDIT_MESH':
                 depress = m3.show_edit_mesh_wire
-                text = 'Wireframe (xray)' if m3.show_edit_mesh_wire else 'Wireframe'
+                text = 'Wireframe (XRay)'
 
             elif context.mode == 'SCULPT':
                 depress = active.show_wire
@@ -1294,7 +1471,7 @@ class PieShading(Menu):
         scene = context.scene
         m3 = scene.M3
 
-        column = layout.column(align=True) 
+        column = layout.column(align=True)
 
         if view.shading.type == "SOLID":
 
@@ -1413,7 +1590,7 @@ class PieShading(Menu):
                     r.prop(world, 'sun_angle')
                     r.prop(world, 'sun_shadow_maximum_resolution', text="Resolution")
 
-                inputs = get_world_surface_inputs(world)
+                inputs = get_world_surface_inputs(world, debug=False)
 
                 if inputs:
                     for idx, (name, input) in enumerate(inputs.items()):
@@ -1691,7 +1868,7 @@ class PieShading(Menu):
                     data = is_volume(context, simple=False)
 
                     if data['is_world_volume']:
-                        split = col.split(factor=0.29, align=True)                                       
+                        split = col.split(factor=0.29, align=True)
                         split.prop(eevee, "use_volume_custom_range", text="Custom Range")
 
                         row = split.row(align=True)
@@ -1704,7 +1881,7 @@ class PieShading(Menu):
                         density = node.inputs[2]
                         emission_color = node.inputs[7]
                         emission_strength = node.inputs[6]
-                        
+
                         if not all(i.links for i in [color, density, emission_color, emission_strength]):
                             row = col.row(align=True)
 
@@ -1798,7 +1975,7 @@ class PieShading(Menu):
                     density = node.inputs[2]
                     emission_color = node.inputs[7]
                     emission_strength = node.inputs[6]
-                    
+
                     if not all(i.links for i in [color, density, emission_color, emission_strength]):
                         row = col.row(align=True)
 
@@ -1957,10 +2134,16 @@ class PieViewport(Menu):
 
     def draw_camera_box(self, scene, view, layout):
         column = layout.column(align=True)
-
         column.scale_x = 2
 
-        row = column.row()
+        is_cam_view =  view.region_3d.view_perspective == 'CAMERA'
+
+        if scene.camera and is_cam_view:
+            row = column.row(align=True)
+            row.scale_y = 1.5
+            row.prop(scene.camera, 'name', text='')
+
+        row = column.row(align=True)
         row.scale_y = 1.5
         row.operator("machin3.smart_view_cam", text="Smart View Cam", icon='HIDE_OFF')
 
@@ -1968,9 +2151,9 @@ class PieViewport(Menu):
             cams = [obj for obj in scene.objects if obj.type == "CAMERA"]
 
             if len(cams) > 1:
-                row = column.row(align=True)
-                row.operator("machin3.next_cam", text="(Q) Previous Cam").previous = True
-                row.operator("machin3.next_cam", text="(W) Next Cam").previous = False
+                split = column.split(factor=0.49, align=True)
+                split.operator("machin3.next_cam", text="(Q) Previous Cam").previous = True
+                split.operator("machin3.next_cam", text="(W) Next Cam").previous = False
 
         row = column.split(align=True)
         row.operator("machin3.make_cam_active")
@@ -2014,44 +2197,47 @@ class PieViewport(Menu):
         if view.region_3d.view_perspective == 'CAMERA':
             cam = context.scene.camera
 
-            text, icon = ("Orthographic", "VIEW_ORTHO") if cam.data.type == "PERSP" else ("Perspective", "VIEW_PERSPECTIVE")
-            row.operator("machin3.toggle_cam_persportho", text=text, icon=icon)
+            if cam:
+                text, icon = ("Orthographic", "VIEW_ORTHO") if cam.data.type == "PERSP" else ("Perspective", "VIEW_PERSPECTIVE")
+                row.operator("machin3.toggle_cam_persportho", text=text, icon=icon)
 
-            if cam.data.type == "PERSP":
-                column.prop(cam.data, "lens")
+                if cam.data.type == "PERSP":
+                    row = column.row(align=True)
+                    row.prop(cam.data, "lens")
+                    row.prop(cam.data, "sensor_width")
 
-            elif cam.data.type == "ORTHO":
-                column.prop(cam.data, "ortho_scale")
+                elif cam.data.type == "ORTHO":
+                    column.prop(cam.data, "ortho_scale")
 
-            dof = cam.data.dof
-
-            row = column.row(align=True)
-            icon = "TRIA_DOWN" if dof.use_dof else "TRIA_RIGHT"
-            row.prop(dof, 'use_dof', icon=icon)
-
-            if dof.use_dof:
-                row.prop(dof, 'aperture_fstop')
+                dof = cam.data.dof
 
                 row = column.row(align=True)
-                row.prop(dof, 'aperture_blades')
-                row.prop(dof, 'aperture_rotation')
-                row.prop(dof, 'aperture_ratio')
+                icon = "TRIA_DOWN" if dof.use_dof else "TRIA_RIGHT"
+                row.prop(dof, 'use_dof', icon=icon)
 
-                row = column.row(align=True)
+                if dof.use_dof:
+                    row.prop(dof, 'aperture_fstop')
 
-                row.operator("machin3.select_dof_object", text='', icon='RESTRICT_SELECT_OFF')
-                row.prop(dof, "focus_object", text='')
+                    row = column.row(align=True)
+                    row.prop(dof, 'aperture_blades')
+                    row.prop(dof, 'aperture_rotation')
+                    row.prop(dof, 'aperture_ratio')
 
-                r = row.row(align=True)
-                r.scale_x = 1.5
-                r.operator("machin3.create_dof_empty", text='', icon='SPHERE')
+                    row = column.row(align=True)
 
-                r = row.row(align=True)
-                r.enabled = not dof.focus_object
-                r.prop(dof, "focus_distance", text='')
+                    row.operator("machin3.select_dof_object", text='', icon='RESTRICT_SELECT_OFF')
+                    row.prop(dof, "focus_object", text='')
 
-                if bpy.app.version >= (4, 2, 0):
-                    r.operator("ui.eyedropper_depth", icon='EYEDROPPER', text="").prop_data_path = "scene.camera.data.dof.focus_distance"
+                    r = row.row(align=True)
+                    r.scale_x = 1.5
+                    r.operator("machin3.create_dof_empty", text='', icon='SPHERE')
+
+                    r = row.row(align=True)
+                    r.enabled = not dof.focus_object
+                    r.prop(dof, "focus_distance", text='')
+
+                    if bpy.app.version >= (4, 2, 0):
+                        r.operator("ui.eyedropper_depth", icon='EYEDROPPER', text="").prop_data_path = "scene.camera.data.dof.focus_distance"
 
         else:
             text, icon = ("Orthographic", "VIEW_ORTHO") if r3d.is_perspective else ("Perspective", "VIEW_PERSPECTIVE")
@@ -2454,9 +2640,8 @@ class PieCursor(Menu):
                 row.separator()
                 row.label(text="Object Origin")
 
-                column.scale_x = 1.1
-
                 if tuple(context.scene.tool_settings.mesh_select_mode) in [(True, False, False), (False, True, False), (False, False, True)]:
+                    column.scale_x = 1.1
 
                     sel, icon = ('Vert', 'VERTEXSEL') if tuple(context.scene.tool_settings.mesh_select_mode) == (True, False, False) else ('Edge', 'EDGESEL') if tuple(context.scene.tool_settings.mesh_select_mode) == (False, True, False) else ('Face', 'FACESEL') if tuple(bpy.context.scene.tool_settings.mesh_select_mode) == (False, False, True) else (None, None)
 
@@ -2466,6 +2651,7 @@ class PieCursor(Menu):
                     row.operator("machin3.origin_to_cursor", text="to Cursor", icon='LAYER_ACTIVE')
 
                 else:
+                    column.scale_x = 1.5
 
                     row = column.split(factor=0.25, align=True)
                     row.scale_y = 1.5
@@ -2507,18 +2693,22 @@ class PieTransform(Menu):
         m3 = context.scene.M3
         active = context.active_object
 
-        op = pie.operator('machin3.set_transform_preset', text='Local')
+        pivot = context.scene.tool_settings.transform_pivot_point
+        orientation = context.scene.transform_orientation_slots[0].type
+
+        op = pie.operator('machin3.set_transform_preset', text='Local', depress=pivot == 'MEDIAN_POINT' and orientation == 'LOCAL')
         op.pivot = 'MEDIAN_POINT'
         op.orientation = 'LOCAL'
 
-        orientation = 'VIEW' if m3.custom_views_local or m3.custom_views_cursor else 'GLOBAL'
-        op = pie.operator('machin3.set_transform_preset', text=orientation.capitalize())
+        ori = 'VIEW' if m3.custom_views_local or m3.custom_views_cursor else 'GLOBAL'
+        op = pie.operator('machin3.set_transform_preset', text=ori.capitalize(), depress=pivot == 'MEDIAN_POINT' and orientation == ori)
         op.pivot = 'MEDIAN_POINT'
-        op.orientation = orientation
+        op.orientation = ori
 
-        op = pie.operator('machin3.set_transform_preset', text='Active')
+        ori = 'NORMAL' if context.mode in ['EDIT_MESH', 'EDIT_ARMATURE'] else 'LOCAL'
+        op = pie.operator('machin3.set_transform_preset', text='Active', depress=pivot == 'ACTIVE_ELEMENT' and orientation == ori)
         op.pivot = 'ACTIVE_ELEMENT'
-        op.orientation = 'NORMAL' if context.mode in ['EDIT_MESH', 'EDIT_ARMATURE'] else 'LOCAL'
+        op.orientation = ori
 
         box = pie.split()
 
@@ -2538,11 +2728,12 @@ class PieTransform(Menu):
 
         pie.separator()
 
-        op = pie.operator('machin3.set_transform_preset', text='Individual')
+        ori = 'NORMAL' if context.mode in ['EDIT_MESH', 'EDIT_ARMATURE'] else 'LOCAL'
+        op = pie.operator('machin3.set_transform_preset', text='Individual', depress=pivot == 'INDIVIDUAL_ORIGINS' and orientation == ori)
         op.pivot = 'INDIVIDUAL_ORIGINS'
-        op.orientation = 'NORMAL' if context.mode in ['EDIT_MESH', 'EDIT_ARMATURE'] else 'LOCAL'
+        op.orientation = ori
 
-        op = pie.operator('machin3.set_transform_preset', text='Cursor')
+        op = pie.operator('machin3.set_transform_preset', text='Cursor', depress=pivot == 'CURSOR' and orientation == 'CURSOR')
         op.pivot = 'CURSOR'
         op.orientation = 'CURSOR'
 
@@ -2622,33 +2813,42 @@ class PieSnapping(Menu):
         absolute_grid = get_prefs().snap_show_absolute_grid
         volume = get_prefs().snap_show_volume
 
-        op = pie.operator('machin3.set_snapping_preset', text='Vertex', depress=ts.snap_elements == {'VERTEX'} and ts.snap_target == 'CLOSEST' and not ts.use_snap_align_rotation, icon='SNAP_VERTEX')
+        op = pie.operator('machin3.set_snapping_preset', text='Vertex', depress='VERTEX' in ts.snap_elements  and ts.snap_target == 'CLOSEST' and not ts.use_snap_align_rotation, icon='SNAP_VERTEX')
         op.element = 'VERTEX'
         op.target = 'CLOSEST'
         op.align_rotation = False
 
         if absolute_grid or (absolute_grid and volume):
-            op = pie.operator('machin3.set_snapping_preset', text='Absolute Grid', depress=ts.snap_elements == {'INCREMENT'} and ts.use_snap_grid_absolute, icon='SNAP_GRID')
-            op.element = 'INCREMENT'
+
+            if bpy.app.version >= (4, 2, 0):
+                depress = 'GRID' in ts.snap_elements and ts.snap_target == "CLOSEST"
+            else:
+                depress = 'INCREMENT' in ts.snap_elements and ts.use_snap_grid_absolute
+
+            op = pie.operator('machin3.set_snapping_preset', text='Absolute Grid', depress=depress, icon='SNAP_GRID')
+            op.element = 'GRID' if bpy.app.version >= (4, 2, 0) else 'INCREMENT'
+
+            if bpy.app.version >= (4, 2, 0):
+                op.target = 'CLOSEST'
 
         elif volume:
-            op = pie.operator('machin3.set_snapping_preset', text='Volume', depress=ts.snap_elements == {'VOLUME'}, icon='SNAP_VOLUME')
+            op = pie.operator('machin3.set_snapping_preset', text='Volume', depress='VOLUME' in ts.snap_elements, icon='SNAP_VOLUME')
             op.element = 'VOLUME'
 
         else:
-            op = pie.operator('machin3.set_snapping_preset', text='Surface', depress=ts.snap_elements == {'FACE'} and ts.snap_target == 'MEDIAN' and ts.use_snap_align_rotation, icon='SNAP_FACE')
+            op = pie.operator('machin3.set_snapping_preset', text='Surface', depress='FACE' in ts.snap_elements and ts.snap_target == 'MEDIAN' and ts.use_snap_align_rotation, icon='SNAP_FACE')
             op.element = 'FACE'
             op.target = 'MEDIAN'
             op.align_rotation = True
 
         if absolute_grid or volume:
-            op = pie.operator('machin3.set_snapping_preset', text='Surface', depress=ts.snap_elements == {'FACE'} and ts.snap_target == 'MEDIAN' and ts.use_snap_align_rotation, icon='SNAP_FACE')
+            op = pie.operator('machin3.set_snapping_preset', text='Surface', depress='FACE' in ts.snap_elements and ts.snap_target == 'MEDIAN' and ts.use_snap_align_rotation, icon='SNAP_FACE')
             op.element = 'FACE'
             op.target = 'MEDIAN'
             op.align_rotation = True
 
         else:
-            op = pie.operator('machin3.set_snapping_preset', text='Edge', depress=ts.snap_elements == {'EDGE'} and ts.snap_target == 'CLOSEST' and not ts.use_snap_align_rotation, icon='SNAP_EDGE')
+            op = pie.operator('machin3.set_snapping_preset', text='Edge', depress='EDGE' in ts.snap_elements and ts.snap_target == 'CLOSEST' and not ts.use_snap_align_rotation, icon='SNAP_EDGE')
             op.element = 'EDGE'
             op.target = 'CLOSEST'
             op.align_rotation = False
@@ -2664,7 +2864,7 @@ class PieSnapping(Menu):
         pie.separator()
 
         if absolute_grid or volume:
-            op = pie.operator('machin3.set_snapping_preset', text='Edge', depress=ts.snap_elements == {'EDGE'} and ts.snap_target == 'CLOSEST' and not ts.use_snap_align_rotation, icon='SNAP_EDGE')
+            op = pie.operator('machin3.set_snapping_preset', text='Edge', depress='EDGE' in ts.snap_elements and ts.snap_target == 'CLOSEST' and not ts.use_snap_align_rotation, icon='SNAP_EDGE')
             op.element = 'EDGE'
             op.target = 'CLOSEST'
             op.align_rotation = False
@@ -2673,7 +2873,7 @@ class PieSnapping(Menu):
             pie.separator()
 
         if absolute_grid and volume:
-            op = pie.operator('machin3.set_snapping_preset', text='Volume', depress=ts.snap_elements == {'VOLUME'}, icon='SNAP_VOLUME')
+            op = pie.operator('machin3.set_snapping_preset', text='Volume', depress='VOLUME' in ts.snap_elements, icon='SNAP_VOLUME')
             op.element = 'VOLUME'
 
         else:
@@ -2682,7 +2882,7 @@ class PieSnapping(Menu):
     def draw_center_column(self, tool_settings, layout):
         column = layout.column(align=True)
 
-        if tool_settings.snap_elements == {'INCREMENT'}:
+        if bpy.app.version < (4, 2, 0) and tool_settings.snap_elements == {'INCREMENT'}:
             column.scale_x = 1.5
 
         row = column.row(align=True)
@@ -2691,7 +2891,7 @@ class PieSnapping(Menu):
         row.prop(get_prefs(), 'snap_show_volume', text='', icon='SNAP_VOLUME')
         row.prop(get_prefs(), 'snap_show_absolute_grid', text='', icon='SNAP_GRID')
 
-        if tool_settings.snap_elements == {'INCREMENT'}:
+        if bpy.app.version < (4, 2, 0) and tool_settings.snap_elements == {'INCREMENT'}:
             row = column.row(align=True)
             row.scale_y = 1.25
             row.prop(tool_settings, 'use_snap_grid_absolute')
@@ -2706,6 +2906,11 @@ class PieSnapping(Menu):
             row.scale_y = 1.25
             row.prop(tool_settings, 'use_snap_align_rotation')
 
+        column.separator()
+        row = column.row()
+        row.alignment = "CENTER"
+        row.label(text=" + ".join(e for e in tool_settings.snap_elements).title())
+
 class PieCollections(Menu):
     bl_idname = "MACHIN3_MT_collections_pie"
     bl_label = "Collections"
@@ -2714,11 +2919,10 @@ class PieCollections(Menu):
         global batchops, decalmachine
 
         sel = context.selected_objects
-        active = context.active_object
 
         if batchops is None:
             batchops = get_addon("Batch Operations™")[0]
-        
+
         if decalmachine is None:
             decalmachine = get_addon("DECALmachine")[0]
 
@@ -3042,47 +3246,82 @@ class PieTools(Menu):
         ts = context.scene.tool_settings
 
         tools = get_tools_from_context(context)
-        
+
+        active = context.active_object
+
         active_tool = get_active_tool(context).idname
 
-        active_layer = context.active_annotation_layer
+        annotate_layer = context.active_annotation_layer
 
-        global hypercursor, hardops, boxcutter, hops_name, bc_name 
+        is_annotate = active_tool in ['builtin.annotate', 'builtin.annotate_line', 'builtin.annotate_eraser']
+
+        is_grease_pencil = active and active.type in ['GPENCIL', 'GREASEPENCIL']
+
+        global hypercursor, hardops, hops_name, hops_tool_names, boxcutter, bc_name
 
         if hypercursor is None:
             hypercursor = get_addon("HyperCursor")[0]
 
         if hardops is None:
-            hardops = get_addon('Hard Ops 9')[0]
+            hardops, hops_name = get_addon('Hard Ops 9')[:2]
 
         if boxcutter is None:
             boxcutter, bc_name = get_addon('BoxCutter')[:2]
 
-        show_hardops = hardops and get_prefs().tools_show_hardops and hops_name in tools
+        show_hardops = hardops and get_prefs().tools_show_hardops and any(name in tools for name in hops_tool_names) and not (is_annotate and is_grease_pencil)
         show_boxcutter = boxcutter and get_prefs().tools_show_boxcutter and bc_name in tools
+        show_hardops_menu = show_hardops and get_prefs().tools_show_hardops_menu and not is_annotate and not is_grease_pencil
         show_boxcutter_presets = show_boxcutter and get_prefs().tools_show_boxcutter_presets
 
-        if context.mode in ['OBJECT', 'EDIT_MESH']:
+        modes = ['OBJECT', 'EDIT_MESH']
 
-            if show_boxcutter:
-                tool = tools['BC']
-                pie.operator("machin3.set_tool_by_name", text="   " + tool['label'], depress=tool['active'], icon_value=tool['icon_value']).name = 'BC'
+        if is_grease_pencil:
+            if bpy.app.version < (4, 3, 0):
+                modes.extend(["EDIT_GPENCIL", "PAINT_GPENCIL", "SCULPT_GPENCIL"])
+
+            else:
+                modes.extend(["EDIT_GREASE_PENCIL", "PAINT_GREASE_PENCIL", "SCULPT_GREASE_PENCIL"])
+
+        if context.mode in modes:
+
+            if is_grease_pencil and context.mode in ["PAINT_GPENCIL", "PAINT_GREASE_PENCIL"]:
+                name = "builtin_brush.Draw" if bpy.app.version < (4, 3, 0) else "builtin.brush"
+                tool = tools[name]
+
+                pie.operator("machin3.set_tool_by_name", text="   " + tool['label'], depress=tool['active'], icon_value=tool['icon_value']).name = name
+
+            elif show_boxcutter:
+                tool = tools[bc_name]
+                pie.operator("machin3.set_tool_by_name", text="   " + tool['label'], depress=tool['active'], icon_value=tool['icon_value']).name = bc_name
 
             else:
                 pie.separator()
 
-            if show_hardops:
-                tool = tools['Hops']
-                pie.operator("machin3.set_tool_by_name", text="   " + tool['label'], depress=tool['active'], icon_value=tool['icon_value']).name = 'Hops'
+            if is_grease_pencil and context.mode in ["PAINT_GPENCIL", "PAINT_GREASE_PENCIL"]:
+                name = "builtin.line"
+                tool = tools[name]
+
+                pie.operator("machin3.set_tool_by_name", text="   " + tool['label'], depress=tool['active'], icon_value=tool['icon_value']).name = name
+
+            elif show_hardops:
+                tool = tools[hops_tool_names[0 if context.mode == 'OBJECT' else 1]]
+                pie.operator("machin3.set_tool_by_name", text="   " + tool['label'], depress=tool['active'], icon_value=tool['icon_value']).name = hops_tool_names[0 if context.mode == 'OBJECT' else 1]
             else:
                 pie.separator()
 
-            if get_prefs().tools_show_annotate or (get_prefs().tools_show_surfacedraw and context.mode == 'OBJECT'):
+            if is_grease_pencil and context.mode in ["PAINT_GPENCIL", "PAINT_GREASE_PENCIL"]:
+                name = "builtin_brush.Erase"
+                tool = tools[name]
+
+                pie.operator("machin3.set_tool_by_name", text="   " + tool['label'], depress=tool['active'], icon_value=tool['icon_value']).name = name
+
+            elif get_prefs().tools_show_annotate or (get_prefs().tools_show_surfacedraw and context.mode == 'OBJECT'):
                 col = pie.column(align=True)
                 col.scale_y = 1.5
 
                 if get_prefs().tools_show_annotate:
                     if all(tool in tools for tool in ['builtin.annotate', 'builtin.annotate_line', 'builtin.annotate_eraser']):
+
                         row = col.row(align=True)
                         tool = tools['builtin.annotate']
                         row.operator("machin3.set_tool_by_name", text="   " + tool['label'], depress=tool['active'], icon_value=tool['icon_value']).name = 'builtin.annotate'
@@ -3090,9 +3329,34 @@ class PieTools(Menu):
                         tool = tools['builtin.annotate_line']
                         row.operator("machin3.set_tool_by_name", text="   " + "Line", depress=tool['active'], icon_value=tool['icon_value']).name = 'builtin.annotate_line'
 
-                        row = col.row(align=True)
+                        split = col.split(factor=0.5, align=True)
                         tool = tools['builtin.annotate_eraser']
-                        row.operator("machin3.set_tool_by_name", text="   " + "Erase", depress=tool['active'], icon_value=tool['icon_value']).name = 'builtin.annotate_eraser'
+                        split.operator("machin3.set_tool_by_name", text="   " + "Erase", depress=tool['active'], icon_value=tool['icon_value']).name = 'builtin.annotate_eraser'
+
+                        split.operator("machin3.annotate", text="Note", icon="OUTLINER_OB_FONT")
+
+                        if bpy.app.version < (4, 3, 0):
+                            is_visible = any(not layer.hide for layer in context.annotation_data.layers) if context.annotation_data else False
+
+                            if context.annotation_data:
+                                row = col.row(align=True)
+                                row.scale_y = 0.75
+                                action, icon = ('Hide', 'HIDE_OFF') if is_visible else ('Show', 'HIDE_ON')
+                                row.operator("machin3.toggle_annotation", text=f"{action} Annotations", icon=icon)
+
+                        else:
+                            is_annotation_visible = any(not layer.annotation_hide for layer in context.annotation_data.layers) if context.annotation_data else False
+
+                            note_gps = [obj for obj in context.visible_objects if obj.type == 'GREASEPENCIL' and 'Annotation' in obj.name]
+                            is_gp_visible = any([not layer.hide for obj in note_gps for layer in obj.data.layers])
+
+                            is_visible = is_annotation_visible or is_gp_visible
+
+                            if context.annotation_data or note_gps:
+                                row = col.row(align=True)
+                                row.scale_y = 0.75
+                                action, icon = ('Hide', 'HIDE_OFF') if is_visible else ('Show', 'HIDE_ON')
+                                row.operator("machin3.toggle_annotation", text=f"{action} Annotations", icon=icon)
 
                 if get_prefs().tools_show_surfacedraw and context.mode == 'OBJECT':
                     col.separator()
@@ -3102,7 +3366,7 @@ class PieTools(Menu):
                 pie.separator()
 
             if 'builtin.select_box' in tools:
-                if hypercursor:
+                if hypercursor and context.mode in ['OBJECT', 'EDIT_MESH']:
                     if 'machin3.tool_hyper_cursor' in active_tool:
                         name = 'builtin.select_box'
 
@@ -3120,7 +3384,8 @@ class PieTools(Menu):
                 pie.separator()
 
             if get_prefs().tools_show_quick_favorites:
-                pie.operator("wm.call_menu", text="Quick Favorites").name="SCREEN_MT_user_menu"
+                action = '(F) Quick Favorites' if show_hardops_menu else 'Quick Favorites'
+                pie.operator("wm.call_menu", text=action).name="SCREEN_MT_user_menu"
             else:
                 pie.separator()
 
@@ -3194,29 +3459,151 @@ class PieTools(Menu):
             else:
                 pie.separator()
 
-            if active_tool in ['builtin.annotate', 'builtin.annotate_line']:
+            if is_grease_pencil:
+                column = self.draw_grease_pencil_extra(context, active, active_tool, ts, pie)
+
+                if is_annotate:
+                    column.separator()
+
+                    self.draw_annotation_extras(context, active_tool, annotate_layer, ts, column)
+
+            elif is_annotate:
                 column = pie.column(align=True)
 
-                row = column.row(align=True)
-                row.prop(ts, 'annotation_stroke_placement_view3d', text='Placement')
+                self.draw_annotation_extras(context, active_tool, annotate_layer, ts, column)
 
-                if active_layer is not None:
-                    row = column.row(align=True)
+            elif show_hardops_menu:
+                HOps = importlib.import_module(hops_name)
 
-                    row.prop(active_layer, "color", text="")
-                    row.popover(panel="TOPBAR_PT_annotation_layers", text=active_layer.info)
-
-            elif active_tool == 'builtin.annotate_eraser':
-                column = pie.column(align=True)
-
-                row = column.row(align=True)
-                row.prop(context.preferences.edit, "grease_pencil_eraser_radius", text="Radius")
-
-                if active_layer is not None:
-                    row = column.row(align=True)
-
-                    row.label(text="Layer: ")
-                    row.popover(panel="TOPBAR_PT_annotation_layers", text=active_layer.info)
+                icon = HOps.icons.get('sm_logo_white')
+                pie.operator("wm.call_menu", text="(Q) Menu", icon_value=icon.icon_id).name="HOPS_MT_MainMenu"
 
             else:
                 pie.separator()
+
+    def draw_annotation_extras(self, context, active_tool, annotate_layer, tool_settings, layout):
+        layout.scale_x = 1.2
+
+        split = layout.split(factor=0.1, align=True)
+        split.scale_y = 1.2
+        split.separator()
+
+        if active_tool in ['builtin.annotate', 'builtin.annotate_line']:
+            split.prop(tool_settings, 'annotation_stroke_placement_view3d', expand=True)
+
+        elif active_tool == 'builtin.annotate_eraser':
+            split.prop(context.preferences.edit, "grease_pencil_eraser_radius", text="Radius")
+
+        split = layout.split(factor=0.1, align=True)
+        split.separator()
+
+        s = split.split(factor=0.33, align=True)
+        s.alignment = 'RIGHT'
+        s.label(text="Layer:")
+
+        col = s.column(align=True)
+        row = col.row(align=True)
+
+        if annotate_layer is None:
+            data_owner = context.annotation_data_owner
+
+            if context.annotation_data_owner is None:
+                row.label(text="No annotation source")
+                return
+
+            row.template_ID(data_owner, "grease_pencil", new="gpencil.annotation_add", unlink="gpencil.data_unlink")
+
+        else:
+            row.popover(panel="TOPBAR_PT_annotation_layers", text=annotate_layer.info)
+
+    def draw_grease_pencil_extra(self, context, active, tool, toolsettings, pie):
+        box = pie.split()
+        column = box.column(align=True)
+
+        if tool == 'builtin.line':
+            split = column.split(factor=0.1, align=True)
+            split.separator()
+
+            if bpy.app.version < (4, 3, 0):
+                props = get_tool_options(context, 'builtin.line', "GPENCIL_OT_primitive_line")
+            else:
+                props = get_tool_options(context, 'builtin.line', "GREASE_PENCIL_OT_primitive_line")
+
+            split.prop(props, "subdivision", text="Line Subdivision")
+
+            column.separator()
+
+        if context.mode in ['EDIT_GPENCIL', 'EDIT_GREASE_PENCIL']:
+            split = column.split(factor=0.1, align=True)
+            split.separator()
+
+            if bpy.app.version < (4, 3, 0):
+                split.operator("gpencil.stroke_simplify")
+
+            else:
+                split.operator("grease_pencil.stroke_simplify")
+
+            column.separator()
+
+        split = column.split(factor=0.1, align=True)
+        split.scale_y = 1.5
+        split.separator()
+
+        row = split.row(align=True)
+        row.operator('machin3.shrinkwrap_grease_pencil', text='Shrinkwrap')
+
+        if bpy.app.version < (4, 3, 0):
+            row.prop(active.data, "zdepth_offset", text='')
+
+        else:
+            row.prop(toolsettings, "gpencil_surface_offset", text='')
+
+        if bpy.app.version < (4, 3, 0):
+            opacity = [mod for mod in active.grease_pencil_modifiers if mod.type == 'GP_OPACITY']
+            thickness = [mod for mod in active.grease_pencil_modifiers if mod.type == 'GP_THICK']
+
+        else:
+            opacity = [mod for mod in active.modifiers if mod.type == 'GREASE_PENCIL_OPACITY']
+            thickness = [mod for mod in active.modifiers if mod.type == 'GREASE_PENCIL_THICKNESS']
+
+        if opacity:
+            split = column.split(factor=0.1, align=True)
+            split.separator()
+
+            row = split.row(align=True)
+
+            factor = 'factor' if bpy.app.version < (4, 3, 0) else 'color_factor'
+            row.prop(opacity[0], factor, text='Opacity')
+
+        if thickness:
+            split = column.split(factor=0.1, align=True)
+            split.separator()
+
+            row = split.row(align=True)
+            row.prop(thickness[0], 'thickness_factor', text='Thickness')
+
+        column.separator()
+
+        split = column.split(factor=0.1, align=True)
+        split.separator()
+
+        row = split.row(align=True)
+        row.popover(panel="MACHIN3_PT_grease_pencil_extras", text="Grease Pencil Layers")
+
+        if active.type == 'GREASEPENCIL' and '_Annotation' in active.name:
+            gpd = active.data
+            layer = gpd.layers.active
+
+            if layer:
+                column.separator()
+
+                split = column.split(factor=0.1, align=True)
+                split.separator()
+
+                s = split.split(factor=0.33, align=True)
+                s.alignment = 'RIGHT'
+                s.label(text="Color:")
+
+                s.prop(layer, "tint_color", text="")
+
+        return column

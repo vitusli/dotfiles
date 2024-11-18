@@ -6,12 +6,12 @@ from mathutils import Vector, Matrix, Quaternion
 from mathutils.geometry import intersect_line_plane
 from .. utils.collection import get_collection_depth
 from .. utils.draw import draw_cross_3d, draw_fading_label, draw_init, draw_point, draw_vector, draw_label, get_text_dimensions, update_HUD_location, draw_circle, draw_mesh_wire
-from .. utils.group import get_group_base_name, group, process_group_poses, retrieve_group_pose, set_group_pose, ungroup, get_group_matrix, select_group_children, get_child_depth, clean_up_groups, fade_group_sizes, prettify_group_pose_names, get_pose_batches, get_batch_pose_name, get_group_hierarchy, get_remove_poses
+from .. utils.group import get_group_base_name, get_group_default_name, group, process_group_poses, retrieve_group_pose, set_group_pose, ungroup, get_group_matrix, select_group_children, get_child_depth, clean_up_groups, fade_group_sizes, prettify_group_pose_names, get_pose_batches, get_batch_pose_name, get_group_hierarchy, get_remove_poses
 from .. utils.math import average_locations, dynamic_format, compare_quat
+from .. utils.mesh import get_bbox, get_coords, get_eval_mesh
 from .. utils.modifier import get_mods_as_dict, add_mods_from_dict
 from .. utils.object import get_eval_bbox, parent, unparent, compensate_children
 from .. utils.registration import get_prefs
-from .. utils.mesh import get_bbox, get_coords, get_eval_mesh
 from .. utils.ui import force_ui_update, init_cursor, init_status, finish_status, navigation_passthrough
 from .. utils.view import get_view_origin_and_dir, get_location_2d
 from .. items import group_location_items, axis_items, axis_vector_mappings, ctrl, axis_color_mappings, axis_index_mapping
@@ -60,6 +60,8 @@ class Group(bpy.types.Operator):
         return self.execute(context)
 
     def execute(self, context):
+        context.evaluated_depsgraph_get()
+
         groupable = {obj for obj in context.selected_objects if (obj.parent and obj.parent.M3.is_group_empty) or not obj.parent}
 
         if groupable:
@@ -79,8 +81,8 @@ class Group(bpy.types.Operator):
                     mesh = get_eval_mesh(dg, obj, data_block=False)
                     batch = get_coords(mesh, mx=mx, indices=True)
 
-                    bbox = get_bbox(obj.data)
-                    loc2d = get_location_2d(context, mx @ average_locations(bbox[0]), default='OFF_SCREEN')
+                    bbox = get_bbox(obj.data)[0] if obj.type == 'MESH' else get_eval_bbox(obj)
+                    loc2d = get_location_2d(context, mx @ average_locations(bbox), default='OFF_SCREEN')
                     ungroupable_batches.append((loc2d, batch))
                     del mesh
 
@@ -296,9 +298,8 @@ class Groupify(bpy.types.Operator):
                 obj.empty_display_size = get_prefs().group_size
                 obj.show_name = True
 
-                if not any([s in obj.name.lower() for s in ['grp', 'group']]):
-                    obj.name = f"{obj.name}_GROUP"
-
+                if get_prefs().group_auto_name:
+                    obj.name = get_group_default_name(basename=obj.name)
                 set_group_pose(obj, name='Inception')
 
                 self.groupify(obj.children)
@@ -684,7 +685,7 @@ class CollapseOutliner(bpy.types.Operator):
 
         child_depth = get_child_depth(self, [obj for obj in context.scene.objects if obj.children], init=True)
 
-        for i in range(max(col_depth, child_depth) + 1):
+        for i in range(max(col_depth, child_depth) + 2):
             bpy.ops.outliner.show_one_level(open=False)
 
         return {'FINISHED'}
@@ -760,18 +761,18 @@ def draw_transform_group(op):
 
         row.separator(factor=2)
         row.label(text="", icon='EVENT_S')
-        row.label(text=f"Set Pose + Finish")
+        row.label(text="Set Pose + Finish")
 
         row.separator(factor=2)
 
         if op.pidx > 0:
             row.label(text="", icon='EVENT_X')
-            row.label(text=f"Mark Pose for Removal")
+            row.label(text="Mark Pose for Removal")
 
         if op.poseCOL:
             row.separator(factor=1)
             row.label(text="", icon='EVENT_A')
-            row.label(text=f"Mark All Poses for Removal")
+            row.label(text="Mark All Poses for Removal")
 
     return draw
 
@@ -1214,7 +1215,6 @@ class TransformGroup(bpy.types.Operator):
 
         if scene.tool_settings.use_keyframe_insert_auto:
             frame = scene.frame_current
-            mode = self.empty.rotation_mode
             data_path = 'rotation_quaternion'
 
             self.empty.keyframe_insert(data_path=data_path, frame=frame)
@@ -1251,7 +1251,7 @@ def draw_setup_group_gizmos_status(op):
 
         row = layout.row(align=True)
 
-        row.label(text=f"Setup Group Gizmos")
+        row.label(text="Setup Group Gizmos")
 
         row.label(text="", icon='MOUSE_LMB')
         row.label(text="Confirm")
@@ -1318,7 +1318,7 @@ class SetupGroupGizmos(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        column = layout.column(align=True)
+        _column = layout.column(align=True)
 
     def draw_HUD(self, context):
         if self.area == context.area:
@@ -1653,7 +1653,7 @@ class SetGroupPose(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        column = layout.column(align=True)
+        _column = layout.column(align=True)
 
     def execute(self, context):
         active = context.active_object
@@ -1799,7 +1799,7 @@ class RetrieveGroupPose(bpy.types.Operator):
         return {'CANCELLED'}
 
     def execute(self, context):
-        dg = context.evaluated_depsgraph_get()
+        context.evaluated_depsgraph_get()
 
         active = context.active_object
         poseCOL = active.M3.group_pose_COL
@@ -1847,7 +1847,7 @@ class SortGroupPose(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        column = layout.column(align=True)
+        _column = layout.column(align=True)
 
     def execute(self, context):
         active = context.active_object

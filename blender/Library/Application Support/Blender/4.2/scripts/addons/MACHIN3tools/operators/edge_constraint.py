@@ -6,13 +6,13 @@ from bl_ui.space_statusbar import STATUSBAR_HT_header as statusbar
 from mathutils import Vector, Matrix, Quaternion
 from mathutils.geometry import intersect_line_plane, intersect_point_line, intersect_line_line, distance_point_to_plane
 from math import radians, degrees
-from .. utils.selection import get_selected_vert_sequences
-from .. utils.math import average_locations, get_loc_matrix, get_face_center
 from .. utils.draw import draw_point, draw_vector, draw_line, draw_points, draw_lines, draw_label
-from .. utils.system import printd
+from .. utils.math import average_locations, get_loc_matrix, get_face_center
 from .. utils.property import step_enum
-from .. utils.ui import get_zoom_factor
 from .. utils.registration import get_prefs
+from .. utils.selection import get_selected_vert_sequences
+from .. utils.system import printd
+from .. utils.ui import get_zoom_factor
 from .. items import ctrl, alt, shift, axis_mapping_dict
 from .. colors import normal, white, yellow, green, red, blue
 
@@ -114,11 +114,11 @@ def draw_edge_constrained_transform_status(op):
             row.label(text="Constrain Mode")
 
             row.label(text="", icon='EVENT_CTRL')
-            row.label(text=f"Angle Snap")
+            row.label(text="Angle Snap")
 
         elif not op.is_direction_locking and not op.is_axis_locking and not op.is_zero_scaling:
             row.label(text="", icon='EVENT_ALT')
-            row.label(text=f"Direction Lock")
+            row.label(text="Direction Lock")
 
         if op.draw_end_align:
             row.label(text="", icon='EVENT_E')
@@ -166,14 +166,14 @@ class TransformEdgeConstrained(bpy.types.Operator):
         height = 10 * scale
 
         if self.is_zero_scaling:
-            draw_label(context, title=f"ZERO SCALE", coords=self.mousepos + Vector((20, height)), color=white, center=False)
+            draw_label(context, title="ZERO SCALE", coords=self.mousepos + Vector((20, height)), color=white, center=False)
 
         elif self.transform_mode == 'SCALE':
             draw_label(context, title=f"SCALE {self.amount:.2f}", coords=self.mousepos + Vector((20, height)), color=yellow if self.is_snapping else white, center=False)
 
             if self.is_direction_locking:
                 height -= 20 * scale
-                draw_label(context, title=f"Direction Locked", coords=self.mousepos + Vector((20, height)), color=white, alpha=0.5, center=False)
+                draw_label(context, title="Direction Locked", coords=self.mousepos + Vector((20, height)), color=white, alpha=0.5, center=False)
 
         elif self.transform_mode == 'ROTATE':
             draw_label(context, title=f"ROTATE {self.angle:.1f}", coords=self.mousepos + Vector((20, height)), color=yellow if self.is_snapping else white, center=False)
@@ -188,7 +188,7 @@ class TransformEdgeConstrained(bpy.types.Operator):
 
         if self.individual_origins:
             height -= 20 * scale
-            draw_label(context, title=f'Individual Origins', coords=self.mousepos + Vector((20, height)), color=yellow, center=False)
+            draw_label(context, title='Individual Origins', coords=self.mousepos + Vector((20, height)), color=yellow, center=False)
 
     def draw_VIEW3D(self):
         modal = True

@@ -1,19 +1,21 @@
+import os
+
+import bmesh
 import bpy
 from bpy.props import BoolProperty
-import bmesh
-from bpy.types import OBJECT_PT_bDampTrackConstraint, TOPBAR_MT_file_defaults
-from mathutils import Vector
-import os
-from .. utils.asset import get_asset_details_from_space
-from .. utils.color import linear_to_srgb, lighten
-from .. utils.draw import draw_fading_label, draw_label, draw_line, draw_lines, draw_mesh_wire, draw_region_border, update_HUD_location, draw_init
-from .. utils.material import get_last_node
-from .. utils.mesh import get_coords, get_eval_mesh
-from .. utils.raycast import cast_obj_ray_from_mouse, cast_bvh_ray_from_mouse
-from .. utils.system import printd
-from .. utils.ui import force_ui_update, get_mouse_pos, get_region_space_co2d, get_window_space_co2d, init_cursor, init_status, finish_status, get_scale
-from .. items import alt, ctrl, shift
-from .. colors import white, yellow, green, red, blue, orange
+from mathutils import Matrix, Vector
+
+from ..colors import blue, green, red, white, yellow
+from ..items import alt, ctrl, shift
+from ..utils.asset import get_asset_details_from_space
+from ..utils.color import lighten, linear_to_srgb
+from ..utils.draw import draw_init, draw_label, draw_line, draw_mesh_wire, draw_region_border
+from ..utils.material import get_last_node
+from ..utils.mesh import get_coords, get_eval_mesh
+from ..utils.object import get_eval_object, hide_render, remove_obj
+from ..utils.raycast import cast_scene_ray_from_mouse
+from ..utils.system import printd
+from ..utils.ui import  finish_status, force_ui_update, get_mouse_pos, get_region_space_co2d, get_scale, init_status
 
 def draw_material_pick_status(op):
     def draw(self, context):
@@ -342,6 +344,12 @@ class MaterialPicker(bpy.types.Operator):
 
                     if hitobj:
 
+                        if hitobj.name not in context.view_layer.objects:
+                            self.create_material_dummy_object(context, hitobj, matindex)
+
+                            self.finish(context)
+                            return {'FINISHED'}
+
                         iseditmode = context.mode == 'EDIT_MESH'
 
                         if context.active_object != hitobj:
@@ -349,7 +357,7 @@ class MaterialPicker(bpy.types.Operator):
 
                             if iseditmode:
                                 bpy.ops.object.mode_set(mode='EDIT')
-                            
+
                         hitobj.active_material_index = matindex
 
                     self.finish(context)
@@ -377,6 +385,8 @@ class MaterialPicker(bpy.types.Operator):
             context.visible_objects[0].select_set(context.visible_objects[0].select_get())
 
     def invoke(self, context, event):
+        self.remove_material_dummy_objects()
+
         shading = context.space_data.shading
         shading_types = ['MATERIAL', 'RENDERED']
 
@@ -450,7 +460,7 @@ class MaterialPicker(bpy.types.Operator):
 
                 if 'MATERIAL_EDITOR' in self.areas:
                     self.modes.append('PICK')
-            
+
                 if self.has_object_selection or self.has_face_selection:
                     self.modes.append('ASSIGN')
 
@@ -460,10 +470,10 @@ class MaterialPicker(bpy.types.Operator):
             if not self.modes:
                 return False
 
-            self.assign_from_assetbrowser_to_selection = False 
+            self.assign_from_assetbrowser_to_selection = False
 
             mode = self.modes[0]
-        
+
         if mode == 'PICK':
             self.assign = False
             self.assign_from_assetbrowser = False
@@ -527,7 +537,7 @@ class MaterialPicker(bpy.types.Operator):
             for data in (browsers := areas['ASSET_BROWSER']):
                 data['is_active'] = len(browsers) == 1
 
-        for data in (views := areas['VIEW_3D']):
+        for data in areas['VIEW_3D']:
             data['is_active'] = data['area'] == context.area
 
         return areas
@@ -603,7 +613,7 @@ class MaterialPicker(bpy.types.Operator):
                 asset = {'error': msg}
 
         else:
-            msg = f"No Material selected in asset browser!"
+            msg = "No Material selected in asset browser!"
             asset = {'error': msg}
 
         return asset
@@ -619,13 +629,13 @@ class MaterialPicker(bpy.types.Operator):
                     asset = selected[0]
 
                 else:
-                    msg = f"There is no selected Material Asset in the active asset browser"
+                    msg = "There is no selected Material Asset in the active asset browser"
                     asset = {'error': msg}
 
             else:
                 msg = "There is no active asset browser in this workspace, move the mouse over one to make it active"
                 asset = {'error': msg}
-        
+
         else:
             msg = "There is no asset browser in this workspace"
             asset = {'error': msg}
@@ -695,19 +705,12 @@ class MaterialPicker(bpy.types.Operator):
 
                 if debug:
                     print("\nmaterial hitting at", mouse_pos, "on view", area['area'])
-        
-                if context.mode == 'OBJECT':
-                    hitobj, hitobj_eval, _, _, hitindex, _ = cast_obj_ray_from_mouse(mouse_pos, depsgraph=self.dg, objtypes=['MESH', 'CURVE', 'FONT', 'SURFACE', 'META'], region=region, debug=False)
 
-                elif context.mode == 'EDIT_MESH':
-                    hitobj, _, _, hitindex, _, _ = cast_bvh_ray_from_mouse(mouse_pos, candidates=[obj for obj in context.visible_objects], objtypes=['MESH', 'CURVE', 'FONT', 'SURFACE', 'META'], region=region, debug=False)
+                _, hitobj, hitindex, _, _, _ = cast_scene_ray_from_mouse(mouse_pos, depsgraph=self.dg, region=region, debug=False)
+                hitobj_eval = get_eval_object(None, hitobj, self.dg)
 
-                if hitobj:
-                    if context.mode == 'OBJECT':
-                        matindex = hitobj_eval.data.polygons[hitindex].material_index if hitobj.type == 'MESH' else 0
-
-                    elif context.mode == 'EDIT_MESH':
-                        matindex = hitobj.data.polygons[hitindex].material_index if hitobj.type == 'MESH' else 0
+                if hitobj_eval:
+                    matindex = hitobj_eval.data.polygons[hitindex].material_index if hitobj.type == 'MESH' else 0
 
                     if debug:
                         print(" hit object:", hitobj.name, "material index:", matindex)
@@ -767,10 +770,10 @@ class MaterialPicker(bpy.types.Operator):
 
         return mat
 
-    def get_material_color_from_material(self, mat, srgb=False): 
+    def get_material_color_from_material(self, mat, srgb=False):
         if mat:
             last_node = get_last_node(mat)
-            
+
             if last_node:
                 matcolor = last_node.inputs.get('Base Color', None)
 
@@ -832,6 +835,33 @@ class MaterialPicker(bpy.types.Operator):
         else:
             active.data.materials.append(mat)
 
+    def create_material_dummy_object(self, context, hitobj, matindex):
+        bpy.ops.mesh.primitive_cube_add()
+
+        active = context.active_object
+        active.select_set(False)
+        active.name = "_MATERIAL_DUMMY_OBJECT"
+
+        active.matrix_world = Matrix()
+        mcol = context.scene.collection
+
+        if active.name not in mcol.objects:
+            mcol.objects.link(active)
+
+        for col in active.users_collection:
+            if col is not mcol:
+                col.objects.unlink(active)
+
+        hide_render(active, True)
+        active.hide_viewport = True
+        active.hide_select = True
+        active.hide_set(True)
+
+        mat = hitobj.material_slots[matindex].material
+        active.data.materials.append(mat)
+
+        print("INFO: Created material dummy object", active.name)
+
     def clear_material_in_editmode(self, context):
         active = context.active_object
 
@@ -866,3 +896,10 @@ class MaterialPicker(bpy.types.Operator):
             bmesh.update_edit_mesh(active.data)
 
             active.update_from_editmode()
+
+    def remove_material_dummy_objects(self):
+        dummies = [obj for obj in bpy.data.objects if "_MATERIAL_DUMMY_OBJECT" in obj.name]
+
+        for obj in dummies:
+            print("INFO: Removing material dummy object", obj.name)
+            remove_obj(obj)

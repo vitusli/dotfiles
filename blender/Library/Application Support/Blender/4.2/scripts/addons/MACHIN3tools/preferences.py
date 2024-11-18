@@ -1,13 +1,13 @@
-from sys import dont_write_bytecode
 import bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty, EnumProperty, FloatProperty, FloatVectorProperty
+import rna_keymap_ui
 import os
 import shutil
 from . import bl_info
-from . utils.ui import get_icon, draw_keymap_items, get_keymap_item, get_user_keymap_items
-from . utils.registration import activate, get_path, get_name, get_addon
 from . utils.draw import draw_split_row, draw_empty_split_row
+from . utils.registration import activate, get_path, get_name, get_addon
 from . utils.system import get_bl_info_from_file, remove_folder, get_update_files
+from . utils.ui import find_kmi_from_idname, get_icon, draw_keymap_items, get_keymap_item, get_user_keymap_items
 from . items import preferences_tabs, matcap_background_type_items
 from . registration import keys
 
@@ -19,6 +19,10 @@ hypercursor = None
 
 hardops = None
 boxcutter = None
+
+has_fbx = None
+has_better_fbx = None
+has_gltf = None
 
 has_sidebar = ['OT_smart_drive',
                'OT_group',
@@ -55,7 +59,7 @@ has_settings = has_sidebar + has_hud + ['OT_smart_vert',
                                         'OT_material_picker',
                                         'OT_clipping_toggle',
                                         'OT_customize',
-                                 
+
                                         'MT_modes_pie',
                                         'MT_save_pie',
                                         'MT_shading_pie',
@@ -140,7 +144,8 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
             return
 
         try:
-            angles = [int(a) for a in self.auto_smooth_angle_presets.split(',')]
+            [int(a) for a in self.auto_smooth_angle_presets.split(',')]
+
         except:
             self.avoid_update = True
             self.auto_smooth_angle_presets = "10, 15, 20, 30, 60, 180"
@@ -269,11 +274,7 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
 
     assetbrowser_show: BoolProperty(name="Show Asset Browser Tools Preferences", default=False)
     preferred_default_catalog: StringProperty(name="Preferred Default Catalog", default="Model")
-    preferred_assetbrowser_workspace_name: StringProperty(name="Preferred Workspace for Assembly Asset Creation", default="General.alt")
     show_assembly_asset_creation_in_save_pie: BoolProperty(name="Show Assembly Asset Creation in Save Pie", default=True)
-    show_instance_collection_assembly_in_modes_pie: BoolProperty(name="Show Collection Instance Assembly in Modes Pie", default=True)
-    hide_wire_objects_when_creating_assembly_asset: BoolProperty(name="Hide Wire Objects when creating Assembly Asset", default=True)
-    hide_wire_objects_when_assembling_instance_collection: BoolProperty(name="Hide Wire Objects when assembling Collection Instance", default=True)
 
     region_show: BoolProperty(name="Show Region Preferences", default=False)
     region_prefer_left_right: BoolProperty(name="Prefer Left/Right over Bottom/Top", default=True)
@@ -325,13 +326,17 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
     save_pie_show_obj_export: BoolProperty(name="Show .obj Export", default=True)
     save_pie_show_plasticity_export: BoolProperty(name="Show Plasticity Export", default=True)
     save_pie_show_fbx_export: BoolProperty(name="Show .fbx Export", default=True)
+    save_pie_show_better_fbx_export: BoolProperty(name="Show Better .fbx Export", default=False)
     save_pie_show_usd_export: BoolProperty(name="Show .usd Export", default=True)
     save_pie_show_stl_export: BoolProperty(name="Show .stl Export", default=False)
+    save_pie_show_gltf_export: BoolProperty(name="Show .glTF Export", default=False)
     save_pie_obj_folder: StringProperty(name=".obj Folder", subtype='DIR_PATH', default='')
-    save_pie_plasticity_folder: StringProperty(name=".obj Folder", subtype='DIR_PATH', default='')
-    save_pie_fbx_folder: StringProperty(name=".obj Folder", subtype='DIR_PATH', default='')
-    save_pie_usd_folder: StringProperty(name=".obj Folder", subtype='DIR_PATH', default='')
-    save_pie_stl_folder: StringProperty(name=".obj Folder", subtype='DIR_PATH', default='')
+    save_pie_plasticity_folder: StringProperty(name=".plasticity Folder", subtype='DIR_PATH', default='')
+    save_pie_fbx_folder: StringProperty(name=".fbx Folder", subtype='DIR_PATH', default='')
+    save_pie_better_fbx_folder: StringProperty(name="Better .fbx Folder", subtype='DIR_PATH', default='')
+    save_pie_usd_folder: StringProperty(name=".usd Folder", subtype='DIR_PATH', default='')
+    save_pie_stl_folder: StringProperty(name=".stl Folder", subtype='DIR_PATH', default='')
+    save_pie_gltf_folder: StringProperty(name=".glTF Folder", subtype='DIR_PATH', default='')
     fbx_export_apply_scale_all: BoolProperty(name="Use 'Fbx All' for Applying Scale", description="This is useful for Unity, but bad for Unreal Engine", default=False)
     show_screencast: BoolProperty(name="Show Screencast in Save Pie", description="Show Screencast in Save Pie", default=True)
     screencast_operator_count: IntProperty(name="Operator Count", description="Maximum number of Operators displayed when Screen Casting", default=12, min=1, max=100)
@@ -370,13 +375,14 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
     custom_views_set_transform_preset: BoolProperty(name="Set Transform Preset when using Custom Views", default=False)
     show_orbit_selection: BoolProperty(name="Show Orbit around Active", default=True)
     show_orbit_method: BoolProperty(name="Show Orbit Method Selection", default=True)
+    smart_cam_perfectly_match_viewport: BoolProperty(name="Match Resolution and Camera Lens to Viewport", description="Adjust Render Resulution ratio, to match the 3D View's region width/height ratio. Also sync the Camera Lens to the 3D View's Lens and set the Camera Sensor Width to 72, all of which creates a perfectly matching Camera View", default=True)
 
     cursor_pie_show: BoolProperty(name="Show Cursor and Origin Pie Preferences", default=False)
     cursor_show_to_grid: BoolProperty(name="Show Cursor and Selected to Grid", default=False)
     cursor_set_transform_preset: BoolProperty(name="Set Transform Preset when Setting Cursor", default=False)
 
     snapping_pie_show: BoolProperty(name="Show Snapping Pie Preferences", default=False)
-    snap_show_absolute_grid: BoolProperty(name="Show Absolute Grid Snapping", default=False)
+    snap_show_absolute_grid: BoolProperty(name="Show Absolute Grid Snapping", default=True)
     snap_show_volume: BoolProperty(name="Show Volume Snapping", default=False)
 
     workspace_pie_show: BoolProperty(name="Show Workspace Pie Preferences", default=False)
@@ -406,8 +412,9 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
     pie_workspace_bottom_left_icon: StringProperty(name="Bottom-Left Workspace Icon", default="GEOMETRY_NODES")
 
     tools_pie_show: BoolProperty(name="Show Tools Pie Preferences", default=False)
-    tools_show_hardops: BoolProperty(name="Show Hard Ops Menu", default=True)
-    tools_show_boxcutter: BoolProperty(name="Show BoxCutter", default=True)
+    tools_show_hardops: BoolProperty(name="Show Hard Ops Tool", default=True)
+    tools_show_hardops_menu: BoolProperty(name="Show Hard Ops Menu", default=True)
+    tools_show_boxcutter: BoolProperty(name="Show BoxCutter Tool", default=True)
     tools_show_boxcutter_presets: BoolProperty(name="Show BoxCutter Presets", default=True)
     tools_show_quick_favorites: BoolProperty(name="Show Quick Favorites", default=False)
     tools_show_tool_bar: BoolProperty(name="Show Tool Bar", default=False)
@@ -502,6 +509,16 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
             self.draw_about(box)
 
     def draw_update(self, layout):
+
+        if self.update_available:
+            row = layout.row()
+            row.scale_y = 1.2
+            row.alignment = "CENTER"
+            row.label(text="An Update is Available", icon_value=get_icon("refresh_green"))
+            row.operator("wm.url_open", text="What's new?").url = f"https://machin3.io/{bl_info['name']}/docs/whatsnew"
+
+            layout.separator(factor=2)
+
         row = layout.row()
         row.scale_y = 1.25
         row.prop(self, 'show_update', text="Install MACHIN3tools Update", icon='TRIA_DOWN' if self.show_update else 'TRIA_RIGHT')
@@ -524,14 +541,13 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
                 s.operator('wm.quit_blender', text='Quit Blender + Install Update', icon='FILE_REFRESH')
 
             else:
+                b = box.box()
+                col = b.column(align=True)
+
+                row = col.row()
+                row.alignment = 'LEFT'
 
                 if update_files:
-
-                    b = box.box()
-                    col = b.column(align=True)
-
-                    row = col.row()
-                    row.alignment = 'LEFT'
                     row.label(text="Found the following Updates in your home and/or Downloads folder: ")
                     row.operator('machin3.rescan_machin3tools_updates', text="Re-Scan", icon='FILE_REFRESH')
 
@@ -555,6 +571,9 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
                         r.active = False
                         r.alignment = 'LEFT'
                         r.label(text=path)
+                else:
+                    row.label(text="No Update was found. Neither in your Home directory, nor in your Downloads folder.")
+                    row.operator('machin3.rescan_machin3tools_updates', text="Re-Scan", icon='FILE_REFRESH')
 
                 row = box.row()
 
@@ -573,7 +592,7 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
                 split.label(text=text)
 
             box.separator()
-    
+
     def draw_support(self, layout):
         layout.separator()
 
@@ -758,7 +777,7 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
                 rr.active = self.group_fade_sizes
                 rr.prop(self, "group_fade_factor", text='Factor')
 
-        if getattr(bpy.types, "MACHIN3_OT_assemble_instance_collection", False):
+        if getattr(bpy.types, "MACHIN3_OT_create_assembly_asset", False):
             bb = b.box()
             bb.prop(self, 'assetbrowser_show', text="Assetbrowser Tools", icon='TRIA_DOWN' if self.assetbrowser_show else 'TRIA_RIGHT', emboss=False)
 
@@ -766,13 +785,6 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
                 column = bb.column(align=True)
 
                 draw_split_row(self, column, prop='preferred_default_catalog', label='Preferred Default Catalog (must exist already)')
-                draw_split_row(self, column, prop='preferred_assetbrowser_workspace_name', label='Preferred Workspace for Assembly Asset Creation')
-                draw_split_row(self, column, prop='hide_wire_objects_when_creating_assembly_asset', label='Hide Wire Objects when creatinng Assembly Asset')
-                draw_split_row(self, column, prop='hide_wire_objects_when_assembling_instance_collection', label='Hide Wire Objects when assemgling Instance Collection')
-
-                if getattr(bpy.types, "MACHIN3_MT_modes_pie", False):
-                    draw_split_row(self, column, prop='show_instance_collection_assembly_in_modes_pie', label='Show Instance Collection Assembly in Modes Pie')
-
                 if getattr(bpy.types, "MACHIN3_MT_save_pie", False):
                     draw_split_row(self, column, prop='show_assembly_asset_creation_in_save_pie', label='Show Assembly Asset Creation in Save Pie')
 
@@ -789,7 +801,7 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
                 if bpy.app.version >= (4, 0, 0):
                     column.separator()
 
-                    draw_split_row(self, column, prop='region_toggle_assetshelf', label='If available toggle the Asset Shelf instead of the Browser', info='This is still extremely limited in Blender 4.0, and practically unusable')
+                    draw_split_row(self, column, prop='region_toggle_assetshelf', label='If available toggle the Asset Shelf instead of the Browser', info='Asset Shelfs are used to access Brushes, but only starting in 4.3')
 
                 column.separator()
 
@@ -909,15 +921,28 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
                 draw_split_row(self, column, prop='sync_tools', label='Sync Tool if possible, when switching Modes')
 
         if getattr(bpy.types, "MACHIN3_MT_save_pie", False):
+            global has_fbx, has_better_fbx, has_gltf
+
+            if has_fbx is None:
+                has_fbx = get_addon("FBX format")[0]
+
+            if has_better_fbx is None:
+                has_better_fbx = get_addon("Better FBX Importer & Exporter")[0]
+
+            if has_gltf is None:
+                has_gltf = get_addon("glTF 2.0 format")[0]
 
             bb = b.box()
             bb.prop(self, 'save_pie_show', text="Save Pie", icon='TRIA_DOWN' if self.save_pie_show else 'TRIA_RIGHT', emboss=False)
 
             if self.save_pie_show:
+                extensions = []
 
                 bb.label(text='Import / Export')
 
                 column = bb.column(align=True)
+
+                extensions.append("obj")
 
                 row = column.row(align=True)
                 split = row.split(factor=0.5, align=True)
@@ -927,6 +952,8 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
                 r.label(text="Show .obj Import/Export")
 
                 split.separator()
+
+                extensions.append("plasticity")
 
                 row = column.row(align=True)
                 split = row.split(factor=0.5, align=True)
@@ -941,20 +968,37 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
                 else:
                     split.separator()
 
-                row = column.row(align=True)
-                split = row.split(factor=0.5, align=True)
+                if has_fbx:
+                    extensions.append("fbx")
 
-                r = split.split(factor=0.42, align=True)
-                r.prop(self, "save_pie_show_fbx_export", text=str(self.save_pie_show_fbx_export), toggle=True)
-                r.label(text="Show .fbx Import/Export")
+                    row = column.row(align=True)
+                    split = row.split(factor=0.5, align=True)
 
-                if self.save_pie_show_fbx_export:
                     r = split.split(factor=0.42, align=True)
-                    r.prop(self, "fbx_export_apply_scale_all", text=str(self.fbx_export_apply_scale_all), toggle=True)
-                    r.label(text="Use 'Fbx All' for Applying Scale")
+                    r.prop(self, "save_pie_show_fbx_export", text=str(self.save_pie_show_fbx_export), toggle=True)
+                    r.label(text="Show .fbx Import/Export")
 
-                else:
+                    if self.save_pie_show_fbx_export:
+                        r = split.split(factor=0.42, align=True)
+                        r.prop(self, "fbx_export_apply_scale_all", text=str(self.fbx_export_apply_scale_all), toggle=True)
+                        r.label(text="Use 'Fbx All' for Applying Scale")
+
+                    else:
+                        split.separator()
+
+                if has_better_fbx:
+                    extensions.append("better_fbx")
+
+                    row = column.row(align=True)
+                    split = row.split(factor=0.5, align=True)
+
+                    r = split.split(factor=0.42, align=True)
+                    r.prop(self, "save_pie_show_better_fbx_export", text=str(self.save_pie_show_fbx_export), toggle=True)
+                    r.label(text="Show Better .fbx Import/Export")
+
                     split.separator()
+
+                extensions.append("usd")
 
                 row = column.row(align=True)
                 split = row.split(factor=0.5, align=True)
@@ -965,6 +1009,8 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
 
                 split.separator()
 
+                extensions.append("stl")
+
                 row = column.row(align=True)
                 split = row.split(factor=0.5, align=True)
 
@@ -974,21 +1020,41 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
 
                 split.separator()
 
-                if any(getattr(self, f"save_pie_show_{ext}_export") for ext in ['obj', 'plasticity', 'fbx', 'usd', 'stl']):
+                if has_gltf:
+                    extensions.append("gltf")
+
+                    row = column.row(align=True)
+                    split = row.split(factor=0.5, align=True)
+
+                    r = split.split(factor=0.42, align=True)
+                    r.prop(self, "save_pie_show_gltf_export", text=str(self.save_pie_show_gltf_export), toggle=True)
+                    r.label(text="Show .glTF Import/Export")
+
+                    split.separator()
+
+                if any(getattr(self, f"save_pie_show_{ext}_export") for ext in extensions):
 
                     bbb = bb.box()
                     bbb.label(text="Export Root Folders")
 
                     col = bbb.column(align=True)
-                    
-                    for ext in ['obj', 'plasticity', 'fbx', 'usd', 'stl']:
+
+                    for ext in ['obj', 'plasticity', 'fbx', 'better_fbx', 'usd', 'stl', 'gltf']:
                         if getattr(self, f"save_pie_show_{ext}_export"):
                             split = col.split(factor=0.2, align=True)
 
                             row = split.row(align=True)
                             row.alignment = 'RIGHT'
                             row.active = bool(getattr(self, f"save_pie_{ext}_folder"))
-                            row.label(text="Plasticity" if ext == 'plasticity' else f".{ext}" )
+
+                            if ext == 'plasticity':
+                                row.label(text="Plasticity")
+
+                            elif ext == 'better_fbx':
+                                row.label(text="Better .fbx")
+
+                            else:
+                                row.label(text=f".{ext}")
 
                             split.prop(self, f"save_pie_{ext}_folder", text='')
 
@@ -1122,6 +1188,16 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
 
                 draw_split_row(self, column, prop='show_orbit_selection', label='Show Orbit around Active')
                 draw_split_row(self, column, prop='show_orbit_method', label='Show Turntable/Trackball Orbit Method Selection')
+
+                column = bb.column(align=True)
+                row = column.row(align=True)
+                row.alignment = 'LEFT'
+                row.label(text="Smart Cam")
+                r = row.row(align=True)
+                r.active = False
+                r.label(text="Camera Creation")
+
+                draw_split_row(self, column, prop='smart_cam_perfectly_match_viewport', label='Match Resolution and Camera Lens to Viewport')
 
         if getattr(bpy.types, "MACHIN3_MT_cursor_pie", False):
             bb = b.box()
@@ -1293,31 +1369,27 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
                 row = draw_split_row(self, row, prop='tools_show_tool_bar', label='Show Tool Bar', factor=0.4)
                 draw_empty_split_row(self, row, factor=0.4)
 
-                if hardops and boxcutter:
-                    row = draw_split_row(self, col, prop='tools_show_hardops', label='Show Hard Ops Menu', factor=0.4)
-                    row = draw_split_row(self, row, prop='tools_show_boxcutter', label='Show BoxCutter', factor=0.4)
+                row = draw_split_row(self, col, prop='tools_show_annotate', label='Show Annotate', factor=0.4)
+                draw_split_row(self, row, prop='tools_show_surfacedraw', label='Show SurfaceDraw', factor=0.4)
+                draw_empty_split_row(self, row, factor=0.4)
+
+                col.separator()
+
+                if hardops:
+                    row = draw_split_row(self, col, prop='tools_show_hardops', label='Show Hard Ops', factor=0.4)
 
                     r = row.row(align=True)
-                    r.enabled = self.tools_show_boxcutter
-                    draw_split_row(self, r, prop='tools_show_boxcutter_presets', label='Show BoxCutter presets', factor=0.4)
-
-                elif hardops:
-                    row = draw_split_row(self, col, prop='tools_show_hardops', label='Show Hard Ops Menu', factor=0.4)
-                    draw_empty_split_row(self, row, factor=0.4)
+                    r.enabled = self.tools_show_hardops
+                    row = draw_split_row(self, r, prop='tools_show_hardops_menu', label='Show Hard Ops Menu', factor=0.4)
                     draw_empty_split_row(self, row, factor=0.4)
 
-                elif boxcutter:
+                if boxcutter:
                     row = draw_split_row(self, col, prop='tools_show_boxcutter', label='Show BoxCutter', factor=0.4)
 
                     r = row.row(align=True)
                     r.enabled = self.tools_show_boxcutter
-                    draw_split_row(self, r, prop='tools_show_boxcutter_presets', label='Show BoxCutter presets', factor=0.4)
-
+                    row = draw_split_row(self, r, prop='tools_show_boxcutter_presets', label='Show BoxCutter Presets', factor=0.4)
                     draw_empty_split_row(self, row, factor=0.4)
-
-                row = draw_split_row(self, col, prop='tools_show_annotate', label='Show Annotate', factor=0.4)
-                draw_split_row(self, row, prop='tools_show_surfacedraw', label='Show SurfaceDraw', factor=0.4)
-                draw_empty_split_row(self, row, factor=0.4)
 
         if not any([getattr(bpy.types, f'MACHIN3_{name}', False) for name in has_settings]):
             b.label(text="No tools or pie menus with settings have been activated.", icon='ERROR')
@@ -1325,6 +1397,56 @@ class MACHIN3toolsPreferences(bpy.types.AddonPreferences):
     def draw_keymaps(self, context, layout):
         wm = bpy.context.window_manager
         kc = wm.keyconfigs.user
+
+        if bpy.app.version >= (4, 2, 0):
+            km = kc.keymaps.get('Sculpt')
+            km3d = kc.keymaps.get('3D View Generic')
+
+            shading_pie_conflict = False
+            views_pie_conflict = False
+
+            if self.activate_shading_pie:
+                grow_sculpt_kmi = find_kmi_from_idname(km, "paint.visibility_filter", properties=[('action', 'GROW')])
+
+                if grow_sculpt_kmi:
+                    shading_pie_kmi = find_kmi_from_idname(km3d, "machin3.call_machin3tools_pie", properties=[('idname', 'shading_pie')])
+
+                    if shading_pie_kmi and shading_pie_kmi.compare(grow_sculpt_kmi):
+                        shading_pie_conflict = True
+
+            if self.activate_views_pie:
+                shrink_sculpt_kmi = find_kmi_from_idname(km, "paint.visibility_filter", properties=[('action', 'SHRINK')])
+
+                if shrink_sculpt_kmi:
+                    views_pie_kmi = find_kmi_from_idname(km3d, "wm.call_menu_pie", properties=[('name', 'MACHIN3_MT_viewport_pie')])
+
+                    if views_pie_kmi and views_pie_kmi.compare(shrink_sculpt_kmi):
+                        views_pie_conflict = True
+
+            if shading_pie_conflict or views_pie_conflict:
+                layout.separator()
+
+                box = layout.box()
+                box.label(text="Sculpt Mode Conflicts")
+                column = box.column(align=True)
+
+                if shading_pie_conflict:
+                    row = column.row(align=True)
+                    row.alert = True
+
+                    row.label(text="There is a conflicting keymap, preventing the Shading Pie from coming up in Sculpt mode. I suggest you remap it, maybe by adding a mod key?")
+
+                    row = column.row(align=True)
+                    rna_keymap_ui.draw_kmi(["ADDON", "USER", "DEFAULT"], kc, km, grow_sculpt_kmi, row, 0)
+
+                if views_pie_conflict:
+                    row = column.row(align=True)
+                    row.alert = True
+
+                    row.label(text="There is a conflicting keymap, preventing the Views Pie from coming up in Sculpt mode. I suggest you remap it, maybe by adding a mod key?")
+
+                    row = column.row(align=True)
+                    rna_keymap_ui.draw_kmi(["ADDON", "USER", "DEFAULT"], kc, km, shrink_sculpt_kmi, row, 0)
 
         modified, missing = get_user_keymap_items(context)
 

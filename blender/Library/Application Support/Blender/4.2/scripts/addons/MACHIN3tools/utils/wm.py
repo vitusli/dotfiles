@@ -1,6 +1,6 @@
-from . tools import prettify_tool_name
-from . system import printd
 from . registration import get_addon_operator_idnames
+from . system import printd
+from . tools import prettify_tool_name
 
 addons = None
 
@@ -327,9 +327,9 @@ def get_last_operators(context, debug=False):
             elif is_array:
 
                 if shade_type == 'Translate':
-                    label = f"Linear Array"
+                    label = "Linear Array"
                 elif shade_type == 'Rotate':
-                    label = f"Radial Array"
+                    label = "Radial Array"
 
             else:
                 label = f"{shade_type} Cursor"

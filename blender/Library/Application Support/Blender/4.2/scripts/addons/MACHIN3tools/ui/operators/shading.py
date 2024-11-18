@@ -2,13 +2,12 @@ import bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty, FloatProperty
 import os
 from math import degrees, radians
-from bpy.types import GPENCIL_MT_layer_active
 from mathutils import Matrix
-from ... utils.registration import get_prefs
 from ... utils.light import adjust_lights_for_rendering, get_area_light_poll
-from ... utils.view import sync_light_visibility
 from ... utils.material import adjust_bevel_shader
+from ... utils.registration import get_prefs
 from ... utils.render import is_cycles, is_cycles_view, is_volume
+from ... utils.view import sync_light_visibility
 from ... utils.world import get_use_world, set_use_world
 
 render_visibility = []
@@ -131,7 +130,7 @@ class SwitchShading(bpy.types.Operator):
         global render_visibility
 
         if new_shading_type == 'RENDERED':
-            render_visibility = [(obj, obj.name) for obj in context.visible_objects if obj.hide_render == True and obj.visible_get()]
+            render_visibility = [(obj, obj.name) for obj in context.visible_objects if obj.hide_render and obj.visible_get()]
 
             for obj, name in render_visibility:
                 obj.hide_set(True)
@@ -306,6 +305,8 @@ class AdjustBevelShaderRadius(bpy.types.Operator):
         layout = self.layout
         column = layout.column(align=True)
 
+        column.label(text=f"Set {int(self.factor * 100)}% Bevel {'Global' if self.global_radius else 'Object'} Radius")
+
     def invoke(self, context, event):
         active = context.active_object
 
@@ -333,7 +334,7 @@ class AdjustBevelShaderRadius(bpy.types.Operator):
 
 class ApplyEeveeUserPreset(bpy.types.Operator):
     bl_idname = "machin3.apply_eevee_user_preset"
-    bl_label = "MACHIN3: Apply Eevee User Preset"
+    bl_label = "MACHIN3: Apply Eevee Raytrace Preset"
     bl_options = {'REGISTER', 'UNDO'}
 
     name: StringProperty(name="Preset Name")
@@ -341,6 +342,8 @@ class ApplyEeveeUserPreset(bpy.types.Operator):
     def draw(self, context):
         layout = self.layout
         column = layout.column(align=True)
+
+        column.label(text=f"Raytrace Preset: {self.name}")
 
     @classmethod
     def description(cls, context, properties):

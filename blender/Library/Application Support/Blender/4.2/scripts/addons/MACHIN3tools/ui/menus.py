@@ -1,8 +1,9 @@
 import bpy
-from .. utils.registration import get_prefs, get_addon
+from .. utils.asset import get_asset_ids, get_assetbrowser_bookmarks, get_libref_and_catalog
 from .. utils.group import get_group_polls
+from .. utils.object import is_instance_collection
+from .. utils.registration import get_prefs, get_addon
 from .. utils.ui import get_icon
-from .. utils.asset import get_asset_library_reference, get_assetbrowser_bookmarks, get_libref_and_catalog
 
 hypercursor = None
 
@@ -281,11 +282,16 @@ def asset_browser_bookmark_buttons(self, context):
     if p.activate_assetbrowser_tools:
 
         current_libref, current_catalog_id, current_catalog = get_libref_and_catalog(context)
-
+        
         bookmarks = get_assetbrowser_bookmarks()
 
         self.layout.separator(factor=1)
         row = self.layout.row(align=True)
+
+        r = row.row(align=True)
+        r.scale_x = 1.3
+        is_current = current_libref == 'LOCAL'
+        r.operator("machin3.assetbrowser_bookmark", text='', depress=is_current, icon='FILE_BLEND').index = 0
 
         for idx in range(10):
             bookmark = bookmarks[str(idx + 1)]
@@ -311,9 +317,38 @@ def asset_browser_bookmark_buttons(self, context):
         r.scale_x = 1.5
         r.operator('machin3.filebrowser_toggle', text='', icon=icon).type = 'DISPLAY_TYPE'
         
-        if not context.space_data.show_region_toolbar and current_catalog:
-            text = f"{current_catalog['libname']} - {current_catalog['catalog']}"
-            row.label(text=text, icon="RIGHTARROW_THIN")
+        if not context.space_data.show_region_toolbar:
+            libref = current_libref.replace('LOCAL', 'Current File').title()
+
+            if current_catalog:
+                text = f"{libref} - {current_catalog['catalog']}"
+                row.label(text=text, icon="RIGHTARROW_THIN")
+
+            elif libref:
+                row.label(text=libref, icon="RIGHTARROW_THIN")
+
+def asset_browser_metadata(self, context):
+    p = get_prefs()
+
+    if p.activate_assetbrowser_tools:
+        active, id_type, local_id = get_asset_ids(context)
+
+        if id_type == 'OBJECT' and local_id and is_instance_collection(local_id):
+            layout = self.layout
+            layout.use_property_split = True
+            layout.use_property_decorate = False  # says "No animation." in space_filebrowser.py, but leaving it out here causes an odd negative indent/offset
+
+            layout.prop(local_id.instance_collection, "name", text="Collection Name")
+
+def asset_browser_update_thumbnail(self, context):
+    p = get_prefs()
+
+    if p.activate_assetbrowser_tools:
+        active, id_type, local_id = get_asset_ids(context)
+
+        if active and id_type in ['OBJECT', 'MATERIAL', 'COLLECTION', 'ACTION'] and local_id:
+            layout = self.layout
+            layout.operator("machin3.update_asset_thumbnail", text='Update Thumbnail')
 
 def outliner_group_toggles(self, context):
     if getattr(bpy.types, 'MACHIN3_OT_group', False) and get_prefs().use_group_outliner_toggles:
@@ -344,11 +379,11 @@ def render_menu(self, context):
 
         layout.separator()
 
-        op = layout.operator("machin3.render", text=f"Quick Render")
+        op = layout.operator("machin3.render", text="Quick Render")
         op.seed = False
         op.final = False
 
-        op = layout.operator("machin3.render", text=f"Final Render")
+        op = layout.operator("machin3.render", text="Final Render")
         op.seed = False
         op.final = True
 
@@ -360,11 +395,11 @@ def render_menu(self, context):
         row.active = True if context.scene.camera else False
         row.prop(get_prefs(), 'render_seed_count', text="Seed Count")
 
-        op = layout.operator("machin3.render", text=f"Seed Render")
+        op = layout.operator("machin3.render", text="Seed Render")
         op.seed = True
         op.final = False
 
-        op = layout.operator("machin3.render", text=f"Final Seed Render")
+        op = layout.operator("machin3.render", text="Final Seed Render")
         op.seed = True
         op.final = True
 
@@ -376,11 +411,11 @@ def render_buttons(self, context):
 
         row = column.row(align=True)
         row.scale_y = 1.2
-        op = row.operator("machin3.render", text=f"Quick Render")
+        op = row.operator("machin3.render", text="Quick Render")
         op.seed = False
         op.final = False
 
-        op = row.operator("machin3.render", text=f"Final Render")
+        op = row.operator("machin3.render", text="Final Render")
         op.seed = False
         op.final = True
 
@@ -392,10 +427,10 @@ def render_buttons(self, context):
 
         row = column.row(align=True)
         row.scale_y = 1.2
-        op = row.operator("machin3.render", text=f"Seed Render")
+        op = row.operator("machin3.render", text="Seed Render")
         op.seed = True
         op.final = False
 
-        op = row.operator("machin3.render", text=f"Final Seed Render")
+        op = row.operator("machin3.render", text="Final Seed Render")
         op.seed = True
         op.final = True

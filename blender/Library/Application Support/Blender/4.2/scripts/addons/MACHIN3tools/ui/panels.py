@@ -1,12 +1,14 @@
 import bpy
-from .. utils.registration import get_prefs
-from .. utils.group import get_group_base_name, get_group_polls
-from .. utils.ui import get_icon
 from .. import bl_info
+from .. utils.asset import is_local_assembly_asset
+from .. utils.collection import get_instance_collections_recursively, is_instance_collection
+from .. utils.group import get_group_base_name, get_group_polls
+from .. utils.registration import get_prefs
+from .. utils.ui import get_icon
 
 class PanelMACHIN3tools(bpy.types.Panel):
     bl_idname = "MACHIN3_PT_machin3_tools"
-    bl_label = "MACHIN3tools %s" % ('.'.join([str(v) for v in bl_info['version']]))
+    bl_label = f"MACHIN3tools {('.'.join([str(v) for v in bl_info['version']]))}"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "MACHIN3"
@@ -17,16 +19,36 @@ class PanelMACHIN3tools(bpy.types.Panel):
         p = get_prefs()
 
         if p.show_sidebar_panel:
+            if get_prefs().update_available:
+                return True
+
             if context.mode == 'OBJECT':
                 return p.activate_smart_drive or p.activate_unity or p.activate_group or p.activate_assetbrowser_tools
+
             elif context.mode == 'EDIT_MESH':
                 return p.activate_extrude
+
+    def draw_header(self, context):
+        layout = self.layout
+
+        if get_prefs().update_available:
+            layout.label(text="", icon_value=get_icon("refresh_green"))
 
     def draw(self, context):
         layout = self.layout
 
         m3 = context.scene.M3
         p = get_prefs()
+
+        if p.update_available:
+            layout.separator()
+
+            row = layout.row()
+            row.scale_y = 1.2
+            row.label(text="An Update is Available", icon_value=get_icon("refresh_green"))
+            row.operator("wm.url_open", text="What's new?").url = 'https://machin3.io/MACHIN3tools/docs/whatsnew'
+
+            layout.separator()
 
         if context.mode == 'OBJECT':
 
@@ -394,11 +416,228 @@ class PanelMACHIN3tools(bpy.types.Panel):
         row.operator("machin3.punch_it", text='Punch It', icon_value=get_icon('fist'))
 
     def draw_assetbrowser_tools(self, context, layout):
-        column = layout.column(align=True)
-        column.scale_y = 1.2
+        active = context.active_object
+        col = None
 
-        column.operator("machin3.create_assembly_asset", text='Create Assembly Asset', icon='ASSET_MANAGER')
+        is_linked = bool(active and active.library)
+        is_assembly = bool(active and (col := is_instance_collection(active)))
+        is_local_asset = bool(active and (asset := is_local_assembly_asset(active)))
+
+        if is_assembly:
+            box = layout.box()
+            column = box.column(align=True)
+
+            icols = {}
+            get_instance_collections_recursively(icols, col)
+
+            row = column.row(align=True)
+            row.alignment = 'LEFT'
+            row.label(text="Assembly")
+
+            if is_local_asset:
+                r = row.row(align=False)
+                r.active = False
+                r.alignment = 'LEFT'
+                r.label(text=f"is {'recursive ' if icols else''}Local Asset Instance")
+
+                if asset.preview:
+                    row = column.row(align=True)
+                    row.template_icon(icon_value=asset.preview.icon_id, scale=15)
+
+                    row = column.row(align=True)
+                    row.scale_y = 1.2
+                    row.operator("machin3.update_asset_thumbnail", text='Update Thumbnail')
+                    column.separator()
+
+            elif icols or is_linked:
+                r = row.row(align=False)
+                r.active = False
+
+                if icols and is_linked:
+                    r.label(text="is recursive and linked")
+                elif icols:
+                    r.label(text="is recursive")
+                else:
+                    r.label(text="is linked")
+
+            split = column.split(factor=0.3, align=True)
+            split.enabled = is_local_asset
+            row = split.row()
+            row.active = False
+            row.alignment = 'RIGHT'
+            row.label(text="Asset Collection")
+            split.prop(col, 'name', text='')
+
+            split = column.split(factor=0.3, align=True)
+            row = split.row()
+            row.active = False
+            row.alignment = 'RIGHT'
+
+            if is_local_asset:
+                row.label(text="Asset Name")
+                split.prop(asset, 'name', text='')
+
+            else:
+                row.label(text="Instance Name")
+                split.prop(active, 'name', text='')
+
+            if icols:
+                split = column.split(factor=0.3, align=True)
+                row = split.row()
+                row.active = False
+                row.alignment = 'RIGHT'
+                row.label(text="Children")
+
+                col = split.column(align=True)
+
+                for depth, cols in icols.items():
+                    unique_cols = set(cols)
+
+                    for icol in unique_cols:
+                        row = col.row(align=True)
+                        row.alignment = 'LEFT'
+
+                        depth_str = (depth - 1) * '  '
+                        row.label(text=f"{depth_str} ◦ {icol.name}")
+
+                        if (count := cols.count(icol)) > 1:
+                            r = row.row(align=True)
+                            r.alignment = 'LEFT'
+                            r.active = False
+                            r.label(text=f"x {count}")
+
+            if is_local_asset:
+                split = column.split(factor=0.3, align=True)
+
+                row = split.row()
+                row.active = False
+                row.alignment = 'RIGHT'
+
+                row.label(text="Offset")
+
+                c = split.column(align=True)
+                row = c.row(align=True)
+                row.prop(col, 'instance_offset', text='')
+
+                row = c.row(align=True)
+                row.operator("machin3.set_instance_collection_offset", text="from Cursor").type = "CURSOR"
+                row.operator("machin3.set_instance_collection_offset", text="from Object").type = "OBJECT"
+
+            column.separator()
+
+        column = layout.column(align=True)
 
         row = column.row(align=True)
-        row.operator("machin3.disassemble_asset", text='Disassemble Asset', icon='NETWORK_DRIVE')
-        row.operator("machin3.remove_assembly_asset", text='Remove Asset', icon='TRASH')
+        row.scale_y = 1.5
+        row.operator("machin3.create_assembly_asset", text='Create Assembly Asset', icon='ASSET_MANAGER')
+
+        row = column.row(align=True)
+        row.scale_y = 1.2
+        row.operator("machin3.disassemble_assembly", text='Disassemble', icon='NETWORK_DRIVE')
+        row.operator("machin3.remove_assembly_asset", text='Remove Assembly', icon='TRASH').remove_asset = False
+
+        if is_local_asset:
+            row = column.row(align=True)
+            row.operator("machin3.remove_assembly_asset", text='Remove Asset', icon_value=get_icon('cancel')).remove_asset = True
+
+class PanelGreasePencilExtras(bpy.types.Panel):
+    bl_idname = "MACHIN3_PT_grease_pencil_extras"
+    bl_label = "Grease Pencil Extras"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "WINDOW"
+    bl_ui_units_x = 12
+
+    @classmethod
+    def poll(cls, context):
+        active = context.active_object
+        return active and active.type in ['GPENCIL', 'GREASEPENCIL']
+
+    def draw(self, context):
+        layout = self.layout
+        column = layout.column(align=True)
+        gpd = context.active_object.data
+
+        layer = gpd.layers.active
+
+        if bpy.app.version < (4, 3, 0):
+            if gpd.layers:
+                row = column.row()
+                col = row.column()
+                col.template_list("GPENCIL_UL_layer", "", gpd, "layers", gpd.layers, "active_index", rows=7 if len(gpd.layers) > 1 else 2, sort_reverse=True, sort_lock=True)
+
+                col = row.column()
+                sub = col.column(align=True)
+                sub.operator("gpencil.layer_add", icon='ADD', text="")
+                sub.operator("gpencil.layer_remove", icon='REMOVE', text="")
+
+                sub.separator()
+
+                if layer:
+                    sub.menu("GPENCIL_MT_layer_context_menu", icon='DOWNARROW_HLT', text="")
+
+                    if len(gpd.layers) > 1:
+                        col.separator()
+
+                        sub = col.column(align=True)
+                        sub.operator("gpencil.layer_move", icon='TRIA_UP', text="").type = 'UP'
+                        sub.operator("gpencil.layer_move", icon='TRIA_DOWN', text="").type = 'DOWN'
+
+                        col.separator()
+
+                        sub = col.column(align=True)
+                        sub.operator("gpencil.layer_isolate", icon='RESTRICT_VIEW_ON', text="").affect_visibility = True
+                        sub.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
+
+            else:
+                column.operator("gpencil.layer_add")
+
+        else:
+            if gpd.layers:
+                is_layer_active = layer is not None
+                is_group_active = gpd.layer_groups.active is not None
+
+                row = column.row()
+                row.template_grease_pencil_layer_tree()
+
+                col = row.column()
+                sub = col.column(align=True)
+                sub.operator_context = 'EXEC_DEFAULT'
+                sub.operator("grease_pencil.layer_add", icon='ADD', text="")
+                sub.operator("grease_pencil.layer_group_add", icon='NEWFOLDER', text="")
+                sub.separator()
+
+                if is_layer_active:
+                    sub.operator("grease_pencil.layer_remove", icon='REMOVE', text="")
+                elif is_group_active:
+                    sub.operator("grease_pencil.layer_group_remove", icon='REMOVE', text="").keep_children = True
+
+                if is_layer_active or is_group_active:
+                    sub.separator()
+
+                if layer:
+                    sub.menu("GREASE_PENCIL_MT_grease_pencil_add_layer_extra", icon='DOWNARROW_HLT', text="")
+
+                    sub = col.column(align=True)
+                    sub.operator("grease_pencil.layer_move", icon='TRIA_UP', text="").direction = 'UP'
+                    sub.operator("grease_pencil.layer_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
+
+            else:
+                column.operator("grease_pencil.layer_add")
+                column.separator()
+
+        if layer:
+            col = column.column(align=True)
+            row = col.row(align=True)
+            row.prop(layer, "blend_mode", expand=True)
+
+            col.prop(layer, "opacity", text="Opacity", slider=True)
+
+            col.separator()
+
+            col.prop(layer, "tint_color", text="")
+            col.prop(layer, "tint_factor", text="Factor", slider=True)
+
+            if bpy.app.version < (4, 3, 0):
+                col.prop(layer, "line_change", text="Stroke Thickness")
+            else:
+                col.prop(layer, "radius_offset", text="Stroke Thickness")

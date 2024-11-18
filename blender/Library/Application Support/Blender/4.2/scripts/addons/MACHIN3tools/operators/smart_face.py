@@ -2,7 +2,6 @@ import bpy
 from bpy.props import BoolProperty
 import bmesh
 from .. utils.view import update_local_view
-from .. utils.registration import get_prefs
 
 class SmartFace(bpy.types.Operator):
     bl_idname = "machin3.smart_face"
@@ -11,35 +10,52 @@ class SmartFace(bpy.types.Operator):
 
     automerge: BoolProperty(name="Merge to closeby Vert", default=True)
     use_focus: BoolProperty(name="Focus on new Object", default=False)
-    def draw(self, context):
-        layout = self.layout
-
-        column = layout.column()
-
-        if self.mode[0] or self.mode[1]:
-            if len(self.verts) == 1:
-                column.prop(self, "automerge")
-
-        elif self.mode[2] and get_prefs().activate_focus:
-            column.prop(self, "use_focus", text="Use Focus", toggle=True)
-
+    keep_mods: BoolProperty(name="Keep Modifiers", default=False)
+    join: BoolProperty(name="Join Separated", default=False)
     @classmethod
     def poll(cls, context):
         if context.mode == 'EDIT_MESH':
             mode = tuple(context.scene.tool_settings.mesh_select_mode)
             return any(mode == m for m in [(True, False, False), (False, True, False), (False, False, True)])
 
+    def draw(self, context):
+        layout = self.layout
+
+        column = layout.column(align=True)
+
+        if self.is_vert or self.is_edge:
+            if len(self.verts) == 1:
+                column.prop(self, "automerge", toggle=True)
+
+        elif self.is_face:
+
+            row = column.row(align=True)
+            row.prop(self, "use_focus", text="Use Focus", toggle=True)
+
+            if self.is_multiple_separated and self.has_modifiers:
+                row = column.row(align=True)
+
+            if self.is_multiple_separated:
+                row.prop(self, "join", toggle=True)
+
+            if self.has_modifiers:
+                row.prop(self, "keep_mods", toggle=True)
+
     def execute(self, context):
         active = context.active_object
-        ts = context.scene.tool_settings
+        sel = context.selected_objects
 
-        self.mode = tuple(ts.mesh_select_mode)
+        self.is_vert = tuple(context.scene.tool_settings.mesh_select_mode) == (True, False, False)
+        self.is_edge = tuple(context.scene.tool_settings.mesh_select_mode) == (False, True, False)
+        self.is_face = tuple(context.scene.tool_settings.mesh_select_mode) == (False, False, True)
+        self.has_modifiers = False
+        self.is_multiple_separated = False
 
         bm = bmesh.from_edit_mesh(active.data)
         bm.normal_update()
         bm.verts.ensure_lookup_table()
 
-        if self.mode[0] or self.mode[1]:
+        if self.is_vert or self.is_edge:
             self.verts = [v for v in bm.verts if v.select]
 
             if self.verts:
@@ -52,38 +68,47 @@ class SmartFace(bpy.types.Operator):
 
                 return {'FINISHED'}
 
-        elif self.mode[2]:
+        elif self.is_face:
             faces = [f for f in bm.faces if f.select]
 
             if faces:
+
                 bpy.ops.mesh.duplicate()
                 bpy.ops.mesh.separate(type='SELECTED')
 
                 bpy.ops.object.mode_set(mode='OBJECT')
 
-                objs = [obj for obj in context.selected_objects if obj != active]
+                separated = [obj for obj in context.selected_objects if obj not in sel]
 
-                if objs:
-                    obj = objs[0]
+                self.is_multiple_separated = len(separated) > 1
+                self.has_modifiers = any(bool(obj.modifiers) for obj in separated)
 
-                    active.select_set(False)
+                bpy.ops.object.select_all(action='DESELECT')
+
+                for obj in separated:
+                    if obj.modifiers and not self.keep_mods:
+                        obj.modifiers.clear()
+
                     obj.select_set(True)
                     context.view_layer.objects.active = obj
 
-                    if get_prefs().activate_focus and self.use_focus:
-                        self.focus(context)
+                if self.use_focus:
+                    self.focus(context, separated)
 
-                    bpy.ops.object.mode_set(mode='EDIT')
+                if self.join:
+                    bpy.ops.object.join()
+
+                bpy.ops.object.mode_set(mode='EDIT')
 
                 return {'FINISHED'}
         return {'CANCELLED'}
 
-    def focus(self, context):
+    def focus(self, context, separated):
         view = context.space_data
         history = context.scene.M3.focus_history
 
         vis = context.visible_objects
-        hidden = [obj for obj in vis if obj != context.active_object]
+        hidden = [obj for obj in vis if obj not in separated]
 
         if view.local_view:
             update_local_view(view, [(obj, False) for obj in hidden])
@@ -95,7 +120,7 @@ class SmartFace(bpy.types.Operator):
             bpy.ops.view3d.localview(frame_selected=False)
 
         epoch = history.add()
-        epoch.name = "Epoch %d" % (len(history) - 1)
+        epoch.name = f"Epoch {len(history) - 1}"
 
         for obj in hidden:
             entry = epoch.objects.add()

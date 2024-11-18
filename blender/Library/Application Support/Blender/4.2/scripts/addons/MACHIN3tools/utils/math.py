@@ -198,6 +198,13 @@ def create_rotation_matrix_from_face(context, mx, face, edge_pair=True, cylinder
 
     return rot
 
+def create_rotation_matrix_from_vectors(tangent, binormal, normal):
+    rot = Matrix()
+    rot.col[0].xyz = tangent
+    rot.col[1].xyz = binormal
+    rot.col[2].xyz = normal
+    return rot
+
 def create_rotation_difference_matrix(v1, v2):
     q = v1.rotation_difference(v2)
     return q.to_matrix().to_4x4()
@@ -265,4 +272,10 @@ def create_coords_bbox(coords, use_numpy=False):
 
     mid = average_locations(bbox)
 
-    return bbox, mid
+    xdim = (bbox[1] - bbox[0]).length
+    ydim = (bbox[2] - bbox[1]).length
+    zdim = (bbox[4] - bbox[0]).length
+
+    dimensions = Vector((xdim, ydim, zdim))
+
+    return bbox, mid, dimensions

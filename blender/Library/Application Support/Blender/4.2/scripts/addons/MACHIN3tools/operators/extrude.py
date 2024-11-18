@@ -5,18 +5,17 @@ import bmesh
 from mathutils import Vector
 from mathutils.geometry import intersect_line_line, intersect_point_line
 from math import sqrt, radians
-from .. utils.modifier import add_boolean, apply_mod
-from .. utils.selection import get_selection_islands, get_boundary_edges, get_edges_vert_sequences, get_selected_vert_sequences
-from .. utils.property import rotate_list
-from .. utils.math import average_normals, average_locations, get_center_between_verts, dynamic_format
-from .. utils.system import printd
-from .. utils.draw import draw_vector, draw_point, draw_line, draw_tris, draw_label, update_HUD_location
 from .. utils.bmesh import get_loop_triangles
-from .. utils.ui import popup_message, init_cursor, init_status, finish_status
-from .. utils.snap import Snap
-from .. utils.registration import get_prefs
-from .. utils.raycast import cast_bvh_ray_from_point
+from .. utils.draw import draw_vector, draw_point, draw_line, draw_tris, draw_label, update_HUD_location
 from .. utils.graph import get_shortest_path
+from .. utils.math import average_normals, average_locations, get_center_between_verts, dynamic_format
+from .. utils.property import rotate_list
+from .. utils.raycast import cast_bvh_ray_from_point
+from .. utils.registration import get_prefs
+from .. utils.selection import get_selection_islands, get_boundary_edges, get_edges_vert_sequences, get_selected_vert_sequences
+from .. utils.snap import Snap
+from .. utils.system import printd
+from .. utils.ui import popup_message, init_cursor, init_status, finish_status
 from .. colors import green, red, blue, yellow, white
 from .. items import extrude_mode_items, ctrl, axis_vector_mappings, axis_items, cursor_spin_angle_preset_items
 
@@ -43,16 +42,16 @@ def draw_punchit_status(op):
 
             row.separator(factor=5)
 
-            row.label(text=f"Extrusion Mode:")
+            row.label(text="Extrusion Mode:")
 
             row.label(text="", icon='EVENT_A')
-            row.label(text=f"Averaged")
+            row.label(text="Averaged")
 
             row.label(text="", icon='EVENT_E')
-            row.label(text=f"Edge")
+            row.label(text="Edge")
 
             row.label(text="", icon='EVENT_N')
-            row.label(text=f"Normal")
+            row.label(text="Normal")
 
             row.separator(factor=5)
 
@@ -68,33 +67,33 @@ def draw_punchit_status(op):
 
             row.separator(factor=5)
             row.label(text="", icon='EVENT_S')
-            row.label(text=f"Sorcery")
+            row.label(text="Sorcery")
 
             row.separator(factor=3)
 
             row.label(text="", icon='EVENT_W')
-            row.label(text=f"Push and Pull")
+            row.label(text="Push and Pull")
 
             row.label(text="", icon='EVENT_Q')
-            row.label(text=f"Pull")
+            row.label(text="Pull")
 
             row.label(text="", icon='EVENT_E')
-            row.label(text=f"Push")
+            row.label(text="Push")
 
             row.label(text="", icon='EVENT_R')
-            row.label(text=f"Reset")
+            row.label(text="Reset")
 
             row.label(text="", icon='EVENT_SHIFT')
-            row.label(text=f"Invert")
+            row.label(text="Invert")
 
             row.label(text="", icon='EVENT_CTRL')
-            row.label(text=f"Push/Pull x 100")
+            row.label(text="Push/Pull x 100")
 
             row.separator(factor=5)
-            row.label(text=f'"Pushing" means widening the extrusion, moving the blue faces outwards')
+            row.label(text='"Pushing" means widening the extrusion, moving the blue faces outwards')
 
             row.separator(factor=2)
-            row.label(text=f'"Pulling" means moving the green faces back')
+            row.label(text='"Pulling" means moving the green faces back')
 
     return draw
 
@@ -135,7 +134,7 @@ class PunchIt(bpy.types.Operator):
         offset = 15 * scale
 
         if self.finalizing:
-            draw_label(context, title=f"Finalizing", coords=Vector((self.HUD_x, self.HUD_y)), center=False, color=white, alpha=1)
+            draw_label(context, title="Finalizing", coords=Vector((self.HUD_x, self.HUD_y)), center=False, color=white, alpha=1)
 
             if self.use_self:
                 draw_label(context, title="magically", coords=Vector((self.HUD_x + 80 * scale, self.HUD_y)), center=False, color=white, alpha=0.5)
@@ -325,8 +324,6 @@ class PunchIt(bpy.types.Operator):
         self.S.finish()
 
     def invoke(self, context, event):
-        debug = False
-        debug = True
 
         self.active = context.active_object
         self.active.update_from_editmode()
@@ -905,83 +902,6 @@ class PunchIt(bpy.types.Operator):
             f.select_set(True)
 
         bmesh.update_edit_mesh(active.data)
-
-    def prototype(self, context):
-        active = context.active_object
-
-        selected_objects = [obj for obj in context.selected_objects]
-        print("selected:", [obj.name for obj in selected_objects])
-
-        bpy.ops.mesh.duplicate()
-        bpy.ops.mesh.separate(type='SELECTED')
-
-        separated_obects = [obj for obj in context.selected_objects if obj not in selected_objects]
-
-        if separated_obects:
-            separated = separated_obects[0]
-
-            print("separated:", separated.name)
-
-            bm = bmesh.new()
-            bm.from_mesh(separated.data)
-            bm.normal_update()
-            bm.verts.ensure_lookup_table()
-
-            original_verts = [v for v in bm.verts]
-            original_faces = [f for f in bm.faces]
-
-            geo = bmesh.ops.extrude_face_region(bm, geom=original_faces, use_normal_flip=False)
-            extruded_faces = [e for e in geo['geom'] if isinstance(e, bmesh.types.BMFace)]
-
-            normal = original_faces[0].normal
-
-            for v in original_verts:
-                v.co += normal * self.amount
-
-            boolean = add_boolean(active, separated, method='DIFFERENCE', solver='EXACT')
-            boolean.use_self = self.use_self
-
-            bm.to_mesh(separated.data)
-            bm.free()
-
-            bpy.ops.object.mode_set(mode='OBJECT')
-
-            apply_mod(boolean.name)
-            bpy.data.meshes.remove(separated.data, do_unlink=True)
-
-            bpy.ops.object.mode_set(mode='EDIT')
-
-    def prototype2(self, context):
-        active = context.active_object
-
-        bpy.ops.mesh.duplicate()
-
-        bm = bmesh.from_edit_mesh(active.data)
-        bm.normal_update()
-
-        original_verts = [v for v in bm.verts if v.select]
-        original_faces = [f for f in bm.faces if f.select]
-
-        geo = bmesh.ops.extrude_face_region(bm, geom=original_faces, use_normal_flip=False)
-        extruded_verts = [v for v in geo['geom'] if isinstance(v, bmesh.types.BMVert)]
-
-        normal = original_faces[0].normal
-
-        for v in original_verts:
-            v.co += normal * self.amount
-
-        for v in extruded_verts:
-            v.select_set(True)
-
-        bm.select_flush(True)
-
-        all_faces = [f for f in bm.faces if f.select]
-
-        bmesh.ops.recalc_face_normals(bm, faces=all_faces)
-
-        bmesh.update_edit_mesh(active.data)
-
-        bpy.ops.mesh.intersect_boolean(use_self=self.use_self)
 
 class CursorSpin(bpy.types.Operator):
     bl_idname = "machin3.cursor_spin"

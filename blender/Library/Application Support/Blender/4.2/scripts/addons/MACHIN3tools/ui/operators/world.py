@@ -1,7 +1,5 @@
 import bpy
-from bpy.types import CLIP_PT_annotation
 from ... utils.render import is_volume
-from ... utils.system import printd
 from ... utils.world import get_world_output, set_use_world
 
 class AddWorld(bpy.types.Operator):
@@ -37,10 +35,6 @@ class SetupVolumetricWorld(bpy.types.Operator):
     def poll(cls, context):
         if context.area.type == 'VIEW_3D':
             return context.space_data.shading.type in ['MATERIAL', 'RENDERED']
-
-    def draw(self, context):
-        layout = self.layout
-        column = layout.column(align=True)
 
     def invoke(self, context, event):
         data = is_volume(context, simple=False)

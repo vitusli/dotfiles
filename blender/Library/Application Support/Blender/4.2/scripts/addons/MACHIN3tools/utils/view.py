@@ -71,6 +71,9 @@ def get_view_origin_and_dir(context, coord=None) -> Tuple[Vector, Vector]:
 
     return view_origin, view_dir
 
+def is_on_viewlayer(obj):
+    return obj.name in bpy.context.view_layer.objects
+
 def ensure_visibility(context, obj: Union[bpy.types.Object, list[bpy.types.Object]], view_layer=True, local_view=True, unhide=True, unhide_viewport=True, select=False):
     view = context.space_data
 
@@ -78,8 +81,8 @@ def ensure_visibility(context, obj: Union[bpy.types.Object, list[bpy.types.Objec
 
     if view_layer:
         for obj in objects:
-            if obj.name not in context.view_layer.objects:
-                context.collection.objects.link(obj)
+            if not is_on_viewlayer(obj):
+                context.scene.collection.objects.link(obj)
                 obj.select_set(False)  # it's automatically selected when being linked, but if we actually want this, we'll do it intentionally
 
     if local_view:

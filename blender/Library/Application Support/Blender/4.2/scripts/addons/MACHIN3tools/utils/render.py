@@ -1,7 +1,6 @@
 from typing import Tuple
 import bpy
 import os
-from . system import printd
 from . view import get_shading_type
 from . world import get_world_output
 
@@ -17,7 +16,7 @@ def is_eevee(context):
 def is_eevee_view(context):
     return (shading_type := get_shading_type(context)) == 'MATERIAL' or (shading_type == 'RENDERED' and is_eevee(context))
 
-def set_eevee():
+def set_eevee(context):
     if bpy.app.version >= (4, 2, 0):
         context.scene.render.engine = 'BLENDER_EEVEE_NEXT'
     else:

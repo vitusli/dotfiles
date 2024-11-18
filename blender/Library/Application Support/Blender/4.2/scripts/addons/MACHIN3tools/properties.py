@@ -1,26 +1,22 @@
-from math import log
 import bpy
 from bpy.props import StringProperty, IntProperty, BoolProperty, CollectionProperty, PointerProperty, EnumProperty, FloatProperty, FloatVectorProperty
 from mathutils import Matrix
 import bmesh
-from . utils.math import flatten_matrix
-from . utils.world import get_world_output, is_volume_only_world, set_use_world
-from . utils.registration import get_addon, get_prefs, get_addon_prefs
-from . utils.tools import get_active_tool
 from . utils.light import adjust_lights_for_rendering, get_area_light_poll
-from . utils.view import get_shading_type, sync_light_visibility
 from . utils.material import adjust_bevel_shader
+from . utils.math import flatten_matrix
+from . utils.registration import get_addon, get_prefs, get_addon_prefs
+from . utils.render import is_volume, set_device, is_cycles, is_eevee, set_render_engine
+from . utils.scene import ensure_composite_input_and_output, get_composite_dispersion, get_composite_glare
+from . utils.system import abspath, dprint, dprintd
+from . utils.tools import get_active_tool
 from . utils.ui import force_ui_update
+from . utils.view import sync_light_visibility
+from . utils.world import get_world_output, is_volume_only_world, set_use_world
 from . utils.group import get_group_hierarchy, get_batch_pose_name, process_group_poses, propagate_pose_preview_alpha
-from . utils.render import get_render_engine, is_volume, set_device, set_eevee, set_cycles, is_cycles, is_eevee, set_render_engine
-from . utils.system import abspath, dprint, printd, dprintd
-from . utils.scene import ensure_composite_input_and_output, get_composite_dispersion, get_composite_glare, get_composite_output, get_composite_input
-from . items import eevee_preset_items, eevee_next_preset_items, eevee_passes_preset_items, align_mode_items, render_engine_items, cycles_device_items, driver_limit_items, axis_items, driver_transform_items, driver_space_items, bc_orientation_items, shading_light_items, compositor_items, eevee_next_raytrace_resolution_items
+from . items import eevee_preset_items, eevee_next_preset_items, eevee_passes_preset_items, align_mode_items, render_engine_items, cycles_device_items, driver_limit_items, axis_items, driver_transform_items, driver_space_items, bc_orientation_items, shading_light_items, eevee_next_raytrace_resolution_items
 
 decalmachine = None
-
-class AppendMatsCollection(bpy.types.PropertyGroup):
-    name: StringProperty()
 
 class HistoryObjectsCollection(bpy.types.PropertyGroup):
     name: StringProperty()
@@ -81,7 +77,7 @@ class GroupPoseCollection(bpy.types.PropertyGroup):
                 if not skip_get_batch_pose_name:
                     name = get_batch_pose_name(other_empties, basename=pose_name)
 
-                empties = other_empties + [empty] if name != self.name else other_empties 
+                empties = other_empties + [empty] if name != self.name else other_empties
 
                 for obj in empties:
                     for pose in obj.M3.group_pose_COL:
@@ -604,7 +600,6 @@ class M3SceneProperties(bpy.types.PropertyGroup):
 
         debug = False
 
-        shading = context.space_data.shading
         data = is_volume(context, simple=False, debug=False)
 
         dprint("toggling volumes to:", self.use_volumes, debug=debug)
@@ -779,7 +774,7 @@ class M3SceneProperties(bpy.types.PropertyGroup):
 
     def update_use_bevel_shader(self, context):
         adjust_bevel_shader(context)
-                
+
     def update_bevel_shader(self, context):
         if self.use_bevel_shader:
             adjust_bevel_shader(context)
@@ -1031,6 +1026,7 @@ class M3ObjectProperties(bpy.types.PropertyGroup):
 
     asset_version: StringProperty(default="1.0")
     hide: BoolProperty(description="Custom Hide prop set in CreateAssemblyAsset, because and objects original visibility gets lost once you drop an asset into a scene")
+    hide_viewport: BoolProperty(description="Custom Hide Viewport prop set in CreateAssemblyAsset, because we disable this for some objects in the assets collection, but want to get the original state back when disassembling")
 
     avoid_update: BoolProperty()
 

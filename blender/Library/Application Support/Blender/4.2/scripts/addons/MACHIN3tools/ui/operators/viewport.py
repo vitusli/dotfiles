@@ -1,13 +1,14 @@
 import bpy
 import bmesh
 from bpy.props import EnumProperty, BoolProperty
-from bpy.types import OBJECT_PT_delta_transform
 from mathutils import Vector
 from ... utils.draw import draw_fading_label
 from ... utils.math import average_locations
+from ... utils.registration import get_prefs
 from ... utils.ui import warp_mouse
 from ... utils.view import ensure_visibility, get_view_origin_and_dir, reset_viewport
 from ... items import view_axis_items
+from ... colors import yellow, white, green
 
 class ViewAxis(bpy.types.Operator):
     bl_idname = "machin3.view_axis"
@@ -141,11 +142,40 @@ class SmartViewCam(bpy.types.Operator):
     def invoke(self, context, event):
         cams = [obj for obj in context.scene.objects if obj.type == "CAMERA"]
         view = context.space_data
+        is_cam_view = view.region_3d.view_perspective == 'CAMERA'
 
         if not cams or event.alt:
+
+            if event.alt and is_cam_view:
+                draw_fading_label(context, text=["You already are in Camera View", context.scene.camera.name], color=[yellow, white], move_y=40, time=4)
+                return {'FINISHED'}
+
+            sel = [obj for obj in context.selected_objects]
+            active = context.active_object
+
             bpy.ops.object.camera_add()
-            context.scene.camera = context.active_object
+
+            cam = context.active_object
+            context.scene.camera = cam
+
             bpy.ops.view3d.camera_to_view()
+
+            if get_prefs().smart_cam_perfectly_match_viewport:
+                ratio = context.region.width / context.region.height
+                context.scene.render.resolution_y = round(context.scene.render.resolution_x / ratio)
+
+                cam.data.lens = view.lens
+                cam.data.sensor_width = 72
+
+            bpy.ops.object.select_all(action='DESELECT')
+
+            for obj in sel:
+                obj.select_set(True)
+
+            context.view_layer.objects.active = active
+
+            if cam:
+                draw_fading_label(context, text=f"Created new {cam.name}", color=green, move_y=30, time=3)
 
         else:
             active = context.active_object
@@ -159,7 +189,16 @@ class SmartViewCam(bpy.types.Operator):
                 bpy.ops.view3d.view_persportho()
 
             bpy.ops.view3d.view_camera()
-            bpy.ops.view3d.view_center_camera()
+
+            cam = context.scene.camera
+
+            if cam:
+                if is_cam_view:
+                    draw_fading_label(context, text=f"Framed {cam.name} Bounds", move_y=30, time=3)
+                else:
+                    draw_fading_label(context, text=f"Switched to {cam.name}", move_y=30, time=3)
+
+        bpy.ops.view3d.view_center_camera()
 
         return {'FINISHED'}
 
@@ -191,6 +230,13 @@ class NextCam(bpy.types.Operator):
         if context.space_data:
             return context.space_data.type == 'VIEW_3D' and context.space_data.region_3d.view_perspective == 'CAMERA'
 
+    @classmethod
+    def description(cls, context, properties):
+        if properties.previous:
+            return "Switch to Previous Camera"
+        else:
+            return "Switch to Next Camera"
+
     def execute(self, context):
         cams = sorted([obj for obj in context.scene.objects if obj.type == "CAMERA"], key=lambda x: x.name)
 
@@ -210,6 +256,7 @@ class NextCam(bpy.types.Operator):
             context.scene.camera = newcam
 
             bpy.ops.view3d.view_center_camera()
+            draw_fading_label(context, text=f"Switched to {'previous' if self.previous else 'next'} {newcam.name}", move_y=30, time=3)
 
         return {'FINISHED'}
 
@@ -304,10 +351,6 @@ class CreateDoFEmpty(bpy.types.Operator):
         if context.mode == 'OBJECT':
             return context.scene.camera
 
-    def draw(self, context):
-        layout = self.layout
-        column = layout.column(align=True)
-
     def execute(self, context):
         cam = context.scene.camera
 
@@ -318,19 +361,21 @@ class CreateDoFEmpty(bpy.types.Operator):
         empty.show_name = True
         empty.name = f"{cam.name}_DoF Focus"
 
-        context.scene.camera.data.dof.focus_object = empty
+        cam.data.dof.focus_object = empty
+
+        cam.data.dof.aperture_fstop = 0.2
 
         warp_mouse(self, context, Vector((context.region.width / 2, context.region.height / 2)))
 
         view_origin, view_dir = get_view_origin_and_dir(context, self.mouse_pos)
-        empty.location = view_origin + view_dir
+        empty.location = view_origin + view_dir * 2
 
         context.scene.tool_settings.snap_elements = {'FACE'}
         context.scene.tool_settings.use_snap_align_rotation = True
 
         bpy.ops.transform.translate('INVOKE_DEFAULT')
         
-        draw_fading_label(context, text="Hold CTRL to snap the empty to a Surface", y=self.mouse_pos.y, move_y=40, time=4)
+        draw_fading_label(context, text="Hold CTRL to snap the DoF Focus empty to a Surface", y=self.mouse_pos.y, move_y=40, time=4)
         return {'FINISHED'}
 
 class SelectDoFObject(bpy.types.Operator):
@@ -345,10 +390,6 @@ class SelectDoFObject(bpy.types.Operator):
             cam = context.scene.camera
             return cam and cam.data.dof.focus_object
 
-    def draw(self, context):
-        layout = self.layout
-        column = layout.column(align=True)
-
     def execute(self, context):
         cam = context.scene.camera
         obj = cam.data.dof.focus_object
@@ -357,6 +398,12 @@ class SelectDoFObject(bpy.types.Operator):
         ensure_visibility(context, obj, select=True)
 
         context.view_layer.objects.active = obj
+
+        context.scene.tool_settings.snap_elements = {'FACE'}
+        context.scene.tool_settings.use_snap_align_rotation = True
+
+        draw_fading_label(context, text=[f"{obj.name} has been selected", "Invoke the Translate tool and snap it to a surface using CTRL"], y=100, move_y=40, time=4)
+
         return {'FINISHED'}
 
 class ResetViewport(bpy.types.Operator):

@@ -1,4 +1,5 @@
 import bpy
+from . object import is_instance_collection
 from . registration import get_addon
 
 def get_groups_collection(scene):
@@ -41,3 +42,21 @@ def get_collection_depth(self, collections, depth=0, init=False):
             get_collection_depth(self, col.children, depth + 1, init=False)
 
     return self.depth
+
+def get_instance_collections_recursively(collections, col, depth=0):
+    if depth:
+        if depth not in collections:
+            collections[depth] = []
+
+        collections[depth].append(col)
+
+    for obj in col.objects:
+        if icol := is_instance_collection(obj):
+           get_instance_collections_recursively(collections, icol, depth + 1)
+
+def get_active_collection(context):
+    if layercol := context.view_layer.active_layer_collection:
+        colname = layercol.name
+
+        if colname:
+            return bpy.data.collections.get(colname, None)

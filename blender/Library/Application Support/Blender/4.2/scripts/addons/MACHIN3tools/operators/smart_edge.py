@@ -1,10 +1,10 @@
 import bpy
 from bpy.props import BoolProperty, IntProperty, EnumProperty, FloatProperty
 import bmesh
-from .. items import bridge_interpolation_items, smartedge_sharp_mode_items, smartedge_select_mode_items
+from .. utils.bmesh import ensure_custom_data_layers
 from .. utils.modifier import add_bevel
 from .. utils.ui import popup_message
-from .. utils.bmesh import ensure_custom_data_layers
+from .. items import bridge_interpolation_items, smartedge_sharp_mode_items, smartedge_select_mode_items
 
 class SmartEdge(bpy.types.Operator):
     bl_idname = "machin3.smart_edge"
@@ -17,7 +17,9 @@ class SmartEdge(bpy.types.Operator):
     bevel_amount: FloatProperty(name="Amount", default=0.1, min=0, step=0.3, precision=4)
     bevel_clamp: BoolProperty(name="Clamp Overlap", default=False)
     bevel_loop: BoolProperty(name="Loop Slide", default=False)
+    crease_amount: FloatProperty(name="Amount", default=0.95, min=0, max=1, step=0.3, precision=4)
     is_unbevel: BoolProperty(name="Is Unbevel")
+    is_uncrease: BoolProperty(name="Is Uncrease")
 
     offset: BoolProperty(name="Offset Edge Slide", default=False)
     bridge_cuts: IntProperty(name="Cuts", default=0, min=0)
@@ -33,6 +35,11 @@ class SmartEdge(bpy.types.Operator):
     is_region = False
     is_loop_cut = False
     is_turn = False
+
+    @classmethod
+    def poll(cls, context):
+        mode = tuple(context.scene.tool_settings.mesh_select_mode)
+        return any(mode == m for m in [(True, False, False), (False, True, False), (False, False, True)])
 
     def draw(self, context):
         layout = self.layout
@@ -59,6 +66,10 @@ class SmartEdge(bpy.types.Operator):
                 row.prop(self, "bevel_clamp", toggle=True)
                 row.prop(self, "bevel_loop", toggle=True)
 
+            elif self.sharp_mode == 'CREASE' and not self.is_uncrease:
+                row = column.row(align=True)
+                row.prop(self, "crease_amount")
+
         elif self.draw_bridge_props:
             row.prop(self, "bridge_cuts")
             row.prop(self, "bridge_interpolation", text="")
@@ -67,17 +78,16 @@ class SmartEdge(bpy.types.Operator):
             row.label(text="Select")
             row.prop(self, "select_mode", expand=True)
 
-    @classmethod
-    def poll(cls, context):
-        mode = tuple(context.scene.tool_settings.mesh_select_mode)
-        return any(mode == m for m in [(True, False, False), (False, True, False), (False, False, True)])
-
     def invoke(self, context, event):
         self.draw_bridge_props = False
         self.draw_sharp_props = False
+
         self.is_knife_projectable = False
         self.do_knife_project = False
+
         self.is_unbevel = False
+        self.is_uncrease = False
+
         self.is_knife = False
         self.is_connect = False
         self.is_starconnect = False
@@ -93,6 +103,8 @@ class SmartEdge(bpy.types.Operator):
         bm.normal_update()
         bm.verts.ensure_lookup_table()
 
+        cr = ensure_custom_data_layers(bm)[2]
+
         verts = [v for v in bm.verts if v.select]
         faces = [f for f in bm.faces if f.select]
         edges = [e for e in bm.edges if e.select]
@@ -101,15 +113,21 @@ class SmartEdge(bpy.types.Operator):
             self.is_knife_projectable = True
             self.is_knife_project = True
 
-        if self.sharp and self.sharp_mode in ['CHAMFER', 'KOREAN']:
-            bevels = [mod for mod in active.modifiers if mod.type == 'BEVEL' and mod.limit_method == 'WEIGHT' and mod.name in ['Chamfer', 'Korean Bevel']]
+        if self.sharp:
+            if self.sharp_mode in ['CHAMFER', 'KOREAN']:
+                bevels = [mod for mod in active.modifiers if mod.type == 'BEVEL' and mod.limit_method == 'WEIGHT' and mod.name in ['Chamfer', 'Korean Bevel']]
 
-            if bevels:
-                bevel = bevels[-1]
+                if bevels:
+                    bevel = bevels[-1]
 
-                self.bevel_amount = bevel.width
-                self.bevel_clamp = bevel.use_clamp_overlap
-                self.bevel_loop = bevel.loop_slide
+                    self.bevel_amount = bevel.width
+                    self.bevel_clamp = bevel.use_clamp_overlap
+                    self.bevel_loop = bevel.loop_slide
+
+            elif self.sharp_mode == 'CREASE':
+                if any(e[cr] for e in edges) and not all(e[cr] for e in edges):
+                    self.crease_amount = max(e[cr] for e in edges)
+                    print("crease amount:", self.crease_amount)
 
         return self.execute(context)
 
@@ -120,7 +138,7 @@ class SmartEdge(bpy.types.Operator):
         bm.normal_update()
         bm.verts.ensure_lookup_table()
 
-        bw = ensure_custom_data_layers(bm)[1]
+        _, bw, cr = ensure_custom_data_layers(bm)
 
         verts = [v for v in bm.verts if v.select]
         faces = [f for f in bm.faces if f.select]
@@ -138,11 +156,14 @@ class SmartEdge(bpy.types.Operator):
             if self.sharp_mode == 'SHARPEN':
                 self.toggle_sharp(active, edges)
 
+            elif self.sharp_mode == 'CREASE':
+                self.toggle_crease(active, cr, edges)
+
             else:
                 self.set_bevel_weight(active, bw, edges)
-                self.bevel(active, bw, edges)
+                self.bevel(active)
 
-            self.clean_up_bevels(active, bm, bw, edges)
+            self.clean_up_bevels(active, bm, bw)
 
             if not self.show_wire:
                 active.show_wire = self.sharp_mode == 'KOREAN'
@@ -171,8 +192,16 @@ class SmartEdge(bpy.types.Operator):
                             bpy.ops.mesh.vert_connect_path()
                             self.is_connect = True
                         except:
-                            self.report({'ERROR'}, "Could not connect vertices")
-                            return {'CANCELLED'}
+                            if len(verts) == 2:
+                                try:
+                                    bpy.ops.mesh.edge_face_add()
+                                    self.is_connect = True
+                                except:
+                                    self.report({'ERROR'}, "Could not connect vertices")
+                                    return {'CANCELLED'}
+                            else:
+                                self.report({'ERROR'}, "Could not connect vertices")
+                                return {'CANCELLED'}
 
             elif tuple(bpy.context.scene.tool_settings.mesh_select_mode) == (False, True, False):
 
@@ -264,6 +293,22 @@ class SmartEdge(bpy.types.Operator):
 
         bmesh.update_edit_mesh(active.data)
 
+    def toggle_crease(self, active, cr, edges):
+        state = all(e[cr] for e in edges)
+
+        if state:
+            amount = 0
+
+            self.is_uncrease = True
+
+        else:
+            amount = self.crease_amount
+
+        for e in edges:
+            e[cr] = amount
+
+        bmesh.update_edit_mesh(active.data)
+
     def set_bevel_weight(self, active, bw, edges):
         if any([e[bw] > 0 for e in edges]):
             self.bevel_weight = max(e[bw] for e in edges)
@@ -279,7 +324,7 @@ class SmartEdge(bpy.types.Operator):
 
         bmesh.update_edit_mesh(active.data)
 
-    def bevel(self, active, bw, edges):
+    def bevel(self, active):
         bevels = [mod for mod in active.modifiers if mod.type == 'BEVEL' and mod.limit_method == 'WEIGHT' and mod.name in ['Chamfer', 'Korean Bevel']]
 
         if not bevels:
@@ -302,7 +347,7 @@ class SmartEdge(bpy.types.Operator):
             bevel.profile = 1
             bevel.segments = 2
 
-    def clean_up_bevels(self, active, bm, bw, edges):
+    def clean_up_bevels(self, active, bm, bw):
         if all([e[bw] == 0 for e in bm.edges]):
             bevels = [mod for mod in active.modifiers if mod.type == 'BEVEL' and mod.limit_method == 'WEIGHT' and mod.name in ['Chamfer', 'Korean Bevel']]
 
@@ -310,9 +355,6 @@ class SmartEdge(bpy.types.Operator):
                 active.modifiers.remove(bevel)
 
     def offset_edges(self, active, edges):
-        verts = {v for e in edges for v in e.verts}
-
-        connected_edge_counts = [len([e for e in v.link_edges if e not in edges]) for v in verts]
 
         for e in edges:
             e.smooth = True

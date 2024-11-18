@@ -1,5 +1,1 @@
-/Users/vituspacholleck/Library/Application Support/Blender/4.2/config/userpref.blend
-/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects/Arc/assets/_work/arc.blend
-/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/design/03_DesignStudio/06_OffTopic/07_VitusWorkSpace/2024-05-28 Astronaut/24-05-28 Astronaut.blend
-/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects/Arc/assets/_work/arc_glb.blend
-/Users/vituspacholleck/Downloads/geo nodes test.blend
+/Users/vituspacholleck/Downloads/startup.blend

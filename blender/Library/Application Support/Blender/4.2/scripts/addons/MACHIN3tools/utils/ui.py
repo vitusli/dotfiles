@@ -212,8 +212,6 @@ def draw_keymap_items(kc, name, keylist, layout):
 
                     rna_keymap_ui.draw_kmi(["ADDON", "USER", "DEFAULT"], kc, km, kmi, row, 0)
 
-                    infos = item.get("info", [])
-
                     info = item.get("info", '')
 
                     if info:
@@ -318,7 +316,7 @@ def get_user_keymap_items(context, debug=False):
 
                 else:
                     if debug:
-                        print(f"  keymap: !! NOT FOUND !!")
+                        print("  keymap: !! NOT FOUND !!")
 
     return modified_kmis, missing_kmis
 
@@ -363,6 +361,28 @@ def navigation_passthrough(event, alt=True, wheel=False) -> bool:
     else:
         return event.type in {'MIDDLEMOUSE'} or event.type.startswith('NDOF')
 
+def scroll_up(event, wheel=True, key=False):
+    up_keys = ['ONE', 'UP_ARROW']
+
+    if event.value == 'PRESS':
+        if wheel and key:
+            return event.type in {'WHEELUPMOUSE', *up_keys}
+        elif wheel:
+            return event.type in {'WHEELUPMOUSE'}
+        else:
+            return event.type in {*up_keys}
+
+def scroll_down(event, wheel=True, key=False):
+    down_keys = ['TWO', 'DOWN_ARROW']
+
+    if event.value == 'PRESS':
+        if wheel and key:
+            return event.type in {'WHEELDOWNMOUSE', *down_keys}
+        elif wheel:
+            return event.type in {'WHEELDOWNMOUSE'}
+        else:
+            return event.type in {*down_keys}
+
 def init_timer_modal(self, debug=False):
     self.start = time()
 
@@ -384,6 +404,20 @@ def get_timer_progress(self, debug=False):
         print("progress:", progress)
 
     return progress
+
+def ignore_events(event, none=True, timer=True, timer_report=True):
+    ignore = ['INBETWEEN_MOUSEMOVE', 'WINDOW_DEACTIVATE']
+
+    if none:
+        ignore.append('NONE')
+
+    if timer:
+        ignore.extend(['TIMER', 'TIMER1', 'TIMER2', 'TIMER3'])
+
+    if timer_report:
+        ignore.append('TIMER_REPORT')
+
+    return event.type in ignore
 
 def force_ui_update(context, active=None):
     if context.mode == 'OBJECT':

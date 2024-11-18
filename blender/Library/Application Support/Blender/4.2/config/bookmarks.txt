@@ -1,12 +1,12 @@
 [Bookmarks]
 [Recent]
-/Users/vituspacholleck/.dotfiles/
-/Users/vituspacholleck/.dotfiles/blender/
-/Users/vituspacholleck/Downloads/
-/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects/Arc/rendering/
-/var/folders/b9/4c0npbq50sx6ywg02g50nt1w0000gn/T/
-/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/design/03_DesignStudio/06_OffTopic/07_VitusWorkSpace/2024-05-28 Astronaut/
-/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects/Arc/assets/_work/emotions_frames/idle_blink/
-/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects/Arc/assets/_work/Textures/
-/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects/Arc/assets/_work/
-/Users/vituspacholleck/Downloads/idle/
+/Applications/Adobe Photoshop 2025/
+/Volumes/T7 Shield/Creative/3D/Blender/02 Addons/Blender 4.x/Modeling/
+/Volumes/T7 Shield/Creative/3D/Blender/01 Assets/Asset Browser/Models/botaniq_full/
+/Volumes/T7 Shield/Creative/3D/Blender/01 Assets/Asset Browser/Models/Machin3 Assemblies/
+/Volumes/T7 Shield/Creative/3D/Blender/01 Assets/Asset Browser/All/Poly Haven/
+/Volumes/T7 Shield/Creative/3D/Blender/01 Assets/Asset Browser/All/Freepoly/
+/Volumes/T7 Shield/Creative/3D/Blender/01 Assets/Asset Browser/All/Poliigon/
+/Volumes/T7 Shield/Creative/3D/Blender/01 Assets/Asset Browser/Shader/Chocofur Materials/
+/Volumes/T7 Shield/Creative/3D/Blender/01 Assets/Asset Browser/Shader/Chocofur Materials/Materials/
+/Volumes/T7 Shield/Creative/3D/Blender/01 Assets/Asset Browser/Shader/Nodes/procedural patterns/

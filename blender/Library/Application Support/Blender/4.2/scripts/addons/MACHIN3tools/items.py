@@ -44,6 +44,7 @@ smartvert_path_type_items = [("TOPO", "Topo", ""),
                              ("LENGTH", "Length", "")]
 
 smartedge_sharp_mode_items = [('SHARPEN', 'Sharpen', ''),
+                              ('CREASE', 'Crease', ''),
                               ('CHAMFER', 'Chamfer', ''),
                               ('KOREAN', 'Korean Bevel', '')]
 
@@ -131,8 +132,9 @@ cursor_spin_angle_preset_items = [('None', 'None', ''),
                                   ('180', '180', '')]
 
 create_assembly_asset_empty_location_items = [('AVG', 'Average', 'Averaged Location of all Asset Root Objects'),
-                                              ('AVGFLOOR', 'Floor', 'Averaged Location of all Asset Root Objects projected on the floor'),
-                                              ('WORLDORIGIN', 'World Origin', 'World Origin')]
+                                              ('AVGFLOOR', 'Avg. Floor', 'Averaged Location of all Asset Root Objects projected on the floor'),
+                                              ('CURSOR', 'Cursor', 'Cursor Location'),
+                                              ('ORIGIN', 'Origin', 'World Origin')]
 
 create_assembly_asset_empty_collection_items = [('SCENECOL', 'Scene Collection', 'Add Asset empty to Scene Collection'),
                                                 ('OBJCOLS', 'Object Collections', "Add Asset Empty to Asset Object's Colletion(s)")]
@@ -141,6 +143,49 @@ shade_mode_items = [('SMOOTH', 'Smooth', ''),
                     ('FLAT', 'Flat', '')]
 
 asset_browser_bookmark_props = ['libref', 'catalog_id', 'display_size', 'display_type', 'valid']
+
+letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+numbers = ["ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "ZERO"]
+special = ["SPACE", "PLUS", "MINUS", "STAR", "EQUAL", "COMMA", "PERIOD", "COLON", "SEMI_COLON", "SLASH", "BACK_SLASH", "QUOTE", "DOUBLE-QUOTE", "LEFT_BRACKET", "RIGHT_BRACKET"]
+control = ['BACK_SPACE', 'RET']
+
+annotate_inputs = [*letters, *numbers, *special, *control]
+
+numbers_map = {"ONE": 1,
+               "TWO": 2,
+               "THREE": 3,
+               "FOUR": 4,
+               "FIVE": 5,
+               "SIX": 6,
+               "SEVEN": 7,
+               "EIGHT": 8,
+               "NINE": 9,
+               "ZERO": 0}
+
+specials_map = {"SPACE": " ",
+
+                "PLUS": "+",
+                "MINUS": "-",
+                "STAR": "*",
+                "EQUAL": "=",
+
+                "COMMA": ",",
+                "PERIOD": ".",
+
+                "SEMI_COLON": ";",
+                "COLON": ":",
+
+                "EXCLAMATION_MARK": "!",
+                "QUESTION_MARK": "?",
+
+                "SLASH": "/",
+                "BACK_SLASH": "\\",
+
+                "QUOTE": "'",
+                "DOUBLE_QUOTE": '"',
+
+                "LEFT_BRACKET": "[",
+                "RIGHT_BRACKET": "]"}
 
 eevee_preset_items = [('NONE', 'None', ''),
                       ('LOW', 'Low', 'Use Scene Lights, Ambient Occlusion and Screen Space Reflections'),
@@ -185,7 +230,6 @@ tool_name_mapping_dict = {'BC': 'BoxCutter',
                           'builtin.select_box': 'Select Box',
                           'builtin.annotate': 'Annotate',
                           'builtin.annotate_eraser': 'Erase',
-                          'builtin.select_box': 'Select Box',
                           'machin3.tool_hyper_cursor': 'Hyper Cursor',
                           'machin3.tool_hyper_cursor_simple': 'Simple Hyper Cursor'}
 

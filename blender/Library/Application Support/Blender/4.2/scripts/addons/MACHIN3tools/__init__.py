@@ -1,10 +1,10 @@
 bl_info = {
     "name": "MACHIN3tools",
     "author": "MACHIN3, TitusLVR",
-    "version": (1, 10, 0, "DeusEx", 'rc-2'),
-    "blender": (3, 6, 0),
+    "version": (1, 11, 0, "DeusEx"),
+    "blender": (4, 2, 0),
     "location": "Everywhere",
-    "revision": "2a4efee1b4ff11133971b94974368bb61fcb01ed",
+    "revision": "64e6aa02ab28086eb030818fcbf709d3f279aeb0",
     "description": "Streamlining Blender 3.6+.",
     "warning": "",
     "doc_url": "https://machin3.io/MACHIN3tools/docs",
@@ -33,7 +33,7 @@ def reload_modules(name):
         importlib.reload(eval(module))
 
     from . import handlers
-    
+
     if dbg:
         print("reloading", handlers.__name__)
 
@@ -73,11 +73,31 @@ from . properties import M3SceneProperties, M3ObjectProperties, M3CollectionProp
 from . utils.registration import get_core, get_prefs, get_tools, get_pie_menus, get_path
 from . utils.registration import register_classes, unregister_classes, register_keymaps, unregister_keymaps, register_icons, unregister_icons, register_msgbus, unregister_msgbus
 from . utils.system import verify_update, install_update
-from . ui.menus import asset_browser_bookmark_buttons, object_context_menu, mesh_context_menu, add_object_buttons, material_pick_button, outliner_group_toggles, extrude_menu, group_origin_adjustment_toggle, render_menu, render_buttons
+from . ui.menus import asset_browser_bookmark_buttons, asset_browser_metadata, object_context_menu, mesh_context_menu, add_object_buttons, material_pick_button, outliner_group_toggles, extrude_menu, group_origin_adjustment_toggle, render_menu, render_buttons, asset_browser_update_thumbnail
 from . handlers import load_post, undo_pre, depsgraph_update_post, render_start, render_end
 from time import time
 
 def update_check():
+    def get_version_as_string():
+        return '.'.join(str(v) for v in bl_info['version'])
+
+    def get_version_as_semver_string():
+        version = [v for v in bl_info['version'] if v != "DeusEx"]
+
+        if len(version) == 3:
+            return ".".join([str(v) for v in version])
+
+        else:
+            sign = "-" if any(version[3] == rt for rt in ['alpha', 'beta', 'rc']) else "+"
+            basever = ".".join([str(v) for v in version[:3]]) + f"{sign}{version[3]}"
+
+            if version[4:]:
+                tailver = ".".join(str(v) for v in version[4:])
+                return f"{basever}.{tailver}"
+
+            else:
+                return basever
+
     def hook(resp, *args, **kwargs):
         if resp:
             if resp.text == 'true':
@@ -94,7 +114,7 @@ def update_check():
     def init_update_check(debug=False):
         if debug:
             print()
-            print("initiating update check for version", bl_info['version'])
+            print("initiating update check for version", get_version_as_string(), "semver:", get_version_as_semver_string())
 
         import platform
         import hashlib
@@ -102,7 +122,7 @@ def update_check():
 
         machine = hashlib.sha1(platform.node().encode('utf-8')).hexdigest()[0:7]
 
-        headers = {'User-Agent': f"{bl_info['name']}/{'.'.join([str(v) for v in bl_info.get('version')[:3]])} Blender/{'.'.join([str(v) for v in bpy.app.version])} ({platform.uname()[0]}; {platform.uname()[2]}; {platform.uname()[4]}; {machine})"}
+        headers = {'User-Agent': f"{bl_info['name']}/{get_version_as_semver_string()} Blender/{'.'.join([str(v) for v in bpy.app.version])} ({platform.uname()[0]}; {platform.uname()[2]}; {platform.uname()[4]}; {machine})"}
         session = FuturesSession()
 
         try:
@@ -120,7 +140,7 @@ def update_check():
 
         update_available = get_prefs().update_available
 
-        msg = [f"version: {'.'.join(str(v) for v in bl_info['version'][:3])}",
+        msg = [f"version: {get_version_as_string()}",
                f"update time: {update_time}",
                f"update available: {update_available}\n"]
 
@@ -141,18 +161,14 @@ def update_check():
             lines = [l[:-1] for l in f.readlines()]
 
         if len(lines) == 3:
-            version_str = lines[0].replace('version: ', '')
+            version = lines[0].replace('version: ', '')
             update_time_str = lines[1].replace('update time: ', '')
             update_available_str = lines[2].replace('update available: ', '')
 
             if debug:
+                print(" fetched version:", version)
                 print(" fetched update available:", update_available_str)
                 print(" fetched update time:", update_time_str)
-
-            try:
-                version = tuple(int(v) for v in version_str.split('.'))
-            except:
-                version = None
 
             try:
                 update_time = float(update_time_str)
@@ -164,7 +180,7 @@ def update_check():
             except:
                 update_available = None
 
-            if version is not None and update_time is not None and update_available is not None:
+            if version and update_time is not None and update_available is not None:
                 return True, version, update_time, update_available
 
         return False, None, None, None
@@ -185,9 +201,9 @@ def update_check():
         if valid:
 
             if debug:
-                print(f" comparing stored {bl_info['name']} version:", version, "with bl_info['version']:", bl_info['version'][:3])
+                print(f" comparing stored {bl_info['name']} version:", version, "with bl_info['version']:", get_version_as_string())
 
-            if version != bl_info['version'][:3]:
+            if version != get_version_as_string():
                 if debug:
                     print(f"init {bl_info['name']} update check, as the versions differ due to user updating the addon since the last update check")
 
@@ -243,8 +259,12 @@ def register():
     bpy.types.VIEW3D_MT_edit_mesh_extrude.append(extrude_menu)
     bpy.types.VIEW3D_MT_mesh_add.prepend(add_object_buttons)
     bpy.types.VIEW3D_MT_editor_menus.append(material_pick_button)
-    bpy.types.ASSETBROWSER_MT_editor_menus.append(asset_browser_bookmark_buttons)
+
     bpy.types.OUTLINER_HT_header.prepend(outliner_group_toggles)
+
+    bpy.types.ASSETBROWSER_MT_editor_menus.append(asset_browser_bookmark_buttons)
+    bpy.types.ASSETBROWSER_PT_metadata.prepend(asset_browser_metadata)
+    bpy.types.ASSETBROWSER_PT_metadata_preview.append(asset_browser_update_thumbnail)
 
     bpy.types.VIEW3D_PT_tools_object_options_transform.append(group_origin_adjustment_toggle)
 
@@ -309,8 +329,12 @@ def unregister():
     bpy.types.VIEW3D_MT_edit_mesh_extrude.remove(extrude_menu)
     bpy.types.VIEW3D_MT_mesh_add.remove(add_object_buttons)
     bpy.types.VIEW3D_MT_editor_menus.remove(material_pick_button)
-    bpy.types.ASSETBROWSER_MT_editor_menus.remove(asset_browser_bookmark_buttons)
+
     bpy.types.OUTLINER_HT_header.remove(outliner_group_toggles)
+
+    bpy.types.ASSETBROWSER_MT_editor_menus.remove(asset_browser_bookmark_buttons)
+    bpy.types.ASSETBROWSER_PT_metadata.remove(asset_browser_metadata)
+    bpy.types.ASSETBROWSER_PT_metadata_preview.remove(asset_browser_update_thumbnail)
 
     bpy.types.VIEW3D_PT_tools_object_options_transform.remove(group_origin_adjustment_toggle)
 

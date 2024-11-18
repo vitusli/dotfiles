@@ -2,9 +2,9 @@ import bpy
 from bpy.utils import register_class, unregister_class, previews
 import os
 from importlib import import_module
-from .. registration import keys as keysdict
+from .. msgbus import gp_annotation_tint_change, object_name_change, group_color_change
 from .. registration import classes as classesdict
-from .. msgbus import group_name_change, group_color_change
+from .. registration import keys as keysdict
 
 def get_path():
     return os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -325,8 +325,11 @@ def unregister_icons(icons):
     previews.remove(icons)
 
 def register_msgbus(owner):
-    bpy.msgbus.subscribe_rna(key=(bpy.types.Object, 'color'), owner=owner, args=(), notify=group_color_change)
-    bpy.msgbus.subscribe_rna(key=(bpy.types.Object, 'name'), owner=owner, args=(), notify=group_name_change)
+    bpy.msgbus.subscribe_rna(key=(bpy.types.Object, 'color'), owner=owner, args=(bpy.context, ), notify=group_color_change)
+    bpy.msgbus.subscribe_rna(key=(bpy.types.Object, 'name'), owner=owner, args=(bpy.context, ), notify=object_name_change)
+
+    if bpy.app.version >= (4, 3, 0):
+        bpy.msgbus.subscribe_rna(key=(bpy.types.GreasePencilLayer, 'tint_color'), owner=owner, args=(bpy.context, ), notify=gp_annotation_tint_change)
 
 def unregister_msgbus(owner):
     bpy.msgbus.clear_by_owner(owner)
@@ -489,7 +492,6 @@ def get_pie_menus():
 
 def get_smart_vert(classlists=[], keylists=[], count=0):
     if get_prefs().activate_smart_vert:
-        from .. operators.smart_vert import SmartVert
 
         classlists.append(classesdict["SMART_VERT"])
         keylists.append(keysdict["SMART_VERT"])
@@ -499,7 +501,6 @@ def get_smart_vert(classlists=[], keylists=[], count=0):
 
 def get_smart_edge(classlists=[], keylists=[], count=0):
     if get_prefs().activate_smart_edge:
-        from .. operators.smart_edge import SmartEdge
 
         classlists.append(classesdict["SMART_EDGE"])
         keylists.append(keysdict["SMART_EDGE"])

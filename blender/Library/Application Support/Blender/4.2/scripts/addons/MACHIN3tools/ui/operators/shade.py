@@ -1,13 +1,13 @@
 import bpy
-from bpy.ops import ed
 from bpy.props import IntProperty, BoolProperty, EnumProperty, FloatProperty
 import bmesh
 from math import radians, degrees
 from ... utils.bmesh import ensure_custom_data_layers
 from ... utils.draw import draw_fading_label
-from ... utils.modifier import add_auto_smooth, get_auto_smooth, get_mod_input, move_mod, remove_mod, sort_mod, set_mod_input
+from ... utils.modifier import add_auto_smooth, get_auto_smooth, get_mod_input, move_mod, remove_mod, sort_mod, set_mod_input, replace_invalid_auto_smooth_mods
 from ... utils.registration import get_addon 
 from ... utils.system import printd
+from ... utils.view import is_on_viewlayer
 from ... items import shade_mode_items
 from ... colors import yellow, white, red, orange, blue
 
@@ -140,10 +140,12 @@ class Shade(bpy.types.Operator):
 
             selected = set(obj for obj in context.selected_objects if obj.type in objtypes)
 
-            children = set(c for obj in selected for c in obj.children_recursive if c.type in objtypes if c.name in context.view_layer.objects) if self.include_children else set()
-            booleans = set(mod.object for obj in selected for mod in obj.modifiers if mod.type == 'BOOLEAN' and mod.object and mod.object.name in context.view_layer.objects) - children if self.include_boolean_objs else set()
+            children = set(c for obj in selected for c in obj.children_recursive if c.type in objtypes if is_on_viewlayer(c)) if self.include_children else set()
+            booleans = set(mod.object for obj in selected for mod in obj.modifiers if mod.type == 'BOOLEAN' and mod.object and is_on_viewlayer(mod.object)) - children if self.include_boolean_objs else set()
 
             objects = selected | children | booleans
+
+            replace_invalid_auto_smooth_mods(objects)
 
             self.poll_redo_panel(objects)
 
@@ -154,6 +156,8 @@ class Shade(bpy.types.Operator):
         elif context.mode == 'EDIT_MESH':
 
             objects = set(obj for obj in context.objects_in_mode)
+
+            replace_invalid_auto_smooth_mods(objects)
 
             self.poll_redo_panel(objects)
 
@@ -212,11 +216,11 @@ class Shade(bpy.types.Operator):
                 if mod := get_auto_smooth(obj):
 
                     data[obj]['auto_smooth'] = {'Angle': degrees(get_mod_input(mod, "Angle")),
-                                                'Ignore Sharpness': get_mod_input(mod, 'Ignore Sharpness'),
+                                                'Ignore Sharpness': bool(get_mod_input(mod, 'Ignore Sharpness')),   # NOTE: it's possible this mod input returns None (for invalid auto smooth mods), although these should all be removed now at the beginning
                                                 'show_expanded': mod.show_expanded,
                                                 'use_pin_to_last': mod.use_pin_to_last,
                                                 'index': list(obj.modifiers).index(mod),
-                                                'active_index': list(obj.modifiers).index(obj.modifiers.active)}
+                                                'active_index': list(obj.modifiers).index(obj.modifiers.active) if obj.modifiers.active else 0}   # NOTE: in some rare cases the active mod can point to None, in this case just set the index to 0
 
         if view.local_view:
             for obj, state, in data.items():
@@ -251,7 +255,7 @@ class Shade(bpy.types.Operator):
 
         for obj in booleans + boolean_instances:
             if bpy.app.version >= (4, 2, 0):
-                if obj in data and data[obj]['auto_smooth']:
+                if data and obj in data and data[obj]['auto_smooth']:
                     continue
 
             if bpy.app.version >= (4, 1, 0) :
@@ -268,7 +272,7 @@ class Shade(bpy.types.Operator):
                     sort_mod(mod)
 
             else:
-                if obj in data and data[obj]['auto_smooth']:
+                if data and obj in data and data[obj]['auto_smooth']:
                     continue
                 
                 else:
@@ -317,6 +321,7 @@ class Shade(bpy.types.Operator):
                     obj.data.use_auto_smooth = True
 
                 elif bpy.app.version >= (4, 2, 0):
+
                     data = state['auto_smooth']
                     mod = add_auto_smooth(obj, angle=data['Angle'])
 
@@ -556,6 +561,8 @@ class ToggleAutoSmooth(bpy.types.Operator):
         if active:
             sel = [obj for obj in context.selected_objects if obj.type in objtypes]
 
+            replace_invalid_auto_smooth_mods(sel)
+
             if active not in sel:
                 sel.append(active)
 
@@ -579,7 +586,7 @@ class ToggleAutoSmooth(bpy.types.Operator):
                                              'show_expanded': mod.show_expanded,
                                              'use_pin_to_last': mod.use_pin_to_last,
                                              'index': list(obj.modifiers).index(mod),
-                                             'active_index': list(obj.modifiers).index(obj.modifiers.active)}
+                                             'active_index': list(obj.modifiers).index(obj.modifiers.active) if obj.modifiers.active else 0}
                 else:
                     moddicts = {}
 
@@ -633,14 +640,14 @@ class ToggleAutoSmooth(bpy.types.Operator):
 
             if state:
                 if self.angle:
-                    fading_hud_text.insert(0, f"Enabled Auto Smooth with angle {self.angle}")
+                    fading_hud_text.insert(0, f"Enabled Auto Smooth with angle {self.angle}°")
                 else:
-                    fading_hud_text.insert(0, f"Enabled Auto Smooth")
+                    fading_hud_text.insert(0, "Enabled Auto Smooth with 20°")
 
                 fading_hud_colors.insert(0, blue)
 
             else:
-                fading_hud_text.insert(0, f"Disabled Auto Smooth")
+                fading_hud_text.insert(0, "Disabled Auto Smooth")
                 fading_hud_colors.insert(0, red)
 
             fading_hud_alphas.insert(0, 1)

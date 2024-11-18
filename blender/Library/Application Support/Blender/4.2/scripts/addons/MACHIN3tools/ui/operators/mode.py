@@ -1,8 +1,8 @@
 import bpy
 from bpy.props import StringProperty
 from ... utils.registration import get_prefs
-from ... utils.view import set_xray, reset_xray
 from ... utils.tools import get_active_tool, get_tools_from_context
+from ... utils.view import set_xray, reset_xray
 
 user_cavity = True
 
@@ -79,7 +79,7 @@ class MeshMode(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if context.mode in ['OBJECT', 'EDIT_MESH']:
+        if context.mode in ['OBJECT', 'EDIT_MESH', 'SCULPT', 'PAINT_TEXTURE', 'PAINT_WEIGHT', 'PAINT_VERTEX', 'PARTICLE']:
             active = context.active_object
 
             if active and active.override_library:
@@ -98,20 +98,21 @@ class MeshMode(bpy.types.Operator):
 
         desc = f"{mode.capitalize()} Select"
 
-        if not (mode == 'VERT' and isvert or mode == 'EDGE' and isedge or mode == 'FACE' and isface):
-            desc += "\nSHIFT: Extend Selection"
+        if context.mode == 'EDIT_MESH':
+            if not (mode == 'VERT' and isvert or mode == 'EDGE' and isedge or mode == 'FACE' and isface):
+                desc += "\nSHIFT: Extend Selection"
 
-        if isvert and mode != 'VERT' or isedge and mode != 'EDGE':
-            desc += '\n   or'
+            if isvert and mode != 'VERT' or isedge and mode != 'EDGE':
+                desc += '\n   or'
 
-            if mode == 'VERT':
+                if mode == 'VERT':
+                    desc += "\nCTRL: Contract Selection"
+                else:
+                    desc += "\nCTRL: Expand Selection"
+
+            elif isface and mode != 'FACE':
+                desc += '\n   or'
                 desc += "\nCTRL: Contract Selection"
-            else:
-                desc += "\nCTRL: Expand Selection"
-
-        elif isface and mode != 'FACE':
-            desc += '\n   or'
-            desc += "\nCTRL: Contract Selection"
 
         return desc
 
@@ -122,7 +123,7 @@ class MeshMode(bpy.types.Operator):
         toggle_cavity = get_prefs().toggle_cavity
         toggle_xray = get_prefs().toggle_xray
 
-        if context.mode == "OBJECT":
+        if context.mode in ['OBJECT', 'SCULPT', 'PAINT_TEXTURE', 'PAINT_WEIGHT', 'PAINT_VERTEX', 'PARTICLE']:
             if toggle_xray:
                 set_xray(context)
 

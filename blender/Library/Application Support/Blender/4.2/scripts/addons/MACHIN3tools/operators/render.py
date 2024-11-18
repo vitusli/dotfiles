@@ -4,14 +4,14 @@ import os
 import datetime
 import time
 import platform
+from .. utils.math import dynamic_format
 from .. utils.registration import get_prefs
 from .. utils.system import makedir
-from .. utils.math import dynamic_format
 
 class Render(bpy.types.Operator):
     bl_idname = "machin3.render"
     bl_label = "MACHIN3: Render"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER'}
 
     quarter_qual: BoolProperty(name="Quarter Quality", default=False)
     half_qual: BoolProperty(name="Half Quality", default=False)
@@ -19,10 +19,6 @@ class Render(bpy.types.Operator):
     quad_qual: BoolProperty(name="Quadruple Quality", default=False)
     seed: BoolProperty(name="Seed Render", default=False)
     final: BoolProperty(name="Final Render", default=False)
-    def draw(self, context):
-        layout = self.layout
-        column = layout.column()
-
     @classmethod
     def description(cls, context, properties):
         currentblend = bpy.data.filepath
@@ -37,7 +33,7 @@ class Render(bpy.types.Operator):
         if properties.final:
             desc += "\nAdditionally force EXR, render Cryptomatte, and set up the Compositor"
 
-        desc += f"\n\nALT: Half Quality\nSHIFT: Double Quality\nALT + CTRL: Quarter Quality\nSHIFT + CTRL: Quadruple Quality"
+        desc += "\n\nALT: Half Quality\nSHIFT: Double Quality\nALT + CTRL: Quarter Quality\nSHIFT + CTRL: Quadruple Quality"
 
         return desc
 
@@ -389,7 +385,7 @@ class Render(bpy.types.Operator):
 
             img.name = f"Render Seed {i} ({i + 1}/{count})"
             bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
-            img.name = f"Render Result"
+            img.name = "Render Result"
 
         return seedpaths, matte_path
 

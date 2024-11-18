@@ -2,10 +2,10 @@ import bpy
 from bpy.props import FloatProperty, FloatVectorProperty, BoolProperty
 from mathutils import Vector
 from bpy_extras.view3d_utils import location_3d_to_region_2d
-from ... utils.draw import draw_circle, draw_label, draw_mesh_wire, yellow
-from ... utils.ui import get_scale, get_zoom_factor, init_timer_modal, set_countdown, get_timer_progress
+from ... utils.draw import draw_circle, draw_label, draw_mesh_wire
 from ... utils.registration import get_prefs
-from ... colors import white, blue, red
+from ... utils.ui import get_scale, get_zoom_factor, init_timer_modal, set_countdown, get_timer_progress
+from ... colors import white, blue, yellow
 
 class DrawGroupRestPose(bpy.types.Operator):
     bl_idname = "machin3.draw_group_rest_pose"

@@ -1,12 +1,10 @@
 import bpy
 import os
 import shutil
-
-from bpy.types import TOPBAR_MT_file_defaults
 from .. utils.registration import get_addon, get_addon_prefs, get_prefs, enable_addon
 from .. utils.system import makedir
+from .. utils.ui import get_scale, kmi_to_string, get_keymap_item
 from .. utils.view import reset_viewport
-from .. utils.ui import get_scale, kmi_to_string, get_keymap_item, region_2d_to_location_3d
 
 class Customize(bpy.types.Operator):
     bl_idname = "machin3.customize"
@@ -491,6 +489,17 @@ class Customize(bpy.types.Operator):
                             kmi.properties.alt_navigation = False
                             print(to_str, kmi_to_string(kmi, docs_mode=docs_mode))
 
+            if bpy.app.version >= (4, 2, 0):
+                km = kc.keymaps.get("Sculpt")
+                print("\n Sculpt Keymap")
+
+                for kmi in km.keymap_items:
+                    if kmi.idname == "paint.visibility_filter":
+                        if kmi.type in ['PAGE_UP', 'PAGE_DOWN']:
+                            print(changed_str, kmi_to_string(kmi, docs_mode=docs_mode))
+                            kmi.shift = True
+                            print(to_str, kmi_to_string(kmi, docs_mode=docs_mode))
+
             km = kc.keymaps.get("Curve")
             print("\n Curve Keymap")
 
@@ -666,6 +675,15 @@ class Customize(bpy.types.Operator):
                     kmi.ctrl = False
                     print(to_str, kmi_to_string(kmi, docs_mode=docs_mode))
 
+            km = kc.keymaps.get("File Browser Main")
+            print_keymap_title(km)
+
+            for kmi in km.keymap_items:
+                if kmi.idname == "file.view_selected":
+                    print(changed_str, kmi_to_string(kmi, docs_mode=docs_mode))
+                    kmi.type = 'F'
+                    print(to_str, kmi_to_string(kmi, docs_mode=docs_mode))
+
             km = kc.keymaps.get("Transform Modal Map")
             print_keymap_title(km)
 
@@ -679,6 +697,19 @@ class Customize(bpy.types.Operator):
                     print(f" Changed Transform Modal Map's PROPORTIONAL_SIZE_UP from {'SHIFT + ' if kmi.shift else ''}WHEELUPMOUSE")
                     kmi.type = 'WHEELDOWNMOUSE'
                     print(f"                                                      to {'SHIFT + ' if kmi.shift else ''}WHEELDOWNMOUSE")
+
+            km = kc.keymaps.get(f"Grease Pencil {'Stroke ' if bpy.app.version < (4, 3, 0) else ''}Edit Mode", None)
+            print_keymap_title(km)
+
+            for kmi in km.keymap_items:
+                
+                if kmi.idname == "gpencil.stroke_cyclical_set":
+                    print(deactivated_str, kmi_to_string(kmi, docs_mode=docs_mode))
+                    kmi.active = False
+                
+                elif kmi.idname == "grease_pencil.cyclical_set":
+                    print(deactivated_str, kmi_to_string(kmi, docs_mode=docs_mode))
+                    kmi.active = False
 
         def add_keymaps(kc):
 

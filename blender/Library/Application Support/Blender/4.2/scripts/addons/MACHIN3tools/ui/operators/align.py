@@ -3,9 +3,9 @@ from bpy.props import EnumProperty, BoolProperty
 import bmesh
 from mathutils import Vector, Matrix, geometry
 from ... utils.math import get_center_between_verts, create_rotation_difference_matrix, get_loc_matrix, create_coords_bbox, get_right_and_up_axes
-from ... items import axis_items, align_type_items, axis_mapping_dict, align_direction_items, align_space_items, align_mode_items
 from ... utils.selection import get_selected_vert_sequences, get_selection_islands
 from ... utils.ui import popup_message
+from ... items import axis_items, align_type_items, axis_mapping_dict, align_direction_items, align_space_items, align_mode_items
 
 class AlignEditMesh(bpy.types.Operator):
     bl_idname = "machin3.align_editmesh"
@@ -241,7 +241,7 @@ class CenterEditMesh(bpy.types.Operator):
             origin = get_center_between_verts(*verts)
 
         else:
-            _, origin = create_coords_bbox([v.co for v in verts])
+            _, origin, _ = create_coords_bbox([v.co for v in verts])
 
         if space == 'LOCAL':
             target = origin.copy()

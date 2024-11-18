@@ -1,0 +1,88 @@
+{
+    "highlight_color": [
+        0.5,
+        0.5,
+        0.5
+    ],
+    "highlight_range": 0.5,
+    "contrast": 0.5,
+    "sharpness": 0.25,
+    "sharpness_mask": 0.05,
+    "texture": 0,
+    "clarity": 0.25,
+    "color_boost": 0.25,
+    "saturation": 1.1,
+    "saturation_perceptual": 0.5,
+    "yellow_saturation": 0.65,
+    "orange_saturation": 0.55,
+    "green_saturation": 0.5,
+    "use_values": 1,
+    "use_colors": 1,
+    "texture_color": 1.0,
+    "clarity_size": 0.5,
+    "use_effects": false,
+    "distortion": 0.0,
+    "dispersion": 0.0,
+    "grain": 0.0,
+    "grain_steps": 2,
+    "glare": 0.0,
+    "vignette_value": 0.0,
+    "vignette_highlights": 0.5,
+    "vignette_feathering": 0.5,
+    "vignette_scale_x": 1.0,
+    "vignette_scale_y": 1.0,
+    "shadow_saturation": 1.0,
+    "shadow_saturation_range": 0.5,
+    "highlight_saturation": 1.0,
+    "highlight_saturation_range": 0.5,
+    "temperature": 0.5,
+    "tint": 0.5,
+    "grain_scale": 10.0,
+    "grain_method": "FAST",
+    "value_curves": [
+        [
+            [
+                0.0,
+                0.0
+            ],
+            [
+                1.0,
+                1.0
+            ]
+        ],
+        [
+            [
+                0.0,
+                0.0
+            ],
+            [
+                1.0,
+                1.0
+            ]
+        ],
+        [
+            [
+                0.0,
+                0.0
+            ],
+            [
+                1.0,
+                1.0
+            ]
+        ],
+        [
+            [
+                0.0,
+                0.0
+            ],
+            [
+                1.0,
+                1.0
+            ]
+        ]
+    ],
+    "highlight_blending": "SOFT_LIGHT",
+    "midtone_blending": "SOFT_LIGHT",
+    "shadow_blending": "SOFT_LIGHT",
+    "version": "(1,0,0)"
+}

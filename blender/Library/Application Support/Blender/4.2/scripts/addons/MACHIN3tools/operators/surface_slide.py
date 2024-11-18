@@ -1,7 +1,6 @@
 import bpy
-from bpy.ops import ed
 from uuid import uuid4
-from .. utils.modifier import add_shrinkwrap, add_surface_slide, get_surface_slide, move_mod
+from .. utils.modifier import add_surface_slide, get_surface_slide, move_mod
 from .. utils.object import parent
 
 class SurfaceSlide(bpy.types.Operator):
@@ -13,6 +12,12 @@ class SurfaceSlide(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         if context.mode == 'EDIT_MESH':
+            active = context.active_object
+
+            if active.data.shape_keys:
+                cls.poll_message_set("You can't Surface Slide on Objects with Shape Keys")
+                return False
+
             return not get_surface_slide(context.active_object)
 
     def execute(self, context):

@@ -1,18 +1,19 @@
 import bpy
-from bpy.props import StringProperty, BoolProperty, FloatProperty, EnumProperty, IntProperty
+from bpy.props import StringProperty, BoolProperty, EnumProperty, IntProperty
 import os
-from mathutils import Vector
+from mathutils import Vector, Matrix
 import numpy as np
-from .. utils.asset import get_asset_library_reference, set_asset_library_reference, update_asset_catalogs
-from .. utils.asset import get_assetbrowser_bookmarks, get_catalogs_from_asset_libraries, get_libref_and_catalog, set_assetbrowser_bookmarks, validate_libref_and_catalog
-from .. utils.draw import draw_fading_label, draw_points, draw_line
+from .. utils.asset import get_asset_ids, get_asset_library_reference, get_most_used_local_catalog_id, is_local_assembly_asset, set_asset_library_reference, update_asset_catalogs, get_assetbrowser_bookmarks, get_catalogs_from_asset_libraries, get_libref_and_catalog, set_assetbrowser_bookmarks, validate_libref_and_catalog, get_display_size_from_area
+from .. utils.draw import draw_fading_label, draw_points, draw_point
 from .. utils.math import average_locations, create_coords_bbox, get_loc_matrix
-from .. utils.object import get_eval_bbox, get_object_tree, get_parent, remove_obj, duplicate_objects
-from .. utils.registration import get_addon, get_path 
-from .. utils.ui import force_ui_update, popup_message
-from .. utils.view import ensure_visibility, get_view_bbox
-from .. items import create_assembly_asset_empty_location_items, create_assembly_asset_empty_collection_items, asset_browser_bookmark_props
-from .. colors import white, yellow, blue
+from .. utils.object import get_active_object, get_eval_bbox, get_object_tree, get_parent, has_bbox, is_instance_collection, is_linked_object, remove_obj, duplicate_objects
+from .. utils.registration import get_addon, get_path
+from .. utils.render import is_cycles_view
+from .. utils.ui import force_ui_update, get_icon, popup_message
+from .. utils.view import ensure_visibility, get_view_bbox, get_view_origin_and_dir
+from .. utils.workspace import get_3dview_area, get_window_region_from_area
+from .. items import create_assembly_asset_empty_location_items, asset_browser_bookmark_props
+from .. colors import white, yellow, blue, green, red
 
 decalmachine = None
 meshmachine = None
@@ -26,17 +27,13 @@ class CreateAssemblyAsset(bpy.types.Operator):
     name: StringProperty(name="Asset Name", default="AssemblyAsset")
     move: BoolProperty(name="Move instead of Copy", description="Move Objects into Asset Collection, instead of copying\nThis will unlink them from any existing collections", default=False)
     location: EnumProperty(name="Empty Location", items=create_assembly_asset_empty_location_items, description="Location of Asset's Empty", default='AVGFLOOR')
-    emptycol: EnumProperty(name="Empty Collection", items=create_assembly_asset_empty_collection_items, description="Collections to put the the Asset's Empty in", default='OBJCOLS')
+    unlink_asset: BoolProperty(name="Unlink Assembly Asset", description="Remove the Asset Empty from the current Scene", default=True)
     render_thumbnail: BoolProperty(name="Render Thumbnail", default=True)
-    thumbnail_lens: FloatProperty(name="Thumbnail Lens", default=100)
-    toggle_overlays: BoolProperty(name="Toggle Overlays", default=True)
-
     avoid_update: BoolProperty()
 
     @classmethod
     def poll(cls, context):
-        if context.mode == 'OBJECT':
-            return context.mode == 'OBJECT' and context.selected_objects
+        return context.mode == 'OBJECT' and context.selected_objects
 
     def draw(self, context):
         global decalmachine, meshmachine
@@ -64,11 +61,11 @@ class CreateAssemblyAsset(bpy.types.Operator):
 
         split = column.split(factor=0.2, align=True)
         row = split.row(align=True)
-        row.alignment = 'RIGHT'
         row.active = False
-        row.label(text="Add to")
+        row.alignment = 'RIGHT'
+        row.label(text="Unlink")
         row = split.row(align=True)
-        row.prop(self, 'emptycol', expand=True)
+        row.prop(self, 'unlink_asset', toggle=True)
 
     def invoke(self, context, event):
         global decalmachine, meshmachine
@@ -89,105 +86,45 @@ class CreateAssemblyAsset(bpy.types.Operator):
         name = self.name.strip()
 
         if name:
-            print(f"INFO: Creation Assembly Asset: {name}")
+            print(f"\nINFO: Creation Assembly Asset: {name}")
 
             objects = self.get_assembly_asset_objects(context)
 
-            loc = self.get_empty_location(context, objects)
+            loc = self.get_empty_location(context, objects, debug=False)
 
             duplicates = duplicate_objects(context, objects)
 
             for obj in duplicates:
                 obj.M3.hide = not obj.visible_get()
 
+                obj.M3.hide_viewport = obj.hide_viewport
+
             if decalmachine:
                 self.delete_decal_backups(duplicates)
-            
+
             if meshmachine:
                 self.delete_stashes(duplicates)
 
-            empty = self.create_asset_instance_collection(context, name, duplicates, loc)
+            empty, empty_cols = self.create_asset_instance_collection(context, name, duplicates, loc)
 
             self.switch_asset_browser_to_LOCAL(context, empty)
 
-            asset_bbox = self.get_asset_bbox(duplicates)
+            asset_bbox, asset_dimensions = self.get_asset_bbox(duplicates)
 
-            if True:
+            empty.empty_display_size = min(asset_dimensions) * 1.2
+
+            if asset_bbox and self.render_thumbnail:
                 self.create_asset_thumbnail(context, empty, asset_bbox)
 
-            return {'FINISHED'}
+            self.finalize(context, loc, empty, empty_cols, asset_dimensions)
 
-            render_width = context.scene.render.resolution_x
-            render_height = context.scene.render.resolution_y
-
-            context.scene.render.resolution_x = width
-            context.scene.render.resolution_y = height
-
-            print()
-            print(" width:", width)
-            print("height:", height)
-            print("  crop:", [tuple(co) for co in render_bbox])
-
-            bpy.ops.render.opengl()
-
-            thumb = bpy.data.images.get('Render Result')
-            print(thumb)
-
-            if thumb:
-                filepath = os.path.join(get_path(), 'resources', 'render.png')
-                thumb.save_render(filepath=filepath)
-
-                thumb = bpy.data.images.load(filepath=filepath)
-
-                pixels = np.array(thumb.pixels[:])
-
-                pixels = pixels.reshape((height, width, 4))
-
-                left = int(render_bbox[0].x)
-                right = int(render_bbox[1].x)
-                top = int(render_bbox[1].y)
-                bottom = int(render_bbox[2].y)
-
-                cropped_pixels = pixels[top:bottom, left:right, :]
-
-                cropped_width = right - left
-                cropped_height = bottom - top
-
-                cropped = bpy.data.images.new("Cropped Image", width=cropped_width, height=cropped_height)
-
-                cropped.pixels[:] = cropped_pixels.flatten()         # see CodeMaX below, the difference here is minor though, but extreme for the image_pixels_float
-
-                cropped.scale(256, 256)
-
-                empty.preview_ensure()
-                empty.preview.image_size = cropped.size
-                empty.preview.image_pixels_float[:] = cropped.pixels  # CodeManX is a legend, see https://blender.stackexchange.com/a/3678/33919
-
-                os.unlink(filepath)
-                bpy.data.images.remove(thumb, do_unlink=True)
-                bpy.data.images.remove(cropped, do_unlink=True)
-
-            return {'FINISHED'}
-
-            if self.render_thumbnail:
-                thumbpath = os.path.join(get_path(), 'resources', 'thumb.png')
-                self.render_thumbnail(context, thumbpath)
-
-                thumb = bpy.data.images.load(filepath=thumbpath)
-
-                instance.preview_ensure()
-                instance.preview.image_size = thumb.size
-                instance.preview.image_pixels_float[:] = thumb.pixels  # CodeManX is a legend
-
-                bpy.data.images.remove(thumb)
-                bpy.data.images.remove(bpy.data.images['Render Result'])
-                os.unlink(thumbpath)
+            if not asset_bbox:
+                draw_fading_label(context, text="Could not create Asset Thumbnail from current Selection of Objects", color=red, move_y=30, time=3)
 
             return {'FINISHED'}
 
         else:
-            popup_message("The chosen asset name can't be empty", title="Illegal Name")
-
+            popup_message("The chosen asset name can't be nothing", title="Illegal Name")
             return {'CANCELLED'}
 
     def get_assembly_asset_objects(self, context):
@@ -204,17 +141,28 @@ class CreateAssemblyAsset(bpy.types.Operator):
 
         return objects
 
-    def get_empty_location(self, context, objects):
-        rootobjs = [obj for obj in objects if not obj.parent]
-
+    def get_empty_location(self, context, objects, debug=False):
         if self.location in ['AVG', 'AVGFLOOR']:
+            rootobjs = [obj for obj in objects if not obj.parent]
+
             loc = average_locations([obj.matrix_world.decompose()[0] for obj in rootobjs])
+            color = yellow
 
             if self.location == 'AVGFLOOR':
-                loc[2] = 0
+                loc.z = 0
+                color = green
+
+        elif self.location == 'CURSOR':
+            loc = context.scene.cursor.location
+            color = blue
 
         else:
             loc = Vector((0, 0, 0))
+            color = white
+
+        if debug:
+            draw_point(loc, color=color, modal=False)
+            context.area.tag_redraw()
 
         return loc
 
@@ -231,18 +179,34 @@ class CreateAssemblyAsset(bpy.types.Operator):
         for obj in objs_with_stashes:
             obj.MM.stashes.clear()
 
+    def finalize(self, context, loc, empty, empty_cols, asset_dimensions):
+        if not self.unlink_asset:
+            empty = empty.copy()
+
+            empty.location = loc
+
+            for col in empty_cols:
+                col.objects.link(empty)
+
+            context.evaluated_depsgraph_get()
+
+            context.view_layer.objects.active = empty
+
+            if asset_dimensions:
+                self.offset_asset_empty_towards_view(context, empty, asset_dimensions)
+
     def create_asset_instance_collection(self, context, name, objects, loc):
         master_col = context.scene.collection
 
         main_asset_col = bpy.data.collections.get('_Assets')
 
         if not main_asset_col:
-            main_asset_col = bpy.data.collections.new(f"_Assets")
+            main_asset_col = bpy.data.collections.new("_Assets")
 
         if main_asset_col.name not in master_col.children:
             master_col.children.link(main_asset_col)
 
-            context.view_layer.layer_collection.children[main_asset_col.name].hide_viewport = True
+        context.view_layer.layer_collection.children[main_asset_col.name].exclude = False
 
         asset_col = bpy.data.collections.new(f"_{name}")
         asset_col.M3.is_asset_collection = True
@@ -250,6 +214,11 @@ class CreateAssemblyAsset(bpy.types.Operator):
         main_asset_col.children.link(asset_col)
 
         object_cols = {col for obj in objects for col in obj.users_collection}
+
+        empty_cols = [col for col in object_cols if all(ob.name in col.objects for ob in objects)]
+
+        if not empty_cols:
+            empty_cols = [master_col]
 
         for obj in objects:
             for col in obj.users_collection:
@@ -268,16 +237,7 @@ class CreateAssemblyAsset(bpy.types.Operator):
         empty.instance_collection = asset_col
         empty.instance_type = 'COLLECTION'
 
-        empty.location = loc
-
         empty.M3.asset_version = "1.1"
-
-        if self.emptycol == 'SCENECOL':
-            master_col.objects.link(empty)
-
-        else:
-            for col in object_cols:
-                col.objects.link(empty)
 
         asset_col.instance_offset = loc
 
@@ -290,11 +250,9 @@ class CreateAssemblyAsset(bpy.types.Operator):
                 if catalog == catalog_data['catalog']:
                     empty.asset_data.catalog_id = uuid
 
-        bpy.ops.object.select_all(action='DESELECT')
-        empty.select_set(True)
-        context.view_layer.objects.active = empty
+        context.view_layer.layer_collection.children[main_asset_col.name].exclude = True
 
-        return empty
+        return empty, empty_cols
 
     def switch_asset_browser_to_LOCAL(self, context, asset):
         asset_browsers = [area for screen in context.workspace.screens for area in screen.areas if area.type == 'FILE_BROWSER' and area.ui_type == 'ASSETS']
@@ -305,27 +263,69 @@ class CreateAssemblyAsset(bpy.types.Operator):
                     if get_asset_library_reference(space.params) != 'LOCAL':
                         set_asset_library_reference(space.params, 'LOCAL')
 
-                    space.show_region_toolbar = True
+                    space.params.catalog_id = asset.asset_data.catalog_id
+
                     space.show_region_tool_props = True
 
                     space.activate_asset_by_id(asset, deferred=True)
 
     def get_asset_bbox(self, objects, debug=False):
+        def get_instance_collection_bbox_recursively(col_coords, obj, col, mx):
+            offsetmx = get_loc_matrix(col.instance_offset)
+            instance_mx = mx @ obj.matrix_world @ offsetmx.inverted_safe()
+
+            for ob in obj.instance_collection.objects:
+                if ob.display_type not in ['WIRE', 'BOUNDS'] and not ob.M3.hide and has_bbox(ob):
+                    bbox = [instance_mx @ ob.matrix_world @ co for co in get_eval_bbox(ob)]
+                    col_coords.extend(bbox)
+
+                elif icol := is_instance_collection(ob):
+                    get_instance_collection_bbox_recursively(col_coords, ob, icol, instance_mx)
 
         coords = []
 
         for obj in objects:
-            if not obj.type == 'EMPTY' and obj.display_type not in ['WIRE', 'BOUNDS'] and not obj.M3.hide:
-                coords.extend([obj.matrix_world @ co for co in get_eval_bbox(obj)])
-        
-        if debug:
-            draw_points(coords, color=blue, modal=False)
 
-        bbox = create_coords_bbox(coords)[0]
+            if obj.display_type not in ['WIRE', 'BOUNDS'] and not obj.M3.hide and has_bbox(obj):
+                bbox = [obj.matrix_world @ co for co in get_eval_bbox(obj)]
+                coords.extend(bbox)
 
-        return bbox
+            elif col := is_instance_collection(obj):
+                col_coords = []
+                get_instance_collection_bbox_recursively(col_coords, obj, col, Matrix())
+                coords.extend(col_coords)
 
-    def create_asset_thumbnail(self, context, empty, bbox):
+        if coords:
+            bbox, _, dimensions = create_coords_bbox(coords)
+
+            if debug:
+                draw_points(coords, color=yellow, modal=False)
+                draw_points(bbox, color=blue, modal=False)
+
+            return bbox, dimensions
+        return None, None
+
+    def offset_asset_empty_towards_view(self, context, empty, asset_dimensions):
+        mx = empty.matrix_world
+
+        axes = [('X', mx.to_quaternion() @ Vector((1, 0, 0))),
+                ('X', mx.to_quaternion() @ Vector((-1, 0, 0))),
+                ('Y', mx.to_quaternion() @ Vector((0, 1, 0))),
+                ('Y', mx.to_quaternion() @ Vector((0, -1, 0)))]
+
+        _, view_dir = get_view_origin_and_dir(context)
+
+        aligned = []
+
+        for label, axis in axes:
+            aligned.append((label, axis, axis.dot(view_dir)))
+
+        label, axis = min(aligned, key=lambda x: x[2])[:2]
+
+        amount = asset_dimensions[0] if label == 'X' else asset_dimensions[1]
+        empty.matrix_world @= get_loc_matrix(axis * amount * 1.1)
+
+    def create_asset_thumbnail(self, context, obj, bbox, show_overlays=False):
         def get_square_view_bbox(debug=False):
             render_bbox = get_view_bbox(context, bbox, margin=20, border_gap=0, debug=False)
 
@@ -339,25 +339,22 @@ class CreateAssemblyAsset(bpy.types.Operator):
                 print("  bbox width:", render_bbox_width)
                 print(" bbox height:", render_bbox_height)
 
-            width = context.region.width
-            height = context.region.height
-
             if render_bbox_width > render_bbox_height:
-                delta = (render_bbox_width - render_bbox_height) / 2
+                delta = int((render_bbox_width - render_bbox_height) / 2)
 
                 xmin = render_bbox[0].x
                 xmax = render_bbox[1].x
 
-                ymin = max(min(render_bbox[1].y - delta, height), 0)
-                ymax = max(min(render_bbox[2].y + delta, height), 0)
+                ymin = max(min(render_bbox[1].y - delta, region_height), 0)
+                ymax = max(min(render_bbox[2].y + delta, region_height), 0)
 
                 square_bbox = [Vector((xmin, ymin)), Vector((xmax, ymin)), Vector((xmax, ymax)), Vector((xmin, ymax))]
 
             elif render_bbox_width < render_bbox_height:
-                delta = (render_bbox_height - render_bbox_width) / 2
+                delta = int((render_bbox_height - render_bbox_width) / 2)
 
-                xmin = max(min(render_bbox[0].x - delta, width), 0)
-                xmax = max(min(render_bbox[1].x + delta, width), 0)
+                xmin = max(min(render_bbox[0].x - delta, region_width), 0)
+                xmax = max(min(render_bbox[1].x + delta, region_width), 0)
 
                 ymin = render_bbox[1].y
                 ymax = render_bbox[2].y
@@ -369,44 +366,261 @@ class CreateAssemblyAsset(bpy.types.Operator):
 
             square_bbox_width = (square_bbox[1] - square_bbox[0]).length
             square_bbox_height = (square_bbox[2] - square_bbox[1]).length
-            
+
             if debug:
                 print("square bbox:", square_bbox)
                 print(" square bbox width:", square_bbox_width)
                 print("square bbox height:", square_bbox_height)
 
-        square_bbox = get_square_view_bbox()
+            return square_bbox, (int(square_bbox_width), int(square_bbox_height))
 
-    def render_thumbnail(self, context, filepath):
-        resolution = (context.scene.render.resolution_x, context.scene.render.resolution_y)
-        file_format = context.scene.render.image_settings.file_format
-        lens = context.space_data.lens
-        show_overlays = context.space_data.overlay.show_overlays
+        def render_viewport():
+            view = context.space_data
+            cam = context.scene.camera
+            render = context.scene.render
 
-        context.scene.render.resolution_x = 128
-        context.scene.render.resolution_y = 128
-        context.scene.render.image_settings.file_format = 'JPEG'
+            is_cam_view = cam and view.region_3d.view_perspective == 'CAMERA'
+            is_forced_cam = False
+            is_cycles = is_cycles_view(context)
 
-        context.space_data.lens = self.thumbnail_lens
+            initial = {'resolution_x': render.resolution_x,
+                       'resolution_y': render.resolution_y,
+                       'resolution_percentage': render.resolution_percentage,
+                       'file_format': render.image_settings.file_format,
+                       'show_overlays': view.overlay.show_overlays}
 
-        if show_overlays and self.toggle_overlays:
-            context.space_data.overlay.show_overlays = False
+            if is_cam_view:
+                initial['lens'] = cam.data.lens
 
-        bpy.ops.render.opengl()
+            if is_cycles:
+                cycles = context.scene.cycles
 
-        thumb = bpy.data.images.get('Render Result')
+                settings = { 'use_adaptive_sampling': cycles.use_adaptive_sampling,
+                             'adaptive_threshold': cycles.adaptive_threshold,
+                             'samples': cycles.samples,
+                             'use_denoising': cycles.use_denoising,
+                             'denoising_input_passes': cycles.denoising_input_passes,
+                             'denoising_prefilter': cycles.denoising_prefilter,
+                             'denoising_quality': cycles.denoising_quality,
+                             'denoising_use_gpu': cycles.denoising_use_gpu}
 
-        if thumb:
-            thumb.save_render(filepath=filepath)
+                initial['cycles'] = settings
 
-        context.scene.render.resolution_x = resolution[0]
-        context.scene.render.resolution_y = resolution[1]
-        context.space_data.lens = lens
+                if not is_cam_view:
 
-        context.scene.render.image_settings.file_format = file_format
+                    initial['camera'] = context.scene.camera
 
-        if show_overlays and self.toggle_overlays:
-            context.space_data.overlay.show_overlays = True
+                    initial['active'] = context.active_object
+                    initial['selected'] = context.selected_objects
+
+                    bpy.ops.object.camera_add()
+
+                    cam = context.active_object
+                    context.scene.camera = cam
+
+                    bpy.ops.view3d.camera_to_view()
+
+                    cam.data.lens = view.lens
+                    cam.data.sensor_width = 72
+
+                    is_cam_view = True
+                    is_forced_cam = True
+
+            if is_cam_view and not is_forced_cam:
+                init_resolution_ratio = render.resolution_x / render.resolution_y
+                region_ratio = region_width / region_height
+                factor = init_resolution_ratio / region_ratio
+
+                if round(factor) > 1:
+                    factor = region_ratio
+
+            render.resolution_x = region_width
+            render.resolution_y = region_height
+            render.resolution_percentage = 100
+            render.image_settings.file_format = 'PNG'
+            view.overlay.show_overlays = show_overlays
+
+            if is_cycles:
+                 cycles.use_adaptive_sampling = True
+                 cycles.adaptive_threshold = 0.1
+                 cycles.samples = 4
+                 cycles.use_denoising = True
+                 cycles.denoising_input_passes = 'RGB'
+                 cycles.denoising_prefilter = 'FAST'
+                 cycles.denoising_quality = 'FAST'
+                 cycles.denoising_use_gpu = True
+
+            if is_cam_view and not is_forced_cam:
+                cam.data.lens *= factor
+
+            if is_cycles_view(context):
+                bpy.ops.render.render(write_still=False)
+
+            else:
+                bpy.ops.render.opengl()
+
+            result = bpy.data.images.get('Render Result')
+
+            if result:
+                filepath = os.path.join(get_path(), 'resources', 'asset_thumbnail_render.png')
+                result.save_render(filepath=filepath)
+
+            context.scene.render.resolution_x = initial['resolution_x']
+            context.scene.render.resolution_y = initial['resolution_y']
+            context.scene.render.resolution_percentage = initial['resolution_percentage']
+            context.scene.render.image_settings.file_format = initial['file_format']
+            view.overlay.show_overlays = initial['show_overlays']
+
+            if is_cycles:
+                cycles.use_adaptive_sampling = initial['cycles']['use_adaptive_sampling']
+                cycles.adaptive_threshold = initial['cycles']['adaptive_threshold']
+                cycles.samples = initial['cycles']['samples']
+                cycles.use_denoising = initial['cycles']['use_denoising']
+                cycles.denoising_input_passes = initial['cycles']['denoising_input_passes']
+                cycles.denoising_prefiltert = initial['cycles']['denoising_prefilter']
+                cycles.denoising_quality = initial['cycles']['denoising_quality']
+                cycles.denoising_use_gpu = initial['cycles']['denoising_use_gpu']
+
+            if is_forced_cam:
+                bpy.data.cameras.remove(cam.data, do_unlink=True)
+
+                if cam := initial['camera']:
+                    context.scene.camera = cam
+
+                if active := initial['active']:
+                    context.view_layer.objects.active = active
+
+                for obj in initial['selected']:
+                    obj.select_set(True)
+
+            if is_cam_view and not is_forced_cam:
+                cam.data.lens = initial['lens']
+
+            if result:
+                 image = bpy.data.images.load(filepath=filepath)
+                 return image
+
+        def crop_image(image, crop_box, dimensions, debug=False):
+            width, height = dimensions
+
+            pixels = np.array(image.pixels[:])
+
+            pixels = pixels.reshape((region_height, region_width, 4))
+
+            left = int(crop_box[0].x)
+            right = int(crop_box[1].x)
+            top = int(crop_box[1].y)
+            bottom = int(crop_box[2].y)
+
+            cropped_pixels = pixels[top:bottom, left:right, :]
+
+            cropped = bpy.data.images.new("Cropped Asset Render", width=width, height=height)
+
+            try:
+                cropped.pixels[:] = cropped_pixels.flatten()         # see CodeMaX below, the difference here is minor though, but extreme for the image_pixels_float
+
+            except Exception as e:
+                print("something failed ugh here already actually")
+                print(e)
+
+                print("cropped pixels")
+                print(cropped_pixels)
+
+            if debug:
+                print("cropped width:", width)
+                print("cropped height:", height)
+
+            scale_factor = max(width, height) / 256
+
+            if scale_factor > 1:
+                if debug:
+                    print("scale down by:", scale_factor)
+
+                cropped.scale(int(width / scale_factor), int(height / scale_factor))
+
+            return cropped
+
+        region_width = context.region.width
+        region_height = context.region.height
+
+        square_bbox, cropped_dimensions = get_square_view_bbox(debug=False)
+
+        if image := render_viewport():
+            cropped = crop_image(image, square_bbox, cropped_dimensions)
+
+            obj.preview_ensure()
+            obj.preview.image_size = cropped.size
+
+            try:
+                obj.preview.image_pixels_float[:] = cropped.pixels   # CodeManX is a legend, see https://blender.stackexchange.com/a/3678/33919
+            except Exception as e:
+                print("something failed ugh")
+                print(e)
+
+                print("cropped pixels")
+                print(cropped.pixels)
+
+            os.unlink(image.filepath)
+
+            bpy.data.images.remove(image, do_unlink=True)
+            bpy.data.images.remove(cropped, do_unlink=True)
+
+class UpdateAssetThumbnail(bpy.types.Operator):
+    bl_idname = "machin3.update_asset_thumbnail"
+    bl_label = "MACHIN3: Update Asset Thumbnail"
+    bl_description = "Update the Asset Thumbnail via a Viewport Render of the Active Object\nALT: Render Overlays too"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    show_overlays: BoolProperty(name="Show Overlays", default=False)
+    @classmethod
+    def poll(cls, context):
+        if context.mode == 'OBJECT' and context.area:
+            if context.area.type == 'FILE_BROWSER' and context.area.ui_type == 'ASSETS':
+                if get_3dview_area(context) and context.selected_objects:
+                    active, id_type, local_id = get_asset_ids(context)
+                    return active and id_type in ['OBJECT', 'MATERIAL', 'COLLECTION', 'ACTION'] and local_id
+
+            elif context.area.type == 'VIEW_3D':
+                active = context.active_object
+                return bool(active and is_local_assembly_asset(active))
+
+    def invoke(self, context, event):
+        self.show_overlays = event.alt
+        return self.execute(context)
+
+    def execute(self, context):
+        is_3d_view = context.area.type == 'VIEW_3D'
+
+        if is_3d_view:
+
+            active = context.active_object
+            local_id = is_local_assembly_asset(active)
+
+            sel = [active]
+
+        else:
+            _, _, local_id = get_asset_ids(context)
+
+            sel = [obj for obj in context.selected_objects]
+
+        asset_bbox, _ = CreateAssemblyAsset.get_asset_bbox(self, sel, debug=False)
+
+        if asset_bbox:
+            if is_3d_view:
+                CreateAssemblyAsset.create_asset_thumbnail(self, context, local_id, asset_bbox, show_overlays=self.show_overlays)
+
+            else:
+                area = get_3dview_area(context)
+                region, region_data = get_window_region_from_area(area)
+
+                with context.temp_override(area=area, region=region, region_data=region_data):
+                    CreateAssemblyAsset.create_asset_thumbnail(self, context, local_id, asset_bbox, show_overlays=self.show_overlays)
+
+                context.space_data.activate_asset_by_id(local_id, deferred=True)
+        else:
+            draw_fading_label(context, text="Could not create Asset Thumbnail from current Selection of Objects", color=red, move_y=30, time=3)
+            return {'CANCELLED'}
+        return {'FINISHED'}
 
 class RemoveAssemblyAsset(bpy.types.Operator):
     bl_idname = "machin3.remove_assembly_asset"
@@ -414,21 +628,42 @@ class RemoveAssemblyAsset(bpy.types.Operator):
     bl_description = "description"
     bl_options = {'REGISTER', 'UNDO'}
 
+    remove_asset: BoolProperty(name="Remove entire Local Asset")
+
     @classmethod
     def poll(cls, context):
         if context.mode == 'OBJECT':
-            return [obj for obj in context.selected_objects if obj.type == 'EMPTY' and obj.instance_collection and obj.instance_type == 'COLLECTION']
+            return [obj for obj in context.selected_objects if is_instance_collection(obj)]
 
     def draw(self, context):
         layout = self.layout
         column = layout.column(align=True)
 
+        column.label(text="This will remove the entire asset from the .blend file!", icon_value=get_icon('error'))
+        column.label(text="It will no longer be available in the asset browser after this operation.", icon='BLANK1')
+
+    @classmethod
+    def description(cls, context, properties):
+        if properties.remove_asset:
+            return "Remove entire Local Assembly Asset from the file. Careful, this removes it from from the Asset Browser too"
+        else:
+            return "Remove Assembly Object.\nIf its instance collection has no other users, remove it and the contained objects too"
+
+    def invoke(self, context, event):
+        if self.remove_asset:
+            return context.window_manager.invoke_props_dialog(self, width=400)
+
+        return self.execute(context)
+
     def execute(self, context):
         draw_legacy_message = False
 
-        assemblies = [obj for obj in context.selected_objects if obj.type == 'EMPTY' and obj.instance_collection and obj.instance_type == 'COLLECTION']
+        assemblies = [obj for obj in context.selected_objects if is_instance_collection(obj)]
 
-        asset_cols = set(obj.instance_collection for obj in assemblies)
+        asset_cols = set(obj.instance_collection for obj in assemblies if not obj.library)
+
+        if self.remove_asset:
+            other_assemblies = [obj for obj in bpy.data.objects if obj not in assemblies and is_instance_collection(obj) and obj.instance_collection in asset_cols]
 
         legacy_offset_map = {}
 
@@ -438,6 +673,10 @@ class RemoveAssemblyAsset(bpy.types.Operator):
 
         for obj in assemblies:
             bpy.data.objects.remove(obj, do_unlink=True)
+
+        if self.remove_asset:
+            for obj in other_assemblies:
+                bpy.data.objects.remove(obj, do_unlink=True)
 
         for col in asset_cols:
             if not col.users_dupli_group:
@@ -469,52 +708,42 @@ class RemoveAssemblyAsset(bpy.types.Operator):
 
         return {'FINISHED'}
 
-class DisassembleAsset(bpy.types.Operator):
-    bl_idname = "machin3.disassemble_asset"
-    bl_label = "MACHIN3: Disassemble Asset"
-    bl_description = "Make Instance Collection objects accessible"
+class DisassembleAssembly(bpy.types.Operator):
+    bl_idname = "machin3.disassemble_assembly"
+    bl_label = "MACHIN3: Disassemble Assembly"
+    bl_description = "Make Assembly Objects (Instance Collection) accessible"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
         if context.mode == 'OBJECT':
-            return [obj for obj in context.selected_objects if obj.type == 'EMPTY' and obj.instance_collection and obj.instance_type == 'COLLECTION']
+            return [obj for obj in context.selected_objects if is_instance_collection(obj)]
 
     def execute(self, context):
-        assemblies = [obj for obj in context.selected_objects if obj.type == 'EMPTY' and obj.instance_collection and obj.instance_type == 'COLLECTION']
+        assemblies = [obj for obj in context.selected_objects if is_instance_collection(obj)]
 
-        self.ensure_local_assemblies(assemblies)
+        MakeIDLocal.make_obj_data_icol_local(self, context)
+
+        objects = []
 
         for obj in assemblies:
-            self.disassemble_asset(context, obj)
+            objects.extend(self.disassemble_assembly(context, obj))
+
+        root_objects = [obj for obj in objects if not get_parent(obj)]
+
+        if root_objects:
+            context.view_layer.objects.active = root_objects[0]
+            root_objects[0].select_set(True)
 
         bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)
         return {'FINISHED'}
 
-    def ensure_local_assemblies(self, assemblies):
-        linked = [(obj, 'ASSET EMPTY') for obj in assemblies if obj.library]
-
-        for obj in assemblies:
-            if obj.library:
-                linked.append((obj.instance_collection, 'ASSET COLLECTION'))
-
-            for ob in obj.instance_collection.objects:
-                if ob.library:
-                    linked.append((ob, 'ASSEMBLY ASSET OBJECT'))
-
-                if ob.data and ob.data.library:
-                    linked.append((ob.data, 'ASSEMBLY ASSET DATA'))
-
-        for id, idtype in linked:
-            print(f"INFO: Making {idtype} {id.name} of library {id.library.name} at {id.library.filepath} LOCAL")
-            id.make_local()
-
-    def disassemble_asset(self, context, obj): 
+    def disassemble_assembly(self, context, obj):
         master_col = context.scene.collection
 
         mx = obj.matrix_world.copy()
         cols = [col for col in obj.users_collection]
-        
+
         asset_col = obj.instance_collection
         asset_objects = [obj for obj in asset_col.objects]
 
@@ -525,7 +754,7 @@ class DisassembleAsset(bpy.types.Operator):
                 master_col.objects.link(obj)
 
         if asset_col.users_dupli_group:
-            objects = duplicate_objects(context, asset_objects)
+            objects = duplicate_objects(context, asset_objects)   # NOTE: also ensures visibility on local view and takes care of visibility states including hide_viewport
 
             for obj in asset_objects:
                 master_col.objects.unlink(obj)
@@ -533,22 +762,17 @@ class DisassembleAsset(bpy.types.Operator):
         else:
             objects = asset_objects
 
-        if master_col not in cols:
-            for obj in objects:
-                master_col.objects.unlink(obj)
+        for obj in objects:
+            for col in obj.users_collection:
+                col.objects.unlink(obj)
 
         for obj in objects:
             for col in cols:
-
-                if col == master_col:
-                    continue
-
                 col.objects.link(obj)
-
-        ensure_visibility(context, objects, view_layer=False, local_view=False, unhide=False, unhide_viewport=True, select=False)
 
         for obj in objects:
             obj.hide_set(obj.M3.hide)
+            obj.hide_viewport = obj.M3.hide_viewport
 
         for obj in objects:
             if not obj.parent:
@@ -567,34 +791,119 @@ class DisassembleAsset(bpy.types.Operator):
 
             bpy.ops.ptcache.bake_all(bake=True)
 
-class MakeAssetLocal(bpy.types.Operator):
-    bl_idname = "machin3.make_asset_local"
-    bl_label = "MACHIN3: Make Asset Local"
-    bl_description = "Make Linked Asset Local"
+        return objects
+
+class MakeIDLocal(bpy.types.Operator):
+    bl_idname = "machin3.make_id_local"
+    bl_label = "MACHIN3: Make IDs Local"
     bl_options = {'REGISTER', 'UNDO'}
+
+    force: BoolProperty(name="Force Making Everything Local")
 
     @classmethod
     def poll(cls, context):
         if context.mode == 'OBJECT':
-            return [obj for obj in context.selected_objects if obj.type == 'EMPTY' and obj.instance_collection and obj.instance_type == 'COLLECTION' and obj.library]
+            return [obj for obj in context.selected_objects if is_linked_object(obj)]
 
-    def draw(self, context):
-        layout = self.layout
-        column = layout.column(align=True)
+    @classmethod
+    def description(cls, context, properties):
+        count = 0
+
+        for obj in context.selected_objects:
+            count += len(is_linked_object(obj))
+
+        if count and not any(obj.library for obj in context.selected_objects):
+            desc = "Make object data, including instance collections local"
+
+        else:
+            desc = "Make linked objects local"
+            desc += "\nSHIFT: make object data, including instance collections local"
+
+        desc += f"\n\nSelection contains {count} linked data blocks"
+        return desc
+
+    def invoke(self, context, event):
+        self.force = event.shift
+        return self.execute(context)
 
     def execute(self, context):
-        linked_assemblies = [obj for obj in context.selected_objects if obj.type == 'EMPTY' and obj.instance_collection and obj.instance_type == 'COLLECTION' and obj.library]
+        if any(obj.library for obj in context.selected_objects) and not self.force:
+            bpy.ops.object.make_local(type="SELECT_OBJECT")
 
-        DisassembleAsset.ensure_local_assemblies(self, linked_assemblies)
+        else:
+            self.make_obj_data_icol_local(context)
+
+        return {'FINISHED'}
+
+    def make_obj_data_icol_local(self, context):
+        objects = []
+        collections = []
+
+        bpy.ops.object.make_local(type="SELECT_OBDATA")
+
+        for obj in context.selected_objects:
+            if linked := is_linked_object(obj):
+                for id in linked:
+                    if type(id) is bpy.types.Collection:
+                        collections.append(id)
+
+                    elif type(id) is bpy.types.Object:
+                        objects.append(id)
+
+        for col in collections:
+            col.make_local(clear_proxy=True, clear_liboverride=True, clear_asset_data=True)
+
+        if objects:
+            with context.temp_override(selected_objects=objects):
+                bpy.ops.object.make_local(type="SELECT_OBDATA")
+
+class SetInstanceCollectionOffset(bpy.types.Operator):
+    bl_idname = "machin3.set_instance_collection_offset"
+    bl_label = "MACHIN3: Set Instance Collection Offset"
+    bl_options = {'REGISTER'}
+
+    type: StringProperty(name="type of Offset")
+
+    @classmethod
+    def poll(cls, context):
+        active = context.active_object
+        return bool(active and is_local_assembly_asset(active))
+
+    @classmethod
+    def description(cls, context, properties):
+        if properties.type == 'CURSOR':
+            return "Set Asset Collection Offset from Cursor"
+
+        else:
+            return "Set Asset Collection Offset from Object\nNOTE: Select the Offset Object first, then the Assemlby Asset Object"
+
+    def execute(self, context):
+        active = get_active_object(context)
+        col = active.instance_collection
+
+        sel = [obj for obj in context.selected_objects if obj != active]
+
+        if self.type == 'CURSOR':
+            with context.temp_override(collection=col):
+                bpy.ops.object.instance_offset_from_cursor()
+
+        elif self.type == 'OBJECT':
+            if len(sel) == 1:
+                with context.temp_override(collection=col, active_object=sel[0]):
+                    bpy.ops.object.instance_offset_from_object()
+
+            else:
+                popup_message("Select the Offset Object first, then the Assembly Asset", title="Illegal Selection")
+                return {'CANCELLED'}
+
         return {'FINISHED'}
 
 class AssetBrowserBookmark(bpy.types.Operator):
     bl_idname = "machin3.assetbrowser_bookmark"
     bl_label = "MACHIN3: Assetbrowser Bookmark"
-    bl_description = "description"
     bl_options = {'REGISTER', 'UNDO'}
 
-    index: IntProperty(name="Index", default=1, min=1, max=10)
+    index: IntProperty(name="Index", default=1, min=0, max=10)
     save_bookmark: BoolProperty(name="Save Bookmark", default=False)
     clear_bookmark: BoolProperty(name="Clear Bookmark", default=False)
     @classmethod
@@ -605,8 +914,11 @@ class AssetBrowserBookmark(bpy.types.Operator):
     @classmethod
     def description(cls, context, properties):
         idx = str(properties.index)
-
         desc = f"Bookmark: {idx}"
+
+        if idx == '0':
+            desc += "\n Library: Current File"
+            return desc
 
         bookmarks = get_assetbrowser_bookmarks(force=True)
         bookmark = bookmarks[idx]
@@ -625,7 +937,7 @@ class AssetBrowserBookmark(bpy.types.Operator):
             desc += f"\n Library: {libref}"
 
         else:
-            desc += "\nNone"
+            desc += "\n None"
 
         if catalog:
             desc += "\n\nClick: Jump to this Bookmark's Library and Catalog"
@@ -641,7 +953,7 @@ class AssetBrowserBookmark(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        column = layout.column(align=True)
+        _column = layout.column(align=True)
 
     def invoke(self, context, event):
         self.save_bookmark = event.shift
@@ -678,11 +990,11 @@ class AssetBrowserBookmark(bpy.types.Operator):
 
         elif self.clear_bookmark:
             bookmark = bookmarks.get(str(self.index), None)
-            
+
             if bookmark:
 
                 bookmarks[str(self.index)] = {key: None for key in asset_browser_bookmark_props}
-                
+
                 set_assetbrowser_bookmarks(bookmarks)
 
                 if getattr(context.window_manager, 'M3_screen_cast', False):
@@ -693,37 +1005,47 @@ class AssetBrowserBookmark(bpy.types.Operator):
                 return {'CANCELLED'}
 
         else:
-            bookmark = bookmarks.get(str(self.index), None)
 
-            if bookmark:
-                libref = bookmark.get('libref', None)
-                catalog_id = bookmark.get('catalog_id', None)
-                display_size = bookmark.get('display_size', None)
-                display_type = bookmark.get('display_type', None)
-                valid = bookmark.get('valid', None)
+            if self.index == 0:
+                set_asset_library_reference(space.params, 'LOCAL')
 
-                if libref and catalog_id:
+                if catalog_id := get_most_used_local_catalog_id():
+                    space.params.catalog_id = catalog_id
 
-                    if validate_libref_and_catalog(context, libref, catalog_id):
-                        params = space.params
+                    space.params.display_size = get_display_size_from_area(context)
 
-                        set_asset_library_reference(params, libref)
-                        params.catalog_id = catalog_id
-                        params.display_size = display_size
-                        params.display_type = display_type
+            else:
+                bookmark = bookmarks.get(str(self.index), None)
 
-                        if not valid:
-                            bookmark['valid'] = True
+                if bookmark:
+                    libref = bookmark.get('libref', None)
+                    catalog_id = bookmark.get('catalog_id', None)
+                    display_size = bookmark.get('display_size', None)
+                    display_type = bookmark.get('display_type', None)
+                    valid = bookmark.get('valid', None)
+
+                    if libref and catalog_id:
+
+                        if validate_libref_and_catalog(context, libref, catalog_id):
+                            params = space.params
+
+                            set_asset_library_reference(params, libref)
+                            params.catalog_id = catalog_id
+                            params.display_size = display_size
+                            params.display_type = display_type
+
+                            if not valid:
+                                bookmark['valid'] = True
+
+                                set_assetbrowser_bookmarks(bookmarks)
+
+                        else:
+                            bookmark['valid'] = False
 
                             set_assetbrowser_bookmarks(bookmarks)
 
-                    else:
-                        bookmark['valid'] = False
-
-                        set_assetbrowser_bookmarks(bookmarks)
-
-            else:
-                print(f" WARNING: no bookmark found for {self.index}. This should not happen! Reload the blend file.")
-                return {'CANCELLED'}
+                else:
+                    print(f" WARNING: no bookmark found for {self.index}. This should not happen! Reload the blend file.")
+                    return {'CANCELLED'}
 
         return {'FINISHED'}
