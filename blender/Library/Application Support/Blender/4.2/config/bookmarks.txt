@@ -1,5 +1,6 @@
 [Bookmarks]
 [Recent]
+/Users/vituspacholleck/.dotfiles/
 /Users/vituspacholleck/.dotfiles/blender/
 /Users/vituspacholleck/Downloads/
 /Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects/Arc/rendering/
@@ -9,4 +10,3 @@
 /Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects/Arc/assets/_work/Textures/
 /Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects/Arc/assets/_work/
 /Users/vituspacholleck/Downloads/idle/
-/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects/Arc/assets/_work/emotions_frames/sleeping/
