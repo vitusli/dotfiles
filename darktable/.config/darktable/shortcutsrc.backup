@@ -1,6 +1,6 @@
 f;cmd=disabled;global/panels/filmstrip and timeline
-y;cmd=disabled;views/darkroom/redo
 y;cmd=disabled;views/lighttable/redo
+y;cmd=disabled;views/darkroom/redo
 z;cmd=disabled;views/lighttable/undo
 None;left=fallbacks/utility module
 None;left;double=fallbacks/utility module;reset
