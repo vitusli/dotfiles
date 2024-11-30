@@ -27,8 +27,8 @@
 #nav-bar { border: none !important; }
 
 
-/* remove "padding" left and right from tabs
-.titlebar-spacer { display: none !important; } */
+/* remove "padding" left and right from tabs */
+.titlebar-spacer { display: none !important; }
 
 /* fix Shield Icon padding */
 #urlbar-input-container[pageproxystate="valid"]
