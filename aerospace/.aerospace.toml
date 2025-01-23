@@ -42,41 +42,41 @@ outer.bottom =     15
 outer.top =        [{ monitor.main = 14 }, { monitor.secondary = 48 }, { monitor."BenQ GW2765"= 52 }, 24]
 outer.right =      15
 
-# aersospace list-apps
-[[on-window-detected]]
-if.app-id = 'org.alacritty'
-run = 'move-node-to-workspace 1'
-[[on-window-detected]]
-if.app-id = 'org.mozilla.com.zen.browser'
-run = 'move-node-to-workspace 1'
-[[on-window-detected]]
-if.app-id = 'md.obsidian'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-id = 'com.electron.logseq'
-run = 'move-node-to-workspace 1'
-[[on-window-detected]]
-if.app-id = 'org.zotero.zotero'
-run = 'move-node-to-workspace 1'
-[[on-window-detected]]
-if.app-id = 'com.microsoft.Outlook'
-run = 'move-node-to-workspace 2'
-[[on-window-detected]]
-if.app-id = 'com.tinyspeck.slackmacgap'
-run = 'move-node-to-workspace 2'
-[[on-window-detected]]
-if.app-id = 'com.apple.iCal'
-run = 'move-node-to-workspace 2'
-[[on-window-detected]]
-if.app-id = 'com.apple.mail'
-run = 'move-node-to-workspace 2'
-[[on-window-detected]]
-if.app-id = 'com.microsoft.teams2'
-run = 'move-node-to-workspace 2'
-[[on-window-detected]]
-if.app-id = 'ru.keepcoder.Telegram'
-run = 'move-node-to-workspace 2'
+## aersospace list-apps
+#[[on-window-detected]]
+#if.app-id = 'org.alacritty'
+#run = 'move-node-to-workspace 1'
+#[[on-window-detected]]
+#if.app-id = 'org.mozilla.com.zen.browser'
+#run = 'move-node-to-workspace 1'
+#[[on-window-detected]]
+#if.app-id = 'md.obsidian'
+#run = 'move-node-to-workspace 1'
+#
+#[[on-window-detected]]
+#if.app-id = 'com.electron.logseq'
+#run = 'move-node-to-workspace 1'
+#[[on-window-detected]]
+#if.app-id = 'org.zotero.zotero'
+#run = 'move-node-to-workspace 1'
+#[[on-window-detected]]
+#if.app-id = 'com.microsoft.Outlook'
+#run = 'move-node-to-workspace 2'
+#[[on-window-detected]]
+#if.app-id = 'com.tinyspeck.slackmacgap'
+#run = 'move-node-to-workspace 2'
+#[[on-window-detected]]
+#if.app-id = 'com.apple.iCal'
+#run = 'move-node-to-workspace 2'
+#[[on-window-detected]]
+#if.app-id = 'com.apple.mail'
+#run = 'move-node-to-workspace 2'
+#[[on-window-detected]]
+#if.app-id = 'com.microsoft.teams2'
+#run = 'move-node-to-workspace 2'
+#[[on-window-detected]]
+#if.app-id = 'ru.keepcoder.Telegram'
+#run = 'move-node-to-workspace 2'
 
 # 'main' binding mode declaration
 # 'main' binding mode must be always presented
