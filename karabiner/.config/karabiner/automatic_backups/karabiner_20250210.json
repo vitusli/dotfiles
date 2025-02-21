@@ -1,11 +1,10 @@
 {
-    "global": { "show_in_menu_bar": false },
     "profiles": [
         {
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "Change fn+hjkl to arrow keys",
+                        "description": "Change right_command+hjkl to arrow keys",
                         "manipulators": [
                             {
                                 "from": {
@@ -54,7 +53,7 @@
                         ]
                     },
                     {
-                        "description": "Change escape to fn on press and hold",
+                        "description": "Change escape to right command on press and hold",
                         "manipulators": [
                             {
                                 "from": {

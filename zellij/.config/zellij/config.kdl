@@ -12,9 +12,9 @@ keybinds clear-defaults=true{
         bind "Ctrl g" { SwitchToMode "Locked"; }
         bind "Ctrl q" { Quit; }
         bind "Alt n" { NewPane; }
-        bind "Alt x" { CloseFocus; SwitchToMode "Normal"; }
+        // bind "Alt x" { CloseTab; SwitchToMode "Normal"; }
         bind "Alt t" { NewTab; SwitchToMode "Normal"; }
-        bind "Alt w" { CloseTab; SwitchToMode "Normal"; }
+        bind "Alt w" { CloseFocus; SwitchToMode "Normal"; }
         bind "Alt [" { MoveTab "Left"; }
         bind "Alt ]" { MoveTab "Right"; }
         bind "Alt h" "Alt Left" { MoveFocusOrTab "Left"; }
