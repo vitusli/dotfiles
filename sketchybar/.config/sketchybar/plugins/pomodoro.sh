@@ -28,3 +28,5 @@ if sketchybar --query "$NAME" >/dev/null 2>&1; then
 else
   echo "Item '$NAME' not found"
 fi
+
+#todo on click / hover start timer

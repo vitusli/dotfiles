@@ -16,3 +16,5 @@ elif [[ $MIC_VOLUME -gt 0 ]]; then
     label="" \
     icon.color=$WHITE
 fi
+
+#todo on click / hover start timer
