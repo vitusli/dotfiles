@@ -69,7 +69,6 @@
                     },
                     {
                         "description": "Change spacebar to left_shift. (Post spacebar if pressed alone)",
-                        "enabled": false,
                         "manipulators": [
                             {
                                 "from": {
