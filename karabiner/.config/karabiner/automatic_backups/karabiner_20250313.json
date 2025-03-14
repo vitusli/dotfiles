@@ -5,7 +5,7 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "fn+hjkl to arrows",
+                        "description": "Change fn+hjkl to arrow keys",
                         "manipulators": [
                             {
                                 "from": {
@@ -54,7 +54,7 @@
                         ]
                     },
                     {
-                        "description": "hold escape for fn",
+                        "description": "Change escape to fn on press and hold",
                         "manipulators": [
                             {
                                 "from": {
@@ -68,7 +68,7 @@
                         ]
                     },
                     {
-                        "description": "hold spacebar for left_shift",
+                        "description": "Change spacebar to left_shift. (Post spacebar if pressed alone)",
                         "enabled": false,
                         "manipulators": [
                             {
@@ -85,7 +85,7 @@
                     {
                         "manipulators": [
                             {
-                                "description": "Hyperkey",
+                                "description": "Change caps_lock to command+control+option+shift.",
                                 "from": {
                                     "key_code": "caps_lock",
                                     "modifiers": { "optional": ["any"] }
