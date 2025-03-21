@@ -1,0 +1,194 @@
+{
+    "Type": "Hotkey Preset",
+    "Keys": [
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "isaacsim.gui.menu",
+            "action_id": "delete_prim",
+            "key": "X",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.material.library",
+            "action_id": "create_omnisurface_material_and_assign",
+            "key": "ALT + M",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.widget.stage",
+            "action_id": "toggle_prims_active_state",
+            "key": "BACKSPACE",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.renderer.imgui",
+            "action_id": "EMBridge_window_mdl_material_graph",
+            "key": "SHIFT + G",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.renderer.imgui",
+            "action_id": "EMBridge_window_visual_scripting_action_graph",
+            "key": "ALT + G",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.window.preferences",
+            "action_id": "toggle_preferences_window",
+            "key": "CTRL + COMMA",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.window.extensions.extension",
+            "action_id": "menu_toggle_window_helper_extensions",
+            "key": "CTRL + E",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.hotkeys.window.extension",
+            "action_id": "menu_toggle_window_helper_hotkeys",
+            "key": "SLASH",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.viewport.actions",
+            "action_ext_id": "omni.kit.viewport.actions",
+            "action_id": "toggle_global_visibility",
+            "key": "M",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.menu.create",
+            "action_id": "create_prim_scope",
+            "key": "S",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Stage"
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.primitive.mesh",
+            "action_id": "create_mesh_prim_cube",
+            "key": "C",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Stage"
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.physxui",
+            "action_id": "Fixed Joint",
+            "key": "F",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Stage"
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.menu.create",
+            "action_id": "create_prim_xform",
+            "key": "T",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Stage"
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.menu.create",
+            "action_id": "create_prim_rect_light",
+            "key": "L",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Stage"
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.menu.create",
+            "action_id": "create_prim_dome_light",
+            "key": "D",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Stage"
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.physxui",
+            "action_id": "Ground Plane",
+            "key": "G",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Stage"
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "isaacsim.gui.menu",
+            "action_id": "instance_prim",
+            "key": "ALT + D",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "isaacsim.gui.menu",
+            "action_id": "duplicate_prim",
+            "key": "SHIFT + D",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.selection",
+            "action_id": "UnhideAllPrims",
+            "key": "ALT + H",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.commands",
+            "action_id": "undo",
+            "key": "SHIFT + CTRL + Z",
+            "trigger_press": true,
+            "context": "",
+            "windows": ""
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.window.material",
+            "action_id": "toggle_window",
+            "key": "M",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Content"
+        }
+    ]
+}
