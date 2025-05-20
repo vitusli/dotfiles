@@ -30,24 +30,6 @@
         },
         {
             "hotkey_ext_id": "omni.kit.hotkeys.window",
-            "action_ext_id": "omni.kit.renderer.imgui",
-            "action_id": "EMBridge_window_mdl_material_graph",
-            "key": "SHIFT + G",
-            "trigger_press": true,
-            "context": "",
-            "windows": ""
-        },
-        {
-            "hotkey_ext_id": "omni.kit.hotkeys.window",
-            "action_ext_id": "omni.kit.renderer.imgui",
-            "action_id": "EMBridge_window_visual_scripting_action_graph",
-            "key": "ALT + G",
-            "trigger_press": true,
-            "context": "",
-            "windows": ""
-        },
-        {
-            "hotkey_ext_id": "omni.kit.hotkeys.window",
             "action_ext_id": "omni.kit.window.preferences",
             "action_id": "toggle_preferences_window",
             "key": "CTRL + COMMA",
@@ -183,12 +165,48 @@
         },
         {
             "hotkey_ext_id": "omni.kit.hotkeys.window",
-            "action_ext_id": "omni.kit.window.material",
-            "action_id": "toggle_window",
+            "action_ext_id": "omni.kit.renderer.imgui",
+            "action_id": "EMBridge_window_visual_scripting_generic_graph",
+            "key": "G",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Content"
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.renderer.imgui",
+            "action_id": "EMBridge_window_visual_scripting_action_graph",
+            "key": "A",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Content"
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.renderer.imgui",
+            "action_id": "EMBridge_window_mdl_material_graph",
             "key": "M",
             "trigger_press": true,
             "context": null,
             "windows": "Content"
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.kit.window.material",
+            "action_id": "toggle_window",
+            "key": "ALT + M",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Content"
+        },
+        {
+            "hotkey_ext_id": "omni.kit.hotkeys.window",
+            "action_ext_id": "omni.scene.optimizer.ui",
+            "action_id": "togglePanel",
+            "key": "O",
+            "trigger_press": true,
+            "context": null,
+            "windows": "Viewport"
         }
     ]
 }
