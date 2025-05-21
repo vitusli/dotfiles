@@ -1,0 +1,124 @@
+name "Nord"
+
+base {
+    appearance "dark"
+    background #2e3440
+    separator #3b4252
+    text #d8dee9
+}
+
+actionBar {
+    button {
+        background #2e3440
+        hotkey #5e81ac
+    }
+}
+
+asyncProgressBar {
+    border #eceff4
+    progress #b48ead
+    itemProgress #d8dee9
+}
+
+
+breadcrumbs {
+    color1 #2e3440
+    color2 #2e3440
+    color3 #2e3440
+    separator #3b4252
+}
+
+files {
+    background {
+        alternate #2e3440
+        current #3b4252
+        currentSelected #4c566a
+        selected #00000000
+    }
+
+    dragDropSelection {
+        width 1
+    }
+
+    text {
+        current #e5e9f0
+        currentSelected #5e81ac
+        hidden #4c566a
+        matched #5e81ac
+        selected #5e81ac
+
+        highlighting1 #ebcb8b
+        highlighting2 #ebcb8b
+        highlighting3 #ebcb8b
+        highlighting4 #ebcb8b
+    }
+}
+
+searchBar {
+    query {
+        placeholder #b48ead
+        text #d8dee9
+    }
+
+    results {
+        highlighting #b48ead
+        selection #3b4252
+        subtitle #4c566a
+        text #d8dee9
+    }
+
+    rowSeparator {
+        color #aeb0b7
+        show false
+    }
+}
+
+statusBar {
+    quickSelectNoResultsHighlighting #b48ead
+}
+
+tableHeader {
+    pressed {
+        background #b48ead
+    }
+}
+
+tabs {
+    background #b48ead
+
+    active {
+        background #b48ead
+        text #d8dee9
+    }
+
+    inactive {
+        background #3b4252
+        text #d8dee9
+    }
+}
+
+terminal {
+    caret {
+        background #2e3440
+        text #d8dee9
+    }
+}
+
+textEditor {
+    error #bf616a
+    warning #b48ead
+    keyword #a3be8c
+    comment #4c566a
+    identifier #eceff4
+
+    literal {
+        string #d8dee9
+        number #81a1c1
+        color #d8dee9
+    }
+
+    gutter {
+        background #b48ead
+        text #d8dee9
+    }
+}

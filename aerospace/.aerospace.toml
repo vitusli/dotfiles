@@ -1,6 +1,7 @@
 # You can use it to add commands that run after login to macOS user session.
 # 'start-at-login' needs to be 'true' for 'after-login-command' to work
-after-login-command = ['exec-and-forget skhd --start-service', 'exec-and-forget skhd --stop-service', 'exec-and-forget brew services restart sketchybar']
+# after-login-command = ['exec-and-forget skhd --start-service', 'exec-and-forget skhd --stop-service', 'exec-and-forget brew services restart sketchybar']
+after-login-command = ['exec-and-forget brew services restart sketchybar']
 
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
@@ -94,10 +95,10 @@ ctrl-alt-cmd-o = ['workspace next']
 ctrl-alt-cmd-shift-i = ['resize smart -50']
 ctrl-alt-cmd-shift-o = ['resize smart +50']
 
-ctrl-alt-cmd-h = 'focus --boundaries-action stop left'
+ctrl-alt-cmd-h = ['exec-and-forget aerospace focus left --boundaries-action fail || aerospace workspace prev']
 ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop down'
 ctrl-alt-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop up'
-ctrl-alt-cmd-l = 'focus --boundaries-action stop right'
+ctrl-alt-cmd-l = ['exec-and-forget aerospace focus right --boundaries-action fail || aerospace workspace next']
 # ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors down'
 # ctrl-alt-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors up'
 
