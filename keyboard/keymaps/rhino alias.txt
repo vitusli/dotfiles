@@ -1,0 +1,28 @@
+﻿f '_Zoom _Selected
+ZSA '_Zoom _All _Selected
+S ! _Scale
+P ! _PushPull
+M ! _Mirror
+POn ! _PointsOn
+POff ! _PointsOff
+COn '_CurvatureGraph
+COff '_CurvatureGraphOff
+PlugInManager ! _OptionsPage _PlugIns
+x !_Delete
+G ! _Move
+R ! _Rotate
+D ! _Dim
+Fe ! _FilletEdge
+Fc ! _FilletCorner
+Es ! _EdgeSrf
+Alias ! _OptionsPage _Aliases
+ecs ! _ExtendCrvOnSrf
+xx ! _explode
+w ! _GumballAlignment _Cycle
+a ! _SelLayer
+cc _Cplane _World _Top
+q ! _BooleanDifference
+qq ! _BooleanUnion
+c ! _ChangeLayer
+ov !_OmniPropCmd
+h !_hide
