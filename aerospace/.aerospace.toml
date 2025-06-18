@@ -115,6 +115,7 @@ ctrl-alt-cmd-s = ['workspace-back-and-forth']
 ctrl-alt-cmd-d = ['focus-monitor --wrap-around next']
 
 ctrl-alt-cmd-space = 'layout tiles accordion'
+ctrl-alt-cmd-shift-space = 'layout horizontal vertical'
 
 [mode.transform.binding]
 h = ['move-node-to-workspace --wrap-around prev', 'workspace prev', 'exec-and-forget sketchybar --remove transform', 'mode main']
