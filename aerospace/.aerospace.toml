@@ -1,7 +1,7 @@
 # You can use it to add commands that run after login to macOS user session.
 # 'start-at-login' needs to be 'true' for 'after-login-command' to work
 # after-login-command = ['exec-and-forget skhd --start-service', 'exec-and-forget skhd --stop-service', 'exec-and-forget brew services restart sketchybar']
-after-login-command = ['exec-and-forget brew services restart sketchybar']
+# after-login-command = ['exec-and-forget brew services restart sketchybar']
 
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
