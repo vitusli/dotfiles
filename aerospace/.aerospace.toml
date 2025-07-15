@@ -1,11 +1,6 @@
-# You can use it to add commands that run after login to macOS user session.
-# 'start-at-login' needs to be 'true' for 'after-login-command' to work
-# after-login-command = ['exec-and-forget skhd --start-service', 'exec-and-forget skhd --stop-service', 'exec-and-forget brew services restart sketchybar']
-# after-login-command = ['exec-and-forget brew services restart sketchybar']
-
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
-after-startup-command = ['layout v_accordion', 'mode main', 'exec-and-forget sketchybar']
+after-startup-command = ['layout v_accordion', 'mode main', 'exec-and-forget brew services restart sketchybar']
 
 # Start AeroSpace at login
 start-at-login = true
@@ -33,7 +28,6 @@ exec-on-workspace-change = ['/bin/bash', '-c',
     'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
 ]
 
-
 # In this example, 24 is a default value when there is no match.
 [gaps]
 inner.horizontal = 14
@@ -42,42 +36,6 @@ outer.left =       14
 outer.bottom =     15
 outer.top =        [{ monitor.main = 14 }, { monitor.secondary = 48 }, { monitor."BenQ GW2765"= 52 }, 24]
 outer.right =      15
-
-## aersospace list-apps
-#[[on-window-detected]]
-#if.app-id = 'org.alacritty'
-#run = 'move-node-to-workspace 1'
-#[[on-window-detected]]
-#if.app-id = 'org.mozilla.com.zen.browser'
-#run = 'move-node-to-workspace 1'
-#[[on-window-detected]]
-#if.app-id = 'md.obsidian'
-#run = 'move-node-to-workspace 1'
-#
-#[[on-window-detected]]
-#if.app-id = 'com.electron.logseq'
-#run = 'move-node-to-workspace 1'
-#[[on-window-detected]]
-#if.app-id = 'org.zotero.zotero'
-#run = 'move-node-to-workspace 1'
-#[[on-window-detected]]
-#if.app-id = 'com.microsoft.Outlook'
-#run = 'move-node-to-workspace 2'
-#[[on-window-detected]]
-#if.app-id = 'com.tinyspeck.slackmacgap'
-#run = 'move-node-to-workspace 2'
-#[[on-window-detected]]
-#if.app-id = 'com.apple.iCal'
-#run = 'move-node-to-workspace 2'
-#[[on-window-detected]]
-#if.app-id = 'com.apple.mail'
-#run = 'move-node-to-workspace 2'
-#[[on-window-detected]]
-#if.app-id = 'com.microsoft.teams2'
-#run = 'move-node-to-workspace 2'
-#[[on-window-detected]]
-#if.app-id = 'ru.keepcoder.Telegram'
-#run = 'move-node-to-workspace 2'
 
 # 'main' binding mode declaration
 # 'main' binding mode must be always presented
@@ -90,22 +48,17 @@ ctrl-alt-cmd-slash = [
 
 #ctrl-alt-cmd-i = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev']
 #ctrl-alt-cmd-o = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace next']
-ctrl-alt-cmd-i = ['workspace prev']
-ctrl-alt-cmd-o = ['workspace next']
-ctrl-alt-cmd-shift-i = ['resize smart -50']
-ctrl-alt-cmd-shift-o = ['resize smart +50']
+ctrl-alt-cmd-i = ['resize smart -50']
+ctrl-alt-cmd-o = ['resize smart +50']
 
 ctrl-alt-cmd-h = ['exec-and-forget aerospace focus left --boundaries-action fail || aerospace workspace prev']
 ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop down'
 ctrl-alt-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop up'
 ctrl-alt-cmd-l = ['exec-and-forget aerospace focus right --boundaries-action fail || aerospace workspace next']
-# ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors down'
-# ctrl-alt-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors up'
 
 ctrl-alt-cmd-1 = 'workspace 1'
 ctrl-alt-cmd-2 = 'workspace 2'
 
-#swap, soon with || operator for send to next screen - before that use transform mode
 ctrl-alt-cmd-shift-h = 'move left'
 ctrl-alt-cmd-shift-j = 'move down'
 ctrl-alt-cmd-shift-k = 'move up'
@@ -117,55 +70,40 @@ ctrl-alt-cmd-d = ['focus-monitor --wrap-around next']
 ctrl-alt-cmd-space = 'layout tiles accordion'
 ctrl-alt-cmd-shift-space = 'layout horizontal vertical'
 
-[mode.transform.binding]
-h = ['move-node-to-workspace --wrap-around prev', 'workspace prev', 'exec-and-forget sketchybar --remove transform', 'mode main']
-j = ['move-node-to-monitor down', 'focus-monitor --wrap-around next', 'exec-and-forget sketchybar --remove transform', 'mode main']
-k = ['move-node-to-monitor up', 'focus-monitor --wrap-around next', 'exec-and-forget sketchybar --remove transform', 'mode main']
-l = ['move-node-to-workspace --wrap-around next', 'workspace next', 'exec-and-forget sketchybar --remove transform', 'mode main']
-
-1 = ['move-node-to-workspace 1', 'workspace 1', 'exec-and-forget sketchybar --remove transform', 'mode main']
-2 = ['move-node-to-workspace 2', 'workspace 2', 'exec-and-forget sketchybar --remove transform', 'mode main']
-
-s = ['move-workspace-to-monitor --wrap-around next','focus-monitor --wrap-around next', 'exec-and-forget sketchybar --remove transform', 'mode main']
-
-shift-h = ['move-node-to-monitor left', 'exec-and-forget sketchybar --remove transform', 'mode main']
-shift-j = ['move-node-to-monitor down', 'exec-and-forget sketchybar --remove transform', 'mode main']
-shift-k = ['move-node-to-monitor up', 'exec-and-forget sketchybar --remove transform', 'mode main']
-shift-l = ['move-node-to-monitor right', 'exec-and-forget sketchybar --remove transform', 'mode main']
-
-ctrl-alt-cmd-h = ['join-with left', 'exec-and-forget sketchybar --remove transform', 'mode main']
-ctrl-alt-cmd-j = ['join-with up', 'exec-and-forget sketchybar --remove transform', 'mode main']
-ctrl-alt-cmd-k = ['join-with down', 'exec-and-forget sketchybar --remove transform', 'mode main']
-ctrl-alt-cmd-l = ['join-with right', 'exec-and-forget sketchybar --remove transform', 'mode main']
-
-q = [
-  'mode main',
-  'exec-and-forget sketchybar --remove transform'
-]
-
 [mode.service.binding]
 r = ['reload-config', 'exec-and-forget sketchybar --remove service', 'mode main']
 e = ['flatten-workspace-tree', 'exec-and-forget sketchybar --remove service', 'mode main'] # reset layout
 f = ['layout floating tiling', 'exec-and-forget sketchybar --remove service', 'mode main'] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'exec-and-forget sketchybar --remove service', 'mode main']
 
-space = ['layout horizontal vertical', 'exec-and-forget sketchybar --remove service', 'mode main']
-
-#to return to all modes
-enter = [
-  'mode transform',
-  'exec-and-forget sketchybar --remove service',
-  'exec-and-forget sketchybar --add item transform left --set transform icon=􁼌 icon.color=0xffffffff'
-]
+#return to main mode
 q = [
   'mode main',
   'exec-and-forget sketchybar --remove service'
 ]
 
-1 = ['workspace 1', 'mode main']
-2 = ['workspace 2', 'mode main']
+#continue to transform mode
+enter = [
+  'mode transform',
+  'exec-and-forget sketchybar --remove service',
+  'exec-and-forget sketchybar --add item transform left --set transform icon=􁼌 icon.color=0xffffffff'
+]
+
+[mode.transform.binding]
+h = ['move-node-to-workspace --wrap-around prev --focus-follows-window', 'exec-and-forget sketchybar --remove transform', 'mode main']
+j = ['move-node-to-monitor down --focus-follows-window', 'exec-and-forget sketchybar --remove transform', 'mode main']
+k = ['move-node-to-monitor up --focus-follows-window', 'exec-and-forget sketchybar --remove transform', 'mode main']
+l = ['move-node-to-workspace --wrap-around next --focus-follows-window', 'exec-and-forget sketchybar --remove transform', 'mode main']
+
+s = ['move-workspace-to-monitor --wrap-around next','focus-monitor --wrap-around next', 'exec-and-forget sketchybar --remove transform', 'mode main']
+
+#return to main mode
+q = [
+  'mode main',
+  'exec-and-forget sketchybar --remove transform'
+]
 
 #this are no commands, they are rules (main or secondary)
 [workspace-to-monitor-force-assignment]
-1 = 'secondary'
+1 = 'main'
 2 = 'secondary'
