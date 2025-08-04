@@ -1,37 +1,27 @@
-source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-
-# vim bindings
-# bindkey -v
-# but better use the zsh-vi-mode plugin
-source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-
-eval "$(starship init zsh)"
-
-if type brew &>/dev/null
-then
+# Load only if brew is available
+if type brew &>/dev/null; then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-
+  autoload -Uz compinit
+  compinit
+  FPATH="$(brew --prefix)/share/zsh-abbr:${FPATH}"
   autoload -Uz compinit
   compinit
 fi
 
-#alias
-alias b="/Applications/Blender.app/Contents/MacOS/Blender"
-alias v="nvim"
-alias r="ranger"
-alias l="lazygit"
-alias zz="zellij"
-alias za="zellij a gitup"
-alias zd="zellij a edit_dotfiles"
-alias dot="cd && cd .dotfiles && f"
-alias wm="yabai --start-service && skhd --start-service"
-alias wmend="yabai --stop-service && skhd --stop-service"
-alias wmre="yabai --restart-service && skhd --restart-service"
-alias wmc="yabai --start-service && skhd --start-service && yabai --stop-service && skhd --stop-service && brew services restart sketchybar"
-alias od="cd && cd ./Library/Application\ Support/obsidian && nvim Custom\ Dictionary.txt"
-alias ae="cd && nvim ./.dotfiles/sketchybar/.config/sketchybar/plugins/as_space.sh"
-alias ff="fzf | pbcopy"
+# vim bindings
+source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
+# Starship prompt
+eval "$(starship init zsh)"
+
+# Aliases
+alias v="nvim"
+alias l="lazygit"
+alias dot="cd && cd .dotfiles && f"
+alias od="cd && cd ./Library/Application\ Support/obsidian && nvim Custom\ Dictionary.txt"
+alias ff="fzf | pbcopy"
+alias python=/opt/homebrew/bin/python3.11
+alias pip=/opt/homebrew/bin/pip3.11
 
 # f alias
 f() {
@@ -42,35 +32,22 @@ f() {
   fi
 }
 
-# zsh-abbr completions
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh-abbr:$FPATH
-
-  autoload -Uz compinit
-    compinit
-fi
-
 #z
 zstyle ':completion:*' menu select
-
-bindkey "^[[1;3D" backward-word # ALT-left-arrow  ⌥ + ←
-bindkey "^[[1;3C" forward-word  # ALT-right-arrow ⌥ + →
+source /opt/homebrew/etc/profile.d/z.sh
 
 # zsh fzf
 source <(fzf --zsh)
 
-source /opt/homebrew/etc/profile.d/z.sh
-
+# Load zsh-abbr and syntax highlighting
 source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-source /opt/homebrew//share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-source /opt/homebrew//share/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-if [[ $- == *i* ]]; then
-    # Check if zellij is already running
-    if ! pgrep -x "zellij" > /dev/null; then
-        zellij
-    fi
+# Start zellij if not already running
+if [[ $- == *i* ]] && ! pgrep -x "zellij" > /dev/null; then
+    zellij
 fi
 
+# Add local bin to PATH
+export PATH="$PATH:/Users/vituspacholleck/.local/bin"

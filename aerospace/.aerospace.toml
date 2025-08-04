@@ -16,7 +16,7 @@ accordion-padding = 30
 default-root-container-layout = 'accordion'
 
 # Possible values: horizontal|vertical|auto
-default-root-container-orientation = 'auto'
+default-root-container-orientation = 'vertical'
 
 key-mapping.preset = 'qwerty'
 
