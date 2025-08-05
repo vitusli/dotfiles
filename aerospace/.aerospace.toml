@@ -56,13 +56,14 @@ ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-actio
 ctrl-alt-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop up'
 ctrl-alt-cmd-l = ['exec-and-forget aerospace focus right --boundaries-action fail || aerospace workspace next']
 
-ctrl-alt-cmd-1 = 'workspace 1'
-ctrl-alt-cmd-2 = 'workspace 2'
+ctrl-alt-cmd-1 = 'move-node-to-workspace 1 --focus-follows-window'
+ctrl-alt-cmd-2 = 'move-node-to-workspace 2 --focus-follows-window'
 
-ctrl-alt-cmd-shift-h = 'move left'
-ctrl-alt-cmd-shift-j = 'move down'
-ctrl-alt-cmd-shift-k = 'move up'
-ctrl-alt-cmd-shift-l = 'move right'
+# Try basic move first, then workspace switch - simplified version
+ctrl-alt-cmd-shift-h = ['exec-and-forget aerospace move left --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 1 --focus-follows-window']
+ctrl-alt-cmd-shift-j = ['exec-and-forget aerospace move down --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 2 --focus-follows-window']
+ctrl-alt-cmd-shift-k = ['exec-and-forget aerospace move up --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 1 --focus-follows-window']
+ctrl-alt-cmd-shift-l = ['exec-and-forget aerospace move right --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 2 --focus-follows-window']
 
 ctrl-alt-cmd-s = ['workspace-back-and-forth']
 ctrl-alt-cmd-d = ['focus-monitor --wrap-around next']
@@ -80,27 +81,6 @@ backspace = ['close-all-windows-but-current', 'exec-and-forget sketchybar --remo
 esc = [
   'mode main',
   'exec-and-forget sketchybar --remove service'
-]
-
-#continue to transform mode
-enter = [
-  'mode transform',
-  'exec-and-forget sketchybar --remove service',
-  'exec-and-forget sketchybar --add item transform left --set transform icon=􁼌 icon.color=0xffffffff'
-]
-
-[mode.transform.binding]
-h = ['move-node-to-workspace --wrap-around prev --focus-follows-window', 'exec-and-forget sketchybar --remove transform', 'mode main']
-j = ['move-node-to-monitor down --focus-follows-window', 'exec-and-forget sketchybar --remove transform', 'mode main']
-k = ['move-node-to-monitor up --focus-follows-window', 'exec-and-forget sketchybar --remove transform', 'mode main']
-l = ['move-node-to-workspace --wrap-around next --focus-follows-window', 'exec-and-forget sketchybar --remove transform', 'mode main']
-
-s = ['move-workspace-to-monitor --wrap-around next','focus-monitor --wrap-around next', 'exec-and-forget sketchybar --remove transform', 'mode main']
-
-#return to main mode
-esc = [
-  'mode main',
-  'exec-and-forget sketchybar --remove transform'
 ]
 
 #this are no commands, they are rules (main or secondary)
