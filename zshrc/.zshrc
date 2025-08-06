@@ -2,10 +2,13 @@
 if type brew &>/dev/null; then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
   autoload -Uz compinit
-  compinit
+  # Only run compinit once a day for faster startup
+  if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+  else
+    compinit -C
+  fi
   FPATH="$(brew --prefix)/share/zsh-abbr:${FPATH}"
-  autoload -Uz compinit
-  compinit
 fi
 
 # vim bindings
@@ -44,10 +47,10 @@ source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-# Start zellij if not already running
-if [[ $- == *i* ]] && ! pgrep -x "zellij" > /dev/null; then
-    zellij
-fi
+# Start zellij if not already running (disabled - started by Alacritty)
+# if [[ $- == *i* ]] && ! pgrep -x "zellij" > /dev/null; then
+#     zellij
+# fi
 
 # Add local bin to PATH
 export PATH="$PATH:/Users/vituspacholleck/.local/bin"
