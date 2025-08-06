@@ -119,7 +119,6 @@ keybinds clear-defaults=true {
         bind "Alt ]" { MoveTab "right"; }
         bind "Ctrl g" { SwitchToMode "locked"; }
         bind "Alt h" { MoveFocusOrTab "left"; }
-        bind "Alt i" { PreviousSwapLayout; }
         bind "Alt j" { MoveFocus "down"; }
         bind "Ctrl k" {
             LaunchOrFocusPlugin "session-manager" {
@@ -131,7 +130,6 @@ keybinds clear-defaults=true {
         bind "Alt k" { MoveFocus "up"; }
         bind "Alt l" { MoveFocusOrTab "right"; }
         bind "Alt n" { NewPane; }
-        bind "Alt o" { NextSwapLayout; }
         bind "Ctrl q" { Quit; }
         bind "Alt t" { NewTab; SwitchToMode "normal"; }
         bind "Alt w" { CloseFocus; SwitchToMode "normal"; }
