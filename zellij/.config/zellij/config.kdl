@@ -372,7 +372,9 @@ session_name "main"
 // if it is already running or creates it otherwise.
 // Default: false
 // 
-attach_to_session true// Toggle between having Zellij lay out panes according to a predefined set of layouts whenever possible
+attach_to_session true
+
+// Toggle between having Zellij lay out panes according to a predefined set of layouts whenever possible
 // Options:
 //   - true (default)
 //   - false
