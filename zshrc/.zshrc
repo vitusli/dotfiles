@@ -1,6 +1,14 @@
 # kein "vituspacholleck@macbookAIR blabla"
 PROMPT='%1~ %% '
 
+# Speed up vim mode - reduce escape key delay
+export KEYTIMEOUT=1
+
+# Load vim bindings immediately (essential for workflow)
+source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+
+
+
 # Basic aliases
 alias v="nvim"
 alias l="lazygit"
@@ -43,22 +51,12 @@ f() {
     FPATH="$(brew --prefix)/share/zsh-abbr:${FPATH}"
   fi
 
-  # Load heavy plugins in background
-  source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-  
-  # Fix Alt+n conflict with zellij
-  function zvm_after_init() {
-    bindkey -r "^[n"
-  }
-  
-  # Load other plugins
+  # Load other plugins (vim-mode already loaded above for immediate availability)
   source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
   source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
   source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   
-  # Load z and fzf
-  source /opt/homebrew/etc/profile.d/z.sh
-  source <(fzf --zsh)
+  # z and fzf are loaded lazily when needed (see functions above)
   
   zstyle ':completion:*' menu select
 } &!
