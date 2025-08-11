@@ -1,23 +1,7 @@
-# Load only if brew is available
-if type brew &>/dev/null; then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-  autoload -Uz compinit
-  # Only run compinit once a day for faster startup
-  if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
-    compinit
-  else
-    compinit -C
-  fi
-  FPATH="$(brew --prefix)/share/zsh-abbr:${FPATH}"
-fi
+# kein "vituspacholleck@macbookAIR blabla"
+PROMPT='%1~ %% '
 
-# vim bindings
-source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-
-# Starship prompt
-eval "$(starship init zsh)"
-
-# Aliases
+# Basic aliases
 alias v="nvim"
 alias l="lazygit"
 alias dot="cd && cd .dotfiles && f"
@@ -26,26 +10,58 @@ alias ff="fzf | pbcopy"
 alias python=/opt/homebrew/bin/python3.11
 alias pip=/opt/homebrew/bin/pip3.11
 
-# f alias
+# Lazy z function - loads z when first used
+z() {
+  # Remove this wrapper function
+  unfunction z
+  # Load z.sh
+  source /opt/homebrew/etc/profile.d/z.sh
+  # Now call z with the arguments
+  _z "$@"
+}
+
+# f function with lazy fzf loading
 f() {
   if [[ -z $1 ]]; then
+    # Load fzf only when actually needed
+    if ! command -v fzf &> /dev/null; then
+      source <(fzf --zsh)
+    fi
     nvim $(fzf --preview="bat --color=always {}")
   else
     echo ":)"
   fi
 }
 
-#z
-zstyle ':completion:*' menu select
-source /opt/homebrew/etc/profile.d/z.sh
+# Background loading of heavy plugins (after prompt is ready)
+{
+  # Load completion system
+  if type brew &>/dev/null; then
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+    autoload -Uz compinit
+    compinit -C  # Skip security check for speed
+    FPATH="$(brew --prefix)/share/zsh-abbr:${FPATH}"
+  fi
 
-# zsh fzf
-source <(fzf --zsh)
-
-# Load zsh-abbr and syntax highlighting
-source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  # Load heavy plugins in background
+  source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+  
+  # Fix Alt+n conflict with zellij
+  function zvm_after_init() {
+    bindkey -r "^[n"
+  }
+  
+  # Load other plugins
+  source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  
+  # Load z and fzf
+  source /opt/homebrew/etc/profile.d/z.sh
+  source <(fzf --zsh)
+  
+  zstyle ':completion:*' menu select
+} &!
 
 # Start zellij if not already running (disabled - started by Alacritty)
 # if [[ $- == *i* ]] && ! pgrep -x "zellij" > /dev/null; then

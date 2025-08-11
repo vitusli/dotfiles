@@ -288,13 +288,12 @@ default_layout "disable-status-bar"
 // theme_dir "/tmp"
  
 // Toggle enabling the mouse mode.
-// On certain configurations, or terminals this could
-// potentially interfere with copying text.
+// Disabled for better performance
 // Options:
 //   - true (default)
 //   - false
 // 
-// mouse_mode false
+mouse_mode false
  
 // Toggle having pane frames around the panes
 // Options:
@@ -321,13 +320,10 @@ pane_frames false
 // on_force_close "quit"
  
 // Configure the scroll back buffer size
-// This is the number of lines zellij stores for each pane in the scroll back
-// buffer. Excess number of lines are discarded in a FIFO fashion.
-// (Requires restart)
-// Valid values: positive integers
+// Reduced for better performance
 // Default value: 10000
 // 
-// scroll_buffer_size 10000
+scroll_buffer_size 1000
  
 // Provide a command to execute when copying text. The text will be piped to
 // the stdin of the program to perform the copy. This can be used with
@@ -397,7 +393,8 @@ auto_layout false
 // defaults to the scrollback size. If this number is higher than the scrollback size, it will
 // also default to the scrollback size. This does nothing if `serialize_pane_viewport` is not true.
 // 
-// scrollback_lines_to_serialize 10000
+// scrollback_lines_to_serialize - Reduced for performance
+scrollback_lines_to_serialize 100
  
 // Enable or disable the rendering of styled and colored underlines (undercurl).
 // May need to be disabled for certain unsupported terminals
@@ -406,16 +403,14 @@ auto_layout false
 // 
 // styled_underlines false
  
-// How often in seconds sessions are serialized
-// 
-// serialization_interval 10000
+// How often in seconds sessions are serialized - Increased for performance
+serialization_interval 60
  
-// Enable or disable writing of session metadata to disk (if disabled, other sessions might not know
-// metadata info on this session)
+// Enable or disable writing of session metadata to disk - Disabled for performance
 // (Requires restart)
 // Default: false
 // 
-// disable_session_metadata false
+disable_session_metadata true
  
 // Enable or disable support for the enhanced Kitty Keyboard Protocol (the host terminal must also support it)
 // (Requires restart)
