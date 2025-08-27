@@ -2,7 +2,7 @@
 
 source "$CONFIG_DIR/colors.sh"
 
-echo \$FOCUSED_WORKSPACE: $FOCUSED_WORKSPACE, \$NAME: $NAME \$1: $1 >>~/aaaa
+echo \$FOCUSED_WORKSPACE: $FOCUSED_WORKSPACE, \$NAME: $NAME \$1: $1 >>~/.dotfiles/sketchybar/.config/sketchybar/plugins
 
 if [ "$1" = "$FOCUSED_WORKSPACE" ]; then
   sketchybar --animate circ 5 --set $NAME \
