@@ -1,0 +1,91 @@
+# You can use it to add commands that run after AeroSpace startup.
+# 'after-startup-command' is run after 'after-login-command'
+after-startup-command = ['layout v_accordion', 'mode main', 'exec-and-forget brew services restart sketchybar']
+
+# Start AeroSpace at login
+start-at-login = true
+
+# Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+# You can set 0 to disable the padding feature
+accordion-padding = 30
+
+# Possible values: tiles|accordion
+default-root-container-layout = 'accordion'
+
+# Possible values: horizontal|vertical|auto
+default-root-container-orientation = 'vertical'
+
+key-mapping.preset = 'qwerty'
+
+# See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+on-focus-changed = ['move-mouse window-lazy-center']
+# Notify Sketchybar about workspace change
+exec-on-workspace-change = ['/bin/bash', '-c',
+    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
+]
+
+# In this example, 24 is a default value when there is no match.
+[gaps]
+inner.horizontal = 14
+inner.vertical =   14
+outer.left =       14
+outer.bottom =     15
+outer.top =        [{ monitor.main = 14 }, { monitor.secondary = 48 }, { monitor."BenQ GW2765"= 52 }, 24]
+outer.right =      15
+
+# 'main' binding mode declaration
+# 'main' binding mode must be always presented
+
+[mode.main.binding]
+ctrl-alt-cmd-slash = [
+  'mode service',
+  'exec-and-forget sketchybar --add item service left --set service icon=􂇓 icon.color=0xffffffff'
+]
+
+#ctrl-alt-cmd-i = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev']
+#ctrl-alt-cmd-o = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace next']
+ctrl-alt-cmd-comma = ['resize smart -50']
+ctrl-alt-cmd-period = ['resize smart +50']
+
+ctrl-alt-cmd-h = ['exec-and-forget aerospace focus left --boundaries-action fail || aerospace workspace prev']
+ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop down'
+ctrl-alt-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop up'
+ctrl-alt-cmd-l = ['exec-and-forget aerospace focus right --boundaries-action fail || aerospace workspace next']
+
+ctrl-alt-cmd-1 = 'move-node-to-workspace 1 --focus-follows-window'
+ctrl-alt-cmd-2 = 'move-node-to-workspace 2 --focus-follows-window'
+
+ctrl-alt-cmd-w = 'layout floating tiling'
+
+# Try basic move first, then workspace switch - simplified version
+ctrl-alt-cmd-shift-h = ['exec-and-forget aerospace move left --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 1 --focus-follows-window']
+ctrl-alt-cmd-shift-j = ['exec-and-forget aerospace move down --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 2 --focus-follows-window']
+ctrl-alt-cmd-shift-k = ['exec-and-forget aerospace move up --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 1 --focus-follows-window']
+ctrl-alt-cmd-shift-l = ['exec-and-forget aerospace move right --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 2 --focus-follows-window']
+
+ctrl-alt-cmd-s = ['workspace-back-and-forth']
+ctrl-alt-cmd-d = ['focus-monitor --wrap-around next']
+
+ctrl-alt-cmd-space = 'layout tiles accordion'
+ctrl-alt-cmd-shift-space = 'layout horizontal vertical'
+
+[mode.service.binding]
+r = ['reload-config', 'exec-and-forget sketchybar --remove service', 'mode main']
+e = ['flatten-workspace-tree', 'exec-and-forget sketchybar --remove service', 'mode main'] # reset layout
+f = ['layout floating tiling', 'exec-and-forget sketchybar --remove service', 'mode main'] # Toggle between floating and tiling layout
+backspace = ['close-all-windows-but-current', 'exec-and-forget sketchybar --remove service', 'mode main']
+
+#return to main mode
+esc = [
+  'mode main',
+  'exec-and-forget sketchybar --remove service'
+]
+
+#this are no commands, they are rules (main or secondary)
+[workspace-to-monitor-force-assignment]
+1 = 'main'
+2 = 'secondary'
