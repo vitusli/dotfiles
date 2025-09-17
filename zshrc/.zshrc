@@ -41,30 +41,34 @@ f() {
   fi
 }
 
-# Background loading of heavy plugins (after prompt is ready)
-{
+# Lazy loading wrapper for tab completion
+_lazy_load_completions() {
+  # Remove this wrapper
+  unfunction _lazy_load_completions
+  
   # Load completion system
   if type brew &>/dev/null; then
     FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
     autoload -Uz compinit
-    compinit -C  # Skip security check for speed
+    compinit -C
     FPATH="$(brew --prefix)/share/zsh-abbr:${FPATH}"
   fi
-
-  # Load other plugins (vim-mode already loaded above for immediate availability)
-  source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   
-  # z and fzf are loaded lazily when needed (see functions above)
+  # Load all the good stuff
+  source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
   
   zstyle ':completion:*' menu select
-} &!
+  
+  # Re-bind Tab to normal completion and trigger it
+  bindkey '^I' expand-or-complete
+  zle expand-or-complete
+}
 
-# Start zellij if not already running (disabled - started by Alacritty)
-# if [[ $- == *i* ]] && ! pgrep -x "zellij" > /dev/null; then
-#     zellij
-# fi
+# Bind Tab to lazy loader initially
+zle -N _lazy_load_completions
+bindkey '^I' _lazy_load_completions
 
 # Add local bin to PATH
 export PATH="$PATH:/Users/vituspacholleck/.local/bin"
