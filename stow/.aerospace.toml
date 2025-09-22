@@ -1,6 +1,6 @@
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
-after-startup-command = ['layout v_accordion', 'mode main', 'exec-and-forget brew services restart sketchybar']
+after-startup-command = ['layout v_accordion', 'mode main']
 
 # Start AeroSpace at login
 start-at-login = true
@@ -23,10 +23,7 @@ key-mapping.preset = 'qwerty'
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 on-focus-changed = ['move-mouse window-lazy-center']
-# Notify Sketchybar about workspace change
-exec-on-workspace-change = ['/bin/bash', '-c',
-    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
-]
+
 
 # In this example, 24 is a default value when there is no match.
 [gaps]
@@ -42,8 +39,7 @@ outer.right =      15
 
 [mode.main.binding]
 ctrl-alt-cmd-slash = [
-  'mode service',
-  'exec-and-forget sketchybar --add item service left --set service icon=􂇓 icon.color=0xffffffff'
+  'mode service'
 ]
 
 #ctrl-alt-cmd-i = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev']
@@ -74,15 +70,14 @@ ctrl-alt-cmd-space = 'layout tiles accordion'
 ctrl-alt-cmd-shift-space = 'layout horizontal vertical'
 
 [mode.service.binding]
-r = ['reload-config', 'exec-and-forget sketchybar --remove service', 'mode main']
-e = ['flatten-workspace-tree', 'exec-and-forget sketchybar --remove service', 'mode main'] # reset layout
-f = ['layout floating tiling', 'exec-and-forget sketchybar --remove service', 'mode main'] # Toggle between floating and tiling layout
-backspace = ['close-all-windows-but-current', 'exec-and-forget sketchybar --remove service', 'mode main']
+r = ['reload-config', 'mode main']
+e = ['flatten-workspace-tree', 'mode main'] # reset layout
+f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
+backspace = ['close-all-windows-but-current', 'mode main']
 
 #return to main mode
 esc = [
-  'mode main',
-  'exec-and-forget sketchybar --remove service'
+  'mode main'
 ]
 
 #this are no commands, they are rules (main or secondary)
