@@ -29,12 +29,6 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Configure completion menu
 zstyle ':completion:*' menu select
 
-# Basic aliases
-alias v="nvim"
-alias l="lazygit"
-alias dot="cd && cd .dotfiles && f" #needs the f function underneath
-alias python=/opt/homebrew/bin/python3.11
-alias pip=/opt/homebrew/bin/pip3.11
 
 # f function for file searching with nvim
 f() {
