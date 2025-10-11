@@ -4,8 +4,8 @@ PROMPT='%1~ %% '
 # Speed up vim mode - reduce escape key delay
 export KEYTIMEOUT=1
 
-# Load vim bindings immediately (essential for workflow)
-source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+# vim bindings
+bindkey -v
 
 # Load z for directory jumping
 source /opt/homebrew/etc/profile.d/z.sh
