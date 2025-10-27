@@ -10,9 +10,12 @@ Carousell
 Cobot
 Cobots
 Disbalance
+Durchsetzfügen
 Einstiegshürde
 Einstiegshürden
+Erstellungsaufwand
 Fehlausrichtungen
+Fidelität
 Finalisierung
 Fluidmechanik
 Haptisches
@@ -41,6 +44,8 @@ Pipettier-Systemen
 Probengefäß
 Probenuntersuchung
 Reichweiten-Berechnung
+Rezyklieren
+Rezyklierens
 Roboter-Agnostik
 Roboterarme
 Roboterherstellern
@@ -65,6 +70,7 @@ iterativen
 kollaborativem
 kollaborativen
 kollaborativer
+kontextabhängig
 nicht-parallelisierbaren
 partikelbasierte
 priorisiert
@@ -81,4 +87,4 @@ vibrations-isolierten
 vibrationsisoliertem
 vibrationsisolierten
 vibrationsisolierter
-checksum_v1 = baa9304f0d3e12bdd1b8b8d12549afff
+checksum_v1 = d5e746719b213286a1ee948153f52901
