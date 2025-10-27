@@ -12,12 +12,8 @@ behavior {
 
 
 keyBindings {
-    "s" "core.ordering"
-    "Cmd+K" "core.actions"
     
-    "Tab" "core.change.current.pane"
     "G" "core.move"
-    "I" "core.finder.showInfo"
     
     "K" "core.move.up"
     "Shift+K" "core.select.move.up"
@@ -26,26 +22,10 @@ keyBindings {
     
     "g" "core.move.left"
     "Shift+G" "core.move.right"
+
     
-    
-    "." "core.refresh"
-    
-    "Cmd+O" "core.tab.next"
-    "Cmd+I" "core.tab.previous"
-    
-    "V" "core.volumes"
-    "F" "core.favorites"
-    "Shift+F" "core.favorites.add"
-    
-    "O" "core.open.with"
     "H" "core.go.up"
     "L" "core.open"
-    
-    
-    "Cmd+/" "core.lookup"
-    
-    "Y" "core.clipboard.copy"
-    "P" "core.clipboard.paste"
     
     "R" "core.rename"
     
@@ -54,8 +34,8 @@ keyBindings {
     
     "D" "core.trash"
     
-    "Cmd+Shift+P" "core.path.folder"
-    "Cmd+P" "core.path"
+    "Shift+P" "core.path.folder"
+    "P" "core.path"
     
     "X" "core.move.inactive"
     "C" "core.copy.inactive"
