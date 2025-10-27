@@ -1,0 +1,57 @@
+environment {
+    textEditor "MacVim"
+}
+
+behavior {
+    theme "Nord"
+    layout {
+        showActionBar false
+    }
+    quickSelect {
+        activateOnAnyCharacter false
+        
+    }
+}
+
+
+
+keyBindings {
+    
+    "k" "core.move.up"
+    "j" "core.move.down"
+    
+    "shift+k" "core.select.move.up"
+    "shift+j" "core.select.move.down"
+    
+    "g" "core.move.left"
+    "shift+g" "core.move.right"
+    
+    "h" "core.go.up"
+    "l" "core.open"
+    
+    "r" "core.rename"
+    
+    "n" "core.new.folder"
+    "f" "core.new.file"
+    
+    "d" "core.trash"
+    
+    "p" "core.path"
+    "shift+p" "core.path.folder"
+    
+    "x" "core.move.inactive"
+    "c" "core.copy.inactive"
+    
+    "shift+h" "core.display.hidden"
+    
+    "cmd+f" "core.finder.reveal"
+    
+    "left" "core.clone.left"
+    "right" "core.clone.right"
+    
+    "alt+h" {
+        id "core.open.directory"
+        src "~"
+    }
+    
+}

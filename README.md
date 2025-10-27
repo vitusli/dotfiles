@@ -1,4 +1,4 @@
-$ cd .dotfiles
+$ cd dotfiles
 $ stow --adopt stow
 ```
 - [ref video](https://www.youtube.com/watch?v=y6XCebnB9gs)
