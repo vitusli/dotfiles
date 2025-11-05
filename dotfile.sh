@@ -32,6 +32,7 @@ formulae=(
     bat # preview for fzf
     qlmarkdown # quicklook for markdown
     ffmpeg #yt downloader und mp4 aus frames erstellen
+    rar
 )
 brew install ${formulae[@]}
 
