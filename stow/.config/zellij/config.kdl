@@ -328,56 +328,60 @@ CursorDarkMidnight {
     }
     
     // Ribbon (Tabs) - unselektiert (inaktive Tabs)
-    // Alle Tabs haben denselben transparenten Hintergrund, nur Textfarbe unterscheidet sich
-    // WICHTIG: base ist Textfarbe, background ist Hintergrund - beide müssen korrekt gesetzt sein
+    // Alle Tabs haben denselben transparenten Hintergrund (#191c22)
+    // Nur Textfarbe (#4b5163) unterscheidet sich vom aktiven Tab
     ribbon_unselected {
         base 75 81 99  // #4b5163 - Gedeckter Text für inaktive Tabs
-        background 25 28 34  // #191c22 - Identisch mit Theme-Hintergrund (MUSS identisch sein)
-        emphasis_0 25 28 34  // #191c22 - Gleicher Wert wie background, um keinen sichtbaren Hintergrund zu erzeugen
-        emphasis_1 25 28 34  // #191c22 - Gleicher Wert wie background
-        emphasis_2 25 28 34  // #191c22 - Gleicher Wert wie background
-        emphasis_3 25 28 34  // #191c22 - Gleicher Wert wie background
+        background 25 28 34  // #191c22 - MUSS identisch mit Theme bg sein
+        emphasis_0 25 28 34  // #191c22 - Hintergrund, kein sichtbarer Unterschied
+        emphasis_1 25 28 34  // #191c22 - Hintergrund, kein sichtbarer Unterschied
+        emphasis_2 25 28 34  // #191c22 - Hintergrund, kein sichtbarer Unterschied
+        emphasis_3 25 28 34  // #191c22 - Hintergrund, kein sichtbarer Unterschied
     }
     
     // Ribbon (Tabs) - selektiert (aktiver Tab)
-    // Gleicher transparenter Hintergrund wie inaktive Tabs, nur Textfarbe ist heller
+    // Gleicher transparenter Hintergrund wie inaktive Tabs
+    // Nur Textfarbe ist heller (#d8dee9) - das ist der EINZIGE Unterschied
     ribbon_selected {
-        base 216 222 233  // #d8dee9 - Heller Text für aktiven Tab (einziger Unterschied)
-        background 25 28 34  // #191c22 - Gleicher Hintergrund wie inaktive Tabs (transparent)
-        emphasis_0 216 222 233  // #d8dee9 - Konsistent hell
-        emphasis_1 216 222 233  // #d8dee9 - Konsistent hell
-        emphasis_2 216 222 233  // #d8dee9 - Konsistent hell
-        emphasis_3 216 222 233  // #d8dee9 - Konsistent hell
+        base 216 222 233  // #d8dee9 - Heller Text für aktiven Tab
+        background 25 28 34  // #191c22 - GLEICHER Hintergrund wie unselected
+        emphasis_0 25 28 34  // #191c22 - Gleicher Hintergrund, keine Akzente
+        emphasis_1 25 28 34  // #191c22 - Gleicher Hintergrund, keine Akzente
+        emphasis_2 25 28 34  // #191c22 - Gleicher Hintergrund, keine Akzente
+        emphasis_3 25 28 34  // #191c22 - Gleicher Hintergrund, keine Akzente
     }
     
     // Rahmen - unselektiert (nicht fokussierte Panes)
+    // Rahmenfarbe zwischen Panes: #272c36 (heller, besser sichtbar, aber noch gedeckt)
     frame_unselected {
-        base 67 76 94  // #434c5e - Gedeckter Rahmen
+        base 39 44 54  // #272c36 - Hellere, aber noch gedeckte Rahmenfarbe (besser sichtbar)
         background 25 28 34  // #191c22 - Hintergrund
-        emphasis_0 67 76 94  // #434c5e
-        emphasis_1 123 136 161  // #7b88a1
-        emphasis_2 136 192 208  // #88c0d0
-        emphasis_3 191 97 106  // #bf616a
+        emphasis_0 39 44 54  // #272c36 - Konsistent
+        emphasis_1 39 44 54  // #272c36 - Konsistent
+        emphasis_2 39 44 54  // #272c36 - Konsistent
+        emphasis_3 39 44 54  // #272c36 - Konsistent
     }
     
     // Rahmen - selektiert (fokussierte Pane)
+    // Gleiche Farbe wie unselected für konsistenten Strich
     frame_selected {
-        base 136 192 208  // #88c0d0 - Cyan für fokussierten Rahmen
+        base 39 44 54  // #272c36 - Gleiche Rahmenfarbe wie unselected
         background 25 28 34  // #191c22 - Hintergrund
-        emphasis_0 136 192 208  // #88c0d0
-        emphasis_1 216 222 233  // #d8dee9
-        emphasis_2 163 190 140  // #a3be8c
-        emphasis_3 191 97 106  // #bf616a
+        emphasis_0 39 44 54  // #272c36 - Konsistent
+        emphasis_1 39 44 54  // #272c36 - Konsistent
+        emphasis_2 39 44 54  // #272c36 - Konsistent
+        emphasis_3 39 44 54  // #272c36 - Konsistent
     }
     
     // Rahmen - Highlight (wenn in einem speziellen Modus)
+    // Gleiche Farbe für konsistenten Strich
     frame_highlight {
-        base 143 188 187  // #8fbcbb - Türkis für Highlight
+        base 39 44 54  // #272c36 - Gleiche Rahmenfarbe
         background 25 28 34  // #191c22 - Hintergrund
-        emphasis_0 143 188 187  // #8fbcbb
-        emphasis_1 216 222 233  // #d8dee9
-        emphasis_2 163 190 140  // #a3be8c
-        emphasis_3 191 97 106  // #bf616a
+        emphasis_0 39 44 54  // #272c36 - Konsistent
+        emphasis_1 39 44 54  // #272c36 - Konsistent
+        emphasis_2 39 44 54  // #272c36 - Konsistent
+        emphasis_3 39 44 54  // #272c36 - Konsistent
     }
     
     // Tabellen-Titel

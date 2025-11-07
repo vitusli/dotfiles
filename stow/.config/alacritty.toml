@@ -8,7 +8,7 @@ args = ["-l", "-c", "zellij"]
 [window]
 decorations = "buttonless"
 dynamic_padding = true
-opacity = 0.95
+# opacity = 0.95
 blur = true
 option_as_alt = "Both" 
 
@@ -47,7 +47,7 @@ black = "#3b4252"
 red = "#bf616a"
 green = "#a3be8c"
 yellow = "#ebcb8b"
-blue = "#434c5e"
+blue = "#81a1c1"
 magenta = "#b48ead"
 cyan = "#88c0d0"
 white = "#e5e9f0"
@@ -57,7 +57,7 @@ black = "#4c566a"
 red = "#bf616a"
 green = "#a3be8c"
 yellow = "#ebcb8b"
-blue = "#434c5e"
+blue = "#81a1c1"
 magenta = "#b48ead"
 cyan = "#8fbcbb"
 white = "#eceff4"
