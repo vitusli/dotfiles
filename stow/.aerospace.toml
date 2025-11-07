@@ -1,3 +1,6 @@
+# Documentation
+# https://nikitabobko.github.io/AeroSpace/guide
+
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
 after-startup-command = ['layout v_accordion', 'mode main']
@@ -44,8 +47,8 @@ ctrl-alt-cmd-slash = [
 
 #ctrl-alt-cmd-i = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev']
 #ctrl-alt-cmd-o = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace next']
-ctrl-alt-cmd-comma = ['resize smart -50']
-ctrl-alt-cmd-period = ['resize smart +50']
+ctrl-alt-cmd-minus = ['resize smart -50']
+ctrl-alt-cmd-equal = ['resize smart +50']
 
 ctrl-alt-cmd-h = ['exec-and-forget aerospace focus left --boundaries-action fail || aerospace workspace prev']
 ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop down'
@@ -64,7 +67,7 @@ ctrl-alt-cmd-shift-k = ['exec-and-forget aerospace move up --boundaries all-moni
 ctrl-alt-cmd-shift-l = ['exec-and-forget aerospace move right --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 2 --focus-follows-window']
 
 ctrl-alt-cmd-s = ['workspace-back-and-forth']
-ctrl-alt-cmd-d = ['focus-monitor --wrap-around next']
+# ctrl-alt-cmd-d = ['focus-monitor --wrap-around next'] #not necessary with two spaces
 
 ctrl-alt-cmd-space = 'layout tiles accordion'
 ctrl-alt-cmd-shift-space = 'layout horizontal vertical'
@@ -74,6 +77,11 @@ r = ['reload-config', 'mode main']
 e = ['flatten-workspace-tree', 'mode main'] # reset layout
 f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'mode main']
+
+h = ['join-with left', 'mode main']
+j = ['join-with down', 'mode main']
+k = ['join-with up', 'mode main']
+l = ['join-with right', 'mode main']
 
 #return to main mode
 esc = [

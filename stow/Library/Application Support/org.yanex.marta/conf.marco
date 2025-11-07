@@ -3,7 +3,7 @@ environment {
 }
 
 behavior {
-    theme "Nord"
+    theme "Cursor Dark Midnight"
     layout {
         showActionBar false
     }
@@ -26,6 +26,7 @@ keyBindings {
     "g" "core.move.left"
     "shift+g" "core.move.right"
     
+    "/" "core.go"
     "h" "core.go.up"
     "l" "core.open"
     
@@ -34,7 +35,7 @@ keyBindings {
     "n" "core.new.folder"
     "f" "core.new.file"
     
-    "d" "core.trash"
+    "ctrl+x" "core.trash"
     
     "p" "core.path"
     "shift+p" "core.path.folder"
@@ -45,6 +46,7 @@ keyBindings {
     "shift+h" "core.display.hidden"
     
     "cmd+f" "core.finder.reveal"
+    
     
     "left" "core.clone.left"
     "right" "core.clone.right"

@@ -59,7 +59,6 @@ casks=(
     logi-options+
     adobe-creative-cloud
     figma
-    miro
     darktable
     spotify
     ableton-live-suite@12

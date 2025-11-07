@@ -99,8 +99,8 @@ tabs {
 
 terminal {
     caret {
-        background #2e3440
-        text #d8dee9
+        background #d8dee9
+        text #2e3440
     }
 }
 
