@@ -30,7 +30,6 @@ formulae=(
     git
     gh
     lazygit
-    neovim
     stow
     zsh-autosuggestions
     zsh-autocomplete

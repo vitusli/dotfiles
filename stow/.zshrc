@@ -50,7 +50,7 @@ zstyle ':completion:*' menu select
 # f function for file searching with nvim
 f() {
   if [[ -z $1 ]]; then
-    nvim $(fzf --preview="bat --color=always {}")
+    vim $(fzf --preview="bat --color=always {}")
   else
     echo ":)"
   fi
