@@ -9,6 +9,17 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 xcode-select --install
 
+# SSH key generieren und zu github hinzufügen
+if [ ! -f ~/.ssh/id_ed25519 ]; then
+    ssh-keygen -t ed25519 -C "vituspach@gmail.com" -f ~/.ssh/id_ed25519 -N ""
+    eval "$(ssh-agent -s)"
+    ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+    pbcopy < ~/.ssh/id_ed25519.pub
+    echo "SSH key copied to clipboard. Add it to your GitHub account."
+else
+    echo "SSH key already exists. Skipping generation."
+fi
+
 echo "Installing Brew..."
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
@@ -217,4 +228,7 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
 
 killall Dock
 
-# disable hotkey spotlight
+
+echo "Don't forget to set up SSH keys for GitHub!"
+echo "You may turn off all text replacements in System Preferences > Keyboard > Text to avoid issues with snippets in Rayacast."
+echo "Disable cmd-space hotkey for spotlight in System Preferences > Keyboard > Shortcuts > Spotlight to avoid conflicts with Raycast."
