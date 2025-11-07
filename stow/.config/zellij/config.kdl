@@ -288,19 +288,181 @@ default_layout "disable-status-bar"
 // theme_dir "/tmp"
 
 // Custom theme matching CursorDarkMidnight.theme
+// Vollständige Theme-Definition mit UI-Komponenten für bessere Tab-Differenzierung
 themes {
 CursorDarkMidnight {
-bg "#191c22"
-fg "#7b88a1"
-red "#bf616a"
-green "#3b4252"
-yellow "#ebcb8b"
-blue "#81a1c1"
-magenta "#b48ead"
-orange "#d08770"
-cyan "#5e81ac"
-black "#3b4252"
-white "#e5e9f0"
+    // Basis-Farben (für Kompatibilität)
+    bg "#191c22"
+    fg "#7b88a1"
+    red "#bf616a"
+    green "#a3be8c"
+    yellow "#ebcb8b"
+    blue "#81a1c1"
+    magenta "#b48ead"
+    orange "#d08770"
+    cyan "#88c0d0"
+    black "#3b4252"
+    white "#5E6678"
+    
+    // UI-Komponenten für Tabs und Statusleiste
+    // RGB-Werte: base background emphasis_0 emphasis_1 emphasis_2 emphasis_3
+    
+    // Text - unselektiert (gedeckter Text in der Statusleiste)
+    text_unselected {
+        base 123 136 161  // #7b88a1 - Haupttext
+        background 25 28 34  // #191c22 - Hintergrund
+        emphasis_0 75 81 99  // #4b5163 - Gedeckter Text
+        emphasis_1 216 222 233  // #d8dee9 - Heller Text
+        emphasis_2 136 192 208  // #88c0d0 - Akzentfarbe
+        emphasis_3 191 97 106  // #bf616a - Rot/Akzent
+    }
+    
+    // Text - selektiert
+    text_selected {
+        base 216 222 233  // #d8dee9 - Heller Text für Selektion
+        background 33 36 43  // #21242b - Selektion Hintergrund
+        emphasis_0 136 192 208  // #88c0d0 - Cyan Akzent
+        emphasis_1 255 255 255  // Weiß für starke Betonung
+        emphasis_2 163 190 140  // #a3be8c - Grün
+        emphasis_3 191 97 106  // #bf616a - Rot
+    }
+    
+    // Ribbon (Tabs) - unselektiert (inaktive Tabs)
+    // Alle Tabs haben denselben transparenten Hintergrund, nur Textfarbe unterscheidet sich
+    // WICHTIG: base ist Textfarbe, background ist Hintergrund - beide müssen korrekt gesetzt sein
+    ribbon_unselected {
+        base 75 81 99  // #4b5163 - Gedeckter Text für inaktive Tabs
+        background 25 28 34  // #191c22 - Identisch mit Theme-Hintergrund (MUSS identisch sein)
+        emphasis_0 25 28 34  // #191c22 - Gleicher Wert wie background, um keinen sichtbaren Hintergrund zu erzeugen
+        emphasis_1 25 28 34  // #191c22 - Gleicher Wert wie background
+        emphasis_2 25 28 34  // #191c22 - Gleicher Wert wie background
+        emphasis_3 25 28 34  // #191c22 - Gleicher Wert wie background
+    }
+    
+    // Ribbon (Tabs) - selektiert (aktiver Tab)
+    // Gleicher transparenter Hintergrund wie inaktive Tabs, nur Textfarbe ist heller
+    ribbon_selected {
+        base 216 222 233  // #d8dee9 - Heller Text für aktiven Tab (einziger Unterschied)
+        background 25 28 34  // #191c22 - Gleicher Hintergrund wie inaktive Tabs (transparent)
+        emphasis_0 216 222 233  // #d8dee9 - Konsistent hell
+        emphasis_1 216 222 233  // #d8dee9 - Konsistent hell
+        emphasis_2 216 222 233  // #d8dee9 - Konsistent hell
+        emphasis_3 216 222 233  // #d8dee9 - Konsistent hell
+    }
+    
+    // Rahmen - unselektiert (nicht fokussierte Panes)
+    frame_unselected {
+        base 67 76 94  // #434c5e - Gedeckter Rahmen
+        background 25 28 34  // #191c22 - Hintergrund
+        emphasis_0 67 76 94  // #434c5e
+        emphasis_1 123 136 161  // #7b88a1
+        emphasis_2 136 192 208  // #88c0d0
+        emphasis_3 191 97 106  // #bf616a
+    }
+    
+    // Rahmen - selektiert (fokussierte Pane)
+    frame_selected {
+        base 136 192 208  // #88c0d0 - Cyan für fokussierten Rahmen
+        background 25 28 34  // #191c22 - Hintergrund
+        emphasis_0 136 192 208  // #88c0d0
+        emphasis_1 216 222 233  // #d8dee9
+        emphasis_2 163 190 140  // #a3be8c
+        emphasis_3 191 97 106  // #bf616a
+    }
+    
+    // Rahmen - Highlight (wenn in einem speziellen Modus)
+    frame_highlight {
+        base 143 188 187  // #8fbcbb - Türkis für Highlight
+        background 25 28 34  // #191c22 - Hintergrund
+        emphasis_0 143 188 187  // #8fbcbb
+        emphasis_1 216 222 233  // #d8dee9
+        emphasis_2 163 190 140  // #a3be8c
+        emphasis_3 191 97 106  // #bf616a
+    }
+    
+    // Tabellen-Titel
+    table_title {
+        base 216 222 233  // #d8dee9 - Heller Text für Titel
+        background 30 33 39  // #1e2127 - Etwas hellerer Hintergrund
+        emphasis_0 136 192 208  // #88c0d0
+        emphasis_1 255 255 255  // Weiß
+        emphasis_2 163 190 140  // #a3be8c
+        emphasis_3 191 97 106  // #bf616a
+    }
+    
+    // Tabellen-Zelle - unselektiert
+    table_cell_unselected {
+        base 123 136 161  // #7b88a1 - Standard Text
+        background 25 28 34  // #191c22 - Hintergrund
+        emphasis_0 75 81 99  // #4b5163
+        emphasis_1 216 222 233  // #d8dee9
+        emphasis_2 136 192 208  // #88c0d0
+        emphasis_3 191 97 106  // #bf616a
+    }
+    
+    // Tabellen-Zelle - selektiert
+    table_cell_selected {
+        base 216 222 233  // #d8dee9 - Heller Text
+        background 33 36 43  // #21242b - Selektion Hintergrund
+        emphasis_0 136 192 208  // #88c0d0
+        emphasis_1 255 255 255  // Weiß
+        emphasis_2 163 190 140  // #a3be8c
+        emphasis_3 191 97 106  // #bf616a
+    }
+    
+    // Liste - unselektiert
+    list_unselected {
+        base 123 136 161  // #7b88a1 - Standard Text
+        background 25 28 34  // #191c22 - Hintergrund
+        emphasis_0 75 81 99  // #4b5163
+        emphasis_1 216 222 233  // #d8dee9
+        emphasis_2 136 192 208  // #88c0d0
+        emphasis_3 191 97 106  // #bf616a
+    }
+    
+    // Liste - selektiert
+    list_selected {
+        base 216 222 233  // #d8dee9 - Heller Text
+        background 33 36 43  // #21242b - Selektion Hintergrund
+        emphasis_0 136 192 208  // #88c0d0
+        emphasis_1 255 255 255  // Weiß
+        emphasis_2 163 190 140  // #a3be8c
+        emphasis_3 191 97 106  // #bf616a
+    }
+    
+    // Exit Code - Erfolg
+    exit_code_success {
+        base 163 190 140  // #a3be8c - Grün für Erfolg
+        background 25 28 34  // #191c22
+        emphasis_0 0 0 0  // Nicht verwendet
+        emphasis_1 0 0 0
+        emphasis_2 0 0 0
+        emphasis_3 0 0 0
+    }
+    
+    // Exit Code - Fehler
+    exit_code_error {
+        base 191 97 106  // #bf616a - Rot für Fehler
+        background 25 28 34  // #191c22
+        emphasis_0 0 0 0  // Nicht verwendet
+        emphasis_1 0 0 0
+        emphasis_2 0 0 0
+        emphasis_3 0 0 0
+    }
+    
+    // Multiplayer-Farben
+    multiplayer_user_colors {
+        player_1 136 192 208  // #88c0d0
+        player_2 143 188 187  // #8fbcbb
+        player_3 163 190 140  // #a3be8c
+        player_4 235 203 139  // #ebcb8b
+        player_5 191 97 106  // #bf616a
+        player_6 180 142 173  // #b48ead
+        player_7 208 135 112  // #d08770
+        player_8 129 161 193  // #81a1c1
+        player_9 94 129 172  // #5e81ac
+        player_10 75 81 99  // #4b5163
+    }
 }
 }
  
