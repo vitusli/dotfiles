@@ -256,7 +256,7 @@ simplified_ui true
 // Choose the theme that is specified in the themes section.
 // Default: default
 // 
-theme "nord"
+theme "CursorDarkMidnight"
  
 // Choose the base input mode of zellij.
 // Default: normal
@@ -286,6 +286,23 @@ default_layout "disable-status-bar"
 // (Requires restart)
 // 
 // theme_dir "/tmp"
+
+// Custom theme matching CursorDarkMidnight.theme
+themes {
+CursorDarkMidnight {
+bg "#191c22"
+fg "#7b88a1"
+red "#bf616a"
+green "#3b4252"
+yellow "#ebcb8b"
+blue "#81a1c1"
+magenta "#b48ead"
+orange "#d08770"
+cyan "#5e81ac"
+black "#3b4252"
+white "#e5e9f0"
+}
+}
  
 // Toggle enabling the mouse mode.
 // Disabled for better performance
