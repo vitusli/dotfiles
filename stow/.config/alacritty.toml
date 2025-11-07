@@ -8,7 +8,7 @@ args = ["-l", "-c", "zellij"]
 [window]
 decorations = "buttonless"
 dynamic_padding = true
-opacity = 0.8
+opacity = 0.95
 blur = true
 option_as_alt = "Both" 
 
@@ -17,21 +17,26 @@ x = 18
 y = 16
 
 [colors.primary]
-background = "#2e3440"
-foreground = "#d8dee9"
-dim_foreground = "#a5abb6"
+# Darker primary background and tweaked foreground to match CursorDarkMidnight.theme
+background = "#191c22"
+foreground = "#7b88a1"
+dim_foreground = "#4b5163"
 
 [colors.cursor]
-text = "#2e3440"
-cursor = "#d8dee9"
+# Cursor (caret) colors taken from CursorDarkMidnight.theme
+# caret.background = #8fbcbb, caret.text = #191c22
+text = "#191c22"
+cursor = "#8fbcbb"
 
 [colors.vi_mode_cursor]
-text = "#2e3440"
-cursor = "#d8dee9"
+# Vi mode cursor uses the same caret colors as the normal cursor
+text = "#191c22"
+cursor = "#8fbcbb"
 
 [colors.selection]
 text = "CellForeground"
-background = "#4c566a"
+# use a darker selection background closer to the theme (was #4c566a)
+background = "#21242b"
 
 [colors.search.matches]
 foreground = "CellBackground"
