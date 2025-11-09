@@ -1,10 +1,10 @@
 #!/bin/zsh
 
-# Passwort am Anfang abfragen und sudo-Zugang für die Dauer des Skripts aufrechterhalten
-echo "Dieses Skript benötigt Administrator-Rechte."
+# Prompt for password and maintain sudo access for the duration of the script
+echo "This script requires administrator privileges."
 sudo -v
 
-# Sudo-Session während der Skript-Ausführung am Leben halten
+# Keep sudo session alive during script execution
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 xcode-select --install
@@ -30,7 +30,7 @@ formulae=(
     olets/tap/zsh-abbr
     bat # preview for fzf
     qlmarkdown # quicklook for markdown
-    ffmpeg #yt downloader und mp4 aus frames erstellen
+    ffmpeg # yt downloader and create mp4 from frames
     rar
 )
 brew install ${formulae[@]}
@@ -76,13 +76,13 @@ mas install 1291898086 # toggltrack
 mas install 1423210932 # flow
 # mas install 1609342064 # Octane X
 
-# GitHub CLI authentifizieren
+# Authenticate with GitHub CLI
 echo "Authenticating with GitHub CLI..."
 if ! gh auth status &> /dev/null; then
     gh auth login --scopes repo --web
 fi
 
-# SSH key generieren und zu github hinzufügen
+# Generate SSH key and add to GitHub
 if [ ! -f ~/.ssh/id_ed25519 ]; then
     ssh-keygen -t ed25519 -C "vituspach@gmail.com" -f ~/.ssh/id_ed25519 -N ""
     eval "$(ssh-agent -s)"
@@ -95,7 +95,7 @@ else
 fi
 
 ### repositories
-echo "Cloning github repositories..."
+echo "Cloning GitHub repositories..."
 git clone git@github.com:vitusli/obsidian.git ~/Documents 
 git clone git@github.com:vitusli/codespace.git ~
 git clone git@github.com:vitusli/extensions.git ~/Documents/blenderlokal
@@ -108,12 +108,12 @@ stow --adopt stow
 exec zsh
 
 echo "Changing macOS defaults..."
-# to reactivate commands, type them without the flag
+# To reactivate commands, type them without the flag
 # [Reference](https://macos-defaults.com/keyboard)
 ### marta 
 # command-line launcher
 ln -s /Applications/Marta.app/Contents/Resources/launcher /usr/local/bin/marta
-# set marta as default app for opening folders
+# Set marta as default app for opening folders
 defaults write -g NSFileViewer -string org.yanex.marta
 defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType=public.folder;LSHandlerRoleAll=org.yanex.marta;}'
 
@@ -124,11 +124,11 @@ defaults write NSGlobalDomain KeyRepeat -int 1
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
 ## Window Management & Gestures
-# trackpad speed
+# Trackpad speed
 defaults write NSGlobalDomain com.apple.mouse.scaling -float .875
-#Dragging with three finger drag
+# Dragging with three finger drag
 defaults write com.apple.AppleMultitouchTrackpad "TrackpadThreeFingerDrag" -bool "true"
-# Disable seperate spaces on displays
+# Disable separate spaces on displays
 defaults write com.apple.spaces spans-displays -bool true && killall SystemUIServer
 
 ## Animation Settings (Disable All)
@@ -162,18 +162,101 @@ defaults write com.apple.dock springboard-hide-duration -float 0
 defaults write com.apple.dock springboard-page-duration -float 0
 
 ## Finder Settings
-#"Use column view in all Finder windows by default"
+# Use column view in all Finder windows by default
 defaults write com.apple.finder FXPreferredViewStyle Clmv
 # Disable all Finder animations
 defaults write com.apple.finder DisableAllAnimations -bool true
-#"Showing icons for hard drives, servers, and removable media on the desktop"
+# Show icons for hard drives, servers, and removable media on the desktop
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
 # Enable text selection in Quick Look
 defaults write com.apple.finder QLEnableTextSelection -bool TRUE
-#"Showing all filename extensions in Finder by default"
+# Show all filename extensions in Finder by default
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-#"Disabling the warning when changing a file extension"
+# Disable the warning when changing a file extension
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
+
+## App-Specific Settings
+# Prevent Time Machine from prompting to use new hard drives as backup volume
+defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
+# Disable Mail send animations
+defaults write com.apple.Mail DisableSendAnimations -bool true
+# Disable Mail reply animations
+defaults write com.apple.Mail DisableReplyAnimations -bool true
+
+# Disable OS X Gate Keeper
+# (You'll be able to install any app you want from here on, not just Mac App Store apps)
+sudo spctl --master-disable
+sudo defaults write /var/db/SystemPolicy-prefs.plist enabled -string no
+defaults write com.apple.LaunchServices LSQuarantine -bool false
+
+# Expand the save panel by default
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
+
+# Automatically quit printer app once the print jobs complete
+defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
+
+# Disable system-wide resume
+defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false
+
+# Save to disk (not to iCloud) by default
+defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+
+# Disable smart quotes and smart dashes as they are annoying when typing code
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+
+# Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+
+# Disable press-and-hold for keys in favor of a key repeat
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+
+# Show all filename extensions in Finder by default
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+
+# Use column view in all Finder windows by default
+defaults write com.apple.finder FXPreferredViewStyle Clmv
+
+# Avoid the creation of .DS_Store files on network volumes
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+
+# Set email addresses to copy as 'foo@example.com' instead of 'Foo Bar <foo@example.com>' in Mail.app
+# defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
+
+# Don't prompt for confirmation before downloading
+defaults write org.m0k.transmission DownloadAsk -bool false
+
+# Don't automatically rearrange Spaces based on most recent use
+defaults write com.apple.dock mru-spaces -bool false
+
+# Set Dock to auto-hide and remove the auto-hiding delay
+defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock autohide-delay -float 0
+defaults write com.apple.dock autohide-time-modifier -float 0
+
+# Speed up Mission Control animations and group windows by application
+defaults write com.apple.dock expose-animation-duration -float 0.1
+defaults write com.apple.dock "expose-group-by-app" -bool true
+
+# F1, F2, etc. behave as standard function keys. Press the fn key to use the special features printed on the key.
+defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
+
+# fn key does nothing
+defaults write com.apple.HIToolbox AppleFnUsageType -int "0"
+
+# By default, when a key is held down, the accents menu is displayed.
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
+
+# Use `~/Downloads/Incomplete` to store incomplete downloads
+defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool true
+defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Downloads/Incomplete"
+
+# TODO: Find out real values for trackpad and mouse speed
+# "Setting trackpad & mouse speed to a reasonable number"
+# defaults write -g com.apple.trackpad.scaling 2
+# defaults write -g com.apple.mouse.scaling 2.5
 
 ## App-Specific Settings
 # Prevent Time Machine from prompting to use new hard drives as backup volume
@@ -263,3 +346,12 @@ killall Dock
 echo "Setup complete! ✓"
 echo "You may turn off all text replacements in System Preferences > Keyboard > Text to avoid issues with snippets in Raycast."
 echo "Disable cmd-space hotkey for spotlight in System Preferences > Keyboard > Shortcuts > Spotlight to avoid conflicts with Raycast."
+
+# Logout to apply all system settings
+read -r "?To complete the setup, you should log out so all settings take effect. Do you want to log out now? (y/n) " response
+if [[ "$response" =~ ^[yY]$ ]]; then
+    echo "Logging out..."
+    osascript -e 'tell application "System Events" to log out'
+else
+    echo "Logout skipped. Please log out manually if needed."
+fi
