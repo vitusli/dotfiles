@@ -1,1 +1,6 @@
-[]
+[
+    {
+        "key": "cmd+e",
+        "command": "workbench.action.toggleMaximizedAuxiliaryBar"
+    }
+]
