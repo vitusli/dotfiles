@@ -2,10 +2,35 @@
 
 set -e  # Exit on any error
 
+# Error handler
+trap 'handle_error $? $LINENO' ERR
+
+handle_error() {
+    local exit_code=$1
+    local line_number=$2
+    
+    {
+        echo ""
+        echo "════════════════════════════════════════════════════════════"
+        echo "✗ SCRIPT ERROR"
+        echo "════════════════════════════════════════════════════════════"
+        echo "Exit Code: $exit_code"
+        echo "Line Number: $line_number"
+        echo "Error Time: $(date)"
+        echo "════════════════════════════════════════════════════════════"
+    } | tee -a "$LOG_FILE"
+    
+    echo ""
+    echo "✗ Setup script failed!"
+    echo "ℹ Check the log file for details: $LOG_FILE"
+}
+
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
 DOTFILES_DIR="$HOME/dotfiles"
+LOG_DIR="$DOTFILES_DIR/logs"
+LOG_FILE="$LOG_DIR/setup-$(date +%Y%m%d-%H%M%S).log"
 REPOS=(
     "git@github.com:vitusli/obsidian.git|$HOME/Documents"
     "git@github.com:vitusli/codespace.git|$HOME"
@@ -73,26 +98,59 @@ MAS_APPS=(
 # UTILITY FUNCTIONS
 # ============================================================================
 
+# Initialize logging
+init_logging() {
+    mkdir -p "$LOG_DIR"
+    
+    # Add header to log file
+    {
+        echo "════════════════════════════════════════════════════════════"
+        echo "macOS Setup & Configuration Script Log"
+        echo "════════════════════════════════════════════════════════════"
+        echo "Start Time: $(date)"
+        echo "Log File: $LOG_FILE"
+        echo "User: $(whoami)"
+        echo "Hostname: $(hostname)"
+        echo "macOS Version: $(sw_vers -productVersion)"
+        echo "════════════════════════════════════════════════════════════"
+        echo ""
+    } >> "$LOG_FILE"
+}
+
 log_header() {
+    local msg="▶ $1"
     echo "\n════════════════════════════════════════════════════════════"
-    echo "▶ $1"
+    echo "$msg"
     echo "════════════════════════════════════════════════════════════"
+    
+    echo "" >> "$LOG_FILE"
+    echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
+    echo "$msg" >> "$LOG_FILE"
+    echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
 }
 
 log_success() {
-    echo "✓ $1"
+    local msg="✓ $1"
+    echo "$msg"
+    echo "✓ $1" >> "$LOG_FILE"
 }
 
 log_info() {
-    echo "ℹ $1"
+    local msg="ℹ $1"
+    echo "$msg"
+    echo "ℹ $1" >> "$LOG_FILE"
 }
 
 log_warning() {
-    echo "⚠ $1"
+    local msg="⚠ $1"
+    echo "$msg"
+    echo "⚠ $1" >> "$LOG_FILE"
 }
 
 log_error() {
-    echo "✗ $1"
+    local msg="✗ $1"
+    echo "$msg"
+    echo "✗ $1" >> "$LOG_FILE"
 }
 
 command_exists() {
@@ -473,6 +531,8 @@ main() {
     log_header "macOS Setup & Configuration Script (Idempotent)"
     echo "Starting setup... This may take a while."
     echo "This script can be run multiple times safely."
+    echo ""
+    log_info "Log file: $LOG_FILE"
     
     # Core setup
     setup_sudo
@@ -499,24 +559,31 @@ main() {
     
     # Final summary
     log_header "Setup Complete!"
-    echo "
-    ✓ All tasks completed successfully!
     
-    ℹ Next steps:
-    1. Verify all applications are installed
-    2. Configure Raycast: turn off text replacements in System Preferences
-    3. Disable Spotlight hotkey to avoid conflicts with Raycast
-    4. Log out to apply all system settings (recommended)
-    "
+    local end_time=$(date)
+    echo "✓ All tasks completed successfully!" | tee -a "$LOG_FILE"
+    echo "" | tee -a "$LOG_FILE"
+    echo "ℹ Next steps:" | tee -a "$LOG_FILE"
+    echo "  1. Verify all applications are installed" | tee -a "$LOG_FILE"
+    echo "  2. Configure Raycast: turn off text replacements in System Preferences" | tee -a "$LOG_FILE"
+    echo "  3. Disable Spotlight hotkey to avoid conflicts with Raycast" | tee -a "$LOG_FILE"
+    echo "  4. Log out to apply all system settings (recommended)" | tee -a "$LOG_FILE"
+    echo "" | tee -a "$LOG_FILE"
+    echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
+    echo "End Time: $end_time" >> "$LOG_FILE"
+    echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
     
     read -r "?Do you want to log out now? (y/n) " response
     if [[ "$response" =~ ^[yY]$ ]]; then
         log_info "Logging out..."
+        echo "User chose to log out at $(date)" >> "$LOG_FILE"
         osascript -e 'tell application "System Events" to log out'
     else
         log_info "Logout skipped. Please log out manually if needed."
+        echo "User skipped logout at $(date)" >> "$LOG_FILE"
     fi
 }
 
 # Run main function
+init_logging
 main "$@"
