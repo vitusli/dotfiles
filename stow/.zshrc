@@ -46,7 +46,7 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Configure completion menu
 zstyle ':completion:*' menu select
 
-gatekeeper() {
+gateme() {
   local app
   read "app?App: "
   
@@ -68,6 +68,19 @@ gatekeeper() {
     echo "Failed"
     return 1
   fi
+}
+
+shellme() {
+  local count=0
+  for item in */; do
+    local new_name="${item// /_}"
+    if [[ "$item" != "$new_name" ]]; then
+      mv "$item" "$new_name"
+      ((count++))
+      echo "Renamed: $item → $new_name"
+    fi
+  done
+  echo "Total: $count renamed"
 }
 
 # f function for file searching with vim
