@@ -1,0 +1,194 @@
+════════════════════════════════════════════════════════════
+macOS Setup & Configuration Script Log
+════════════════════════════════════════════════════════════
+Start Time: Sun Nov  9 20:38:52 CET 2025
+Log File: /Users/vituspacholleck/dotfiles/logs/setup-20251109-203852.log
+User: vituspacholleck
+Hostname: Vituss-MacBook-Air.local
+macOS Version: 26.0.1
+════════════════════════════════════════════════════════════
+
+
+════════════════════════════════════════════════════════════
+▶ macOS Setup & Configuration Script (Idempotent)
+════════════════════════════════════════════════════════════
+ℹ Log file: /Users/vituspacholleck/dotfiles/logs/setup-20251109-203852.log
+
+════════════════════════════════════════════════════════════
+▶ Setting up sudo privileges
+════════════════════════════════════════════════════════════
+✓ sudo already available
+
+════════════════════════════════════════════════════════════
+▶ Setting up Xcode Command Line Tools
+════════════════════════════════════════════════════════════
+✓ Xcode Command Line Tools already installed
+
+════════════════════════════════════════════════════════════
+▶ Setting up Homebrew
+════════════════════════════════════════════════════════════
+✓ Homebrew already installed
+✓ Homebrew already in ~/.zprofile
+✓ Homebrew environment configured
+
+════════════════════════════════════════════════════════════
+▶ Installing Homebrew Formulae
+════════════════════════════════════════════════════════════
+✓ git
+✓ gh
+✓ lazygit
+✓ stow
+✓ zsh-autosuggestions
+✓ zsh-autocomplete
+✓ zsh-syntax-highlighting
+✓ fzf
+⚠ zsh-vi-mode (will be installed)
+✓ zellij
+✓ z
+✓ olets/tap/zsh-abbr
+✓ bat
+✓ ffmpeg
+✓ rar
+✓ mas
+ℹ Installing 1 new formulae...
+✓ Formulae installation complete
+
+════════════════════════════════════════════════════════════
+▶ Installing Homebrew Casks
+════════════════════════════════════════════════════════════
+✓ nikitabobko/tap/aerospace
+✓ arc
+✓ alacritty
+✓ visual-studio-code
+✓ macvim-app
+
+════════════════════════════════════════════════════════════
+✗ SCRIPT ERROR
+════════════════════════════════════════════════════════════
+Exit Code: 1
+Line Number: 12
+Error Time: Sun Nov  9 20:39:52 CET 2025
+════════════════════════════════════════════════════════════
+✓ obsidian
+✓ zotero
+✓ raycast
+✓ keepassxc
+✓ keeweb
+✓ google-drive
+✓ karabiner-elements
+✓ marta
+✓ onedrive
+✓ microsoft-teams
+✓ microsoft-outlook
+✓ slack
+✓ openvpn-connect
+⚠ microsoft-remote-desktop (will be installed)
+✓ logi-options+
+✓ figma
+✓ darktable
+✓ spotify
+⚠ ableton-live-suite@12 (will be installed)
+✓ rhino
+✓ blender
+⚠ superwhisper (will be installed)
+✓ homerow
+✓ github
+ℹ Installing 3 new casks...
+
+════════════════════════════════════════════════════════════
+✗ SCRIPT ERROR
+════════════════════════════════════════════════════════════
+Exit Code: 1
+Line Number: 16
+Error Time: Sun Nov  9 20:40:34 CET 2025
+════════════════════════════════════════════════════════════
+✓ Casks installation complete
+
+════════════════════════════════════════════════════════════
+▶ Installing App Store Apps with mas
+════════════════════════════════════════════════════════════
+✓ toggltrack (already installed)
+✓ flow (already installed)
+
+════════════════════════════════════════════════════════════
+▶ Setting up GitHub Authentication
+════════════════════════════════════════════════════════════
+✓ GitHub CLI already authenticated
+
+════════════════════════════════════════════════════════════
+▶ Setting up SSH Key
+════════════════════════════════════════════════════════════
+✓ SSH key already exists
+
+════════════════════════════════════════════════════════════
+▶ Cloning GitHub Repositories
+════════════════════════════════════════════════════════════
+✓ obsidian (already cloned)
+✓ codespace (already cloned)
+ℹ Cloning extensions to /Users/vituspacholleck/Documents/blenderlokal...
+
+════════════════════════════════════════════════════════════
+✗ SCRIPT ERROR
+════════════════════════════════════════════════════════════
+Exit Code: 1
+Line Number: 12
+Error Time: Sun Nov  9 20:40:52 CET 2025
+════════════════════════════════════════════════════════════
+✓ extensions cloned
+✓ dotfiles (already cloned)
+
+════════════════════════════════════════════════════════════
+▶ Stowing Dotfiles
+════════════════════════════════════════════════════════════
+✓ Dotfiles already stowed
+
+════════════════════════════════════════════════════════════
+▶ Configuring Marta
+════════════════════════════════════════════════════════════
+✓ Marta launcher symlink already exists
+ℹ Setting Marta as default folder opener...
+✓ Marta folder integration configured
+
+════════════════════════════════════════════════════════════
+▶ Configuring macOS System Defaults
+════════════════════════════════════════════════════════════
+
+════════════════════════════════════════════════════════════
+✗ SCRIPT ERROR
+════════════════════════════════════════════════════════════
+Exit Code: 1
+Line Number: 58
+Error Time: Sun Nov  9 20:42:29 CET 2025
+════════════════════════════════════════════════════════════
+
+════════════════════════════════════════════════════════════
+✗ SCRIPT ERROR
+════════════════════════════════════════════════════════════
+Exit Code: 1
+Line Number: 59
+Error Time: Sun Nov  9 20:42:29 CET 2025
+════════════════════════════════════════════════════════════
+✓ All macOS defaults configured
+
+════════════════════════════════════════════════════════════
+▶ Applying System Changes
+════════════════════════════════════════════════════════════
+ℹ Killing Dock to apply changes...
+✓ System changes applied
+
+════════════════════════════════════════════════════════════
+▶ Setup Complete!
+════════════════════════════════════════════════════════════
+✓ All tasks completed successfully!
+
+ℹ Next steps:
+  1. Verify all applications are installed
+  2. Configure Raycast: turn off text replacements in System Preferences
+  3. Disable Spotlight hotkey to avoid conflicts with Raycast
+  4. Log out to apply all system settings (recommended)
+
+════════════════════════════════════════════════════════════
+End Time: Sun Nov  9 20:42:30 CET 2025
+════════════════════════════════════════════════════════════
+ℹ Logout skipped. Please log out manually if needed.
+User skipped logout at Sun Nov  9 20:42:34 CET 2025

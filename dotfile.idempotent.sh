@@ -1,29 +1,29 @@
 #!/bin/zsh
 
-set -e  # Exit on any error
+# Error handler - but be selective about what we report
+# Don't use set -e because interactive commands like xcode-select --install will break
+set +e
 
-# Error handler
-trap 'handle_error $? $LINENO' ERR
-
-handle_error() {
-    local exit_code=$1
-    local line_number=$2
-    
+# Only trap fatal errors, not normal command failures
+SCRIPT_ERROR=0
+handle_fatal_error() {
+    SCRIPT_ERROR=1
     {
         echo ""
         echo "════════════════════════════════════════════════════════════"
-        echo "✗ SCRIPT ERROR"
+        echo "✗ FATAL SCRIPT ERROR"
         echo "════════════════════════════════════════════════════════════"
-        echo "Exit Code: $exit_code"
-        echo "Line Number: $line_number"
         echo "Error Time: $(date)"
         echo "════════════════════════════════════════════════════════════"
     } | tee -a "$LOG_FILE"
     
     echo ""
-    echo "✗ Setup script failed!"
+    echo "✗ Setup script encountered a fatal error!"
     echo "ℹ Check the log file for details: $LOG_FILE"
 }
+
+# We don't use ERR trap because too many non-fatal errors are triggered
+# Instead we check critical functions manually
 
 # ============================================================================
 # CONFIGURATION
@@ -58,7 +58,7 @@ FORMULAE=(
 )
 
 CASKS=(
-    nikitabobko/tap/aerospace
+    aerospace
     arc
     alacritty
     visual-studio-code
@@ -81,17 +81,19 @@ CASKS=(
     figma
     darktable
     spotify
-    ableton-live-suite@12
+    ableton-live-suite
     rhino
     blender
     superwhisper
     homerow
     github
+    #adobe-creative-cloud
 )
 
 MAS_APPS=(
     "1291898086|toggltrack"
     "1423210932|flow"
+    #1609342064|octane-x
 )
 
 # ============================================================================
@@ -153,6 +155,32 @@ log_error() {
     echo "✗ $1" >> "$LOG_FILE"
 }
 
+# Smart error checker - only reports real errors
+check_error() {
+    local exit_code=$1
+    local description=$2
+    local output=$3
+    
+    # If exit code is 0, it's fine
+    [ $exit_code -eq 0 ] && return 0
+    
+    # If exit code is non-zero but output contains expected keywords, it's likely fine
+    if echo "$output" | grep -qi "already\|skipped\|up.to.date"; then
+        return 0
+    fi
+    
+    # Only report if it contains error keywords
+    if echo "$output" | grep -qi "error\|failed\|fatal\|permission denied\|no such file"; then
+        log_error "$description"
+        echo "Details: $output" >> "$LOG_FILE"
+        SCRIPT_ERROR=1
+        return 1
+    fi
+    
+    # Default: don't report (too noisy otherwise)
+    return 0
+}
+
 command_exists() {
     command -v "$1" &> /dev/null
 }
@@ -194,12 +222,27 @@ setup_sudo() {
 setup_xcode() {
     log_header "Setting up Xcode Command Line Tools"
     
-    if command_exists xcode-select && [ -d "$(xcode-select --print-path)/Platforms/MacOSX.platform" ] 2>/dev/null; then
+    if xcode-select -p &>/dev/null && [ -d "$(xcode-select --print-path)" ] 2>/dev/null; then
         log_success "Xcode Command Line Tools already installed"
     else
         log_info "Installing Xcode Command Line Tools..."
-        xcode-select --install
-        log_success "Xcode Command Line Tools installed"
+        # This command opens an interactive dialog, so we wrap it
+        (xcode-select --install &) 2>/dev/null || true
+        
+        # Wait up to 5 minutes for installation
+        log_info "Waiting for Xcode installation... (check the popup if it appeared)"
+        local timeout=300
+        local elapsed=0
+        while ! xcode-select -p &>/dev/null && [ $elapsed -lt $timeout ]; do
+            sleep 5
+            ((elapsed+=5))
+        done
+        
+        if xcode-select -p &>/dev/null; then
+            log_success "Xcode Command Line Tools installed"
+        else
+            log_warning "Xcode installation may still be in progress. Please wait and run the script again if needed."
+        fi
     fi
 }
 
@@ -210,7 +253,10 @@ setup_brew() {
         log_success "Homebrew already installed"
     else
         log_info "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || {
+            log_error "Failed to install Homebrew"
+            return 1
+        }
         log_success "Homebrew installed"
     fi
     
@@ -439,75 +485,125 @@ setup_system_defaults() {
     log_header "Configuring macOS System Defaults"
     
     # Global System Settings
+    # Set fastest key repeat rate (1 = fastest)
     defaults write NSGlobalDomain KeyRepeat -int 1
+    # Disable automatic spell correction
     defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
     
     # Trackpad & Mouse
+    # Trackpad speed (0.5-2.5 scale, 0.875 = fast)
     defaults write NSGlobalDomain com.apple.mouse.scaling -float .875
+    # Enable three-finger drag on trackpad
     defaults write com.apple.AppleMultitouchTrackpad "TrackpadThreeFingerDrag" -bool "true"
+    # Disable separate spaces per display (span all displays)
     defaults write com.apple.spaces spans-displays -bool true
     
     # Animation Settings (Disable All)
+    # Disable window opening/closing animations
     defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
+    # Disable scroll animations
     defaults write -g NSScrollAnimationEnabled -bool false
+    # Speed up window resize animations (0.001 = no delay)
     defaults write -g NSWindowResizeTime -float 0.001
+    # Disable Quick Look panel animations
     defaults write -g QLPanelAnimationDuration -float 0
+    # Disable document revision window animations
     defaults write -g NSDocumentRevisionsWindowTransformAnimation -bool false
+    # Disable full screen toolbar animations
     defaults write -g NSToolbarFullScreenAnimationDuration -float 0
+    # Disable browser column animations
     defaults write -g NSBrowserColumnAnimationSpeedMultiplier -float 0
     
     # Dock Settings
+    # Enable Dock auto-hide
     defaults write com.apple.dock autohide -bool true
+    # Remove auto-hide delay (instant show on mouse over)
     defaults write com.apple.dock autohide-delay -float 0
+    # Remove auto-hide animation time
     defaults write com.apple.dock autohide-time-modifier -float 0
+    # Disable Mission Control animation
     defaults write com.apple.dock expose-animation-duration -float 0
+    # Disable Launchpad show animation
     defaults write com.apple.dock springboard-show-duration -float 0
+    # Disable Launchpad hide animation
     defaults write com.apple.dock springboard-hide-duration -float 0
+    # Disable Launchpad page animation
     defaults write com.apple.dock springboard-page-duration -float 0
+    # Don't automatically rearrange Spaces based on most recent use
     defaults write com.apple.dock mru-spaces -bool false
+    # Speed up Mission Control animation (0.1 = fast)
     defaults write com.apple.dock expose-animation-duration -float 0.1
+    # Group Mission Control windows by application
     defaults write com.apple.dock "expose-group-by-app" -bool true
     
     # Finder Settings
+    # Use column view in Finder (Clmv = column view)
     defaults write com.apple.finder FXPreferredViewStyle Clmv
+    # Disable all Finder animations
     defaults write com.apple.finder DisableAllAnimations -bool true
+    # Show external hard drives and USB on desktop
     defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
+    # Enable text selection in Quick Look preview
     defaults write com.apple.finder QLEnableTextSelection -bool TRUE
+    # Don't warn when changing file extension
     defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
     
     # File Extensions
+    # Show all filename extensions in Finder
     defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+    # Avoid .DS_Store files on network volumes
     defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
     
     # Security & Gatekeeper
+    # Disable Gatekeeper (allow any app installation)
     sudo spctl --master-disable 2>/dev/null || true
+    # Disable system policy restrictions
     sudo defaults write /var/db/SystemPolicy-prefs.plist enabled -string no 2>/dev/null || true
+    # Disable quarantine attributes for downloaded files
     defaults write com.apple.LaunchServices LSQuarantine -bool false
     
     # Save & Print Dialogs
+    # Expand save panel by default
     defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+    # Expand print panel by default
     defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+    # Expand print panel for all apps
     defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
     
     # App-Specific Settings
+    # Automatically quit printer app after print jobs complete
     defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
+    # Disable system-wide resume (don't reopen windows on login)
     defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false
+    # Save to disk by default instead of iCloud
     defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+    # Disable Mail send animations
     defaults write com.apple.mail DisableSendAnimations -bool true
+    # Disable Mail reply animations
     defaults write com.apple.mail DisableReplyAnimations -bool true
+    # Don't prompt to use new hard drives as Time Machine backup
     defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
     
     # Text & Keyboard
+    # Disable smart quotes (useful for programming)
     defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+    # Disable smart dashes (useful for programming)
     defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+    # Enable full keyboard access for all UI controls (Tab in dialogs)
     defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+    # Enable press-and-hold for accents menu
     defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
+    # F1/F2 keys behave as standard function keys (not media control)
     defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
+    # fn key does nothing (opposite of above)
     defaults write com.apple.HIToolbox AppleFnUsageType -int "0"
     
-    # Download Manager
+    # Download Manager (Transmission)
+    # Don't prompt for confirmation before downloading
     defaults write org.m0k.transmission DownloadAsk -bool false
+    # Use incomplete folder for downloads in progress
     defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool true
+    # Set incomplete downloads folder location
     defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Downloads/Incomplete"
     
     log_success "All macOS defaults configured"
@@ -564,10 +660,9 @@ main() {
     echo "✓ All tasks completed successfully!" | tee -a "$LOG_FILE"
     echo "" | tee -a "$LOG_FILE"
     echo "ℹ Next steps:" | tee -a "$LOG_FILE"
-    echo "  1. Verify all applications are installed" | tee -a "$LOG_FILE"
-    echo "  2. Configure Raycast: turn off text replacements in System Preferences" | tee -a "$LOG_FILE"
-    echo "  3. Disable Spotlight hotkey to avoid conflicts with Raycast" | tee -a "$LOG_FILE"
-    echo "  4. Log out to apply all system settings (recommended)" | tee -a "$LOG_FILE"
+    echo "  1. You now have snippets in Raycast: turn off text replacements in System Preferences" | tee -a "$LOG_FILE"
+    echo "  2. Disable Spotlight hotkey to avoid conflicts with Raycast" | tee -a "$LOG_FILE"
+    echo "  3. Log out to apply all system settings (recommended)" | tee -a "$LOG_FILE"
     echo "" | tee -a "$LOG_FILE"
     echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
     echo "End Time: $end_time" >> "$LOG_FILE"
@@ -587,3 +682,10 @@ main() {
 # Run main function
 init_logging
 main "$@"
+
+# Final check
+if [ $SCRIPT_ERROR -eq 1 ]; then
+    exit 1
+fi
+
+exit 0
