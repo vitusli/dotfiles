@@ -4,5 +4,12 @@
     "security.workspace.trust.untrustedFiles": "open",
     "python.defaultInterpreterPath": "/opt/homebrew/bin/python3",
     "workbench.startupEditor": "none",
-    "vim.useSystemClipboard": true
+    "vim.useSystemClipboard": true,
+    "chat.tools.terminal.autoApprove": {
+        "brew list --cask | grep -i ableton": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "brew": true
+    }
 }

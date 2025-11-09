@@ -32,6 +32,7 @@ formulae=(
     qlmarkdown # quicklook for markdown
     ffmpeg # yt downloader and create mp4 from frames
     rar
+    mas
 )
 brew install ${formulae[@]}
 
@@ -56,7 +57,6 @@ casks=(
     openvpn-connect
     microsoft-remote-desktop
     logi-options+
-    adobe-creative-cloud
     figma
     darktable
     spotify
@@ -66,7 +66,7 @@ casks=(
     superwhisper
     homerow
     github
-    mas
+    #adobe-creative-cloud
 )
 brew install --cask ${casks[@]}
 
