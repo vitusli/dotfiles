@@ -46,8 +46,31 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Configure completion menu
 zstyle ':completion:*' menu select
 
+gatekeeper() {
+  local app
+  read "app?App: "
+  
+  # Entferne .app suffix wenn vorhanden
+  app="${app%.app}"
+  
+  local app_path="/Applications/${app}.app"
+  
+  # Prüfe ob App existiert
+  if [[ ! -d "$app_path" ]]; then
+    echo "Not found"
+    return 1
+  fi
+  
+  # Entferne Quarantine
+  if xattr -d com.apple.quarantine "$app_path" 2>/dev/null; then
+    echo "Done"
+  else
+    echo "Failed"
+    return 1
+  fi
+}
 
-# f function for file searching with nvim
+# f function for file searching with vim
 f() {
   if [[ -z $1 ]]; then
     vim $(fzf --preview="bat --color=always {}")
