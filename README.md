@@ -36,11 +36,15 @@ all macos defaults are configured in the `setup_system_defaults()` function. eac
 
 ## repos cloned
 
-the script clones my private repositories. replace mine with your own in the `REPOS` array:
+the script clones my private repositories. replace mine with your own in the `REPOS` array.
 
 ## github auth
 
 during setup, you'll be prompted to authenticate with github via browser. this is needed for cloning private repos and using the github cli.
+
+## stow
+
+the script symlinks configuration files from the `/stow` directory to your home directory using `stow`.
 
 ## feedback
 

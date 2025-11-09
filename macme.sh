@@ -50,7 +50,6 @@ FORMULAE=(
     zsh-autocomplete
     zsh-syntax-highlighting
     fzf
-    zsh-vi-mode
     zellij
     z
     olets/tap/zsh-abbr
