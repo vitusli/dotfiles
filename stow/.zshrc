@@ -72,7 +72,8 @@ gateme() {
 
 shellme() {
   local count=0
-  for item in */; do
+  for item in *; do
+    [[ "$item" == "*" ]] && continue  # Skip wenn keine Items
     local new_name="${item// /_}"
     if [[ "$item" != "$new_name" ]]; then
       mv "$item" "$new_name"

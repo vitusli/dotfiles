@@ -9,17 +9,6 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 xcode-select --install
 
-# SSH key generieren und zu github hinzufügen
-if [ ! -f ~/.ssh/id_ed25519 ]; then
-    ssh-keygen -t ed25519 -C "vituspach@gmail.com" -f ~/.ssh/id_ed25519 -N ""
-    eval "$(ssh-agent -s)"
-    ssh-add --apple-use-keychain ~/.ssh/id_ed25519
-    pbcopy < ~/.ssh/id_ed25519.pub
-    echo "SSH key copied to clipboard. Add it to your GitHub account."
-else
-    echo "SSH key already exists. Skipping generation."
-fi
-
 echo "Installing Brew..."
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
@@ -87,17 +76,34 @@ mas install 1291898086 # toggltrack
 mas install 1423210932 # flow
 # mas install 1609342064 # Octane X
 
-echo "Cloning github repositories..." #is this via ssh? the new machine should register its ssh to github first
+# GitHub CLI authentifizieren
+echo "Authenticating with GitHub CLI..."
+if ! gh auth status &> /dev/null; then
+    gh auth login --scopes repo --web
+fi
+
+# SSH key generieren und zu github hinzufügen
+if [ ! -f ~/.ssh/id_ed25519 ]; then
+    ssh-keygen -t ed25519 -C "vituspach@gmail.com" -f ~/.ssh/id_ed25519 -N ""
+    eval "$(ssh-agent -s)"
+    ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+    
+    gh ssh-key add ~/.ssh/id_ed25519.pub --title "MacBook $(date +%Y-%m-%d)"
+    echo "✓ SSH key added to GitHub!"
+else
+    echo "SSH key already exists."
+fi
+
 ### repositories
-git clone https://github.com/vitusli/.obsidian.git ~/Documents #repo name changed obsidian
-git clone https://github.com/vitusli/codespace.git ~
-git clone https://github.com/vitusli/4.5.git ~/Library/Application Support/Blender
-git clone https://github.com/hkdobrev/cleanmac.git ~/Documents
-git clone https://github.com/vitusli/.dotfiles.git ~ #repo name changed to dotfiles
+echo "Cloning github repositories..."
+git clone git@github.com:vitusli/obsidian.git ~/Documents 
+git clone git@github.com:vitusli/codespace.git ~
+git clone git@github.com:vitusli/extensions.git ~/Documents/blenderlokal
+git clone git@github.com:vitusli/dotfiles.git ~
 
 echo "Stowing dotfiles..."
 ### stow
-cd ~/.dotfiles
+cd ~/dotfiles
 stow --adopt stow
 exec zsh
 
@@ -109,7 +115,7 @@ echo "Changing macOS defaults..."
 ln -s /Applications/Marta.app/Contents/Resources/launcher /usr/local/bin/marta
 # set marta as default app for opening folders
 defaults write -g NSFileViewer -string org.yanex.marta
-defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType="public.folder";LSHandlerRoleAll="org.yanex.marta";}'
+defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType=public.folder;LSHandlerRoleAll=org.yanex.marta;}'
 
 ## Global System Settings
 # Set fastest key repeat rate
@@ -254,6 +260,6 @@ defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Do
 
 killall Dock
 
-echo "Don't forget to set up SSH keys for GitHub!"
-echo "You may turn off all text replacements in System Preferences > Keyboard > Text to avoid issues with snippets in Rayacast."
+echo "Setup complete! ✓"
+echo "You may turn off all text replacements in System Preferences > Keyboard > Text to avoid issues with snippets in Raycast."
 echo "Disable cmd-space hotkey for spotlight in System Preferences > Keyboard > Shortcuts > Spotlight to avoid conflicts with Raycast."
