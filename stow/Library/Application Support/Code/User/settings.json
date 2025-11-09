@@ -11,5 +11,7 @@
             "matchCommandLine": true
         },
         "brew": true
-    }
+    },
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false
 }
