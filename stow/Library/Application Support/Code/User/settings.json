@@ -3,6 +3,6 @@
     "workbench.colorTheme": "cursor anysphere theme",
     "security.workspace.trust.untrustedFiles": "open",
     "python.defaultInterpreterPath": "/opt/homebrew/bin/python3",
-    "workbench.startupEditor": "none"
+    "workbench.startupEditor": "none",
     "vim.useSystemClipboard": true
 }

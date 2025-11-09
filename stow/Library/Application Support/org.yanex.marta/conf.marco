@@ -15,8 +15,7 @@ behavior {
 
 
 
-keyBindings {
-    
+keyBindings {    
     "k" "core.move.up"
     "j" "core.move.down"
     "h" "core.go.up"
