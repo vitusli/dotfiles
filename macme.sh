@@ -1,6 +1,9 @@
 #!/bin/zsh
 
-# Error handler - but be selective about what we report
+# Download manually and run with zsh
+# curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macme.sh | zsh
+
+# Error handler - be selective about what to report
 # Don't use set -e because interactive commands like xcode-select --install will break
 set +e
 
@@ -22,8 +25,8 @@ handle_fatal_error() {
     echo "ℹ Check the log file for details: $LOG_FILE"
 }
 
-# We don't use ERR trap because too many non-fatal errors are triggered
-# Instead we check critical functions manually
+# ERR trap not used because too many non-fatal errors are triggered
+# Instead critical functions are checked manually
 
 # ============================================================================
 # CONFIGURATION
@@ -226,7 +229,7 @@ setup_xcode() {
         log_success "Xcode Command Line Tools already installed"
     else
         log_info "Installing Xcode Command Line Tools..."
-        # This command opens an interactive dialog, so we wrap it
+        # Interactive dialog needs background execution
         (xcode-select --install &) 2>/dev/null || true
         
         # Wait up to 5 minutes for installation
