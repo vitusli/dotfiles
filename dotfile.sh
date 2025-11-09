@@ -156,16 +156,22 @@ defaults write com.apple.dock springboard-hide-duration -float 0
 defaults write com.apple.dock springboard-page-duration -float 0
 
 ## Finder Settings
+#"Use column view in all Finder windows by default"
+defaults write com.apple.finder FXPreferredViewStyle Clmv
 # Disable all Finder animations
 defaults write com.apple.finder DisableAllAnimations -bool true
-# Hide external hard drives on desktop
-defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
+#"Showing icons for hard drives, servers, and removable media on the desktop"
+defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
 # Enable text selection in Quick Look
 defaults write com.apple.finder QLEnableTextSelection -bool TRUE
+#"Showing all filename extensions in Finder by default"
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+#"Disabling the warning when changing a file extension"
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 
 ## App-Specific Settings
 # Prevent Time Machine from prompting to use new hard drives as backup volume
-defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool YES
+defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 # Disable Mail send animations
 defaults write com.apple.Mail DisableSendAnimations -bool true
 # Disable Mail reply animations
@@ -184,6 +190,9 @@ defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
 #"Automatically quit printer app once the print jobs complete"
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
+
+#"Disabling system-wide resume"
+defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false
 
 #"Saving to disk (not to iCloud) by default"
 defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
@@ -216,6 +225,15 @@ defaults write org.m0k.transmission DownloadAsk -bool false
 # Don’t automatically rearrange Spaces based on most recent use
 defaults write com.apple.dock mru-spaces -bool false
 
+#"Setting Dock to auto-hide and removing the auto-hiding delay"
+defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock autohide-delay -float 0
+defaults write com.apple.dock autohide-time-modifier -float 0
+
+#"Speeding up Mission Control animations and grouping windows by application"
+defaults write com.apple.dock expose-animation-duration -float 0.1
+defaults write com.apple.dock "expose-group-by-app" -bool true
+
 # F1, F2, etc. behave as standard function keys. Press the fn key to use the special features printed on the key.
 defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
 
@@ -225,8 +243,16 @@ defaults write com.apple.HIToolbox AppleFnUsageType -int "0"
 # By default, when a key is held down, the accents menu is displayed.
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
 
-killall Dock
+#"Use `~/Downloads/Incomplete` to store incomplete downloads"
+defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool true
+defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Downloads/Incomplete"
 
+#todo find out real values for trackpad and mouse speed
+#"Setting trackpad & mouse speed to a reasonable number"
+#defaults write -g com.apple.trackpad.scaling 2
+#defaults write -g com.apple.mouse.scaling 2.5
+
+killall Dock
 
 echo "Don't forget to set up SSH keys for GitHub!"
 echo "You may turn off all text replacements in System Preferences > Keyboard > Text to avoid issues with snippets in Rayacast."

@@ -19,6 +19,8 @@ keyBindings {
     
     "k" "core.move.up"
     "j" "core.move.down"
+    "h" "core.go.up"
+    "l" "core.open"
     
     "shift+k" "core.select.move.up"
     "shift+j" "core.select.move.down"
@@ -27,8 +29,6 @@ keyBindings {
     "shift+g" "core.move.right"
     
     "/" "core.go"
-    "h" "core.go.up"
-    "l" "core.open"
     
     "r" "core.rename"
     
