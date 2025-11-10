@@ -78,7 +78,6 @@ CASKS=(
     microsoft-outlook
     slack
     openvpn-connect
-    microsoft-remote-desktop
     logi-options+
     figma
     darktable
@@ -89,7 +88,9 @@ CASKS=(
     superwhisper
     homerow
     github
+    windows-app
     #adobe-creative-cloud
+    #affinity
 )
 
 MAS_APPS=(
