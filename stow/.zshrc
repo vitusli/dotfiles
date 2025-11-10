@@ -46,44 +46,6 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Configure completion menu
 zstyle ':completion:*' menu select
 
-gateme() {
-  local app
-  read "app?App: "
-  
-  # Entferne .app suffix wenn vorhanden
-  app="${app%.app}"
-  
-  local app_path="/Applications/${app}.app"
-  
-  # Prüfe ob App existiert
-  if [[ ! -d "$app_path" ]]; then
-    echo "Not found"
-    return 1
-  fi
-  
-  # Entferne Quarantine
-  if xattr -d com.apple.quarantine "$app_path" 2>/dev/null; then
-    echo "Done"
-  else
-    echo "Failed"
-    return 1
-  fi
-}
-
-shellme() {
-  local count=0
-  for item in *; do
-    [[ "$item" == "*" ]] && continue  # Skip wenn keine Items
-    local new_name="${item// /_}"
-    if [[ "$item" != "$new_name" ]]; then
-      mv "$item" "$new_name"
-      ((count++))
-      echo "Renamed: $item → $new_name"
-    fi
-  done
-  echo "Total: $count renamed"
-}
-
 # f function for file searching with vim
 f() {
   if [[ -z $1 ]]; then
