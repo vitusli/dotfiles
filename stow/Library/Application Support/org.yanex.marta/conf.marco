@@ -9,6 +9,7 @@ behavior {
     }
     quickSelect {
         activateOnAnyCharacter false
+        defaultMode "substring"
         
     }
 }
@@ -16,6 +17,8 @@ behavior {
 
 
 keyBindings {    
+    "\\" "core.go"
+
     "k" "core.move.up"
     "j" "core.move.down"
     "h" "core.go.up"
@@ -26,8 +29,6 @@ keyBindings {
     
     "g" "core.move.left"
     "shift+g" "core.move.right"
-    
-    "/" "core.go"
     
     "r" "core.rename"
     
