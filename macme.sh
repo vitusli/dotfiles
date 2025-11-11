@@ -35,10 +35,11 @@ DOTFILES_DIR="$HOME/dotfiles"
 LOG_DIR="$DOTFILES_DIR/logs"
 LOG_FILE="$LOG_DIR/setup-$(date +%Y%m%d-%H%M%S).log"
 REPOS=(
-    "git@github.com:vitusli/obsidian.git|$HOME/Documents"
-    "git@github.com:vitusli/codespace.git|$HOME"
-    "git@github.com:vitusli/extensions.git|$HOME/Documents/blenderlokal"
     "git@github.com:vitusli/dotfiles.git|$HOME"
+    "git@github.com:vitusli/codespace.git|$HOME"
+    "git@github.com:vitusli/obsidian.git|$HOME/Documents"
+    "git@github.com:vitusli/extensions.git|$HOME/Documents/blenderlokal"
+    "git@github.com:vitusli/user_bought.git|$HOME/Documents/blenderlokal"
 )
 
 FORMULAE=(
@@ -89,8 +90,8 @@ CASKS=(
     homerow
     github
     windows-app
-    #adobe-creative-cloud
-    #affinity
+    adobe-creative-cloud
+    affinity
 )
 
 MAS_APPS=(
@@ -541,7 +542,7 @@ setup_system_defaults() {
     
     # Finder Settings
     # Use column view in Finder (Clmv = column view)
-    defaults write com.apple.finder FXPreferredViewStyle Clmv
+    defaults write com.apple.finder FXPreferredViewStyle clmv
     # Disable all Finder animations
     defaults write com.apple.finder DisableAllAnimations -bool true
     # Show external hard drives and USB on desktop
