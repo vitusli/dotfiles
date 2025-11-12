@@ -44,7 +44,40 @@ during setup, you'll be prompted to authenticate with github via browser. this i
 
 ## stow
 
-the script symlinks configuration files from the `/stow` directory to your home directory using `stow`.
+the script symlinks configuration files from the `/stow` directory to your home directory using `stow`. underneath is a list of what each config does.
+
+## dotfiles documentation
+
+here's what each dotfile/config does:
+
+### shell configuration
+- **`.zshrc`** - main zsh configuration, aliases, environment variables, prompt setup
+- **`.zprofile`** - runs once at login, sets up PATH and login-time environment
+- **`.profile`** - fallback profile for non-zsh shells
+- **`.hushlogin`** - suppresses the "last login" message when opening terminal
+
+### terminal & multiplexer
+- **`.config/alacritty.toml`** - alacritty terminal emulator configuration (fonts, colors, keybindings)
+- **`.config/zellij/config.kdl`** - zellij terminal multiplexer config (alternative to tmux)
+- **`.config/zsh-abbr/user-abbreviations`** - custom zsh abbreviations that expand as you type
+
+### window management
+- **`.aerospace.toml`** - aerospace window manager configuration (tiling, workspaces, keybindings)
+
+### keyboard customization
+- **`.config/karabiner/karabiner.json`** - karabiner-elements key remapping configuration
+- **`.config/karabiner/assets/complex_modifications/`** - advanced karabiner modification rules
+- **`Library/Keyboard Layouts/Roman.bundle/`** - custom US-German [keyboard layout](https://hci.rwth-aachen.de/usgermankeyboard)
+
+### editors
+- **`.vimrc`** - vim text editor configuration
+- **`.gvimrc`** - gvim (graphical vim) specific settings
+- **`Library/Application Support/Code/User/settings.json`** - VS Code editor settings
+- **`Library/Application Support/Code/User/keybindings.json`** - VS Code keyboard shortcuts
+
+### applications
+- **`Library/Application Support/org.yanex.marta/conf.marco`** - marta file manager configuration
+- **`Library/Application Support/org.yanex.marta/Themes/`** - custom themes for marta file manager
 
 ## feedback
 
