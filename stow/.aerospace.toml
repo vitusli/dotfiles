@@ -69,7 +69,7 @@ ctrl-alt-cmd-shift-j = ['exec-and-forget aerospace move down --boundaries all-mo
 ctrl-alt-cmd-shift-k = ['exec-and-forget aerospace move up --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 1 --focus-follows-window']
 ctrl-alt-cmd-shift-l = ['exec-and-forget aerospace move right --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 2 --focus-follows-window']
 
-ctrl-alt-cmd-s = ['workspace-back-and-forth']
+ctrl-alt-cmd-d = ['workspace-back-and-forth']
 # ctrl-alt-cmd-d = ['focus-monitor --wrap-around next'] #not necessary with two spaces
 
 ctrl-alt-cmd-space = 'layout tiles accordion'
