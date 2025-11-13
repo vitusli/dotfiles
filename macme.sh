@@ -455,6 +455,70 @@ stow_dotfiles() {
 }
 
 # ============================================================================
+# OBSIDIAN CONFIGURATION
+# ============================================================================
+
+stow_obsidian() {
+    log_header "Stowing Obsidian Configuration"
+    
+    # This function symlinks a shared .obsidian configuration directory to multiple
+    # Obsidian vaults. This allows all vaults to share the same settings, plugins,
+    # and themes.
+    #
+    # IMPORTANT: Because the configuration is shared, you should only have ONE
+    # Obsidian vault open at a time. Having multiple vaults open simultaneously
+    # can lead to configuration conflicts or data corruption in the settings.
+    
+    local stow_dir="$HOME/Documents/obsidian"
+    local stow_package="obsidian_stow"
+    local vaults=(
+        "$stow_dir/Wandelbots"
+        "$stow_dir/Diplomarbeit"
+        "$stow_dir/Privatleben"
+    )
+    
+    if ! command_exists stow; then
+        log_error "stow not found, cannot link Obsidian configuration."
+        return 1
+    fi
+    
+    if [ ! -d "$stow_dir/$stow_package" ]; then
+        log_warning "Obsidian stow package not found at $stow_dir/$stow_package. Skipping."
+        return
+    fi
+    
+    cd "$stow_dir" || { log_error "Failed to cd into $stow_dir"; return 1; }
+    
+    for vault in "${vaults[@]}"; do
+        if [ ! -d "$vault" ]; then
+            log_warning "Vault directory not found: $vault. Skipping."
+            continue
+        fi
+        
+        local target_link="$vault/.obsidian"
+        
+        # Check if already correctly symlinked
+        if [ -L "$target_link" ] && [ "$(readlink "$target_link")" = "../$stow_package/.obsidian" ]; then
+            log_success "Obsidian config already stowed for $(basename "$vault")"
+        else
+            # Backup if a real directory/file exists
+            if [ -e "$target_link" ] && [ ! -L "$target_link" ]; then
+                local backup_path="$target_link.bak.$(date +%Y%m%d-%H%M%S)"
+                log_warning "Backing up existing .obsidian in $(basename "$vault") to $backup_path"
+                mv "$target_link" "$backup_path"
+            fi
+            
+            log_info "Stowing Obsidian config for $(basename "$vault")..."
+            stow -v -t "$vault" "$stow_package" >> "$LOG_FILE" 2>&1
+            log_success "Obsidian config stowed for $(basename "$vault")"
+        fi
+    done
+    
+    # Return to original directory if needed, though script context handles this
+    cd - >/dev/null
+}
+
+# ============================================================================
 # MACOS MARTA CONFIGURATION
 # ============================================================================
 
@@ -651,6 +715,7 @@ main() {
     
     # Dotfiles
     stow_dotfiles
+    stow_obsidian
     
     # macOS configuration
     setup_marta
