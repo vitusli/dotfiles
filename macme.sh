@@ -559,7 +559,11 @@ setup_system_defaults() {
     defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
     
     # Trackpad & Mouse
-    # Trackpad speed (0.5-2.5 scale, 0.875 = fast)
+    # Enable tap to click (Trackpad) for this user and for the login screen
+    defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+    defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+    defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+    # Trackpad speed 
     defaults write NSGlobalDomain com.apple.mouse.scaling -float .875
     # Enable three-finger drag on trackpad
     defaults write com.apple.AppleMultitouchTrackpad "TrackpadThreeFingerDrag" -bool "true"
