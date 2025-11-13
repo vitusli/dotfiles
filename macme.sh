@@ -461,21 +461,35 @@ stow_dotfiles() {
 stow_obsidian() {
     log_header "Stowing Obsidian Configuration"
     
-    # This function symlinks a shared .obsidian configuration directory to multiple
-    # Obsidian vaults. This allows all vaults to share the same settings, plugins,
-    # and themes.
-    #
-    # IMPORTANT: Because the configuration is shared, you should only have ONE
-    # Obsidian vault open at a time. Having multiple vaults open simultaneously
-    # can lead to configuration conflicts or data corruption in the settings.
+    # Shared Obsidian configuration stowing.
+    # Automatically applies the configuration to ALL vault directories inside
+    # $HOME/Documents/obsidian except:
+    #   - hidden directories (names starting with . like .git, .archived_vault)
+    #   - the stow package directory itself (obsidian_stow)
+    # Assumes that only vault directories live in that folder.
     
     local stow_dir="$HOME/Documents/obsidian"
     local stow_package="obsidian_stow"
-    local vaults=(
-        "$stow_dir/Wandelbots"
-        "$stow_dir/Diplomarbeit"
-        "$stow_dir/Privatleben"
-    )
+    local vaults=()
+    
+    # Build vault list dynamically
+    if [ -d "$stow_dir" ]; then
+        for v in "$stow_dir"/*; do
+            [ -d "$v" ] || continue
+            local base="$(basename "$v")"
+            # Skip hidden dirs and stow package dir
+            if [[ "$base" == .* ]] || [[ "$base" == "$stow_package" ]]; then
+                continue
+            fi
+            vaults+=("$v")
+        done
+    fi
+    
+    if [ ${#vaults[@]} -eq 0 ]; then
+        log_warning "No Obsidian vaults found in $stow_dir (non-hidden)."
+    else
+        log_info "Detected ${#vaults[@]} Obsidian vault(s): ${vaults[@]##*/}"
+    fi
     
     if ! command_exists stow; then
         log_error "stow not found, cannot link Obsidian configuration."
