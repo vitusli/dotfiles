@@ -601,6 +601,8 @@ setup_system_defaults() {
     defaults write -g NSBrowserColumnAnimationSpeedMultiplier -float 0
     
     # Dock Settings
+    # Disable bouncing animation of Applications in Dock
+    defaults write com.apple.dock no-bouncing -bool TRUE
     # Enable Dock auto-hide
     defaults write com.apple.dock autohide -bool true
     # Remove auto-hide delay (instant show on mouse over)
