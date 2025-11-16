@@ -58,6 +58,8 @@ FORMULAE=(
     ffmpeg
     rar
     mas
+    pandoc
+    pandoc-crossref
 )
 
 CASKS=(
@@ -92,12 +94,15 @@ CASKS=(
     windows-app
     adobe-creative-cloud
     affinity
+    basictex
 )
 
 MAS_APPS=(
-    "1291898086|toggltrack"
-    "1423210932|flow"
-    #1609342064|octane-x
+    MAS_APPS=(
+        "1291898086|toggltrack"
+        "1423210932|flow"
+        "1609342064|octane-x"
+    )
 )
 
 # ============================================================================
