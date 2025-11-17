@@ -45,13 +45,13 @@ keyBindings {
     
     "shift+h" "core.display.hidden"
     
-    "cmd+f" "core.finder.reveal"
+    "cmd+alt+r" "core.finder.reveal"
     
     
     "left" "core.clone.left"
     "right" "core.clone.right"
     
-    "alt+h" {
+    "shift+`" {
         id "core.open.directory"
         src "~"
     }
