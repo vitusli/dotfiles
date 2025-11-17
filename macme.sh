@@ -94,6 +94,7 @@ CASKS=(
     adobe-creative-cloud
     affinity
     basictex # Klein, nur 100MB statt 7GB
+    alt-tab
 )
 
 MAS_APPS=(

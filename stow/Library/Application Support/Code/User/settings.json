@@ -13,5 +13,6 @@
         "markdown": true,
         "scminput": false
     },
-    "files.autoSave": "afterDelay"
+    "files.autoSave": "afterDelay",
+    "workbench.iconTheme": "sf-symbol-icons"
 }
