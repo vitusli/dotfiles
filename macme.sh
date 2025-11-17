@@ -39,7 +39,6 @@ REPOS=(
     "git@github.com:vitusli/codespace.git|$HOME"
     "git@github.com:vitusli/obsidian.git|$HOME/Documents"
     "git@github.com:vitusli/extensions.git|$HOME/Documents/blenderlokal"
-    "git@github.com:vitusli/user_bought.git|$HOME/Documents/blenderlokal"
 )
 
 FORMULAE=(
@@ -94,7 +93,7 @@ CASKS=(
     windows-app
     adobe-creative-cloud
     affinity
-    basictex
+    basictex # Klein, nur 100MB statt 7GB
 )
 
 MAS_APPS=(
