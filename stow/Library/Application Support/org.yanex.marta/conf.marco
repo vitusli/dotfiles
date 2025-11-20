@@ -19,6 +19,8 @@ behavior {
 keyBindings {    
     "\\" "core.go"
 
+    "cmd+j" "core.terminal.activate"
+
     "k" "core.move.up"
     "j" "core.move.down"
     "h" "core.go.up"
