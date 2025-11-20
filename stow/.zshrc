@@ -46,39 +46,33 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Configure completion menu
 zstyle ':completion:*' menu select
 
-# / function for fuzzy finding directories/files and opening in VS Code or Vim
+# / function for fuzzy finding directories/files and opening in VS Code
 /() {
-  # First, select a directory
-  local dir=$(find ~ -type d 2>/dev/null | fzf --prompt="Select directory: " --preview="ls -la {}")
+  # First, select a directory - search specific common directories to avoid hanging
+  local dir=$({ find ~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/Projects -type d 2>/dev/null; find ~ -maxdepth 1 -type d 2>/dev/null; } | fzf --prompt="Select directory: " --preview="ls -la {}")
   
+  # If no directory selected, abort
   if [[ -z $dir ]]; then
     return 0
   fi
   
   # Then, optionally select a file in that directory
-  local file=$(find "$dir" -type f 2>/dev/null | fzf --prompt="Select file (or ESC for directory): " --preview="bat --color=always --style=numbers {}" || echo "")
+  local file=$(find "$dir" -type f 2>/dev/null | fzf --prompt="Select file (or ESC for directory): " --preview="bat --color=always --style=numbers {}")
+  local fzf_exit=$?
+  
+  # If file selection was cancelled, abort
+  if [[ $fzf_exit -ne 0 ]]; then
+    return 0
+  fi
   
   # Determine what to open
-  local target=""
-  if [[ -n $file ]]; then
-    target="$file"
-  else
-    target="$dir"
-  fi
+  local target="${file:-$dir}"
   
-  # Copy to clipboard
+  # Copy to clipboard and open in VS Code
   echo -n "$target" | pbcopy
+  code "$target"
   
-  # Ask where to open
-  local editor=$(echo -e "code\nvim" | fzf --prompt="Open in code or vim: " --height=3)
-  
-  if [[ $editor == "vim" ]]; then
-    vim "$target"
-  elif [[ $editor == "code" ]]; then
-    code "$target"
-  fi
-  
-  echo "Copied to clipboard: $target"
+  echo "Opened in VS Code and copied to clipboard: $target"
 }
 
 # Add local bin to PATH
