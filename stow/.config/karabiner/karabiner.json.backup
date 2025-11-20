@@ -7,37 +7,22 @@
       "complex_modifications": {
         "rules": [
           {
-            "description": "German Umlauts - Mail/Outlook only",
+            "description": "German Umlauts - Mail/Outlook workaround",
             "manipulators": [
               {
                 "type": "basic",
                 "from": {
                   "key_code": "a",
-                  "modifiers": {
-                    "mandatory": [
-                      "option"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "a"
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "a" }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -45,31 +30,16 @@
                 "type": "basic",
                 "from": {
                   "key_code": "o",
-                  "modifiers": {
-                    "mandatory": [
-                      "option"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "o"
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "o" }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -77,31 +47,16 @@
                 "type": "basic",
                 "from": {
                   "key_code": "u",
-                  "modifiers": {
-                    "mandatory": [
-                      "option"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "u"
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "u" }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -109,28 +64,13 @@
                 "type": "basic",
                 "from": {
                   "key_code": "s",
-                  "modifiers": {
-                    "mandatory": [
-                      "option"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option"] }
                 },
-                "to": [
-                  {
-                    "key_code": "s",
-                    "modifiers": [
-                      "option"
-                    ]
-                  }
-                ],
+                "to": [{ "key_code": "s", "modifiers": ["option"] }],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -138,35 +78,16 @@
                 "type": "basic",
                 "from": {
                   "key_code": "a",
-                  "modifiers": {
-                    "mandatory": [
-                      "option",
-                      "shift"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option", "shift"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "a",
-                    "modifiers": [
-                      "shift"
-                    ]
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "a", "modifiers": ["shift"] }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -174,35 +95,16 @@
                 "type": "basic",
                 "from": {
                   "key_code": "o",
-                  "modifiers": {
-                    "mandatory": [
-                      "option",
-                      "shift"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option", "shift"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "o",
-                    "modifiers": [
-                      "shift"
-                    ]
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "o", "modifiers": ["shift"] }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -210,35 +112,16 @@
                 "type": "basic",
                 "from": {
                   "key_code": "u",
-                  "modifiers": {
-                    "mandatory": [
-                      "option",
-                      "shift"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option", "shift"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "shift"
-                    ]
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "u", "modifiers": ["shift"] }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -246,35 +129,130 @@
                 "type": "basic",
                 "from": {
                   "key_code": "s",
-                  "modifiers": {
-                    "mandatory": [
-                      "option",
-                      "shift"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option", "shift"] }
                 },
-                "to": [
-                  {
-                    "key_code": "s",
-                    "modifiers": [
-                      "shift"
-                    ]
-                  },
-                  {
-                    "key_code": "s",
-                    "modifiers": [
-                      "shift"
-                    ]
-                  }
-                ],
+                "to": [{ "key_code": "s", "modifiers": ["shift"] }, { "key_code": "s", "modifiers": ["shift"] }],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "German Umlauts - all other apps",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "a",
+                  "modifiers": { "mandatory": ["option"] }
+                },
+                "to": [{ "key_code": "quote", "modifiers": ["option"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "o",
+                  "modifiers": { "mandatory": ["option"] }
+                },
+                "to": [{ "key_code": "semicolon", "modifiers": ["option"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "u",
+                  "modifiers": { "mandatory": ["option"] }
+                },
+                "to": [{ "key_code": "u", "modifiers": ["option"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "s",
+                  "modifiers": { "mandatory": ["option"] }
+                },
+                "to": [{ "key_code": "s", "modifiers": ["option"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "a",
+                  "modifiers": { "mandatory": ["option", "shift"] }
+                },
+                "to": [{ "key_code": "quote", "modifiers": ["option", "shift"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "o",
+                  "modifiers": { "mandatory": ["option", "shift"] }
+                },
+                "to": [{ "key_code": "semicolon", "modifiers": ["option", "shift"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "u",
+                  "modifiers": { "mandatory": ["option", "shift"] }
+                },
+                "to": [{ "key_code": "u", "modifiers": ["option", "shift"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "s",
+                  "modifiers": { "mandatory": ["option", "shift"] }
+                },
+                "to": [{ "key_code": "s", "modifiers": ["shift"] }, { "key_code": "s", "modifiers": ["shift"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               }
@@ -446,7 +424,7 @@
           ]
         }
       ],
-      "name": "\udbc0\udcae",
+      "name": "􀂮",
       "selected": false,
       "virtual_hid_keyboard": {
         "keyboard_type_v2": "ansi"
@@ -456,37 +434,22 @@
       "complex_modifications": {
         "rules": [
           {
-            "description": "German Umlauts - Mail/Outlook only",
+            "description": "German Umlauts - Mail/Outlook workaround",
             "manipulators": [
               {
                 "type": "basic",
                 "from": {
                   "key_code": "a",
-                  "modifiers": {
-                    "mandatory": [
-                      "option"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "a"
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "a" }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -494,31 +457,16 @@
                 "type": "basic",
                 "from": {
                   "key_code": "o",
-                  "modifiers": {
-                    "mandatory": [
-                      "option"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "o"
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "o" }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -526,31 +474,16 @@
                 "type": "basic",
                 "from": {
                   "key_code": "u",
-                  "modifiers": {
-                    "mandatory": [
-                      "option"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "u"
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "u" }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -558,28 +491,13 @@
                 "type": "basic",
                 "from": {
                   "key_code": "s",
-                  "modifiers": {
-                    "mandatory": [
-                      "option"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option"] }
                 },
-                "to": [
-                  {
-                    "key_code": "s",
-                    "modifiers": [
-                      "option"
-                    ]
-                  }
-                ],
+                "to": [{ "key_code": "s", "modifiers": ["option"] }],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -587,35 +505,16 @@
                 "type": "basic",
                 "from": {
                   "key_code": "a",
-                  "modifiers": {
-                    "mandatory": [
-                      "option",
-                      "shift"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option", "shift"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "a",
-                    "modifiers": [
-                      "shift"
-                    ]
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "a", "modifiers": ["shift"] }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -623,35 +522,16 @@
                 "type": "basic",
                 "from": {
                   "key_code": "o",
-                  "modifiers": {
-                    "mandatory": [
-                      "option",
-                      "shift"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option", "shift"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "o",
-                    "modifiers": [
-                      "shift"
-                    ]
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "o", "modifiers": ["shift"] }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -659,35 +539,16 @@
                 "type": "basic",
                 "from": {
                   "key_code": "u",
-                  "modifiers": {
-                    "mandatory": [
-                      "option",
-                      "shift"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option", "shift"] }
                 },
                 "to": [
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "option"
-                    ]
-                  },
-                  {
-                    "key_code": "u",
-                    "modifiers": [
-                      "shift"
-                    ]
-                  }
+                  { "key_code": "u", "modifiers": ["option"] },
+                  { "key_code": "u", "modifiers": ["shift"] }
                 ],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               },
@@ -695,35 +556,130 @@
                 "type": "basic",
                 "from": {
                   "key_code": "s",
-                  "modifiers": {
-                    "mandatory": [
-                      "option",
-                      "shift"
-                    ]
-                  }
+                  "modifiers": { "mandatory": ["option", "shift"] }
                 },
-                "to": [
-                  {
-                    "key_code": "s",
-                    "modifiers": [
-                      "shift"
-                    ]
-                  },
-                  {
-                    "key_code": "s",
-                    "modifiers": [
-                      "shift"
-                    ]
-                  }
-                ],
+                "to": [{ "key_code": "s", "modifiers": ["shift"] }, { "key_code": "s", "modifiers": ["shift"] }],
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.apple\\.mail$",
-                      "^com\\.microsoft\\.Outlook$",
-                      "^com\\.apple\\.reminders$"
-                    ]
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "German Umlauts - all other apps",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "a",
+                  "modifiers": { "mandatory": ["option"] }
+                },
+                "to": [{ "key_code": "quote", "modifiers": ["option"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "o",
+                  "modifiers": { "mandatory": ["option"] }
+                },
+                "to": [{ "key_code": "semicolon", "modifiers": ["option"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "u",
+                  "modifiers": { "mandatory": ["option"] }
+                },
+                "to": [{ "key_code": "u", "modifiers": ["option"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "s",
+                  "modifiers": { "mandatory": ["option"] }
+                },
+                "to": [{ "key_code": "s", "modifiers": ["option"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "a",
+                  "modifiers": { "mandatory": ["option", "shift"] }
+                },
+                "to": [{ "key_code": "quote", "modifiers": ["option", "shift"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "o",
+                  "modifiers": { "mandatory": ["option", "shift"] }
+                },
+                "to": [{ "key_code": "semicolon", "modifiers": ["option", "shift"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "u",
+                  "modifiers": { "mandatory": ["option", "shift"] }
+                },
+                "to": [{ "key_code": "u", "modifiers": ["option", "shift"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "s",
+                  "modifiers": { "mandatory": ["option", "shift"] }
+                },
+                "to": [{ "key_code": "s", "modifiers": ["shift"] }, { "key_code": "s", "modifiers": ["shift"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": ["^com\\.apple\\.mail$", "^com\\.microsoft\\.Outlook$"]
                   }
                 ]
               }
@@ -1204,7 +1160,7 @@
           ]
         }
       ],
-      "name": "\udbc0\udcbf",
+      "name": "􀂿",
       "virtual_hid_keyboard": {
         "keyboard_type_v2": "ansi"
       },
