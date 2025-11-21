@@ -75,5 +75,22 @@ zstyle ':completion:*' menu select
   echo "Opened in VS Code and copied to clipboard: $target"
 }
 
+# Fuzzy-find and open macOS applications
+/app() {
+  local app_path=$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | fzf --prompt="Select app: ")
+  
+  if [[ -n $app_path ]]; then
+    local executable="$app_path/Contents/MacOS/$(basename "$app_path" .app)"
+    
+    if [[ -x $executable ]]; then
+      echo "Running: $executable"
+      "$executable"
+    else
+      echo "Executable not found, trying 'open' instead..."
+      open "$app_path"
+    fi
+  fi
+}
+
 # Add local bin to PATH
 export PATH="$PATH:/Users/vituspacholleck/.local/bin"
