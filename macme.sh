@@ -96,6 +96,7 @@ CASKS=(
     basictex # Klein, nur 100MB statt 7GB
     alt-tab
     sf-symbols
+    chatgpt
 )
 
 MAS_APPS=(
@@ -602,7 +603,6 @@ setup_system_defaults() {
     # Disable document revision window animations
     defaults write -g NSDocumentRevisionsWindowTransformAnimation -bool false
     # Disable full screen toolbar animations
-    defaults write -g NSToolbarFullScreenAnimationDuration -float 0
     # Disable browser column animations
     defaults write -g NSBrowserColumnAnimationSpeedMultiplier -float 0
     
