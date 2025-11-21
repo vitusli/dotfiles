@@ -77,6 +77,7 @@ ctrl-alt-cmd-shift-space = 'layout horizontal vertical'
 
 [mode.service.binding]
 r = ['reload-config', 'mode main']
+q = ['exec-and-forget killall AeroSpace && open -a AeroSpace', 'mode main']
 e = ['flatten-workspace-tree', 'mode main'] # reset layout
 f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'mode main']
