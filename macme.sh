@@ -42,61 +42,62 @@ REPOS=(
 )
 
 FORMULAE=(
-    git
-    gh
-    lazygit
-    stow
-    zsh-autosuggestions
-    zsh-autocomplete
-    zsh-syntax-highlighting
-    fzf
-    zellij
-    z
-    olets/tap/zsh-abbr
     bat
     ffmpeg
-    rar
+    fzf
+    gh
+    git
+    git-lfs
+    lazygit
     mas
+    olets/tap/zsh-abbr
     pandoc
     pandoc-crossref
+    rar
+    stow
+    z
+    zellij
+    zsh-autocomplete
+    zsh-autosuggestions
+    zsh-syntax-highlighting
 )
 
 CASKS=(
+    ableton-live-suite
+    adobe-creative-cloud
     aerospace
-    arc
+    affinity
     alacritty
-    visual-studio-code
-    macvim-app
-    obsidian
-    zotero
-    raycast
+    alt-tab
+    arc
+    basictex
+    blender
+    chatgpt
+    darktable
+    figma
+    github
+    google-drive
+    homerow
+    karabiner-elements
     keepassxc
     keeweb
-    google-drive
-    karabiner-elements
-    marta
-    onedrive
-    microsoft-teams
-    microsoft-outlook
-    slack
-    openvpn-connect
     logi-options+
-    figma
-    darktable
-    spotify
-    ableton-live-suite
+    macvim-app
+    marta
+    microsoft-outlook
+    microsoft-teams
+    obsidian
+    onedrive
+    openvpn-connect
+    raycast
     rhino
-    blender
-    superwhisper
-    homerow
-    github
-    windows-app
-    adobe-creative-cloud
-    affinity
-    basictex # Klein, nur 100MB statt 7GB
-    alt-tab
     sf-symbols
-    chatgpt
+    slack
+    spotify
+    superwhisper
+    visual-studio-code
+    windows-app
+    zotero
 )
 
 MAS_APPS=(
