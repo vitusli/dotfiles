@@ -447,7 +447,7 @@
         }
       ],
       "name": "􀂮",
-      "selected": true,
+      "selected": false,
       "virtual_hid_keyboard": {
         "keyboard_type_v2": "ansi"
       }
@@ -1208,7 +1208,7 @@
       "virtual_hid_keyboard": {
         "keyboard_type_v2": "ansi"
       },
-      "selected": false
+      "selected": true
     }
   ]
 }

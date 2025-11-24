@@ -49,20 +49,20 @@ zstyle ':completion:*' menu select
 # / function for fuzzy finding directories/files and opening in VS Code
 /() {
   # First, select a directory - search specific common directories to avoid hanging
-  local dir=$({ find ~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/Projects -type d 2>/dev/null; find ~ -maxdepth 1 -type d 2>/dev/null; } | fzf --prompt="Select directory: " --preview="ls -la {}")
+  local dir=$({ find ~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/Projects -type d 2>/dev/null; find ~ -maxdepth 1 -type d 2>/dev/null; } | fzf --prompt="Select directory: " --preview="ls -la {}") || return 130
   
   # If no directory selected, abort
   if [[ -z $dir ]]; then
-    return 0
+    return 1
   fi
   
   # Then, optionally select a file in that directory
   local file=$(find "$dir" -type f 2>/dev/null | fzf --prompt="Select file (or ESC for directory): " --preview="bat --color=always --style=numbers {}")
   local fzf_exit=$?
   
-  # If file selection was cancelled, abort
-  if [[ $fzf_exit -ne 0 ]]; then
-    return 0
+  # If file selection was cancelled with Ctrl+C, abort
+  if [[ $fzf_exit -eq 130 ]]; then
+    return 130
   fi
   
   # Determine what to open
@@ -77,7 +77,11 @@ zstyle ':completion:*' menu select
 
 # Fuzzy-find and open macOS applications
 /app() {
-  local app_path=$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | fzf --prompt="Select app: ")
+  local app_path=$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | fzf --prompt="Select app: ") || return 130
+  
+  if [[ -z $app_path ]]; then
+    return 1
+  fi
   
   if [[ -n $app_path ]]; then
     local executable="$app_path/Contents/MacOS/$(basename "$app_path" .app)"
