@@ -46,33 +46,68 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Configure completion menu
 zstyle ':completion:*' menu select
 
-# / function for fuzzy finding directories/files and opening in VS Code
+# / function for fuzzy finding files/directories and opening in VS Code (or other app)
+# Usage: / [-wb] [app]  (e.g., / -wb marta, / finder, or just /)
 /() {
-  # First, select a directory - search specific common directories to avoid hanging
-  local dir=$({ find ~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/Projects -type d 2>/dev/null; find ~ -maxdepth 1 -type d 2>/dev/null; } | fzf --prompt="Select directory: " --preview="ls -la {}") || return 130
+  local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/Projects)
+  local home_depth=3
+  local app="code"  # Default to VS Code
   
-  # If no directory selected, abort
-  if [[ -z $dir ]]; then
+  # Parse arguments
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -wb)
+        search_dirs=()
+        home_depth=0
+        search_dirs+=("$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library")
+        search_dirs+=("$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse")
+        shift
+        ;;
+      *)
+        app="$1"
+        shift
+        ;;
+    esac
+  done
+  
+  # Build find command
+  local find_cmd=""
+  if [[ ${#search_dirs[@]} -gt 0 ]]; then
+    find_cmd="find ${search_dirs[@]} -type f -o -type d 2>/dev/null"
+  fi
+  if [[ $home_depth -gt 0 ]]; then
+    [[ -n $find_cmd ]] && find_cmd="$find_cmd; "
+    find_cmd="${find_cmd}find ~ -maxdepth $home_depth -type f -o -type d 2>/dev/null"
+  fi
+  
+  # Find all files and directories
+  local target=$(eval "{ $find_cmd; }" | fzf --prompt=": " \
+        --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' \
+        --preview-window=right:60%:wrap) || return 130
+  
+  # If nothing selected, abort
+  if [[ -z $target ]]; then
     return 1
   fi
   
-  # Then, optionally select a file in that directory
-  local file=$(find "$dir" -type f 2>/dev/null | fzf --prompt="Select file (or ESC for directory): " --preview="bat --color=always --style=numbers {}")
-  local fzf_exit=$?
-  
-  # If file selection was cancelled with Ctrl+C, abort
-  if [[ $fzf_exit -eq 130 ]]; then
-    return 130
-  fi
-  
-  # Determine what to open
-  local target="${file:-$dir}"
-  
-  # Copy to clipboard and open in VS Code
+  # Copy to clipboard
   echo -n "$target" | pbcopy
-  code "$target"
   
-  echo "Opened in VS Code and copied to clipboard: $target"
+  # Open with specified app
+  case "$app" in
+    marta)
+      open -a Marta "$target"
+      echo "Opened in Marta and copied to clipboard: $target"
+      ;;
+    finder)
+      open -R "$target"
+      echo "Revealed in Finder and copied to clipboard: $target"
+      ;;
+    *)
+      "$app" "$target"
+      echo "Opened with $app and copied to clipboard: $target"
+      ;;
+  esac
 }
 
 # Fuzzy-find and open macOS applications
@@ -83,16 +118,22 @@ zstyle ':completion:*' menu select
     return 1
   fi
   
-  if [[ -n $app_path ]]; then
-    local executable="$app_path/Contents/MacOS/$(basename "$app_path" .app)"
+  # Find the executable inside Contents/MacOS/
+  local macos_dir="$app_path/Contents/MacOS"
+  if [[ -d $macos_dir ]]; then
+    # Find the first executable file in MacOS directory
+    local executable=$(find "$macos_dir" -type f -perm +111 -maxdepth 1 | head -n 1)
     
-    if [[ -x $executable ]]; then
+    if [[ -n $executable ]]; then
       echo "Running: $executable"
       "$executable"
     else
-      echo "Executable not found, trying 'open' instead..."
-      open "$app_path"
+      echo "No executable found in $macos_dir"
+      return 1
     fi
+  else
+    echo "MacOS directory not found in app bundle"
+    return 1
   fi
 }
 
