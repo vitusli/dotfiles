@@ -183,3 +183,63 @@ zstyle ':completion:*' menu select
 
 # Add local bin to PATH
 export PATH="$PATH:/Users/vituspacholleck/.local/bin"
+
+# assets - Copy asset from library to project folder
+assets() {
+  local asset_library="$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"
+  local projects_dir="$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects"
+  
+  # 1) Select file or folder from Asset-Library (recursively, excluding hidden files)
+  local asset=$(find "$asset_library" -mindepth 1 ! -path '*/\.*' 2>/dev/null | fzf --prompt="Asset: " \
+        --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' \
+        --preview-window=right:60%:wrap)
+  
+  if [[ -z "$asset" ]]; then
+    echo "No asset selected"
+    return 1
+  fi
+  
+  # 2) Select project folder
+  local project_folder=$(find "$projects_dir" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | fzf --prompt="Project: " \
+        --preview='ls -la {}' \
+        --preview-window=right:60%:wrap)
+  
+  if [[ -z "$project_folder" ]]; then
+    echo "No project selected"
+    return 1
+  fi
+  
+  # 3) Select target folder within project
+  local target_folder=$(find "$project_folder" -mindepth 1 -type d 2>/dev/null | fzf --prompt="Target folder: " \
+        --preview='ls -la {}' \
+        --preview-window=right:60%:wrap)
+  
+  if [[ -z "$target_folder" ]]; then
+    echo "No target folder selected"
+    return 1
+  fi
+  
+  # 4) Copy the file or folder
+  local item_name=$(basename "$asset")
+  
+  if [[ -d "$asset" ]]; then
+    # Copy directory recursively
+    cp -r "$asset" "$target_folder/$item_name"
+  else
+    # Copy file
+    cp "$asset" "$target_folder/$item_name"
+  fi
+  
+  if [[ $? -eq 0 ]]; then
+    if [[ -d "$asset" ]]; then
+      echo "✓ Copied folder: $item_name"
+    else
+      echo "✓ Copied file: $item_name"
+    fi
+    echo "  From: $asset"
+    echo "  To:   $target_folder/$item_name"
+  else
+    echo "✗ Failed to copy"
+    return 1
+  fi
+}

@@ -13,5 +13,6 @@
         "scminput": false
     },
     "files.autoSave": "afterDelay",
-    "workbench.iconTheme": "sf-symbol-icons"
+    "workbench.iconTheme": "sf-symbol-icons",
+    "files.autoSaveDelay": 0
 }
