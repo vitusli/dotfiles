@@ -47,20 +47,22 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 zstyle ':completion:*' menu select
 
 # / function for fuzzy finding files/directories and opening in VS Code (or other app)
-# Usage: / [-wb] [app]  (e.g., / -wb marta, / finder, or just /)
+# Usage: / [-w] [app]  (e.g., / -w marta, / finder, or just /)
 /() {
   local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/Projects)
   local home_depth=3
   local app="code"  # Default to VS Code
   
   # Parse arguments
+  local wb_mode=false
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -wb)
+      -w)
         search_dirs=()
         home_depth=0
+        wb_mode=true
         search_dirs+=("$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library")
-        search_dirs+=("$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse")
+        search_dirs+=("$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects")
         shift
         ;;
       *)
@@ -73,21 +75,29 @@ zstyle ':completion:*' menu select
   # Build find command
   local find_cmd=""
   if [[ ${#search_dirs[@]} -gt 0 ]]; then
-    find_cmd="find ${search_dirs[@]} -type f -o -type d 2>/dev/null"
+    if [[ $wb_mode == true ]]; then
+      # For -w: only scan top-level directories (maxdepth 1, directories only)
+      find_cmd="find ${search_dirs[@]} -mindepth 1 -maxdepth 1 -type d 2>/dev/null"
+    else
+      # For regular dirs: full recursive search
+      find_cmd="find ${search_dirs[@]} 2>/dev/null"
+    fi
   fi
   if [[ $home_depth -gt 0 ]]; then
     [[ -n $find_cmd ]] && find_cmd="$find_cmd; "
-    find_cmd="${find_cmd}find ~ -maxdepth $home_depth -type f -o -type d 2>/dev/null"
+    find_cmd="${find_cmd}find ~ -maxdepth $home_depth 2>/dev/null"
   fi
   
   # Find all files and directories
   local target=$(eval "{ $find_cmd; }" | fzf --prompt=": " \
         --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' \
-        --preview-window=right:60%:wrap) || return 130
+        --preview-window=right:60%:wrap)
   
-  # If nothing selected, abort
-  if [[ -z $target ]]; then
-    return 1
+  local fzf_exit=$?
+  
+  # If cancelled with ESC or Ctrl+C, abort cleanly
+  if [[ $fzf_exit -eq 130 ]] || [[ -z $target ]]; then
+    return $fzf_exit
   fi
   
   # Copy to clipboard
