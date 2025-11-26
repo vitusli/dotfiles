@@ -87,6 +87,9 @@ j = ['move down', 'mode main']
 k = ['move up', 'mode main']
 l = ['move right', 'mode main']
 
+ctrl-alt-cmd-h = ['workspace --wrap-around prev', 'mode main']
+ctrl-alt-cmd-l = ['workspace --wrap-around next', 'mode main']
+
 #return to main mode
 esc = [
   'mode main'
