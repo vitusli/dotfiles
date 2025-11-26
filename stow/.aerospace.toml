@@ -26,7 +26,6 @@ key-mapping.preset = 'qwerty'
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
 on-focused-monitor-changed = [
   'move-mouse monitor-lazy-center',
-  'layout h_accordion'
 ]
 on-focus-changed = ['move-mouse window-lazy-center']
 
