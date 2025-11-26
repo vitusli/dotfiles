@@ -51,7 +51,7 @@ zstyle ':completion:*' menu select
 /() {
   local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/dotfiles )
   local home_depth=3
-  local app="code"  # Default to VS Code
+  local app=""  # If empty, we'll ask via fzf
   
   # Parse arguments
   local wb_mode=false
@@ -88,22 +88,50 @@ zstyle ':completion:*' menu select
     find_cmd="${find_cmd}find ~ -maxdepth $home_depth 2>/dev/null"
   fi
   
-  # Find all files and directories
+  # 1) Pick target file/dir
   local target=$(eval "{ $find_cmd; }" | fzf --prompt=": " \
         --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' \
         --preview-window=right:60%:wrap)
   
   local fzf_exit=$?
-  
-  # If cancelled with ESC or Ctrl+C, abort cleanly
   if [[ $fzf_exit -eq 130 ]] || [[ -z $target ]]; then
     return $fzf_exit
   fi
   
-  # Copy to clipboard
+  # Copy target to clipboard
   echo -n "$target" | pbcopy
   
-  # Open with specified app
+  # 2) Pick app if not provided as arg
+  if [[ -z "$app" ]]; then
+    local app_choice=$( {
+        echo "code";
+        echo "finder (reveal)";
+        echo "marta (open)";
+        find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null;
+      } | fzf --prompt="app: " )
+
+    local app_exit=$?
+    if [[ $app_exit -eq 130 ]] || [[ -z "$app_choice" ]]; then
+      return $app_exit
+    fi
+
+    case "$app_choice" in
+      "finder (reveal)")
+        app="finder"
+        ;;
+      "marta (open)")
+        app="marta"
+        ;;
+      *.app)
+        app=$(basename "$app_choice" .app)
+        ;;
+      *)
+        app="$app_choice"
+        ;;
+    esac
+  fi
+  
+  # 3) Open with chosen app
   case "$app" in
     marta)
       open -a Marta "$target"
@@ -114,8 +142,14 @@ zstyle ':completion:*' menu select
       echo "Revealed in Finder and copied to clipboard: $target"
       ;;
     *)
-      "$app" "$target"
-      echo "Opened with $app and copied to clipboard: $target"
+      if [[ -n "$app" ]]; then
+        if open -a "$app" "$target" 2>/dev/null; then
+          echo "Opened with $app and copied to clipboard: $target"
+        else
+          "$app" "$target"
+          echo "Opened with $app (cli) and copied to clipboard: $target"
+        fi
+      fi
       ;;
   esac
 }
