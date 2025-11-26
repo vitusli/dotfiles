@@ -37,14 +37,15 @@ outer.bottom =     15
 outer.top =        [{ monitor.main = 14 }, { monitor.secondary = 14 }, { monitor."BenQ GW2765"= 52 }, 24]
 outer.right =      15
 
-# 'main' binding mode declaration
-# 'main' binding mode must be always presented
 
-[mode.main.binding]
+[mode.main.binding] # 'main' binding mode must be always presented
+
 ctrl-alt-cmd-slash = ['mode service']
 
-ctrl-alt-cmd-minus = ['resize smart -50']
-ctrl-alt-cmd-equal = ['resize smart +50']
+#ctrl-alt-cmd-i = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev']
+#ctrl-alt-cmd-o = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace next']
+ctrl-alt-cmd-minus = ['resize smart -200']
+ctrl-alt-cmd-equal = ['resize smart +200']
 
 #ctrl-alt-cmd-h = ['exec-and-forget aerospace focus left --boundaries-action fail || aerospace workspace prev']
 ctrl-alt-cmd-h = ['exec-and-forget aerospace focus left --boundaries-action fail || aerospace workspace --no-stdin prev']
@@ -81,10 +82,10 @@ f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling
 
 backspace = ['close-all-windows-but-current', 'mode main']
 
-h = ['move left', 'mode main']
-j = ['move down', 'mode main']
-k = ['move up', 'mode main']
-l = ['move right', 'mode main']
+ctrl-alt-cmd-h = ['move left', 'mode main']
+ctrl-alt-cmd-j = ['move down', 'mode main']
+ctrl-alt-cmd-k = ['move up', 'mode main']
+ctrl-alt-cmd-l = ['move right', 'mode main']
 
 #return to main mode
 esc = ['mode main']
