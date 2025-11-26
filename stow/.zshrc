@@ -49,9 +49,9 @@ zstyle ':completion:*' menu select
 # / function for fuzzy finding files/directories and opening in VS Code (or other app)
 # Usage: / [-w] [app]  (e.g., / -w marta, / finder, or just /)
 /() {
-  local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/Projects)
+  local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/dotfiles )
   local home_depth=3
-  local app=""  # If empty, we'll ask via fzf
+  local app="code"  # Default to VS Code
   
   # Parse arguments
   local wb_mode=false
@@ -88,53 +88,22 @@ zstyle ':completion:*' menu select
     find_cmd="${find_cmd}find ~ -maxdepth $home_depth 2>/dev/null"
   fi
   
-  # 1) Pick target file/dir
+  # Find all files and directories
   local target=$(eval "{ $find_cmd; }" | fzf --prompt=": " \
         --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' \
         --preview-window=right:60%:wrap)
   
   local fzf_exit=$?
+  
+  # If cancelled with ESC or Ctrl+C, abort cleanly
   if [[ $fzf_exit -eq 130 ]] || [[ -z $target ]]; then
     return $fzf_exit
   fi
   
-  # Copy target to clipboard
+  # Copy to clipboard
   echo -n "$target" | pbcopy
   
-  # 2) Pick app if not provided as arg
-  if [[ -z "$app" ]]; then
-    # Include a couple of common choices, then actual apps
-    local app_choice=$( {
-        echo "finder (reveal)";
-        echo "marta (open)";
-        find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null;
-      } | fzf --prompt="app: " --preview='echo {}' )
-
-    local app_exit=$?
-    if [[ $app_exit -eq 130 ]] || [[ -z "$app_choice" ]]; then
-      return $app_exit
-    fi
-
-    # Map selection to action
-    case "$app_choice" in
-      "finder (reveal)")
-        app="finder"
-        ;;
-      "marta (open)")
-        app="marta"
-        ;;
-      *.app)
-        # Strip .app to get bundle name for open -a
-        app=$(basename "$app_choice" .app)
-        ;;
-      *)
-        # Fallback: treat as binary name
-        app="$app_choice"
-        ;;
-    esac
-  fi
-  
-  # 3) Open with chosen app
+  # Open with specified app
   case "$app" in
     marta)
       open -a Marta "$target"
@@ -145,17 +114,8 @@ zstyle ':completion:*' menu select
       echo "Revealed in Finder and copied to clipboard: $target"
       ;;
     *)
-      # Prefer using open -a for GUI apps; fall back to direct exec
-      if [[ -n "$app" ]]; then
-        # Try GUI app first
-        if open -a "$app" "$target" 2>/dev/null; then
-          echo "Opened with $app and copied to clipboard: $target"
-        else
-          # Fallback to running as a command (for CLI apps like code)
-          "$app" "$target"
-          echo "Opened with $app (cli) and copied to clipboard: $target"
-        fi
-      fi
+      "$app" "$target"
+      echo "Opened with $app and copied to clipboard: $target"
       ;;
   esac
 }
