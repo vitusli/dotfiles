@@ -13,7 +13,7 @@ enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
 # You can set 0 to disable the padding feature
-accordion-padding = 30
+accordion-padding = 20
 
 # Possible values: tiles|accordion
 default-root-container-layout = 'accordion'
@@ -24,9 +24,7 @@ default-root-container-orientation = 'vertical'
 key-mapping.preset = 'qwerty'
 
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
-on-focused-monitor-changed = [
-  'move-mouse monitor-lazy-center',
-]
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 on-focus-changed = ['move-mouse window-lazy-center']
 
 
@@ -43,12 +41,8 @@ outer.right =      15
 # 'main' binding mode must be always presented
 
 [mode.main.binding]
-ctrl-alt-cmd-slash = [
-  'mode service'
-]
+ctrl-alt-cmd-slash = ['mode service']
 
-#ctrl-alt-cmd-i = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev']
-#ctrl-alt-cmd-o = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace next']
 ctrl-alt-cmd-minus = ['resize smart -50']
 ctrl-alt-cmd-equal = ['resize smart +50']
 
@@ -57,42 +51,44 @@ ctrl-alt-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-actio
 ctrl-alt-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action stop up'
 ctrl-alt-cmd-l = ['exec-and-forget aerospace focus right --boundaries-action fail || aerospace workspace next']
 
+ctrl-alt-cmd-d = ['workspace-back-and-forth']
+#ctrl-alt-cmd-d = ['focus-monitor --wrap-around next']
+
+#ctrl-alt-cmd-i = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev']
+#ctrl-alt-cmd-o = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace next']
+
 ctrl-alt-cmd-1 = 'move-node-to-workspace 1 --focus-follows-window'
 ctrl-alt-cmd-2 = 'move-node-to-workspace 2 --focus-follows-window'
 
-ctrl-alt-cmd-w = 'layout floating tiling'
-
-# Try basic move first, then workspace switch - simplified version
+# Try basic move first, then workspace switch - will stop working in 0.20 beta
 ctrl-alt-cmd-shift-h = ['exec-and-forget aerospace move left --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 1 --focus-follows-window']
 ctrl-alt-cmd-shift-j = ['exec-and-forget aerospace move down --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 2 --focus-follows-window']
 ctrl-alt-cmd-shift-k = ['exec-and-forget aerospace move up --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 1 --focus-follows-window']
 ctrl-alt-cmd-shift-l = ['exec-and-forget aerospace move right --boundaries all-monitors-outer-frame --boundaries-action stop || aerospace move-node-to-workspace 2 --focus-follows-window']
 
-ctrl-alt-cmd-d = ['workspace-back-and-forth']
-# ctrl-alt-cmd-d = ['focus-monitor --wrap-around next'] #not necessary with two spaces
-
 ctrl-alt-cmd-space = 'layout tiles accordion'
 ctrl-alt-cmd-shift-space = 'layout horizontal vertical'
+
+ctrl-alt-cmd-w = 'layout floating tiling'
 
 [mode.service.binding]
 r = ['reload-config', 'mode main']
 q = ['exec-and-forget killall AeroSpace && open -a AeroSpace', 'mode main']
 e = ['flatten-workspace-tree', 'mode main'] # reset layout
 f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
+
 backspace = ['close-all-windows-but-current', 'mode main']
 
-h = ['move left', 'mode main']
-j = ['move down', 'mode main']
-k = ['move up', 'mode main']
-l = ['move right', 'mode main']
+ctrl-alt-cmd-h = ['move left', 'mode main']
+ctrl-alt-cmd-j = ['move down', 'mode main']
+ctrl-alt-cmd-k = ['move up', 'mode main']
+ctrl-alt-cmd-l = ['move right', 'mode main']
 
-ctrl-alt-cmd-h = ['workspace --wrap-around prev', 'mode main']
-ctrl-alt-cmd-l = ['workspace --wrap-around next', 'mode main']
+h = ['workspace --wrap-around prev', 'mode main']
+l = ['workspace --wrap-around next', 'mode main']
 
 #return to main mode
-esc = [
-  'mode main'
-]
+esc = ['mode main']
 
 #this are no commands, they are rules (main or secondary)
 [workspace-to-monitor-force-assignment]
