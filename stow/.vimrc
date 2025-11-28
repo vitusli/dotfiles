@@ -1,11 +1,12 @@
 set clipboard=unnamed
 
-" fzf.vim konfiguration
+" fzf.vim configuration
 set rtp+=/opt/homebrew/bin/fzf
 
-" Space: Begrenzte Suche in wichtigen Verzeichnissen (wie in .zshrc)
-" Durchsucht: Downloads, Documents, Desktop, dotfiles + Home (max depth 3)
-nnoremap <Space> :call fzf#run(fzf#wrap({'source': 'find ~/Downloads ~/Documents ~/Desktop ~/dotfiles -maxdepth 10 2>/dev/null; find ~ -maxdepth 3 2>/dev/null', 'sink': 'e'}))<CR>
+" Space: Scoped search in key directories (mirrors .zshrc)
+" Searches: Downloads, Documents, Desktop, dotfiles + Home (max depth 3)
+" vim interprets <C-@> as Ctrl+Space
+nnoremap <C-@> :call fzf#run(fzf#wrap({'source': 'find ~/Downloads ~/Documents ~/Desktop ~/dotfiles -maxdepth 10 2>/dev/null; find ~ -maxdepth 3 2>/dev/null', 'sink': 'e'}))<CR>
 
 " Relative line numbers (plus absolute cursor line)
 set number
@@ -16,7 +17,7 @@ set ttimeout
 set ttimeoutlen=10   " time to wait for terminal key codes (ESC sequences)
 set timeoutlen=300   " mapping timeout; keep reasonable for sequences
 
-" Cursor Shape (Terminal Vim) passend zu Zsh vi-mode
+" Cursor shape (Terminal Vim) aligned with Zsh vi-mode
 " Normal mode: Block, Insert mode: Beam, Replace: Underline
 let &t_EI = "\e[2 q"
 let &t_SI = "\e[6 q"
