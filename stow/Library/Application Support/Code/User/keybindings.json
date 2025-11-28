@@ -22,5 +22,11 @@
         "key": "cmd+l",
         "command": "workbench.action.terminal.chat.addTerminalSelection",
         "when": "chatIsEnabled && terminalFocus && (terminalHasBeenCreated || terminalProcessSupported)"
+    },
+    {
+        "key": "ctrl+space",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Slash Search",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Normal'"
     }
 ]

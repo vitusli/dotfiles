@@ -14,5 +14,18 @@
     },
     "files.autoSave": "afterDelay",
     "workbench.iconTheme": "sf-symbol-icons",
-    "files.autoSaveDelay": 0
+    "files.autoSaveDelay": 0,
+    "multiCommand.commands": [
+        {
+            "command": "runSlash",
+            "sequence": [
+                "workbench.action.terminal.focus",
+                {
+                    "command": "workbench.action.terminal.sendSequence",
+                    "args": { "text": "/\u000D" }
+                }
+            ]
+        }
+    ],
+    "python.defaultInterpreterPath": "/opt/homebrew/bin/python3"
 }
