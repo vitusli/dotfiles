@@ -11,6 +11,7 @@ Bedienkonzepten
 Carousell
 Cobot
 Cobots
+Detektion
 Disbalance
 Diskontinuität
 Diskontinuitäten
@@ -89,6 +90,7 @@ kollaborativem
 kollaborativen
 kollaborativer
 kontextabhängig
+konzeptioniert
 nicht-parallelisierbaren
 parametrisch
 partikelbasierte
@@ -108,4 +110,4 @@ vibrations-isolierten
 vibrationsisoliertem
 vibrationsisolierten
 vibrationsisolierter
-checksum_v1 = 7bfe0baea4e8c221d6c92fe11e410215
+checksum_v1 = b0dada9b5326fee691daa88061f156e1
