@@ -7,6 +7,8 @@ export KEYTIMEOUT=1
 # vim bindings
 bindkey -v
 
+## (wird unten nach Plugin-Ladung neu gesetzt)
+
 # Cursor shape settings for Zsh in vi mode
 function zle-keymap-select() {
     if [[ $KEYMAP == "vicmd" ]] || [[ $1 = 'block' ]]; then
@@ -46,10 +48,28 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Configure completion menu
 zstyle ':completion:*' menu select
 
+# --- Clipboard Integration für vi-Yank ---
+# Alle Yank-Operationen (yy, Y, y{motion}) kopieren zusätzlich ins macOS Clipboard.
+# Wir wrappen die Widgets erst NACH Plugin-Ladungen und rufen die builtin-Version mit führendem Punkt.
+_copy_cutbuffer_to_clipboard() {
+  [[ -n $CUTBUFFER ]] && printf '%s' "$CUTBUFFER" | pbcopy
+}
+
+vi_yank_wrapper() { zle .vi-yank;              _copy_cutbuffer_to_clipboard }
+vi_yank_whole_line_wrapper() { zle .vi-yank-whole-line; _copy_cutbuffer_to_clipboard }
+vi_yank_eol_wrapper() { zle .vi-yank-eol;      _copy_cutbuffer_to_clipboard }
+
+zle -N vi-yank vi_yank_wrapper
+zle -N vi-yank-whole-line vi_yank_whole_line_wrapper
+zle -N vi-yank-eol vi_yank_eol_wrapper
+
+# Hinweis: 'yy' und 'Y' triggern vi-yank-whole-line, Motions wie 'yw' rufen vi-yank.
+# Test: Tippe Text, ESC, yy / yw, dann `pbpaste`.
+
 # / function for fuzzy finding files/directories and opening in VS Code (or other app)
 # Usage: / [-w] [app]  (e.g., / -w marta, / finder, or just /)
 /() {
-  local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/dotfiles )
+  local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/codespace)
   local home_depth=3
   local app=""  # If empty, we'll ask via fzf
   

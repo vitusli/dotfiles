@@ -11,10 +11,7 @@ Bedienkonzepten
 Carousell
 Cobot
 Cobots
-Detektion
 Disbalance
-Diskontinuität
-Diskontinuitäten
 Durchsetzfügen
 Einstiegshürde
 Einstiegshürden
@@ -31,7 +28,6 @@ Interaktionsgestaltung
 Interaktionskonzepts
 Interaktionsmodelle
 Interaktionsmöglichkeit
-Intrinsische
 Iterations-Schleife
 Komplexitäts-Gründen
 Konzeptionierung
@@ -45,7 +41,6 @@ Oberflächenbeschaffenheiten
 Optimized
 Palletizer
 Parametrisches
-Photogrammetrie
 Pipettenspitzen-Nachfüllsystem
 Pipettenspitzen-Nachfüllsystems
 Pipettier-Prozesses
@@ -63,17 +58,15 @@ Roboterarme
 Roboterherstellern
 Robotersystem
 Robotersysteme
+Robotik
 Rohdatensatz
 Sensorik
 Skalierungs-Einheiten
 Stakeholdern
 Standard-Roboter-Pipettier-System
 Taktil
-Tiefengenauigkeit
-Tiefensensor-Rauschen
 Transkripte
 Tricontinent
-Umpositionieren
 Virtualisierung
 Wandelbots
 Wandelscript
@@ -90,7 +83,6 @@ kollaborativem
 kollaborativen
 kollaborativer
 kontextabhängig
-konzeptioniert
 nicht-parallelisierbaren
 parametrisch
 partikelbasierte
@@ -110,4 +102,4 @@ vibrations-isolierten
 vibrationsisoliertem
 vibrationsisolierten
 vibrationsisolierter
-checksum_v1 = b0dada9b5326fee691daa88061f156e1
+checksum_v1 = a38bd1a7a94ace382a3de8ce5b30caab
