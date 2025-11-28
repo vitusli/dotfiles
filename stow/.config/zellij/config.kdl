@@ -2,6 +2,10 @@
 
 keybinds clear-defaults=true {
     shared_except "locked" {
+        bind "Alt h" { MoveFocus "left"; }
+        bind "Alt j" { MoveFocus "down"; }
+        bind "Alt k" { MoveFocus "up"; }
+        bind "Alt l" { MoveFocus "right"; }
         bind "Alt n" { NewPane; }
         bind "Alt t" { NewTab; }
         bind "Alt w" { CloseFocus; }
