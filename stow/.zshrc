@@ -1,15 +1,24 @@
-# kein "vituspacholleck@macbookAIR blabla"
+# ============================================================================
+# PROMPT & ENVIRONMENT
+# ============================================================================
+
+# Minimal prompt without username/hostname
 PROMPT='%1~ %% '
+
+# Add local bin to PATH
+export PATH="$PATH:/Users/vituspacholleck/.local/bin"
+
+# ============================================================================
+# VIM MODE
+# ============================================================================
+
+# Enable vim bindings
+bindkey -v
 
 # Speed up vim mode - reduce escape key delay
 export KEYTIMEOUT=1
 
-# vim bindings
-bindkey -v
-
-## (wird unten nach Plugin-Ladung neu gesetzt)
-
-# Cursor shape settings for Zsh in vi mode
+# Cursor shape for vi mode (block in normal, line in insert)
 function zle-keymap-select() {
     if [[ $KEYMAP == "vicmd" ]] || [[ $1 = 'block' ]]; then
         print -n "\e[2 q"  # Block cursor for normal mode
@@ -17,19 +26,29 @@ function zle-keymap-select() {
         print -n "\e[6 q"  # Line cursor for insert mode
     fi
 }
+
 function zle-line-init() {
     print -n "\e[6 q"  # Start with line cursor (insert mode)
 }
+
 zle -N zle-keymap-select
 zle -N zle-line-init
 
-# Load z for directory jumping
+# ============================================================================
+# EXTERNAL TOOLS
+# ============================================================================
+
+# z - directory jumping
 source /opt/homebrew/etc/profile.d/z.sh
 
-# Load fzf
+# fzf - fuzzy finder
 source <(fzf --zsh)
 
-# Load completion system (required for zsh-abbr and general tab completions)
+# ============================================================================
+# ZSH PLUGINS & COMPLETION
+# ============================================================================
+
+# Load completion system
 if type brew &>/dev/null; then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
   autoload -Uz compinit
@@ -45,25 +64,29 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Configure completion menu
 zstyle ':completion:*' menu select
 
-# --- Clipboard Integration für vi-Yank ---
-# Alle Yank-Operationen (yy, Y, y{motion}) kopieren zusätzlich ins macOS Clipboard.
-# Wir wrappen die Widgets erst NACH Plugin-Ladungen und rufen die builtin-Version mit führendem Punkt.
+# ============================================================================
+# VIM MODE CLIPBOARD INTEGRATION
+# ============================================================================
+
+# Copy vim yank operations to macOS clipboard
+# Wraps widgets AFTER plugin loading to call builtin versions with leading dot
 _copy_cutbuffer_to_clipboard() {
   [[ -n $CUTBUFFER ]] && printf '%s' "$CUTBUFFER" | pbcopy
 }
 
-vi_yank_wrapper() { zle .vi-yank;              _copy_cutbuffer_to_clipboard }
+vi_yank_wrapper() { zle .vi-yank; _copy_cutbuffer_to_clipboard }
 vi_yank_whole_line_wrapper() { zle .vi-yank-whole-line; _copy_cutbuffer_to_clipboard }
-vi_yank_eol_wrapper() { zle .vi-yank-eol;      _copy_cutbuffer_to_clipboard }
+vi_yank_eol_wrapper() { zle .vi-yank-eol; _copy_cutbuffer_to_clipboard }
 
 zle -N vi-yank vi_yank_wrapper
 zle -N vi-yank-whole-line vi_yank_whole_line_wrapper
 zle -N vi-yank-eol vi_yank_eol_wrapper
 
-# Hinweis: 'yy' und 'Y' triggern vi-yank-whole-line, Motions wie 'yw' rufen vi-yank.
-# Test: Tippe Text, ESC, yy / yw, dann `pbpaste`.
+# ============================================================================
+# CUSTOM FUNCTIONS
+# ============================================================================
 
-# / function for fuzzy finding files/directories and opening in VS Code (or other app)
+# / - Fuzzy find files/directories and open in app
 # Usage: / [-w] [app]  (e.g., / -w marta, / finder, or just /)
 /() {
   local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/codespace)
@@ -171,7 +194,7 @@ zle -N vi-yank-eol vi_yank_eol_wrapper
   esac
 }
 
-# Fuzzy-find and open macOS applications
+# /app - Fuzzy-find and run macOS applications
 /app() {
   local app_path=$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | fzf --prompt="Select app: ") || return 130
   
@@ -198,10 +221,7 @@ zle -N vi-yank-eol vi_yank_eol_wrapper
   fi
 }
 
-# Add local bin to PATH
-export PATH="$PATH:/Users/vituspacholleck/.local/bin"
-
-# assets - Copy asset from library to project folder
+# assets - Copy asset from library to project folder (Wandelbots workflow)
 assets() {
   local asset_library="$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"
   local projects_dir="$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects"
