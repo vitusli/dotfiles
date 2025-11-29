@@ -48,25 +48,19 @@ the script symlinks configuration files from the `/stow` directory to your home 
 
 ### vim plugins (fzf & fzf.vim)
 
-previously these were vendored inside `stow/.vim/pack/plugins/start/`. now they are installed externally for faster clones and simpler updates.
+these plugins are vendored directly in the repo at `stow/.vim/pack/plugins/start/`. they're installed automatically when you run `stow` – no separate setup needed.
 
-to install (handled automatically by `macme.sh`, or run manually):
-
-```bash
-brew install fzf # binary & shell integration
-mkdir -p ~/.vim/pack/plugins/start
-git clone https://github.com/junegunn/fzf.git ~/.vim/pack/plugins/start/fzf
-git clone https://github.com/junegunn/fzf.vim.git ~/.vim/pack/plugins/start/fzf.vim
-```
-
-update later with:
+they're stable and rarely need updates. to update manually (optional, maybe years later):
 
 ```bash
-git -C ~/.vim/pack/plugins/start/fzf pull --ff-only
-git -C ~/.vim/pack/plugins/start/fzf.vim pull --ff-only
-```
+cd ~/dotfiles/stow/.vim/pack/plugins/start/fzf
+git pull https://github.com/junegunn/fzf.git main
+rm -rf .git
 
-these directories are intentionally not tracked in the dotfiles repo.
+cd ~/dotfiles/stow/.vim/pack/plugins/start/fzf.vim
+git pull https://github.com/junegunn/fzf.vim.git master
+rm -rf .git
+```
 
 ## dotfiles documentation
 
