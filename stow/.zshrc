@@ -17,12 +17,9 @@ function zle-keymap-select() {
         print -n "\e[6 q"  # Line cursor for insert mode
     fi
 }
-
 function zle-line-init() {
     print -n "\e[6 q"  # Start with line cursor (insert mode)
 }
-
-# Register the functions
 zle -N zle-keymap-select
 zle -N zle-line-init
 
