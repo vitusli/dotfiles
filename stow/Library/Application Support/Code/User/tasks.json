@@ -2,10 +2,10 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Slash Search",
+      "label": "Slash Search Code",
       "type": "shell",
       "command": "zsh",
-      "args": ["-ic", "/"],
+      "args": ["-ic", "/ code"],
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
