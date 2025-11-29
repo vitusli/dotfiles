@@ -462,25 +462,6 @@ stow_dotfiles() {
     fi
 }
 
-# =========================================================================
-# VIM PLUGINS (EXTERNAL INSTALL)
-# =========================================================================
-
-install_vim_plugins() {
-    # run after stow so ~/.vim from stow (if any) is in place
-    if [ -f "$DOTFILES_DIR/scripts/install_vim_plugins.sh" ]; then
-        log_header "Installing/Updating Vim Plugins (fzf, fzf.vim)"
-        bash "$DOTFILES_DIR/scripts/install_vim_plugins.sh" >> "$LOG_FILE" 2>&1
-        if [ $? -eq 0 ]; then
-            log_success "Vim plugins installed/updated"
-        else
-            log_warning "Vim plugin install script exited with non-zero status"
-        fi
-    else
-        log_info "Vim plugin install script not found; skipping"
-    fi
-}
-
 # ============================================================================
 # OBSIDIAN CONFIGURATION
 # ============================================================================
@@ -765,7 +746,6 @@ main() {
     
     # Dotfiles
     stow_dotfiles
-    install_vim_plugins
     stow_obsidian
     
     # macOS configuration
