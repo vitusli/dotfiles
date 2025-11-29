@@ -592,6 +592,10 @@ setup_system_defaults() {
     # Disable separate spaces per display (span all displays)
     defaults write com.apple.spaces spans-displays -bool true
     
+    # Keyboard Shortcuts / Input Sources
+    # Disable Ctrl+Space (Input Source switching)
+    defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 60 "<dict><key>enabled</key><false/></dict>"
+    
     # Animation Settings (Disable All)
     # Disable window opening/closing animations
     defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
