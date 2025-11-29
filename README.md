@@ -46,6 +46,28 @@ during setup, you'll be prompted to authenticate with github via browser. this i
 
 the script symlinks configuration files from the `/stow` directory to your home directory using `stow`. underneath is a list of what each config does.
 
+### vim plugins (fzf & fzf.vim)
+
+previously these were vendored inside `stow/.vim/pack/plugins/start/`. now they are installed externally for faster clones and simpler updates.
+
+to install (handled automatically by `macme.sh`, or run manually):
+
+```bash
+brew install fzf # binary & shell integration
+mkdir -p ~/.vim/pack/plugins/start
+git clone https://github.com/junegunn/fzf.git ~/.vim/pack/plugins/start/fzf
+git clone https://github.com/junegunn/fzf.vim.git ~/.vim/pack/plugins/start/fzf.vim
+```
+
+update later with:
+
+```bash
+git -C ~/.vim/pack/plugins/start/fzf pull --ff-only
+git -C ~/.vim/pack/plugins/start/fzf.vim pull --ff-only
+```
+
+these directories are intentionally not tracked in the dotfiles repo.
+
 ## dotfiles documentation
 
 here's what each dotfile/config does:
