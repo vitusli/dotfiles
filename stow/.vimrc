@@ -6,7 +6,7 @@ set rtp+=/opt/homebrew/bin/fzf
 " Space: Scoped search in key directories (mirrors .zshrc)
 " Searches: Downloads, Documents, Desktop, dotfiles + Home (max depth 3)
 " vim interprets <C-@> as Ctrl+Space
-nnoremap <C-@> :call fzf#run(fzf#wrap({'source': 'find ~/codespace ~/Downloads ~/Documents ~/Desktop ~/dotfiles -maxdepth 10 2>/dev/null; find ~ -maxdepth 3 2>/dev/null', 'sink': 'e'}))<CR>
+nnoremap <Space> :call fzf#run(fzf#wrap({'source': 'find ~/codespace ~/Downloads ~/Documents ~/Desktop ~/dotfiles -maxdepth 10 2>/dev/null; find ~ -maxdepth 3 2>/dev/null', 'sink': 'e'}))<CR>
 
 " Relative line numbers (plus absolute cursor line)
 set number
