@@ -34,5 +34,10 @@
         "key": "cmd+shift+space",
         "command": "workbench.action.tasks.runTask",
         "args": "Slash Search Code"
+    },
+    {
+        "key": "cmd+i",
+        "command": "workbench.action.chat.openagent",
+        "when": "!chatSetupDisabled && !chatSetupHidden"
     }
 ]
