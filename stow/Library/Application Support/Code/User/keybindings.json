@@ -31,9 +31,8 @@
         "when": "chatIsEnabled && terminalFocus && (terminalHasBeenCreated || terminalProcessSupported)"
     },
     {
-        "key": "ctrl+space",
+        "key": "cmd+shift+space",
         "command": "workbench.action.tasks.runTask",
-        "args": "Slash Search Code",
-        "when": "editorTextFocus && vim.active && vim.mode == 'Normal'"
+        "args": "Slash Search Code"
     }
 ]
