@@ -1,8 +1,15 @@
 [
     {
-    "key": "ctrl+space",
-    "command": "workbench.action.toggleMaximizedPanel",
-    "when": "terminalFocus"
+        "key": "ctrl+space",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "workbench.action.toggleMaximizedPanel",
+                "workbench.action.toggleAuxiliaryBar",
+                "workbench.action.toggleSidebarVisibility"
+            ]
+        },
+        "when": "terminalFocus"
     },
     {
         "key": "cmd+e",
