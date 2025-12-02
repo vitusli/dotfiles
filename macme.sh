@@ -82,7 +82,7 @@ CASKS=(
     keepassxc
     keeweb
     logi-options+
-    macvim-app
+    macvim
     marta
     microsoft-outlook
     microsoft-teams
