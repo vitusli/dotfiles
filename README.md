@@ -97,7 +97,7 @@ here's what each dotfile/config does:
 - **`.vimrc`** - vim text editor configuration
 - **`.gvimrc`** - gvim (graphical vim) specific settings
 - **`Library/Application Support/Code/User/settings.json`** - VS Code editor settings
-- **`Library/Application Support/Code/User/keybindings.json`** - VS Code keyboard shortcuts
+- **`Library/Application ort/Code/User/keybindings.json`** - VS Code keyboard shortcuts
 
 ### applications
 - **`Library/Application Support/org.yanex.marta/conf.marco`** - marta file manager configuration
