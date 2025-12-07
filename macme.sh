@@ -43,6 +43,7 @@ REPOS=(
 
 FORMULAE=(
     bat
+    duti
     ffmpeg
     fzf
     gh
@@ -72,9 +73,11 @@ CASKS=(
     arc
     basictex
     blender
+    bridge
     chatgpt
     darktable
     figma
+    ghostty@tip
     github
     google-drive
     homerow
@@ -541,6 +544,32 @@ stow_obsidian() {
 }
 
 # ============================================================================
+# SET DEFAULT APPLICATIONS
+# ============================================================================
+
+setup_default_apps() {
+    log_header "Setting up Default Applications with duti"
+    
+    if ! command_exists duti; then
+        log_error "duti not found. Install duti first."
+        return 1
+    fi
+    
+    local duti_script="$DOTFILES_DIR/duti/set-defaults.sh"
+    
+    if [ ! -f "$duti_script" ]; then
+        log_error "duti script not found at $duti_script"
+        return 1
+    fi
+    
+    log_info "Applying default applications..."
+    chmod +x "$duti_script"
+    "$duti_script" >> "$LOG_FILE" 2>&1
+    
+    log_success "Default applications configured"
+}
+
+# ============================================================================
 # MACOS MARTA CONFIGURATION
 # ============================================================================
 
@@ -558,10 +587,11 @@ setup_marta() {
             log_success "Marta launcher configured"
         fi
         
-        log_info "Setting Marta as default folder opener..."
-        defaults write -g NSFileViewer -string org.yanex.marta
-        defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType=public.folder;LSHandlerRoleAll=org.yanex.marta;}'
-        log_success "Marta folder integration configured"
+        # Default folder handler is now set via duti (see duti/duti config)
+        # log_info "Setting Marta as default folder opener..."
+        # defaults write -g NSFileViewer -string org.yanex.marta
+        # defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType=public.folder;LSHandlerRoleAll=org.yanex.marta;}'
+        # log_success "Marta folder integration configured"
     else
         log_warning "Marta.app not found"
     fi
@@ -747,6 +777,9 @@ main() {
     # Dotfiles
     stow_dotfiles
     stow_obsidian
+    
+    # Default applications
+    setup_default_apps
     
     # macOS configuration
     setup_marta
