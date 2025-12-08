@@ -25,7 +25,7 @@ body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench::b
 }
 
 /* Optional: Blur-Effekt (kannst du später aktivieren) */
-/*
+
 body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench > * {
     filter: blur(3px) !important;
     transition: filter 0.2s ease !important;
@@ -34,4 +34,4 @@ body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench > 
 body:has(.quick-input-widget:not([style*="display: none"])) .quick-input-widget {
     filter: none !important;
 }
-*/
+
