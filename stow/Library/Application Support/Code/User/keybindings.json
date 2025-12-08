@@ -1,24 +1,9 @@
 [
+    // Chat
     {
-        "key": "ctrl+space",
-        "command": "runCommands",
-        "args": {
-            "commands": [
-                "workbench.action.toggleMaximizedPanel",
-                "workbench.action.toggleAuxiliaryBar",
-                "workbench.action.toggleSidebarVisibility"
-            ]
-        },
-        "when": "terminalFocus"
-    },
-    {
-        "key": "cmd+e",
-        "command": "workbench.action.toggleMaximizedAuxiliaryBar"
-    },
-    {
-        "key": "shift+tab",
-        "command": "workbench.action.chat.toggleAgentMode",
-        "when": "chatIsEnabled && !chatSessionRequestInProgress"
+        "key": "cmd+i",
+        "command": "workbench.action.chat.openagent",
+        "when": "!chatSetupDisabled && !chatSetupHidden"
     },
     {
         "key": "cmd+l",
@@ -31,13 +16,35 @@
         "when": "chatIsEnabled && terminalFocus && (terminalHasBeenCreated || terminalProcessSupported)"
     },
     {
+        "key": "shift+tab",
+        "command": "workbench.action.chat.toggleAgentMode",
+        "when": "chatIsEnabled && !chatSessionRequestInProgress"
+    },
+
+    // Tasks
+    {
         "key": "cmd+shift+space",
         "command": "workbench.action.tasks.runTask",
         "args": "Slash Search Code"
     },
+
+    // Terminal
     {
-        "key": "cmd+i",
-        "command": "workbench.action.chat.openagent",
-        "when": "!chatSetupDisabled && !chatSetupHidden"
+        "key": "ctrl+space",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "workbench.action.toggleMaximizedPanel",
+                "workbench.action.toggleAuxiliaryBar",
+                "workbench.action.toggleSidebarVisibility"
+            ]
+        },
+        "when": "terminalFocus"
+    },
+
+    // Workbench
+    {
+        "key": "cmd+e",
+        "command": "workbench.action.toggleMaximizedAuxiliaryBar"
     }
 ]

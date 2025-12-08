@@ -1,20 +1,27 @@
 {
-    "editor.accessibilitySupport": "off",
-    "workbench.colorTheme": "cursor midnight theme",
-    "security.workspace.trust.untrustedFiles": "open",
-    "workbench.startupEditor": "none",
-    "vim.useSystemClipboard": true,
-    "explorer.confirmDelete": false,
-    "explorer.confirmDragAndDrop": false,
+    // Chat & AI
     "github.copilot.enable": {
         "*": true,
         "plaintext": false,
         "markdown": true,
         "scminput": false
     },
+
+    // Editor
+    "editor.accessibilitySupport": "off",
+
+    // Explorer
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+
+    // Extensions
+    "extensions.ignoreRecommendations": true,
+
+    // Files
     "files.autoSave": "afterDelay",
-    "workbench.iconTheme": "sf-symbol-icons",
     "files.autoSaveDelay": 0,
+
+    // Multi Command
     "multiCommand.commands": [
         {
             "command": "runSlash",
@@ -27,6 +34,34 @@
             ]
         }
     ],
+
+    // Python
     "python.defaultInterpreterPath": "/opt/homebrew/bin/python3",
-    "extensions.ignoreRecommendations": true
+
+    // Security
+    "security.workspace.trust.untrustedFiles": "open",
+
+    // Settings Sync
+    "settingsSync.keybindingsPerPlatform": false,
+    "settingsSync.ignoredExtensions": [],
+    "settingsSync.ignoredSettings": [],
+
+    // Vim
+    "vim.useSystemClipboard": true,
+
+    // VS Code Custom CSS
+    "vscode_custom_css.imports": [
+        "file:///Users/vituspacholleck/Library/Application Support/Code/User/custom-vscode.css"
+    ],
+    "vscode_custom_css.policy": true,
+
+    // Window & UI Controls (all hidden for clean UI)
+    "chat.commandCenter.enabled": false,
+    "window.commandCenter": false,
+    "workbench.layoutControl.enabled": false,
+
+    // Workbench
+    "workbench.colorTheme": "cursor midnight theme",
+    "workbench.iconTheme": "sf-symbol-icons",
+    "workbench.startupEditor": "none"
 }
