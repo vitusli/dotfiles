@@ -1,0 +1,37 @@
+/* Command Palette in die Mitte verschieben */
+.quick-input-widget {
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin-top: 0 !important;
+}
+
+/* Dark Overlay Hintergrund wenn Command Palette offen ist */
+body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench::before {
+    content: '' !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    z-index: 10000 !important;
+    pointer-events: none !important;
+}
+
+/* Sicherstellen dass Command Palette über dem Overlay ist */
+.quick-input-widget {
+    z-index: 10001 !important;
+}
+
+/* Optional: Blur-Effekt (kannst du später aktivieren) */
+/*
+body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench > * {
+    filter: blur(3px) !important;
+    transition: filter 0.2s ease !important;
+}
+
+body:has(.quick-input-widget:not([style*="display: none"])) .quick-input-widget {
+    filter: none !important;
+}
+*/
