@@ -1,8 +1,8 @@
-/* Command Palette in die Mitte verschieben */
+/* Command Palette in die Mitte verschieben - top aligned */
 .quick-input-widget {
-    top: 50% !important;
+    top: 30% !important;
     left: 50% !important;
-    transform: translate(-50%, -50%) !important;
+    transform: translate(-50%, 0) !important;
     margin-top: 0 !important;
 }
 
