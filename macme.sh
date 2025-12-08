@@ -57,7 +57,6 @@ FORMULAE=(
     rar
     stow
     z
-    zellij
     zsh-autocomplete
     zsh-autosuggestions
     zsh-syntax-highlighting
@@ -68,7 +67,6 @@ CASKS=(
     adobe-creative-cloud
     aerospace
     affinity
-    alacritty
     alt-tab
     arc
     basictex
