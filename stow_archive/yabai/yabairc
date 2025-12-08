@@ -1,0 +1,81 @@
+! /usr/bin/env zsh
+
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+sudo yabai --load-sa
+
+#bsp, stack or float possible
+yabai -m config layout stack
+
+yabai -m config window_placement second_child
+
+## Status bar
+yabai -m config --dispaly 0 external_bar all:12:0
+yabai -m config --dispaly 1 external_bar all:35:0
+
+#padding
+yabai -m config top_padding 14
+yabai -m config bottom_padding 14
+yabai -m config left_padding 14
+yabai -m config right_padding 14
+yabai -m config window_gap 14
+
+#Mouse
+# center mouse on window with focus
+yabai -m config mouse_follows_focus on
+# set focus follows mouse mode (default: off, options: off, autoraise, autofocus)
+yabai -m config focus_follows_mouse autoraise
+
+# modifier for clicking and dragging with mouse
+yabai -m config mouse_modifier fn
+# set modifier + left-click drag to move window
+yabai -m config mouse_action1 move
+# set modifier + right-click drag to resize window
+yabai -m config mouse_action2 resize
+
+#disable apps
+yabai -m rule --add app="^System Settings$" manage=off
+yabai -m rule --add app="^Raycast$" manage=off
+yabai -m rule --add app="^Blender$" manage=off
+yabai -m rule --add app="^Archive Utility$" manage=off
+
+# window opacity (default: off)
+# example: render all unfocused windows with 90% opacity 
+yabai -m config window_opacity on
+yabai -m config window_opacity_duration 0.1
+yabai -m config normal_window_opacity 0.7
+yabai -m config active_window_opacity 1.0
+
+yabai -m config window_animation_duration  0.25
+
+yabai -m config window_shadow off 
+
+# [github](https://github.com/koekeishiya/yabai/issues/475#issuecomment-615167241)
+function focus_under_cursor {
+  if yabai -m query --windows --space |
+      jq -er 'map(select(.focused == 1)) | length == 0' >/dev/null; then
+    yabai -m window --focus mouse 2>/dev/null || true
+
+  fi
+}
+# If no window on the current space is focused after a window is destroyed or
+# minimized, or an application is hidden, focus the window under the cursor.
+yabai -m signal --add event=window_destroyed \
+  action="${functions[focus_under_cursor]}"
+yabai -m signal --add event=window_minimized \
+  action="${functions[focus_under_cursor]}"
+yabai -m signal --add event=application_hidden \
+  action="${functions[focus_under_cursor]}"
+
+# signals (from same git repo mentioned above)
+yabai -m signal --add event=window_destroyed action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
+yabai -m signal --add event=application_terminated action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
+
+echo "yabai configuration loaded.."
+
+
+# unknown command '...' for domain 'config'
+# yabai -m config external bar all:32:0
+# when window is dropped in center of another window, swap them (on edges it will split it)
+# yabai -m mouse_drop_action swap
+# floating windows are always on top (default: off)
+# yabai -m config window_topmost on

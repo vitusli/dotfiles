@@ -102,11 +102,42 @@ CASKS=(
 )
 
 MAS_APPS=(
-    MAS_APPS=(
-        "1291898086|toggltrack"
-        "1423210932|flow"
-        "1609342064|octane-x"
-    )
+    "1291898086|toggltrack"
+    "1423210932|flow"
+    "1609342064|octane-x"
+)
+
+VSCODE_EXTENSIONS=(
+    be5invis.vscode-custom-css
+    extr0py.vscode-relative-line-numbers
+    github.copilot
+    github.copilot-chat
+    james-yu.latex-workshop
+    manitejapratha.cursor-midnight-theme
+    michelemelluso.gitignore
+    ms-python.debugpy
+    ms-python.python
+    ms-python.vscode-pylance
+    ms-python.vscode-python-envs
+    vscodevim.vim
+)
+
+DUTI_CONFIGS=(
+    # Text editors
+    "com.microsoft.VSCode|public.plain-text|all"
+    "com.microsoft.VSCode|.sh|all"
+    "com.microsoft.VSCode|.zsh|all"
+    "com.microsoft.VSCode|.bash|all"
+    "com.microsoft.VSCode|.py|all"
+    "com.microsoft.VSCode|.js|all"
+    "com.microsoft.VSCode|.ts|all"
+    "com.microsoft.VSCode|.json|all"
+    "com.microsoft.VSCode|.yaml|all"
+    "com.microsoft.VSCode|.yml|all"
+    "com.microsoft.VSCode|.md|all"
+    "org.vim.MacVim|.txt|all"
+    # File manager
+    "org.yanex.marta|public.folder|all"
 )
 
 # ============================================================================
@@ -464,6 +495,41 @@ stow_dotfiles() {
 }
 
 # ============================================================================
+# VS CODE EXTENSIONS
+# ============================================================================
+
+install_vscode_extensions() {
+    log_header "Installing VS Code Extensions"
+    
+    if ! command_exists code; then
+        log_warning "VS Code not installed, skipping extensions"
+        return 1
+    fi
+    
+    local to_install=()
+    
+    for extension in "${VSCODE_EXTENSIONS[@]}"; do
+        if code --list-extensions 2>/dev/null | grep -qi "^$extension$"; then
+            log_info "Already installed: $extension"
+        else
+            to_install+=("$extension")
+            log_info "Queued: $extension"
+        fi
+    done
+    
+    if [ ${#to_install[@]} -gt 0 ]; then
+        for extension in "${to_install[@]}"; do
+            log_info "Installing: $extension"
+            code --install-extension "$extension" >> "$LOG_FILE" 2>&1
+            log_success "Installed: $extension"
+        done
+        log_success "VS Code extensions installation complete"
+    else
+        log_info "All VS Code extensions already installed"
+    fi
+}
+
+# ============================================================================
 # OBSIDIAN CONFIGURATION
 # ============================================================================
 
@@ -553,16 +619,19 @@ setup_default_apps() {
         return 1
     fi
     
-    local duti_script="$DOTFILES_DIR/duti/set-defaults.sh"
-    
-    if [ ! -f "$duti_script" ]; then
-        log_error "duti script not found at $duti_script"
-        return 1
-    fi
-    
-    log_info "Applying default applications..."
-    chmod +x "$duti_script"
-    "$duti_script" >> "$LOG_FILE" 2>&1
+    for config in "${DUTI_CONFIGS[@]}"; do
+        # Skip comments
+        [[ "$config" =~ ^#.*$ ]] && continue
+        
+        # Parse config: bundle_id|uti|role
+        local bundle_id="${config%%|*}"
+        local rest="${config#*|}"
+        local uti="${rest%|*}"
+        local role="${rest##*|}"
+        
+        log_info "Setting $uti -> $bundle_id ($role)"
+        echo -e "${bundle_id}\t${uti}\t${role}" | duti >> "$LOG_FILE" 2>&1
+    done
     
     log_success "Default applications configured"
 }
@@ -724,6 +793,8 @@ setup_system_defaults() {
     defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
     # fn key does nothing (opposite of above)
     defaults write com.apple.HIToolbox AppleFnUsageType -int "0"
+    # Clear all text replacements (for Raycast Snippets)
+    defaults write -g NSUserDictionaryReplacementItems -array
     
     # Download Manager (Transmission)
     # Don't prompt for confirmation before downloading
@@ -776,6 +847,9 @@ main() {
     stow_dotfiles
     stow_obsidian
     
+    # VS Code
+    install_vscode_extensions
+    
     # Default applications
     setup_default_apps
     
@@ -789,10 +863,6 @@ main() {
     
     local end_time=$(date)
     echo "✓ All tasks completed successfully!" | tee -a "$LOG_FILE"
-    echo "" | tee -a "$LOG_FILE"
-    echo "ℹ Next steps:" | tee -a "$LOG_FILE"
-    echo "  1. You now have snippets in Raycast: turn off text replacements in System Preferences" | tee -a "$LOG_FILE"
-    echo "  2. Log out to apply all system settings (recommended)" | tee -a "$LOG_FILE"
     echo "" | tee -a "$LOG_FILE"
     echo "ℹ Replacing Spotlight with Raycast..." | tee -a "$LOG_FILE"
     open "raycast://extensions/raycast/raycast/replace-spotlight-with-raycast"
