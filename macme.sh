@@ -37,6 +37,7 @@ LOG_FILE="$LOG_DIR/setup-$(date +%Y%m%d-%H%M%S).log"
 REPOS=(
     "git@github.com:vitusli/dotfiles.git|$HOME"
     "git@github.com:vitusli/codespace.git|$HOME"
+    "git@github.com:vitusli/vtools_dev.git|$HOME"
     "git@github.com:vitusli/obsidian.git|$HOME/Documents"
     "git@github.com:vitusli/extensions.git|$HOME/Documents/blenderlokal"
 )
