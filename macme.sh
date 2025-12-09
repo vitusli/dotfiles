@@ -51,6 +51,7 @@ FORMULAE=(
     git-lfs
     lazygit
     mas
+    nvim
     olets/tap/zsh-abbr
     pandoc
     pandoc-crossref
@@ -108,6 +109,7 @@ MAS_APPS=(
 )
 
 VSCODE_EXTENSIONS=(
+    asvetliakov.vscode-neovim
     be5invis.vscode-custom-css
     extr0py.vscode-relative-line-numbers
     github.copilot
@@ -119,7 +121,6 @@ VSCODE_EXTENSIONS=(
     ms-python.python
     ms-python.vscode-pylance
     ms-python.vscode-python-envs
-    vscodevim.vim
 )
 
 DUTI_CONFIGS=(

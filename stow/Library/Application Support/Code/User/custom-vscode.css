@@ -14,7 +14,7 @@ body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench::b
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
-    background: rgba(0, 0, 0, 0.1) !important;
+    background: rgba(0, 0, 0, 0.5) !important;
     z-index: 10000 !important;
     pointer-events: none !important;
 }
@@ -24,9 +24,10 @@ body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench::b
     z-index: 10001 !important;
 }
 
-body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench > * {
+/* PERFORMANCE: Blur-Effekt deaktiviert - war sehr langsam */
+/* body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench > * {
     filter: blur(3px) !important;
-}
+} */
 
 body:has(.quick-input-widget:not([style*="display: none"])) .quick-input-widget {
     filter: none !important;
@@ -35,6 +36,7 @@ body:has(.quick-input-widget:not([style*="display: none"])) .quick-input-widget 
 /* Alle Trennlinien transparent machen - theme-unabhängig */
 * {
     border-color: transparent !important;
+    box-shadow: none !important;
 }
 
 .split-view-view:not(:first-child)::before,
@@ -44,20 +46,13 @@ body:has(.quick-input-widget:not([style*="display: none"])) .quick-input-widget 
 .pane-header,
 .monaco-workbench .part.sidebar,
 .monaco-workbench .part.panel,
-.monaco-workbench .part.editor {
+.monaco-workbench .part.editor,
+.monaco-workbench .part.statusbar,
+.editor-group-container > .title,
+.tabs-and-actions-container {
     border: none !important;
     border-top: none !important;
     border-bottom: none !important;
     border-left: none !important;
     border-right: none !important;
 }
-
-/* Window Controls (Close/Minimize/Maximize) verstecken */
-.window-controls-container {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    width: 0 !important;
-    height: 0 !important;
-}
-
