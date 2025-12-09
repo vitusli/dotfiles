@@ -46,7 +46,8 @@
     "settingsSync.ignoredExtensions": [],
     "settingsSync.ignoredSettings": [],
 
-    // Vim
+    // Vim - disabled via: code --disable-extension vscodevim.vim
+    // To re-enable: code --enable-extension vscodevim.vim
     "vim.useSystemClipboard": true,
 
     // VS Code Custom CSS
@@ -58,6 +59,7 @@
     // Window & UI Controls (all hidden for clean UI)
     "chat.commandCenter.enabled": false,
     "window.commandCenter": false,
+    "window.customTitleBarVisibility": "never",
     "workbench.layoutControl.enabled": false,
 
     // Workbench
@@ -65,5 +67,8 @@
     "workbench.iconTheme": "sf-symbol-icons",
     "workbench.startupEditor": "none",
     "terminal.integrated.suggest.enabled": false,
-    "git.openRepositoryInParentFolders": "always"
+    "git.openRepositoryInParentFolders": "always",
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
 }
