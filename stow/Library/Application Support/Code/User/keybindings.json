@@ -30,6 +30,11 @@
 
     // Terminal
     {
+        "key": "cmd+w",
+        "command": "workbench.action.terminal.kill",
+        "when": "terminalFocus"
+    },
+    {
         "key": "ctrl+space",
         "command": "runCommands",
         "args": {
