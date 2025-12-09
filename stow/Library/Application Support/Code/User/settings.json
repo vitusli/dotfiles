@@ -66,6 +66,7 @@
     "workbench.colorTheme": "cursor midnight theme",
     "workbench.iconTheme": "sf-symbol-icons",
     "workbench.startupEditor": "none",
+    "workbench.tips.enabled": false,
     "terminal.integrated.suggest.enabled": false,
     "git.openRepositoryInParentFolders": "always",
     "extensions.experimental.affinity": {

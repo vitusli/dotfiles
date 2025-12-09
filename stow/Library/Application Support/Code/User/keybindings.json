@@ -39,7 +39,7 @@
                 "workbench.action.toggleSidebarVisibility"
             ]
         },
-        "when": "terminalFocus"
+        // "when": "terminalFocus"
     },
 
     // Workbench
