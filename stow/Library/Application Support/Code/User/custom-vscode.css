@@ -14,7 +14,7 @@ body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench::b
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
-    background: rgba(0, 0, 0, 0.6) !important;
+    background: rgba(0, 0, 0, 0.1) !important;
     z-index: 10000 !important;
     pointer-events: none !important;
 }
@@ -24,14 +24,40 @@ body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench::b
     z-index: 10001 !important;
 }
 
-/* Optional: Blur-Effekt (kannst du später aktivieren) */
-
 body:has(.quick-input-widget:not([style*="display: none"])) .monaco-workbench > * {
     filter: blur(3px) !important;
-    transition: filter 0.2s ease !important;
 }
 
 body:has(.quick-input-widget:not([style*="display: none"])) .quick-input-widget {
     filter: none !important;
+}
+
+/* Alle Trennlinien transparent machen - theme-unabhängig */
+* {
+    border-color: transparent !important;
+}
+
+.split-view-view:not(:first-child)::before,
+.monaco-sash,
+.monaco-split-view2 .sash,
+.tabs-and-actions-container .tab::after,
+.pane-header,
+.monaco-workbench .part.sidebar,
+.monaco-workbench .part.panel,
+.monaco-workbench .part.editor {
+    border: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+
+/* Window Controls (Close/Minimize/Maximize) verstecken */
+.window-controls-container {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
 }
 
