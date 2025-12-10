@@ -46,9 +46,10 @@
     "settingsSync.ignoredExtensions": [],
     "settingsSync.ignoredSettings": [],
 
-    // Vim - disabled via: code --disable-extension vscodevim.vim
-    // To re-enable: code --enable-extension vscodevim.vim
-    "vim.useSystemClipboard": true,
+    // Neovim
+    "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
+    "vscode-neovim.useCtrlKeysForNormalMode": false,
+    "vscode-neovim.useCtrlKeysForInsertMode": false,
 
     // VS Code Custom CSS
     "vscode_custom_css.imports": [
@@ -67,7 +68,7 @@
     "workbench.iconTheme": "sf-symbol-icons",
     "workbench.startupEditor": "none",
     "workbench.tips.enabled": false,
-    "terminal.integrated.suggest.enabled": false,
+    "terminal.integrated.suggest.enabled": false, //fzf ctrl t does the job
     "git.openRepositoryInParentFolders": "always",
     "extensions.experimental.affinity": {
         "asvetliakov.vscode-neovim": 1
