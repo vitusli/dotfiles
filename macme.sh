@@ -56,6 +56,8 @@ FORMULAE=(
     olets/tap/zsh-abbr
     pandoc
     pandoc-crossref
+    python@3.10
+    python@3.11
     rar
     stow
     z
