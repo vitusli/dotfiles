@@ -30,6 +30,16 @@
 
     // Terminal
     {
+        "key": "cmd+shift+j",
+        "command": "workbench.action.terminal.focus",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "cmd+n",
+        "command": "workbench.action.terminal.new",
+        "when": "terminalFocus"
+    },
+    {
         "key": "cmd+w",
         "command": "workbench.action.terminal.kill",
         "when": "terminalFocus"
