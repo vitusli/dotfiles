@@ -56,6 +56,11 @@ if type brew &>/dev/null; then
   FPATH="$(brew --prefix)/share/zsh-abbr:${FPATH}"
 fi
 
+# Load nova completion
+if command -v nova &>/dev/null; then
+  source <(nova completion zsh)
+fi
+
 # Load zsh plugins
 source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
