@@ -39,8 +39,8 @@ keyBindings {
     
     "ctrl+x" "core.trash"
     
-    "p" "core.path"
-    "shift+p" "core.path.folder"
+    "y" "core.path"
+    "shift+y" "core.path.folder"
     
     "x" "core.move.inactive"
     "c" "core.copy.inactive"
