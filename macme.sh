@@ -59,6 +59,7 @@ FORMULAE=(
     pandoc-crossref
     python@3.10
     python@3.11
+    python@3.14
     rar
     stow
     z
