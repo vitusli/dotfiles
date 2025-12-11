@@ -1,0 +1,125 @@
+# ============================================================================
+# LF FILE MANAGER CONFIG
+# Minimal config inspired by Marta setup
+# ============================================================================
+
+# Basic Settings
+set hidden true
+set ignorecase true
+set icons true
+
+# Show only path in title (no user@host)
+set promptfmt "%d"
+
+# Two column view: current dir + preview (no parent dir)
+set ratios 1:1
+
+# Use code as default editor
+set editor code
+
+# Preview with bat
+set previewer ~/.config/lf/preview.sh
+set cleaner ~/.config/lf/cleaner.sh
+
+# ============================================================================
+# KEY BINDINGS (Marta-inspired)
+# ============================================================================
+
+# Navigation (hjkl vim-style)
+map k up
+map j down
+map h updir
+map l open
+map <enter> open
+
+# Selection (shift + k/j) - toggle current, then move
+map K :toggle; up
+map J :toggle; down
+
+# Clear selection and filter
+map <esc> :unselect; setfilter
+
+# Go to top/bottom
+map g top
+map G bottom
+
+# File operations
+map r rename
+map f push :touch<space>
+map n push :mkdir<space>
+map <c-x> delete
+
+# Copy/Move (x = cut, c = copy, v = paste)
+map x cut
+map c copy
+map v paste
+
+# Path operations
+map p :yank-path
+map P :yank-dirname
+
+# Toggle hidden files
+map H set hidden!
+
+# Open with
+map o push :open-with<space>
+
+# Reveal in Finder
+map <c-r> $open -R "$f"
+
+# Go to home
+map ~ cd ~
+
+# Search
+map / :filter
+
+# Fuzzy search with fzf
+map <space> :fzf
+
+# ============================================================================
+# COMMANDS
+# ============================================================================
+
+# Open file with application (using fzf)
+cmd open-with ${{
+    app=$(printf "VS Code\nFinder (reveal)\nMacVim\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open with: ")
+    [ -z "$app" ] && exit
+    
+    case "$app" in
+        "VS Code") open -a "Visual Studio Code" "$f" ;;
+        "Finder (reveal)") open -R "$f" ;;
+        *) open -a "$app" "$f" ;;
+    esac
+}}
+
+# Create file
+cmd touch ${{
+    read -p "File name: " name
+    touch "$name"
+}}
+
+# Create directory
+cmd mkdir ${{
+    read -p "Directory name: " name
+    mkdir -p "$name"
+}}
+
+# Fuzzy search with fzf (recursive)
+cmd fzf ${{
+    result=$(find . -type f 2>/dev/null | fzf --prompt="Search: " --preview="bat --color=always --style=numbers {}")
+    if [ -n "$result" ]; then
+        lf -remote "send $id select \"$result\""
+    fi
+}}
+
+# Yank path to clipboard (macOS)
+cmd yank-path ${{
+    printf "%s" "$f" | pbcopy
+    lf -remote "send $id echo Copied: $f"
+}}
+
+# Yank directory path to clipboard (macOS)
+cmd yank-dirname ${{
+    printf "%s" "$PWD" | pbcopy
+    lf -remote "send $id echo Copied: $PWD"
+}}
