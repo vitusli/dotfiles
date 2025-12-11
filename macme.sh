@@ -62,6 +62,7 @@ FORMULAE=(
     python@3.14
     rar
     stow
+    uv
     z
     zsh-autocomplete
     zsh-autosuggestions
