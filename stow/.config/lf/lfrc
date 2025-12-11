@@ -4,7 +4,7 @@
 # ============================================================================
 
 # Basic Settings
-set hidden true
+set hidden false
 set ignorecase true
 set icons true
 
@@ -37,7 +37,7 @@ map J :toggle; down
 map <esc> :unselect; setfilter
 
 # Go to top/bottom
-map gg top
+map g top
 map G bottom
 
 # File operations
@@ -60,6 +60,7 @@ map H set hidden!
 
 # Open with (fzf)
 map o :open-with
+map O :open-with-dir
 
 # Reveal in Finder
 map <c-r> $open -R "$f"
@@ -70,11 +71,11 @@ map L $lazygit
 # Go to home
 map ~ cd ~
 
-# Search (fzf in current dir)
-map / :fzf-local
+# Search (recursive)
+map / :fzf
 
-# Fuzzy search with fzf (recursive)
-map <space> :fzf
+# Extended search (multiple directories)
+map <space> :fzf-extended
 
 # ============================================================================
 # COMMANDS
@@ -89,6 +90,19 @@ cmd open-with ${{
         "VS Code") open -a "Visual Studio Code" "$f" ;;
         "Finder (reveal)") open -R "$f" ;;
         *) open -a "$app" "$f" ;;
+    esac
+}}
+
+# Open current directory with application (using fzf)
+cmd open-with-dir ${{
+    app=$(printf "VS Code\nFinder\nMarta\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open directory with: ")
+    [ -z "$app" ] && exit
+    
+    case "$app" in
+        "VS Code") open -a "Visual Studio Code" "$PWD" ;;
+        "Finder") open "$PWD" ;;
+        "Marta") open -a "Marta" "$PWD" ;;
+        *) open -a "$app" "$PWD" ;;
     esac
 }}
 
@@ -117,6 +131,26 @@ cmd fzf ${{
     result=$(find . -type f 2>/dev/null | fzf --prompt="Search (recursive): " --preview="bat --color=always --style=numbers {}")
     if [ -n "$result" ]; then
         lf -remote "send $id select \"$result\""
+    fi
+}}
+
+# Extended search across multiple directories (like zsh / function)
+cmd fzf-extended ${{
+    result=$({ 
+        find ~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/codespace 2>/dev/null
+        find ~ -maxdepth 3 2>/dev/null
+    } | fzf --prompt=": " --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' --preview-window=right:60%:wrap)
+    
+    if [ -n "$result" ]; then
+        # Copy to clipboard
+        printf "%s" "$result" | pbcopy
+        
+        # If it's a file, select it; if directory, cd to it
+        if [ -f "$result" ]; then
+            lf -remote "send $id select \"$result\""
+        elif [ -d "$result" ]; then
+            lf -remote "send $id cd \"$result\""
+        fi
     fi
 }}
 
