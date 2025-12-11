@@ -71,8 +71,8 @@ map L $lazygit
 # Go to home
 map ~ cd ~
 
-# Search (recursive)
-map / :fzf
+# Filter (classic lf filter)
+map / filter
 
 # Extended search (multiple directories)
 map <space> :fzf-extended
