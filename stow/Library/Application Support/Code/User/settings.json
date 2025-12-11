@@ -48,6 +48,7 @@
 
     // Neovim
     "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
+    "vscode-neovim.neovimInitVimPaths.darwin": "/Users/vituspacholleck/dotfiles/stow/.config/nvim/init.vim",
     "vscode-neovim.useCtrlKeysForNormalMode": false,
     "vscode-neovim.useCtrlKeysForInsertMode": false,
 
