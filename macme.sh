@@ -51,6 +51,7 @@ FORMULAE=(
     git
     git-lfs
     lazygit
+    lf
     mas
     nvim
     olets/tap/zsh-abbr
