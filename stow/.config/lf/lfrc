@@ -14,9 +14,6 @@ set promptfmt "%d"
 # Two column view: current dir + preview (no parent dir)
 set ratios 1:1
 
-# Use code as default editor
-set editor code
-
 # Preview with bat
 set previewer ~/.config/lf/preview.sh
 set cleaner ~/.config/lf/cleaner.sh
@@ -40,40 +37,43 @@ map J :toggle; down
 map <esc> :unselect; setfilter
 
 # Go to top/bottom
-map g top
+map gg top
 map G bottom
 
 # File operations
 map r rename
-map f push :touch<space>
-map n push :mkdir<space>
+map f :touch
+map n :mkdir
 map <c-x> delete
 
 # Copy/Move (x = cut, c = copy, v = paste)
 map x cut
 map c copy
-map v paste
+map p paste
 
 # Path operations
-map p :yank-path
-map P :yank-dirname
+map y :yank-path
+map Y :yank-dirname
 
 # Toggle hidden files
 map H set hidden!
 
-# Open with
-map o push :open-with<space>
+# Open with (fzf)
+map o :open-with
 
 # Reveal in Finder
 map <c-r> $open -R "$f"
 
+# Git
+map L $lazygit
+
 # Go to home
 map ~ cd ~
 
-# Search
-map / :filter
+# Search (fzf in current dir)
+map / :fzf-local
 
-# Fuzzy search with fzf
+# Fuzzy search with fzf (recursive)
 map <space> :fzf
 
 # ============================================================================
@@ -104,9 +104,17 @@ cmd mkdir ${{
     mkdir -p "$name"
 }}
 
+# Fuzzy search with fzf (current dir only)
+cmd fzf-local ${{
+    result=$(ls -1A | fzf --prompt="Search (current): " --preview="bat --color=always --style=numbers {}")
+    if [ -n "$result" ]; then
+        lf -remote "send $id select \"$result\""
+    fi
+}}
+
 # Fuzzy search with fzf (recursive)
 cmd fzf ${{
-    result=$(find . -type f 2>/dev/null | fzf --prompt="Search: " --preview="bat --color=always --style=numbers {}")
+    result=$(find . -type f 2>/dev/null | fzf --prompt="Search (recursive): " --preview="bat --color=always --style=numbers {}")
     if [ -n "$result" ]; then
         lf -remote "send $id select \"$result\""
     fi
