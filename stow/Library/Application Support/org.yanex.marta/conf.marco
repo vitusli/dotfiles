@@ -20,6 +20,7 @@ keyBindings {
     "\\" "core.go"
 
     "cmd+j" "core.terminal.toggle"
+    "cmd+shift+j" "core.terminal.activate"
 
     "k" "core.move.up"
     "j" "core.move.down"
@@ -53,7 +54,7 @@ keyBindings {
     "left" "core.clone.left"
     "right" "core.clone.right"
     
-    "shift+`" {
+    "cmd+shift+h" {
         id "core.open.directory"
         src "~"
     }
