@@ -26,8 +26,8 @@ set cleaner ~/.config/lf/cleaner.sh
 map k up
 map j down
 map h updir
-map l open
-map <enter> open
+map l :setfilter; open
+map <enter> :setfilter; open
 
 # Selection (shift + k/j) - toggle current, then move
 map K :toggle; up
