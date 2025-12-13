@@ -37,6 +37,9 @@ map J :toggle; down
 # Clear selection and filter
 map <esc> :unselect; setfilter
 
+# Clear cut/copy buffer (safety shortcut)
+map <esc> clear
+
 # Go to top/bottom
 map g top
 map G bottom
@@ -84,9 +87,6 @@ map D cd "/Users/vituspacholleck/Downloads"; filter
 # Open current directory in VS Code
 map C $ open -a "Visual Studio Code" "$PWD"
 
-# Clear cut/copy buffer (safety shortcut)
-map U clear
-
 # Disable default 'd' (cut) as requested
 map d :echo "Cut is disabled"
 
@@ -95,6 +95,9 @@ map / filter
 
 # Extended search (multiple directories)
 map <space> :fzf-extended
+
+# Open dotfiles in VS Code with lfrc editor
+map <c-s> & code ~/dotfiles ~/dotfiles/stow/.config/lf/lfrc
 
 # ============================================================================
 # COMMANDS
