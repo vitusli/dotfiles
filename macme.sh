@@ -57,7 +57,6 @@ FORMULAE=(
     olets/tap/zsh-abbr
     pandoc
     pandoc-crossref
-    # Python runtimes are managed by uv; no Homebrew python@ needed
     rar
     stow
     uv
