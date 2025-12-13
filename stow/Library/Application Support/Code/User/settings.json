@@ -1,12 +1,4 @@
 {
-    // Chat & AI
-    "github.copilot.enable": {
-        "*": true,
-        "plaintext": false,
-        "markdown": true,
-        "scminput": false
-    },
-
     // Editor
     "editor.accessibilitySupport": "off",
 
@@ -15,11 +7,25 @@
     "explorer.confirmDragAndDrop": false,
 
     // Extensions
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
     "extensions.ignoreRecommendations": true,
 
     // Files
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 0,
+
+    // Git
+    "git.openRepositoryInParentFolders": "always",
+
+    // GitHub Copilot
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": false,
+        "markdown": true,
+        "scminput": false
+    },
 
     // Multi Command
     "multiCommand.commands": [
@@ -35,6 +41,12 @@
         }
     ],
 
+    // Neovim
+    "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
+    "vscode-neovim.neovimInitVimPaths.darwin": "/Users/vituspacholleck/dotfiles/stow/.config/nvim/init.vim",
+    "vscode-neovim.useCtrlKeysForNormalMode": false,
+    "vscode-neovim.useCtrlKeysForInsertMode": false,
+
     // Python
     "python.defaultInterpreterPath": "/opt/homebrew/bin/python3",
 
@@ -46,11 +58,8 @@
     "settingsSync.ignoredExtensions": [],
     "settingsSync.ignoredSettings": [],
 
-    // Neovim
-    "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
-    "vscode-neovim.neovimInitVimPaths.darwin": "/Users/vituspacholleck/dotfiles/stow/.config/nvim/init.vim",
-    "vscode-neovim.useCtrlKeysForNormalMode": false,
-    "vscode-neovim.useCtrlKeysForInsertMode": false,
+    // Terminal
+    "terminal.integrated.suggest.enabled": false,
 
     // VS Code Custom CSS
     "vscode_custom_css.imports": [
@@ -58,20 +67,15 @@
     ],
     "vscode_custom_css.policy": true,
 
-    // Window & UI Controls (all hidden for clean UI)
-    "chat.commandCenter.enabled": false,
+    // Window
     "window.commandCenter": false,
     "window.customTitleBarVisibility": "never",
-    "workbench.layoutControl.enabled": false,
 
     // Workbench
+    "chat.commandCenter.enabled": false,
     "workbench.colorTheme": "cursor midnight theme",
     "workbench.iconTheme": "sf-symbol-icons",
+    "workbench.layoutControl.enabled": false,
     "workbench.startupEditor": "none",
-    "workbench.tips.enabled": false,
-    "terminal.integrated.suggest.enabled": false, //fzf ctrl t does the job
-    "git.openRepositoryInParentFolders": "always",
-    "extensions.experimental.affinity": {
-        "asvetliakov.vscode-neovim": 1
-    },
+    "workbench.tips.enabled": false
 }
