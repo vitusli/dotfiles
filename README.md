@@ -46,29 +46,15 @@ during setup, you'll be prompted to authenticate with github via browser. this i
 
 the script symlinks configuration files from the `/stow` directory to your home directory using `stow`. underneath is a list of what each config does.
 
+### note on VS Code custom CSS
+
+the custom CSS extension requires a reload after every VS Code update. if your custom CSS isn't loading, run the **"Reload Custom CSS Extension"** command from the command palette (`⌘⇧P` > type "reload custom css").
+
 ### vim plugins (fzf & fzf.vim)
 
 these plugins are vendored directly in the repo at `stow/.vim/pack/plugins/start/`. they're installed automatically when you run `stow` – no separate setup needed.
 
-they're stable and rarely need updates. to update manually (optional, maybe years later or in case something is broken):
-
-```bash
-cd ~/dotfiles/stow/.vim/pack/plugins/start
-
-# Remove old versions
-rm -rf fzf fzf.vim
-
-# Clone fresh, then remove .git to vendor them
-git clone --depth 1 https://github.com/junegunn/fzf.git
-git clone --depth 1 https://github.com/junegunn/fzf.vim.git
-rm -rf fzf/.git fzf.vim/.git
-
-# Commit the updated files
-cd ~/dotfiles
-git add -f stow/.vim/pack/plugins/start/fzf stow/.vim/pack/plugins/start/fzf.vim
-git commit -m "update: vim plugins fzf + fzf.vim"
-git push
-```
+to update the plugins, run the update script: `~/dotfiles/stow/.vim/update-plugins.sh`
 
 ## dotfiles documentation
 
