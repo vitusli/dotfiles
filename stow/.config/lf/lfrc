@@ -34,11 +34,8 @@ map <enter> :setfilter; open
 map K :toggle; up
 map J :toggle; down
 
-# Clear selection and filter
-map <esc> :unselect; setfilter
-
-# Clear cut/copy buffer (safety shortcut)
-map <esc> clear
+# Clear selection, buffer, and filter (single Esc mapping)
+map <esc> :unselect; clear; setfilter
 
 # Go to top/bottom
 map g top
