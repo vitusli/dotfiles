@@ -80,9 +80,9 @@ here's what each dotfile/config does:
 - **`.profile`** - fallback profile for non-zsh shells
 - **`.hushlogin`** - suppresses the "last login" message when opening terminal
 
-### terminal & multiplexer
-- **`.config/alacritty.toml`** - alacritty terminal emulator configuration (fonts, colors, keybindings)
-- **`.config/zellij/config.kdl`** - zellij terminal multiplexer config (alternative to tmux)
+### terminal & file managers
+- **`.config/ghostty/config`** - ghostty terminal emulator configuration (fonts, colors, keybindings)
+- **`.config/lf/lfrc`** - lf file manager configuration (vim-style navigation, preview, filters)
 - **`.config/zsh-abbr/user-abbreviations`** - custom zsh abbreviations that expand as you type
 
 ### window management
@@ -94,14 +94,18 @@ here's what each dotfile/config does:
 - **`Library/Keyboard Layouts/Roman.bundle/`** - custom US-German [keyboard layout](https://hci.rwth-aachen.de/usgermankeyboard)
 
 ### editors
+- **`.config/nvim/init.vim`** - neovim text editor configuration
 - **`.vimrc`** - vim text editor configuration
 - **`.gvimrc`** - gvim (graphical vim) specific settings
 - **`Library/Application Support/Code/User/settings.json`** - VS Code editor settings
-- **`Library/Application ort/Code/User/keybindings.json`** - VS Code keyboard shortcuts
+- **`Library/Application Support/Code/User/keybindings.json`** - VS Code keyboard shortcuts
+- **`Library/Application Support/Code/User/custom-vscode.css`** - VS Code custom CSS styling
 
 ### applications
 - **`Library/Application Support/org.yanex.marta/conf.marco`** - marta file manager configuration
 - **`Library/Application Support/org.yanex.marta/Themes/`** - custom themes for marta file manager
+- **`Library/Application Support/com.mitchellh.ghostty/config`** - ghostty terminal configuration
+- **`Library/Application Support/obsidian/Custom Dictionary.txt`** - obsidian custom dictionary
 
 ## feedback
 
