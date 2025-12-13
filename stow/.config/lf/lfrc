@@ -85,7 +85,7 @@ map A cd "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/As
 map D cd "/Users/vituspacholleck/Downloads"; filter
 
 # Open current directory in VS Code
-map C $ open -a "Visual Studio Code" "$PWD"
+map V & open -a "Visual Studio Code" "$PWD"
 
 # Disable default 'd' (cut) as requested
 map d :echo "Cut is disabled"
