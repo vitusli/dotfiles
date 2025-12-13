@@ -142,6 +142,11 @@ DUTI_CONFIGS=(
     "org.vim.MacVim|.txt|all"
     # File manager
     "org.yanex.marta|public.folder|all"
+    # Default browser: Arc
+    "company.thebrowser.Browser|http|all"
+    "company.thebrowser.Browser|https|all"
+    "company.thebrowser.Browser|public.url|all"
+    "company.thebrowser.Browser|.webloc|all"
 )
 
 # ============================================================================
