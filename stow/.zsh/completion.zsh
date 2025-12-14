@@ -7,7 +7,6 @@ if type brew &>/dev/null; then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
   autoload -Uz compinit
   compinit -C  # -C flag skips security check for faster startup
-  FPATH="$(brew --prefix)/share/zsh-abbr:${FPATH}"
 fi
 
 # Load nova completion
@@ -16,7 +15,6 @@ if command -v nova &>/dev/null; then
 fi
 
 # Load zsh plugins
-source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 

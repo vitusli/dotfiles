@@ -18,6 +18,12 @@ source /opt/homebrew/etc/profile.d/z.sh
 # fzf - fuzzy finder
 source <(fzf --zsh)
 
+# zsh-abbr - abbreviations (must be sourced after compinit)
+if type brew &>/dev/null; then
+  FPATH="$(brew --prefix)/share/zsh-abbr:${FPATH}"
+fi
+source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
+
 # ============================================================================
 # LOAD MODULAR CONFIG
 # ============================================================================
