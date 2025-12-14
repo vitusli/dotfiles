@@ -50,11 +50,14 @@ the script symlinks configuration files from the `/stow` directory to your home 
 
 the custom CSS extension requires a reload after every VS Code update. if your custom CSS isn't loading, run the **"Reload Custom CSS Extension"** command from the command palette (`⌘⇧P` > type "reload custom css").
 
-### vim plugins (fzf & fzf.vim)
+### vim plugins (fzf, fzf.vim & wilder.nvim)
 
-these plugins are vendored directly in the repo at `stow/.vim/pack/plugins/start/`. they're installed automatically when you run `stow` – no separate setup needed.
+vim plugins are managed as git submodules in `stow/.vim/pack/plugins/start/`. they're automatically initialized by the `macme.sh` setup script – no manual setup needed.
 
-to update the plugins, run the update script: `~/dotfiles/stow/.vim/update-plugins.sh`
+to manage plugins, use the plugin manager script:
+- **install**: `~/dotfiles/stow/.vim/plugin_manager.sh install` (or just `install`)
+- **update**: `~/dotfiles/stow/.vim/plugin_manager.sh update`
+- **remove**: `~/dotfiles/stow/.vim/plugin_manager.sh remove <plugin-name>`
 
 ## dotfiles documentation
 

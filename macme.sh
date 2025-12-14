@@ -489,6 +489,11 @@ stow_dotfiles() {
     
     cd "$DOTFILES_DIR"
     
+    # Initialize git submodules for vim plugins
+    log_info "Initializing vim plugin submodules..."
+    git submodule update --init --recursive 2>&1 | tee -a "$LOG_FILE"
+    log_success "Vim plugins loaded"
+    
     if [ -d stow ]; then
         # Check if already stowed by looking for symlinks
         if [ -L "$HOME/.config" ] 2>/dev/null || [ -L "$HOME/.zshrc" ] 2>/dev/null; then
