@@ -3,6 +3,9 @@ set clipboard=unnamed
 " fzf.vim configuration
 set rtp+=/opt/homebrew/bin/fzf
 
+" FZF centered popup window (like Raycast/wilder.nvim)
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6, 'border': 'rounded' } }
+
 " Space: Scoped search in key directories (mirrors .zshrc)
 " Searches: Downloads, Documents, Desktop, dotfiles + Home (max depth 3)
 " vim interprets <C-@> as Ctrl+Space
@@ -29,3 +32,13 @@ augroup CursorShape
 	autocmd InsertEnter          * silent! let &t_SI = "\e[6 q"
 	autocmd ModeChanged *:[vVsS] silent! if mode() !~# '^[iR]' | let &t_EI = "\e[2 q" | endif
 augroup END
+
+" wilder.nvim - Popup cmdline (centered like Raycast)
+call wilder#setup({'modes': [':', '/', '?']})
+call wilder#set_option('renderer', wilder#popupmenu_renderer(wilder#popupmenu_palette_theme({
+      \ 'border': 'rounded',
+      \ 'max_height': '75%',
+      \ 'min_height': 0,
+      \ 'prompt_position': 'top',
+      \ 'reverse': 0,
+      \ })))
