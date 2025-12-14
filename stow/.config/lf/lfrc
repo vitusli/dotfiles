@@ -96,6 +96,9 @@ map <space> :fzf-extended
 # Open dotfiles in VS Code with lfrc editor
 map <c-s> & code ~/dotfiles ~/dotfiles/stow/.config/lf/lfrc
 
+# Toggle executable permission (Shift+X)
+map X :toggle-executable
+
 # ============================================================================
 # COMMANDS
 # ============================================================================
@@ -183,4 +186,16 @@ cmd yank-path ${{
 cmd yank-dirname ${{
     printf "%s" "$PWD" | pbcopy
     lf -remote "send $id echo Copied: $PWD"
+}}
+
+# Toggle executable permission
+cmd toggle-executable ${{
+    if [ -x "$f" ]; then
+        chmod -x "$f"
+        lf -remote "send $id echo Removed executable: $f"
+    else
+        chmod +x "$f"
+        lf -remote "send $id echo Made executable: $f"
+    fi
+    lf -remote "send $id reload"
 }}
