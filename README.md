@@ -46,29 +46,18 @@ during setup, you'll be prompted to authenticate with github via browser. this i
 
 the script symlinks configuration files from the `/stow` directory to your home directory using `stow`. underneath is a list of what each config does.
 
-### vim plugins (fzf & fzf.vim)
+### note on VS Code custom CSS
 
-these plugins are vendored directly in the repo at `stow/.vim/pack/plugins/start/`. they're installed automatically when you run `stow` – no separate setup needed.
+the custom CSS extension requires a reload after every VS Code update. if your custom CSS isn't loading, run the **"Reload Custom CSS Extension"** command from the command palette (`⌘⇧P` > type "reload custom css").
 
-they're stable and rarely need updates. to update manually (optional, maybe years later or in case something is broken):
+### vim plugins (fzf, fzf.vim & wilder.nvim)
 
-```bash
-cd ~/dotfiles/stow/.vim/pack/plugins/start
+vim plugins are managed as git submodules in `stow/.vim/pack/plugins/start/`. they're automatically initialized by the `macme.sh` setup script – no manual setup needed.
 
-# Remove old versions
-rm -rf fzf fzf.vim
-
-# Clone fresh, then remove .git to vendor them
-git clone --depth 1 https://github.com/junegunn/fzf.git
-git clone --depth 1 https://github.com/junegunn/fzf.vim.git
-rm -rf fzf/.git fzf.vim/.git
-
-# Commit the updated files
-cd ~/dotfiles
-git add -f stow/.vim/pack/plugins/start/fzf stow/.vim/pack/plugins/start/fzf.vim
-git commit -m "update: vim plugins fzf + fzf.vim"
-git push
-```
+to manage plugins, use the plugin manager script:
+- **install**: `~/dotfiles/stow/.vim/plugin_manager.sh install` (or just `install`)
+- **update**: `~/dotfiles/stow/.vim/plugin_manager.sh update`
+- **remove**: `~/dotfiles/stow/.vim/plugin_manager.sh remove <plugin-name>`
 
 ## dotfiles documentation
 
@@ -80,9 +69,9 @@ here's what each dotfile/config does:
 - **`.profile`** - fallback profile for non-zsh shells
 - **`.hushlogin`** - suppresses the "last login" message when opening terminal
 
-### terminal & multiplexer
-- **`.config/alacritty.toml`** - alacritty terminal emulator configuration (fonts, colors, keybindings)
-- **`.config/zellij/config.kdl`** - zellij terminal multiplexer config (alternative to tmux)
+### terminal & file managers
+- **`.config/ghostty/config`** - ghostty terminal emulator configuration (fonts, colors, keybindings)
+- **`.config/lf/lfrc`** - lf file manager configuration (vim-style navigation, preview, filters)
 - **`.config/zsh-abbr/user-abbreviations`** - custom zsh abbreviations that expand as you type
 
 ### window management
@@ -94,14 +83,18 @@ here's what each dotfile/config does:
 - **`Library/Keyboard Layouts/Roman.bundle/`** - custom US-German [keyboard layout](https://hci.rwth-aachen.de/usgermankeyboard)
 
 ### editors
+- **`.config/nvim/init.vim`** - neovim text editor configuration
 - **`.vimrc`** - vim text editor configuration
 - **`.gvimrc`** - gvim (graphical vim) specific settings
 - **`Library/Application Support/Code/User/settings.json`** - VS Code editor settings
-- **`Library/Application ort/Code/User/keybindings.json`** - VS Code keyboard shortcuts
+- **`Library/Application Support/Code/User/keybindings.json`** - VS Code keyboard shortcuts
+- **`Library/Application Support/Code/User/custom-vscode.css`** - VS Code custom CSS styling
 
 ### applications
 - **`Library/Application Support/org.yanex.marta/conf.marco`** - marta file manager configuration
 - **`Library/Application Support/org.yanex.marta/Themes/`** - custom themes for marta file manager
+- **`Library/Application Support/com.mitchellh.ghostty/config`** - ghostty terminal configuration
+- **`Library/Application Support/obsidian/Custom Dictionary.txt`** - obsidian custom dictionary
 
 ## feedback
 

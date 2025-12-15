@@ -57,9 +57,6 @@ FORMULAE=(
     olets/tap/zsh-abbr
     pandoc
     pandoc-crossref
-    python@3.10
-    python@3.11
-    python@3.14
     rar
     stow
     uv
@@ -145,6 +142,11 @@ DUTI_CONFIGS=(
     "org.vim.MacVim|.txt|all"
     # File manager
     "org.yanex.marta|public.folder|all"
+    # Default browser: Arc
+    "company.thebrowser.Browser|http|all"
+    "company.thebrowser.Browser|https|all"
+    "company.thebrowser.Browser|public.url|all"
+    "company.thebrowser.Browser|.webloc|all"
 )
 
 # ============================================================================
@@ -486,6 +488,11 @@ stow_dotfiles() {
     fi
     
     cd "$DOTFILES_DIR"
+    
+    # Initialize git submodules for vim plugins
+    log_info "Initializing vim plugin submodules..."
+    git submodule update --init --recursive 2>&1 | tee -a "$LOG_FILE"
+    log_success "Vim plugins loaded"
     
     if [ -d stow ]; then
         # Check if already stowed by looking for symlinks

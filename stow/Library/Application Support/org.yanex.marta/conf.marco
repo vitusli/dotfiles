@@ -10,6 +10,8 @@ behavior {
     quickSelect {
         activateOnAnyCharacter false
         defaultMode "substring"
+        filterMatchedItems true
+
         
     }
 }
@@ -54,9 +56,28 @@ keyBindings {
     "left" "core.clone.left"
     "right" "core.clone.right"
     
-    "cmd+shift+h" {
+    "shift+`" {
         id "core.open.directory"
         src "~"
+    }
+    
+    "shift+p" {
+        id "core.open.directory"
+        src "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects"
+    }
+    
+    "shift+a" {
+        id "core.open.directory"
+        src "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"
+    }
+    
+    "shift+d" {
+        id "core.open.directory"
+        src "/Users/vituspacholleck/Downloads"
+    }
+
+    "shift+c" {
+        id "vitusli.openInVSCode.openCurrentInVSCode"
     }
     
 }

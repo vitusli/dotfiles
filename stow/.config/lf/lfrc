@@ -7,6 +7,7 @@
 set hidden false
 set ignorecase true
 set icons true
+set incfilter
 
 # Show only path in title (no user@host)
 set promptfmt "%d"
@@ -33,8 +34,8 @@ map <enter> :setfilter; open
 map K :toggle; up
 map J :toggle; down
 
-# Clear selection and filter
-map <esc> :unselect; setfilter
+# Clear selection, buffer, and filter (single Esc mapping)
+map <esc> :unselect; clear; setfilter
 
 # Go to top/bottom
 map g top
@@ -71,11 +72,32 @@ map L $lazygit
 # Go to home
 map ~ cd ~
 
+# Jump to Omniverse projects and start filter
+map P cd "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects"; filter
+
+# Jump to Asset-Library and start filter
+map A cd "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"; filter
+
+# Jump to Downloads and start filter
+map D cd "/Users/vituspacholleck/Downloads"; filter
+
+# Open current directory in VS Code
+map V & open -a "Visual Studio Code" "$PWD"
+
+# Disable default 'd' (cut) as requested
+map d :echo "Cut is disabled"
+
 # Filter (classic lf filter)
 map / filter
 
 # Extended search (multiple directories)
 map <space> :fzf-extended
+
+# Open dotfiles in VS Code with lfrc editor
+map <c-s> & code ~/dotfiles ~/dotfiles/stow/.config/lf/lfrc
+
+# Toggle executable permission (Shift+X)
+map X :toggle-executable
 
 # ============================================================================
 # COMMANDS
@@ -164,4 +186,16 @@ cmd yank-path ${{
 cmd yank-dirname ${{
     printf "%s" "$PWD" | pbcopy
     lf -remote "send $id echo Copied: $PWD"
+}}
+
+# Toggle executable permission
+cmd toggle-executable ${{
+    if [ -x "$f" ]; then
+        chmod -x "$f"
+        lf -remote "send $id echo Removed executable: $f"
+    else
+        chmod +x "$f"
+        lf -remote "send $id echo Made executable: $f"
+    fi
+    lf -remote "send $id reload"
 }}
