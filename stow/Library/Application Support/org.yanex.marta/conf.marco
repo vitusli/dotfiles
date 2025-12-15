@@ -76,7 +76,7 @@ keyBindings {
         src "/Users/vituspacholleck/Downloads"
     }
 
-    "shift+c" {
+    "shift+v" {
         id "vitusli.openInVSCode.openCurrentInVSCode"
     }
     
