@@ -23,7 +23,7 @@
 
     // Tasks
     {
-        "key": "cmd+shift+space",
+        "key": "ctrl+space",
         "command": "workbench.action.tasks.runTask",
         "args": "Slash Search Code"
     },
@@ -45,7 +45,7 @@
         "when": "terminalFocus"
     },
     {
-        "key": "ctrl+space",
+        "key": "cmd+shift+space",
         "command": "runCommands",
         "args": {
             "commands": [
