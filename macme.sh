@@ -439,7 +439,10 @@ setup_ssh_key() {
         
         if command_exists gh; then
             log_info "Adding SSH key to GitHub..."
-            gh ssh-key add "${ssh_key}.pub" --title "MacBook $(date +%Y-%m-%d)"
+            echo -n "Enter a name for this Mac (e.g. 'MacBook Pro Work'): "
+            read key_title
+            key_title="${key_title:-MacBook $(date +%Y-%m-%d)}"
+            gh ssh-key add "${ssh_key}.pub" --title "$key_title"
         fi
         
         log_success "SSH key created and configured"
