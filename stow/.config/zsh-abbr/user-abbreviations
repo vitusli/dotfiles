@@ -6,4 +6,6 @@ abbr "copyid"="nova config view 2>&1 | tee >(awk '/^virtualid:/ {print \$2}' | p
 abbr "copyip"="nova config view 2>&1 | tee >(awk '/^host:/ {print \$2}' | pbcopy)"
 abbr "l"="lazygit"
 abbr "p"="uv run python"
+abbr "rl"="source ~/.zshrc
+"
 abbr "v"="source .venv/bin/activate"
