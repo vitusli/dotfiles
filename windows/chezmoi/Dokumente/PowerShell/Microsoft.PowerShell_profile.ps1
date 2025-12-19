@@ -53,6 +53,7 @@ $Abbreviations = @{
     'wmre' = 'komorebic stop; komorebic start'
     'rl' = '. $PROFILE'
     'ahk' = 'Get-Process | Where-Object {$_.Name -like "*AutoHotkey*"} | Stop-Process -Force; Start-Process "c:\Users\Vitus\wotfiles\ahkv1\macish.ahk"'
+    'ff' = '$f = Get-ChildItem -File -Recurse | ForEach-Object { $_.FullName } | fzf; if ($f) { Set-Location (Split-Path $f) }'
 }
 
 Set-PSReadLineKeyHandler -Key ' ' -ScriptBlock {
