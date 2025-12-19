@@ -45,11 +45,20 @@ Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler $OnViModeChang
 # Set the initial cursor to a line for Insert Mode
 Write-Host -NoNewLine "`e[6 q"
 
+# Reset cursor to line after every command (like zsh zle-line-init)
+$PSDefaultParameterValues['Out-Default:OutVariable'] = '__lastOutput'
+Set-PSReadLineOption -ExtraPromptLineCount 0
+$function:prompt = {
+    # Reset cursor to line for Insert Mode after every command
+    Write-Host -NoNewLine "`e[6 q"
+    "PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "
+}
+
 # Abbreviations - expand on Space
 $Abbreviations = @{
     'p'   = 'uv run python'
     'ov'  = 'A:\isaac-sim\isaac-sim.bat'
-    'l'   = 'lazygit; Write-Host -NoNewLine "`e[6 q"'
+    'l'   = 'lazygit'
     'wmre' = 'komorebic stop; komorebic start'
     'rl' = '. $PROFILE'
     'ahk' = 'Get-Process | Where-Object {$_.Name -like "*AutoHotkey*"} | Stop-Process -Force; Start-Process "c:\Users\Vitus\wotfiles\ahkv1\macish.ahk"'
@@ -113,8 +122,6 @@ function stow {
         Set-Clipboard -Value "chezmoi apply"
         Write-Host "Opened: $sourcePath"
         Write-Host "'chezmoi apply' copied to clipboard"
-        # Reset cursor to line for Insert Mode
-        Write-Host -NoNewLine "`e[6 q"
     }
 }
 
