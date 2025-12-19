@@ -1,9 +1,9 @@
-[submodule "stow/.vim/pack/plugins/start/wilder.nvim"]
-	path = stow/.vim/pack/plugins/start/wilder.nvim
+[submodule "macOS/stow/.vim/pack/plugins/start/wilder.nvim"]
+	path = macOS/stow/.vim/pack/plugins/start/wilder.nvim
 	url = https://github.com/gelguy/wilder.nvim.git
-[submodule "stow/.vim/pack/plugins/start/fzf"]
-	path = stow/.vim/pack/plugins/start/fzf
+[submodule "macOS/stow/.vim/pack/plugins/start/fzf"]
+	path = macOS/stow/.vim/pack/plugins/start/fzf
 	url = https://github.com/junegunn/fzf.git
-[submodule "stow/.vim/pack/plugins/start/fzf.vim"]
-	path = stow/.vim/pack/plugins/start/fzf.vim
+[submodule "macOS/stow/.vim/pack/plugins/start/fzf.vim"]
+	path = macOS/stow/.vim/pack/plugins/start/fzf.vim
 	url = https://github.com/junegunn/fzf.vim.git

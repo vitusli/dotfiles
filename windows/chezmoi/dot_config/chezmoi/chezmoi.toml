@@ -1,0 +1,5 @@
+sourceDir = "C:/Users/Vitus/dotfiles/windows/chezmoi"
+
+[edit]
+command = "code"
+args = ["--wait"]

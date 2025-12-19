@@ -1,0 +1,66 @@
+{
+    // Editor
+    "editor.accessibilitySupport": "off",
+
+    // Explorer
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+
+    // Extensions
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
+    "extensions.ignoreRecommendations": true,
+
+    // Files
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 0,
+
+    // Git
+    "git.openRepositoryInParentFolders": "always",
+
+    // Security
+    "security.workspace.trust.untrustedFiles": "open",
+
+    // Settings Sync
+    "settingsSync.keybindingsPerPlatform": false,
+    "settingsSync.ignoredExtensions": [],
+    "settingsSync.ignoredSettings": [],
+
+    // Terminal
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.commandsToSkipShell": [
+        "workbench.action.terminal.kill",
+        "workbench.action.terminal.killActiveTab"
+    ],
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "path": "pwsh.exe",
+            "icon": "terminal-powershell",
+            "args": []
+        }
+    },
+    "terminal.integrated.suggest.enabled": false,
+
+    // Vim
+    "vim.enable": true,
+    "vim.useSystemClipboard": true,
+
+    // VS Code Custom CSS
+    "vscode_custom_css.imports": [
+        "file:///C:/Users/Vitus/dotfiles/macOS/stow/Library/Application Support/Code/User/custom-vscode.css"
+    ],
+    "vscode_custom_css.policy": true,
+
+    // Window
+    "window.commandCenter": false,
+    "window.customTitleBarVisibility": "never",
+
+    // Workbench
+    "chat.commandCenter.enabled": false,
+    "workbench.colorTheme": "cursor midnight theme",
+    "workbench.iconTheme": "sf-symbol-icons",
+    "workbench.layoutControl.enabled": false,
+    "workbench.startupEditor": "none",
+    "workbench.tips.enabled": false
+}

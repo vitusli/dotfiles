@@ -1,0 +1,17 @@
+# Vi mode
+set editing-mode vi
+set keymap vi-command
+
+# Schnellerer Escape-Key (in Millisekunden, default 500)
+set keyseq-timeout 50
+
+# Cursor shape - Block im Normal Mode, Beam im Insert Mode
+set show-mode-in-prompt on
+$if term=xterm
+    set vi-ins-mode-string \1\e[6 q\2
+    set vi-cmd-mode-string \1\e[2 q\2
+$endif
+$if term=xterm-256color
+    set vi-ins-mode-string \1\e[6 q\2
+    set vi-cmd-mode-string \1\e[2 q\2
+$endif
