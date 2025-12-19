@@ -210,3 +210,23 @@ assets() {
     return 1
   fi
 }
+
+# ============================================================================
+# stow - chezmoi edit with fzf (opens source, then apply)
+# ============================================================================
+stow() {
+  local file=$(chezmoi managed --include=files | \
+        fzf --prompt="chezmoi edit: " \
+            --preview='bat --color=always --style=numbers "$(chezmoi source-path "$HOME/{}")"' \
+            --preview-window=right:60%:wrap)
+  
+  if [[ -z "$file" ]]; then
+    return 1
+  fi
+  
+  local source_path=$(chezmoi source-path ~/"$file")
+  code "$source_path"
+  echo "chezmoi apply" | pbcopy
+  echo "Opened: $source_path"
+  echo "'chezmoi apply' copied to clipboard"
+}

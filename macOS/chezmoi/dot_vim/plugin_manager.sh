@@ -1,6 +1,6 @@
 #!/bin/zsh
 # Vim Plugin Manager using git submodules
-# Usage: ./stow/.vim/plugin_manager.sh [install|update|remove <plugin>]
+# Usage: ./macOS/chezmoi/dot_vim/plugin_manager.sh [install|update|remove <plugin>]
 
 set -e
 
@@ -37,7 +37,7 @@ case "${1:-install}" in
     echo "Removing plugin: $2..."
     git submodule deinit -f "$PLUGINS_DIR/$2"
     git rm -f "$PLUGINS_DIR/$2"
-    rm -rf ".git/modules/stow/.vim/pack/plugins/start/$2"
+    rm -rf ".git/modules/macOS/chezmoi/dot_vim/pack/plugins/start/$2"
     echo "✓ Plugin $2 removed"
     ;;
     

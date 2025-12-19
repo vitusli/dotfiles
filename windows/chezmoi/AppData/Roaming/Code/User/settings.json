@@ -48,7 +48,7 @@
 
     // VS Code Custom CSS
     "vscode_custom_css.imports": [
-        "file:///C:/Users/Vitus/dotfiles/macOS/stow/Library/Application Support/Code/User/custom-vscode.css"
+        "file:///C:/Users/Vitus/dotfiles/macOS/chezmoi/Library/literal_Application Support/Code/User/custom-vscode.css"
     ],
     "vscode_custom_css.policy": true,
 

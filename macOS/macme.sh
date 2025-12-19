@@ -44,6 +44,7 @@ REPOS=(
 
 FORMULAE=(
     bat
+    chezmoi
     duti
     ffmpeg
     fzf
@@ -58,7 +59,6 @@ FORMULAE=(
     pandoc
     pandoc-crossref
     rar
-    stow
     uv
     z
     zsh-autocomplete
@@ -477,37 +477,39 @@ clone_repositories() {
 # DOTFILES
 # ============================================================================
 
-stow_dotfiles() {
-    log_header "Stowing Dotfiles"
+apply_dotfiles() {
+    log_header "Applying Dotfiles with chezmoi"
     
     if [ ! -d "$DOTFILES_DIR" ]; then
         log_error "Dotfiles directory not found at $DOTFILES_DIR"
         return 1
     fi
     
-    if ! command_exists stow; then
-        log_error "stow not found"
+    if ! command_exists chezmoi; then
+        log_error "chezmoi not found"
         return 1
     fi
     
-    cd "$DOTFILES_DIR"
+    local chezmoi_source="$DOTFILES_DIR/macOS/chezmoi"
+    local chezmoi_config="$HOME/.config/chezmoi/chezmoi.toml"
     
-    # Initialize git submodules for vim plugins
-    log_info "Initializing vim plugin submodules..."
-    git submodule update --init --recursive 2>&1 | tee -a "$LOG_FILE"
-    log_success "Vim plugins loaded"
-    
-    if [ -d stow ]; then
-        # Check if already stowed by looking for symlinks
-        if [ -L "$HOME/.config" ] 2>/dev/null || [ -L "$HOME/.zshrc" ] 2>/dev/null; then
-            log_success "Dotfiles already stowed"
-        else
-            log_info "Running stow..."
-            stow --adopt stow
-            log_success "Dotfiles stowed successfully"
-        fi
+    # Ensure chezmoi config exists
+    if [ ! -f "$chezmoi_config" ]; then
+        log_info "Creating chezmoi config..."
+        mkdir -p "$HOME/.config/chezmoi"
+        echo "sourceDir = \"$chezmoi_source\"" > "$chezmoi_config"
+        log_success "chezmoi config created"
     else
-        log_warning "stow directory not found in $DOTFILES_DIR"
+        log_success "chezmoi config already exists"
+    fi
+    
+    # Check if dotfiles are already applied
+    if [ -f "$HOME/.zshrc" ] && chezmoi verify &>/dev/null; then
+        log_success "Dotfiles already applied"
+    else
+        log_info "Applying dotfiles with chezmoi..."
+        chezmoi apply 2>&1 | tee -a "$LOG_FILE"
+        log_success "Dotfiles applied successfully"
     fi
 }
 
@@ -550,27 +552,28 @@ install_vscode_extensions() {
 # OBSIDIAN CONFIGURATION
 # ============================================================================
 
-stow_obsidian() {
-    log_header "Stowing Obsidian Configuration"
+link_obsidian() {
+    log_header "Linking Obsidian Configuration"
     
-    # Shared Obsidian configuration stowing.
-    # Automatically applies the configuration to ALL vault directories inside
+    # Shared Obsidian configuration via symlinks.
+    # Creates symlink from each vault's .obsidian to the shared config.
+    # Automatically applies to ALL vault directories inside
     # $HOME/Documents/obsidian except:
-    #   - hidden directories (names starting with . like .git, .archived_vault)
-    #   - the stow package directory itself (obsidian_stow)
-    # Assumes that only vault directories live in that folder.
+    #   - hidden directories (names starting with . like .git)
+    #   - the shared config directory itself (obsidian_shared)
     
-    local stow_dir="$HOME/Documents/obsidian"
-    local stow_package="obsidian_stow"
+    local obsidian_dir="$HOME/Documents/obsidian"
+    local shared_config="obsidian_shared"
+    local shared_path="$obsidian_dir/$shared_config/.obsidian"
     local vaults=()
     
     # Build vault list dynamically
-    if [ -d "$stow_dir" ]; then
-        for v in "$stow_dir"/*; do
+    if [ -d "$obsidian_dir" ]; then
+        for v in "$obsidian_dir"/*; do
             [ -d "$v" ] || continue
             local base="$(basename "$v")"
-            # Skip hidden dirs and stow package dir
-            if [[ "$base" == .* ]] || [[ "$base" == "$stow_package" ]]; then
+            # Skip hidden dirs and shared config dir
+            if [[ "$base" == .* ]] || [[ "$base" == "$shared_config" ]]; then
                 continue
             fi
             vaults+=("$v")
@@ -578,34 +581,24 @@ stow_obsidian() {
     fi
     
     if [ ${#vaults[@]} -eq 0 ]; then
-        log_warning "No Obsidian vaults found in $stow_dir (non-hidden)."
-    else
-        log_info "Detected ${#vaults[@]} Obsidian vault(s): ${vaults[@]##*/}"
-    fi
-    
-    if ! command_exists stow; then
-        log_error "stow not found, cannot link Obsidian configuration."
-        return 1
-    fi
-    
-    if [ ! -d "$stow_dir/$stow_package" ]; then
-        log_warning "Obsidian stow package not found at $stow_dir/$stow_package. Skipping."
+        log_warning "No Obsidian vaults found in $obsidian_dir (non-hidden)."
         return
     fi
     
-    cd "$stow_dir" || { log_error "Failed to cd into $stow_dir"; return 1; }
+    log_info "Detected ${#vaults[@]} Obsidian vault(s): ${vaults[@]##*/}"
+    
+    if [ ! -d "$shared_path" ]; then
+        log_warning "Shared Obsidian config not found at $shared_path. Skipping."
+        return
+    fi
     
     for vault in "${vaults[@]}"; do
-        if [ ! -d "$vault" ]; then
-            log_warning "Vault directory not found: $vault. Skipping."
-            continue
-        fi
-        
         local target_link="$vault/.obsidian"
+        local relative_path="../$shared_config/.obsidian"
         
         # Check if already correctly symlinked
-        if [ -L "$target_link" ] && [ "$(readlink "$target_link")" = "../$stow_package/.obsidian" ]; then
-            log_success "Obsidian config already stowed for $(basename "$vault")"
+        if [ -L "$target_link" ] && [ "$(readlink "$target_link")" = "$relative_path" ]; then
+            log_success "Obsidian config already linked for $(basename "$vault")"
         else
             # Backup if a real directory/file exists
             if [ -e "$target_link" ] && [ ! -L "$target_link" ]; then
@@ -614,14 +607,14 @@ stow_obsidian() {
                 mv "$target_link" "$backup_path"
             fi
             
-            log_info "Stowing Obsidian config for $(basename "$vault")..."
-            stow -v -t "$vault" "$stow_package" >> "$LOG_FILE" 2>&1
-            log_success "Obsidian config stowed for $(basename "$vault")"
+            # Remove old symlink if pointing elsewhere
+            [ -L "$target_link" ] && rm "$target_link"
+            
+            log_info "Linking Obsidian config for $(basename "$vault")..."
+            ln -s "$relative_path" "$target_link"
+            log_success "Obsidian config linked for $(basename "$vault")"
         fi
     done
-    
-    # Return to original directory if needed, though script context handles this
-    cd - >/dev/null
 }
 
 # ============================================================================
@@ -861,8 +854,8 @@ main() {
     clone_repositories
     
     # Dotfiles
-    stow_dotfiles
-    stow_obsidian
+    apply_dotfiles
+    link_obsidian
     
     # VS Code
     install_vscode_extensions
