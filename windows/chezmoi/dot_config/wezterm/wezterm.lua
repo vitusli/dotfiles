@@ -181,6 +181,6 @@ config.unzoom_on_switch_pane = true
 config.scrollback_lines = 10000
 
 -- Default program (PowerShell on Windows)
-config.default_prog = { 'pwsh.exe' }
+config.default_prog = { 'pwsh.exe', '-NoLogo' }
 
 return config

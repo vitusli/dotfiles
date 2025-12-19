@@ -1,4 +1,3 @@
-# test
 # Enable tab completion for Winget
 try {
     Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
