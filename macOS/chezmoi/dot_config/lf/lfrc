@@ -94,7 +94,7 @@ map / filter
 map <space> :fzf-extended
 
 # Open dotfiles in VS Code with lfrc editor
-map <c-s> & code ~/dotfiles ~/dotfiles/stow/.config/lf/lfrc
+map <c-s> & code ~/dotfiles ~/dotfiles/macOS/chezmoi/dot_config/lf/lfrc
 
 # Toggle executable permission (Shift+X)
 map X :toggle-executable

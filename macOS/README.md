@@ -10,7 +10,7 @@ if the machine is new, download & run manually.
 curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macOS/macme.sh | zsh
 ```
 
-## what it does
+## what it does (serious changes to your system)
 
 the script (`macme.sh`) will:
 
@@ -20,9 +20,42 @@ the script (`macme.sh`) will:
 - setup github authentication & ssh keys
 - clone my github repos
 - apply macos system preferences (keyboard speed, animations, dock settings, etc.)
-- stow dotfiles from this repository for configs
+- apply dotfiles with chezmoi
 
 it's idempotent, so you can run it multiple times safely. it only installs what's missing.
+
+## chezmoi
+
+dotfiles are managed with [chezmoi](https://www.chezmoi.io/). the source directory is `macOS/chezmoi/`.
+
+### daily workflow
+
+after editing files in `chezmoi/`, apply changes:
+
+```bash
+chezmoi apply
+```
+
+edit a managed file (opens source in editor):
+
+```bash
+chezmoi edit ~/.zshrc
+```
+
+or use the `stow` function (fuzzy-select with fzf):
+
+```bash
+stow   # select file, opens source in VS Code, copies 'chezmoi apply' to clipboard
+```
+
+### naming conventions
+
+chezmoi uses prefixes to determine target paths:
+
+- `dot_zshrc` → `~/.zshrc`
+- `dot_config/` → `~/.config/`
+- `literal_Application Support/` → `~/Library/Application Support/` (preserves spaces)
+- `private_` prefix for files with restricted permissions
 
 ## logs
 
@@ -42,22 +75,18 @@ the script clones my private repositories. replace mine with your own in the `RE
 
 during setup, you'll be prompted to authenticate with github via browser. this is needed for cloning private repos and using the github cli.
 
-## stow
-
-the script symlinks configuration files from the `stow/` directory to your home directory using `stow`. underneath is a list of what each config does.
-
 ### note on VS Code custom CSS
 
 the custom CSS extension requires a reload after every VS Code update. if your custom CSS isn't loading, run the **"Reload Custom CSS Extension"** command from the command palette (`⌘⇧P` > type "reload custom css").
 
 ### vim plugins (fzf, fzf.vim & wilder.nvim)
 
-vim plugins are managed as git submodules in `macOS/stow/.vim/pack/plugins/start/`. they're automatically initialized by the `macme.sh` setup script – no manual setup needed.
+vim plugins are managed as git submodules in `macOS/chezmoi/dot_vim/pack/plugins/start/`. they're automatically initialized by the `macme.sh` setup script – no manual setup needed.
 
 to manage plugins, use the plugin manager script:
-- **install**: `~/dotfiles/macOS/stow/.vim/plugin_manager.sh install` (or just `install`)
-- **update**: `~/dotfiles/macOS/stow/.vim/plugin_manager.sh update`
-- **remove**: `~/dotfiles/macOS/stow/.vim/plugin_manager.sh remove <plugin-name>`
+- **install**: `~/dotfiles/macOS/chezmoi/dot_vim/plugin_manager.sh install` (or just `install`)
+- **update**: `~/dotfiles/macOS/chezmoi/dot_vim/plugin_manager.sh update`
+- **remove**: `~/dotfiles/macOS/chezmoi/dot_vim/plugin_manager.sh remove <plugin-name>`
 
 ## dotfiles documentation
 

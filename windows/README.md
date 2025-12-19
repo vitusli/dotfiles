@@ -61,7 +61,7 @@ dotfiles/
 │   ├── ahkv1/                            # AutoHotkey v1 scripts
 │   ├── windowme.ps1                      # Windows setup script
 │   └── README.md
-└── macOS/                                # macOS dotfiles (stow)
+└── macOS/                                # macOS dotfiles (chezmoi)
 ```
 
 
