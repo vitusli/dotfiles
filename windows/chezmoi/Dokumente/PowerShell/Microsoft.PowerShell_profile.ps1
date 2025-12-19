@@ -70,6 +70,20 @@ Set-PSReadLineKeyHandler -Key ' ' -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
 }
 
+Set-PSReadLineKeyHandler -Key 'Enter' -ScriptBlock {
+    $line = $null
+    $cursor = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+    
+    $tokens = $line -split '\s+'
+    $firstToken = $tokens[0]
+    
+    if ($Abbreviations.ContainsKey($firstToken)) {
+        [Microsoft.PowerShell.PSConsoleReadLine]::Replace(0, $firstToken.Length, $Abbreviations[$firstToken])
+    }
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+}
+
 # Scoop completion (installed via scoop, per Moeologist README)
 try {
     if (Get-Command scoop -ErrorAction SilentlyContinue) {
