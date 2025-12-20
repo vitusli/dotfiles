@@ -22,61 +22,26 @@ dotfiles/
 ### macOS
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macOS/macme.sh | zsh
+chezmoi init vitusli/dotfiles --source ~/dotfiles/macOS/chezmoi --apply
 ```
-
 ### Windows
 
 ```powershell
-irm https://raw.githubusercontent.com/vitusli/dotfiles/main/windows/windowme.ps1 | iex
+chezmoi init vitusli/dotfiles --source $env:USERPROFILE\dotfiles\windows\chezmoi --apply
 ```
+
+
+## Updating on Existing Machines
+
+After initial setup, update your dotfiles from the remote repository:
+
+```bash
+chezmoi update -v
+```
+
+This pulls the latest changes from GitHub and applies them to your system (combines `git pull` + `chezmoi apply`).
 
 ## Details
 
 - [macOS README](macOS/README.md) - chezmoi, Homebrew, zsh
 - [Windows README](windows/README.md) - chezmoi, Scoop, PowerShell
-
-### ChezMoi SourceDir (macOS)
-
-If `chezmoi apply` does not pick up this repository automatically, set the source directory once and apply:
-
-```bash
-chezmoi init --source "$HOME/dotfiles/macOS/chezmoi"
-chezmoi apply
-```
-
-Alternatively, configure a default source for future runs (TOML format):
-
-```bash
-mkdir -p "$HOME/.config/chezmoi"
-cat > "$HOME/.config/chezmoi/chezmoi.toml" << 'EOF'
-sourceDir = "/Users/$(whoami)/dotfiles/macOS/chezmoi"
-
-[edit]
-command = "code"
-args = ["--wait"]
-EOF
-```
-
-### ChezMoi SourceDir (Windows)
-
-If `chezmoi apply` does not see this repo yet, initialize with the local source and apply:
-
-```powershell
-chezmoi init --source "$env:USERPROFILE\dotfiles\windows\chezmoi"
-chezmoi apply
-```
-
-Alternatively, configure a default source for future runs (TOML format):
-
-```powershell
-$cfgDir = "$env:APPDATA\chezmoi"
-New-Item -ItemType Directory -Force $cfgDir | Out-Null
-@"
-sourceDir = "$env:USERPROFILE\dotfiles\windows\chezmoi"
-
-[edit]
-command = "code"
-args = ["--wait"]
-"@ | Set-Content "$cfgDir\chezmoi.toml"
-```
