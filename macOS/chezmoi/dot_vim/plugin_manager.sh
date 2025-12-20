@@ -9,6 +9,21 @@ PLUGINS_DIR="${0:h}/pack/plugins/start"
 
 cd "$DOTFILES_ROOT"
 
+# Apply changes to the target system via chezmoi
+apply_chezmoi() {
+  if command -v chezmoi >/dev/null 2>&1; then
+    echo "Applying dotfiles with chezmoi..."
+    if chezmoi -S "$DOTFILES_ROOT/chezmoi" apply; then
+      echo "✓ chezmoi apply completed"
+    else
+      echo "✗ chezmoi apply failed"
+      exit 1
+    fi
+  else
+    echo "chezmoi not installed; skipping auto-apply"
+  fi
+}
+
 case "${1:-install}" in
   install)
     echo "Installing vim plugins as submodules..."
@@ -21,12 +36,14 @@ case "${1:-install}" in
     
     git submodule update --init --recursive
     echo "✓ All plugins installed"
+    apply_chezmoi
     ;;
     
   update)
     echo "Updating vim plugins..."
     git submodule update --remote --merge
     echo "✓ All plugins updated"
+    apply_chezmoi
     ;;
     
   remove)
@@ -39,6 +56,7 @@ case "${1:-install}" in
     git rm -f "$PLUGINS_DIR/$2"
     rm -rf ".git/modules/macOS/chezmoi/dot_vim/pack/plugins/start/$2"
     echo "✓ Plugin $2 removed"
+    apply_chezmoi
     ;;
     
   *)
