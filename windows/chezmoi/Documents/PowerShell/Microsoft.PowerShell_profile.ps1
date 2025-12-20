@@ -9,6 +9,13 @@ try {
     Write-Verbose "Winget completion registration failed: $($_.Exception.Message)"
 }
 
+# Enable tab completion for chezmoi
+try {
+    Invoke-Expression (& chezmoi completion powershell)
+} catch {
+    Write-Verbose "Chezmoi completion registration failed: $($_.Exception.Message)"
+}
+
 # Add scoop to PATH
 $env:Path = "C:\Users\Vitus\scoop\shims;$env:Path"
 

@@ -14,6 +14,11 @@ if command -v nova &>/dev/null; then
   source <(nova completion zsh)
 fi
 
+# Load chezmoi completion
+if command -v chezmoi &>/dev/null; then
+  source <(chezmoi completion zsh)
+fi
+
 # Load zsh plugins
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
