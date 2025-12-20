@@ -6,7 +6,7 @@
 PROMPT='%1~ %% '
 
 # Add local bin to PATH
-export PATH="$PATH:/Users/vituspacholleck/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 # ============================================================================
 # EXTERNAL TOOLS
