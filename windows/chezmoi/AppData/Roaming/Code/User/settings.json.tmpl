@@ -19,37 +19,6 @@
     // Git
     "git.openRepositoryInParentFolders": "always",
 
-    // GitHub Copilot
-    "github.copilot.enable": {
-        "*": true,
-        "plaintext": false,
-        "markdown": true,
-        "scminput": false
-    },
-
-    // Multi Command
-    "multiCommand.commands": [
-        {
-            "command": "runSlash",
-            "sequence": [
-                "workbench.action.terminal.focus",
-                {
-                    "command": "workbench.action.terminal.sendSequence",
-                    "args": { "text": "/\u000D" }
-                }
-            ]
-        }
-    ],
-
-    // Neovim
-    "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
-    "vscode-neovim.neovimInitVimPaths.darwin": "/Users/vituspacholleck/dotfiles/macOS/chezmoi/dot_config/nvim/init.vim",
-    "vscode-neovim.useCtrlKeysForNormalMode": false,
-    "vscode-neovim.useCtrlKeysForInsertMode": false,
-
-    // Python
-    "python.defaultInterpreterPath": "/opt/homebrew/bin/python3",
-
     // Security
     "security.workspace.trust.untrustedFiles": "open",
 
@@ -59,11 +28,27 @@
     "settingsSync.ignoredSettings": [],
 
     // Terminal
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.commandsToSkipShell": [
+        "workbench.action.terminal.kill",
+        "workbench.action.terminal.killActiveTab"
+    ],
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "path": "pwsh.exe",
+            "icon": "terminal-powershell",
+            "args": []
+        }
+    },
     "terminal.integrated.suggest.enabled": false,
+
+    // Vim
+    "vim.enable": true,
+    "vim.useSystemClipboard": true,
 
     // VS Code Custom CSS
     "vscode_custom_css.imports": [
-        "file:///Users/vituspacholleck/Library/Application Support/Code/User/custom-vscode.css"
+        "file:///{{ .chezmoi.homeDir }}/dotfiles/macOS/chezmoi/Library/literal_Application Support/Code/User/custom-vscode.css"
     ],
     "vscode_custom_css.policy": true,
 
