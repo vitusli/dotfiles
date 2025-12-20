@@ -1,4 +1,4 @@
-sourceDir = "{{ if eq .chezmoi.os "windows" }}C:/Users/Vitus/dotfiles/windows/chezmoi{{ else }}/Users/vituspacholleck/dotfiles/macOS/chezmoi{{ end }}"
+sourceDir = "/Users/vituspacholleck/dotfiles/macOS/chezmoi"
 
 [edit]
 command = "code"
