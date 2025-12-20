@@ -225,8 +225,16 @@ stow() {
   fi
   
   local source_path=$(chezmoi source-path ~/"$file")
-  code "$source_path"
-  echo "chezmoi apply" | pbcopy
-  echo "Opened: $source_path"
-  echo "'chezmoi apply' copied to clipboard"
+  # Open in VS Code and wait until the file/editor window is closed
+  code --wait "$source_path"
+  
+  # Automatically apply changes after editing
+  if chezmoi apply; then
+    echo "Applied chezmoi changes"
+  else
+    echo "chezmoi apply failed"
+    return 1
+  fi
+  
+  echo "Opened and applied: $source_path"
 }

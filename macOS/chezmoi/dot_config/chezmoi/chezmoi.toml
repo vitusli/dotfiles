@@ -1,0 +1,5 @@
+sourceDir = "{{ if eq .chezmoi.os "windows" }}C:/Users/Vitus/dotfiles/windows/chezmoi{{ else }}/Users/vituspacholleck/dotfiles/macOS/chezmoi{{ end }}"
+
+[edit]
+command = "code"
+args = ["--wait"]

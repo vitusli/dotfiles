@@ -45,11 +45,17 @@ chezmoi init --source "$HOME/dotfiles/macOS/chezmoi"
 chezmoi apply
 ```
 
-Alternatively, configure a default source for future runs:
+Alternatively, configure a default source for future runs (TOML format):
 
 ```bash
 mkdir -p "$HOME/.config/chezmoi"
-printf 'sourceDir: %s\n' "$HOME/dotfiles/macOS/chezmoi" > "$HOME/.config/chezmoi/chezmoi.yaml"
+cat > "$HOME/.config/chezmoi/chezmoi.toml" << 'EOF'
+sourceDir = "/Users/$(whoami)/dotfiles/macOS/chezmoi"
+
+[edit]
+command = "code"
+args = ["--wait"]
+EOF
 ```
 
 ### ChezMoi SourceDir (Windows)
@@ -57,14 +63,20 @@ printf 'sourceDir: %s\n' "$HOME/dotfiles/macOS/chezmoi" > "$HOME/.config/chezmoi
 If `chezmoi apply` does not see this repo yet, initialize with the local source and apply:
 
 ```powershell
-chezmoi init --source "$env:USERPROFILE\\dotfiles\\windows\\chezmoi"
+chezmoi init --source "$env:USERPROFILE\dotfiles\windows\chezmoi"
 chezmoi apply
 ```
 
-Optionally set a persistent default source:
+Alternatively, configure a default source for future runs (TOML format):
 
 ```powershell
-$cfg = "$env:APPDATA\\chezmoi\\chezmoi.yaml"
-New-Item -ItemType Directory -Force (Split-Path $cfg) | Out-Null
-"sourceDir: $env:USERPROFILE\\dotfiles\\windows\\chezmoi" | Set-Content $cfg
+$cfgDir = "$env:APPDATA\chezmoi"
+New-Item -ItemType Directory -Force $cfgDir | Out-Null
+@"
+sourceDir = "$env:USERPROFILE\dotfiles\windows\chezmoi"
+
+[edit]
+command = "code"
+args = ["--wait"]
+"@ | Set-Content "$cfgDir\chezmoi.toml"
 ```
