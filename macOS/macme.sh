@@ -480,41 +480,19 @@ clone_repositories() {
 apply_dotfiles() {
     log_header "Applying Dotfiles with chezmoi"
     
-    if [ ! -d "$DOTFILES_DIR" ]; then
-        log_error "Dotfiles directory not found at $DOTFILES_DIR"
-        return 1
-    fi
-    
     if ! command_exists chezmoi; then
         log_error "chezmoi not found"
         return 1
     fi
     
     local chezmoi_source="$DOTFILES_DIR/macOS/chezmoi"
-    local chezmoi_config="$HOME/.config/chezmoi/chezmoi.toml"
-    
-    # Ensure chezmoi config exists
-    if [ ! -f "$chezmoi_config" ]; then
-        log_info "Creating chezmoi config..."
-        mkdir -p "$HOME/.config/chezmoi"
-        cat > "$chezmoi_config" << EOF
-sourceDir = "$chezmoi_source"
-
-[edit]
-command = "code"
-args = ["--wait"]
-EOF
-        log_success "chezmoi config created"
-    else
-        log_success "chezmoi config already exists"
-    fi
     
     # Check if dotfiles are already applied
     if [ -f "$HOME/.zshrc" ] && chezmoi verify &>/dev/null; then
         log_success "Dotfiles already applied"
     else
         log_info "Applying dotfiles with chezmoi..."
-        chezmoi apply 2>&1 | tee -a "$LOG_FILE"
+        chezmoi init --source "$chezmoi_source" --apply 2>&1 | tee -a "$LOG_FILE"
         log_success "Dotfiles applied successfully"
     fi
 }

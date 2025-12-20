@@ -473,41 +473,16 @@ function Clone-Repositories {
 function Apply-Dotfiles {
     Log-Header "Applying Dotfiles with chezmoi"
     
-    if (-not (Test-Path $DOTFILES_DIR)) {
-        Log-Error "Dotfiles directory not found at $DOTFILES_DIR"
-        return $false
-    }
-    
     if (-not (Command-Exists chezmoi)) {
         Log-Error "chezmoi not found"
         return $false
     }
     
     $chezmoiSource = "$DOTFILES_DIR\windows\chezmoi"
-    $chezmoiConfigDir = "$env:APPDATA\chezmoi"
-    $chezmoiConfig = "$chezmoiConfigDir\chezmoi.toml"
     
-    # Ensure chezmoi config exists
-    if (-not (Test-Path $chezmoiConfig)) {
-        Log-Info "Creating chezmoi config..."
-        New-Item -ItemType Directory -Path $chezmoiConfigDir -Force | Out-Null
-        
-        $configContent = @"
-sourceDir = "$chezmoiSource"
-
-[edit]
-command = "code"
-args = ["--wait"]
-"@
-        Set-Content -Path $chezmoiConfig -Value $configContent -Force
-        Log-Success "chezmoi config created"
-    } else {
-        Log-Success "chezmoi config already exists"
-    }
-    
-    # Apply dotfiles
+    # Apply dotfiles with chezmoi init
     Log-Info "Applying dotfiles with chezmoi..."
-    & chezmoi apply
+    & chezmoi init --source "$chezmoiSource" --apply
     Log-Success "Dotfiles applied successfully"
     
     return $true
