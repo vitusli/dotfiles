@@ -497,7 +497,13 @@ apply_dotfiles() {
     if [ ! -f "$chezmoi_config" ]; then
         log_info "Creating chezmoi config..."
         mkdir -p "$HOME/.config/chezmoi"
-        echo "sourceDir = \"$chezmoi_source\"" > "$chezmoi_config"
+        cat > "$chezmoi_config" << EOF
+sourceDir = "$chezmoi_source"
+
+[edit]
+command = "code"
+args = ["--wait"]
+EOF
         log_success "chezmoi config created"
     else
         log_success "chezmoi config already exists"

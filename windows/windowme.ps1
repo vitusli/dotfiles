@@ -18,7 +18,7 @@ $LOG_FILE = "$LOG_DIR\setup-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
 # ============================================================================
 
 $REPOS = @(
-    @{ url = "git@github.com:vitusli/wotfiles.git"; path = "$HOME" }
+    @{ url = "git@github.com:vitusli/dotfiles.git"; path = "$HOME" }
     @{ url = "git@github.com:vitusli/codespace.git"; path = "$HOME" }
     @{ url = "git@github.com:vitusli/vtools_dev.git"; path = "$HOME" }
     @{ url = "git@github.com:vitusli/obsidian"; path = "$HOME\Dokumente" }
@@ -95,16 +95,17 @@ $WINGET_PACKAGES = @(
 
 $VSCODE_EXTENSIONS = @(
     "vscodevim.vim"
-    "eamodio.gitlens"
-    "esbenp.prettier-vscode"
-    "GitHub.copilot"
-    "GitHub.copilot-chat"
+    "be5invis.vscode-custom-css"
+    "extr0py.vscode-relative-line-numbers"
+    "github.copilot"
+    "github.copilot-chat"
+    "james-yu.latex-workshop"
+    "manitejapratha.cursor-midnight-theme"
+    "michelemelluso.gitignore"
+    "ms-python.debugpy"
     "ms-python.python"
     "ms-python.vscode-pylance"
-    "ms-vscode.powershell"
-    "ms-vscode-remote.remote-ssh"
-    "ms-vscode-remote.remote-wsl"
-    "rust-lang.rust-analyzer"
+    "ms-python.vscode-python-envs"
 )
 
 # ============================================================================
@@ -466,6 +467,53 @@ function Clone-Repositories {
 }
 
 # ============================================================================
+# DOTFILES
+# ============================================================================
+
+function Apply-Dotfiles {
+    Log-Header "Applying Dotfiles with chezmoi"
+    
+    if (-not (Test-Path $DOTFILES_DIR)) {
+        Log-Error "Dotfiles directory not found at $DOTFILES_DIR"
+        return $false
+    }
+    
+    if (-not (Command-Exists chezmoi)) {
+        Log-Error "chezmoi not found"
+        return $false
+    }
+    
+    $chezmoiSource = "$DOTFILES_DIR\windows\chezmoi"
+    $chezmoiConfigDir = "$env:APPDATA\chezmoi"
+    $chezmoiConfig = "$chezmoiConfigDir\chezmoi.toml"
+    
+    # Ensure chezmoi config exists
+    if (-not (Test-Path $chezmoiConfig)) {
+        Log-Info "Creating chezmoi config..."
+        New-Item -ItemType Directory -Path $chezmoiConfigDir -Force | Out-Null
+        
+        $configContent = @"
+sourceDir = "$chezmoiSource"
+
+[edit]
+command = "code"
+args = ["--wait"]
+"@
+        Set-Content -Path $chezmoiConfig -Value $configContent -Force
+        Log-Success "chezmoi config created"
+    } else {
+        Log-Success "chezmoi config already exists"
+    }
+    
+    # Apply dotfiles
+    Log-Info "Applying dotfiles with chezmoi..."
+    & chezmoi apply
+    Log-Success "Dotfiles applied successfully"
+    
+    return $true
+}
+
+# ============================================================================
 # REGISTRY TWEAKS
 # ============================================================================
 
@@ -691,6 +739,9 @@ function Main {
     Setup-GitHubAuth
     Setup-SSHKey
     Clone-Repositories
+    
+    # Dotfiles
+    Apply-Dotfiles
     
     # Cleanup & tweaks
     Remove-Bloatware
