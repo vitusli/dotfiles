@@ -35,7 +35,6 @@ DOTFILES_DIR="$HOME/dotfiles"
 LOG_DIR="$DOTFILES_DIR/logs"
 LOG_FILE="$LOG_DIR/setup-$(date +%Y%m%d-%H%M%S).log"
 REPOS=(
-    "git@github.com:vitusli/dotfiles.git|$HOME"
     "git@github.com:vitusli/codespace.git|$HOME"
     "git@github.com:vitusli/vtools_dev.git|$HOME"
     "git@github.com:vitusli/obsidian.git|$HOME/Documents"
@@ -485,14 +484,12 @@ apply_dotfiles() {
         return 1
     fi
     
-    local chezmoi_source="$DOTFILES_DIR/macOS/chezmoi"
-    
     # Check if dotfiles are already applied
     if [ -f "$HOME/.zshrc" ] && chezmoi verify &>/dev/null; then
         log_success "Dotfiles already applied"
     else
-        log_info "Applying dotfiles with chezmoi..."
-        chezmoi init --source "$chezmoi_source" --apply 2>&1 | tee -a "$LOG_FILE"
+        log_info "Initializing and applying dotfiles..."
+        chezmoi init vitusli && chezmoi apply --source ~/.local/share/chezmoi/macOS/chezmoi 2>&1 | tee -a "$LOG_FILE"
         log_success "Dotfiles applied successfully"
     fi
 }

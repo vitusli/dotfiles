@@ -18,7 +18,6 @@ $LOG_FILE = "$LOG_DIR\setup-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
 # ============================================================================
 
 $REPOS = @(
-    @{ url = "git@github.com:vitusli/dotfiles.git"; path = "$HOME" }
     @{ url = "git@github.com:vitusli/codespace.git"; path = "$HOME" }
     @{ url = "git@github.com:vitusli/vtools_dev.git"; path = "$HOME" }
     @{ url = "git@github.com:vitusli/obsidian"; path = "$HOME\Dokumente" }
@@ -478,12 +477,16 @@ function Apply-Dotfiles {
         return $false
     }
     
-    $chezmoiSource = "$DOTFILES_DIR\windows\chezmoi"
-    
-    # Apply dotfiles with chezmoi init
-    Log-Info "Applying dotfiles with chezmoi..."
-    & chezmoi init --source "$chezmoiSource" --apply
-    Log-Success "Dotfiles applied successfully"
+    # Apply dotfiles with chezmoi init and apply
+    Log-Info "Initializing and applying dotfiles..."
+    & chezmoi init vitusli
+    if ($LASTEXITCODE -eq 0) {
+        & chezmoi apply --source "$env:USERPROFILE\.local\share\chezmoi\windows\chezmoi"
+        Log-Success "Dotfiles applied successfully"
+    } else {
+        Log-Error "Failed to initialize chezmoi"
+        return $false
+    }
     
     return $true
 }

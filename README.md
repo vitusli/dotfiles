@@ -22,12 +22,13 @@ dotfiles/
 ### macOS
 
 ```bash
-chezmoi init vitusli/dotfiles --source ~/dotfiles/macOS/chezmoi --apply
+chezmoi init vitusli && chezmoi apply --source ~/.local/share/chezmoi/macOS/chezmoi
 ```
+
 ### Windows
 
 ```powershell
-chezmoi init vitusli/dotfiles --source $env:USERPROFILE\dotfiles\windows\chezmoi --apply
+chezmoi init vitusli; chezmoi apply --source $env:USERPROFILE\.local\share\chezmoi\windows\chezmoi
 ```
 
 
