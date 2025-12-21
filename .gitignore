@@ -4,7 +4,6 @@
 ._*
 .Spotlight-V100
 .Trashes
-ehthumbs.db
-Thumbs.db
-macOS/chezmoi/dot_config/karabiner/automatic_backups
-logs
+
+# Karabiner backups
+dot_config/karabiner/automatic_backups
