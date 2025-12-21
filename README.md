@@ -6,31 +6,24 @@ Cross-platform dotfiles for macOS and Windows.
 
 ```
 dotfiles/
-├── macOS/           # macOS dotfiles (chezmoi)
-│   ├── chezmoi/     # config files
-│   ├── macme.sh     # setup script
-│   └── README.md
-├── windows/         # Windows dotfiles (chezmoi)
-│   ├── chezmoi/     # config files
-│   ├── windowme.ps1 # setup script
-│   └── README.md
-└── logs/            # setup logs
+├── main branch      # This README
+├── macos branch     # macOS dotfiles (chezmoi source)
+└── windows branch   # Windows dotfiles (chezmoi source)
 ```
 
-## Quick Start (read the scripts - this will change your system)
+## Quick Start
 
 ### macOS
 
 ```bash
-chezmoi init vitusli && chezmoi apply --source ~/.local/share/chezmoi/macOS/chezmoi
+chezmoi init --branch macos vitusli --apply
 ```
 
 ### Windows
 
 ```powershell
-chezmoi init vitusli; chezmoi apply --source $env:USERPROFILE\.local\share\chezmoi\windows\chezmoi
+chezmoi init --branch windows vitusli --apply
 ```
-
 
 ## Updating on Existing Machines
 
@@ -41,8 +34,3 @@ chezmoi update -v
 ```
 
 This pulls the latest changes from GitHub and applies them to your system (combines `git pull` + `chezmoi apply`).
-
-## Details
-
-- [macOS README](macOS/README.md) - chezmoi, Homebrew, zsh
-- [Windows README](windows/README.md) - chezmoi, Scoop, PowerShell

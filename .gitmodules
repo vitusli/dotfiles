@@ -1,9 +1,0 @@
-[submodule "macOS/chezmoi/dot_vim/pack/plugins/start/wilder.nvim"]
-	path = macOS/chezmoi/dot_vim/pack/plugins/start/wilder.nvim
-	url = https://github.com/gelguy/wilder.nvim.git
-[submodule "macOS/chezmoi/dot_vim/pack/plugins/start/fzf"]
-	path = macOS/chezmoi/dot_vim/pack/plugins/start/fzf
-	url = https://github.com/junegunn/fzf.git
-[submodule "macOS/chezmoi/dot_vim/pack/plugins/start/fzf.vim"]
-	path = macOS/chezmoi/dot_vim/pack/plugins/start/fzf.vim
-	url = https://github.com/junegunn/fzf.vim.git
