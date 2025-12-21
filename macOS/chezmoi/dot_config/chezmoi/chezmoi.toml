@@ -1,5 +1,0 @@
-sourceDir = "/Users/vituspacholleck/dotfiles/macOS/chezmoi"
-
-[edit]
-command = "code"
-args = ["--wait"]
