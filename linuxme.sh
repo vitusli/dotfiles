@@ -349,6 +349,19 @@ setup_wsl_extras() {
         
         # Ensure ~/.local/bin exists
         mkdir -p "$HOME/.local/bin"
+# Ensure WSL interop is enabled (allows running .exe from WSL)
+        if [ ! -f /etc/wsl.conf ] || ! grep -q "enabled.*=.*true" /etc/wsl.conf 2>/dev/null; then
+            log_info "Enabling WSL interop..."
+            sudo tee /etc/wsl.conf > /dev/null << 'EOF'
+[interop]
+enabled = true
+appendWindowsPath = true
+EOF
+            log_success "WSL interop configured (restart WSL for changes: wsl --shutdown)"
+        else
+            log_success "WSL interop already enabled"
+        fi
+        
         
         # VS Code should work out of the box in WSL
         if command_exists code; then
