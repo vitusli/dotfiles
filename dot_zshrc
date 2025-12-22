@@ -12,15 +12,21 @@ export PATH="$PATH:$HOME/.local/bin"
 # EXTERNAL TOOLS
 # ============================================================================
 
-# z - directory jumping
-source /opt/homebrew/etc/profile.d/z.sh
+# z - directory jumping (apt: zoxide or z.lua)
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh)"
+elif [ -f /usr/share/z/z.sh ]; then
+  source /usr/share/z/z.sh
+fi
 
 # fzf - fuzzy finder
-source <(fzf --zsh)
+if command -v fzf &>/dev/null; then
+  source <(fzf --zsh 2>/dev/null) || eval "$(fzf --zsh)"
+fi
 
-# zsh-abbr - add to FPATH before compinit
-if type brew &>/dev/null; then
-  FPATH="$(brew --prefix)/share/zsh-abbr:${FPATH}"
+# zsh-abbr - abbreviations
+if [ -f /usr/share/zsh-abbr/zsh-abbr.zsh ]; then
+  FPATH="/usr/share/zsh-abbr:${FPATH}"
 fi
 
 # ============================================================================
@@ -33,4 +39,6 @@ for config_file in ~/.zsh/*.zsh; do
 done
 
 # zsh-abbr - load after compinit (which is in completion.zsh)
-source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
+if [ -f /usr/share/zsh-abbr/zsh-abbr.zsh ]; then
+  source /usr/share/zsh-abbr/zsh-abbr.zsh
+fi

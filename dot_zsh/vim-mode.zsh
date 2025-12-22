@@ -25,13 +25,24 @@ zle -N zle-keymap-select
 zle -N zle-line-init
 
 # ============================================================================
-# VIM MODE CLIPBOARD INTEGRATION
+# VIM MODE CLIPBOARD INTEGRATION (WSL)
 # ============================================================================
 
-# Copy vim yank operations to macOS clipboard
-# Wraps widgets AFTER plugin loading to call builtin versions with leading dot
+# Copy vim yank operations to Windows/WSL clipboard
+# Uses clip.exe which is available in WSL
 _copy_cutbuffer_to_clipboard() {
-  [[ -n $CUTBUFFER ]] && printf '%s' "$CUTBUFFER" | pbcopy
+  if [[ -n $CUTBUFFER ]]; then
+    if command -v clip.exe &>/dev/null; then
+      # WSL: use Windows clip.exe
+      printf '%s' "$CUTBUFFER" | clip.exe
+    elif command -v xclip &>/dev/null; then
+      # Native Linux with X11
+      printf '%s' "$CUTBUFFER" | xclip -selection clipboard
+    elif command -v xsel &>/dev/null; then
+      # Alternative X11 clipboard
+      printf '%s' "$CUTBUFFER" | xsel --clipboard --input
+    fi
+  fi
 }
 
 vi_yank_wrapper() { zle .vi-yank; _copy_cutbuffer_to_clipboard }
