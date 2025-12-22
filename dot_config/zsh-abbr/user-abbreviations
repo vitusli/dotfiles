@@ -8,3 +8,5 @@ abbr "l"="lazygit"
 abbr "p"="uv run python"
 abbr "rl"="source ~/.zshrc"
 abbr "v"="source .venv/bin/activate"
+abbr '..'='cd ..'
+abbr '...'='cd ../..'
