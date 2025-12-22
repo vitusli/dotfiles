@@ -1,0 +1,32 @@
+# ============================================================================
+# BASH CONFIG (Minimal - auto-starts zsh if available)
+# ============================================================================
+
+# PATH setup
+export PATH="$HOME/.local/bin:$PATH"
+
+# Vim mode for bash
+set -o vi
+
+# Better history
+HISTSIZE=10000
+HISTFILESIZE=20000
+HISTCONTROL=ignoreboth:erasedups
+shopt -s histappend
+
+# Vim-style cursor shape (block in normal, line in insert)
+bind 'set show-mode-in-prompt on'
+bind 'set vi-ins-mode-string \1\e[6 q\2'
+bind 'set vi-cmd-mode-string \1\e[2 q\2'
+
+# Basic aliases
+alias ll='ls -la'
+alias la='ls -A'
+alias l='ls -CF'
+alias ..='cd ..'
+alias ...='cd ../..'
+
+# Auto-start zsh if interactive and zsh exists
+if [[ $- == *i* ]] && command -v zsh &>/dev/null; then
+    exec zsh
+fi
