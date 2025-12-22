@@ -489,7 +489,7 @@ apply_dotfiles() {
         log_success "Dotfiles already applied"
     else
         log_info "Initializing and applying dotfiles..."
-        chezmoi init --branch macos vitusli --apply 2>&1 | tee -a "$LOG_FILE"
+        chezmoi init --branch macos --apply git@github.com:vitusli/dotfiles.git 2>&1 | tee -a "$LOG_FILE"
         log_success "Dotfiles applied successfully"
     fi
 }

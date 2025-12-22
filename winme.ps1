@@ -479,7 +479,7 @@ function Apply-Dotfiles {
     
     # Apply dotfiles with chezmoi init and apply
     Log-Info "Initializing and applying dotfiles..."
-    & chezmoi init --branch windows vitusli --apply
+    & chezmoi init --branch windows --apply git@github.com:vitusli/dotfiles.git
     if ($LASTEXITCODE -eq 0) {
         Log-Success "Dotfiles applied successfully"
     } else {

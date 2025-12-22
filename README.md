@@ -37,19 +37,19 @@ Or apply your dotfiles manually:
 
 ### macOS
 ```bash
-chezmoi init --branch macos vitusli --apply
+chezmoi init --branch macos --apply git@github.com:vitusli/dotfiles.git
 ```
 
 ### Windows
 
 ```powershell
-chezmoi init --branch windows vitusli --apply
+chezmoi init --branch windows --apply git@github.com:vitusli/dotfiles.git
 ```
 
 ### Linux / WSL
 
 ```zsh
-chezmoi init --branch linux vitusli --apply
+chezmoi init --branch linux --apply git@github.com:vitusli/dotfiles.git
 ```
 
 
