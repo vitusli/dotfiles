@@ -1,10 +1,12 @@
+# Shell scripts and zsh files need LF
 *.sh text eol=lf
-linu.sh text eol=lf
-maca.sh text eol=lf
+*.zsh text eol=lf
 
-# All dotfiles (chezmoi dot_ prefix) need LF
+# All dotfiles (chezmoi dot_ prefix) need LF - including subdirectories
 dot_* text eol=lf
+dot_*/** text eol=lf
+dot_zsh/** text eol=lf
+dot_config/** text eol=lf
 
 # Windows scripts get CRLF
 *.ps1 text eol=crlf
-wina.ps1 text eol=crlf
