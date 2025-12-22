@@ -1,4 +1,5 @@
-SendMode Input
+#Requires AutoHotkey v2.0
+SendMode("Input")
 
 ;;LWin::LCtrl
 ;;LCtrl::LWin
@@ -7,102 +8,83 @@ SendMode Input
 
 ;; ======= Caps Lock Remapping =======
 ;; deactivate capslock completely
-SetCapsLockState, AlwaysOff
-CapsLock::return  ; Block CapsLock key completely
+SetCapsLockState("AlwaysOff")
+CapsLock::Return  ; Block CapsLock key completely
 
 ;; ======= Special Character Shortcuts =======
-;öüäß keys, Variables to track key presses
+; öüäß keys - Variables to track key presses
 global AltU_Pressed := false
 global AltA_Pressed := false
 global AltO_Pressed := false
 global AltS_Pressed := false
 
-!u::  ; Alt + u
-    AltU_Pressed := true
-    SetTimer, ResetAltU, -1000  ; Set a timer to reset the variable after 1 second
-    Send, {ASC 0252}  ; Send the 'ü' character immediately
-    return
+!u:: {  ; Alt + u
+    global AltU_Pressed := true
+    SetTimer(ResetAltU, -1000)  ; Set a timer to reset the variable after 1 second
+    Send("ü")  ; Send the 'ü' character
+}
 
-!a::  ; Alt + a
-    AltA_Pressed := true
-    SetTimer, ResetAltA, -1000  ; Set a timer to reset the variable after 1 second
-    Send, {ASC 0228}  ; Send the 'ä' character immediately
-    return
+!a:: {  ; Alt + a
+    global AltA_Pressed := true
+    SetTimer(ResetAltA, -1000)
+    Send("ä")
+}
 
-!o::  ; Alt + o
-    AltO_Pressed := true
-    SetTimer, ResetAltO, -1000  ; Set a timer to reset the variable after 1 second
-    Send, {ASC 0246}  ; Send the 'ö' character immediately
-    return
+!o:: {  ; Alt + o
+    global AltO_Pressed := true
+    SetTimer(ResetAltO, -1000)
+    Send("ö")
+}
 
-!s::  ; Alt + s
-    AltS_Pressed := true
-    SetTimer, ResetAltS, -1000  ; Set a timer to reset the variable after 1 second
-    Send, {U+00DF}  ; Send the 'ß' character using its Unicode value
-    return
+!s:: {  ; Alt + s
+    global AltS_Pressed := true
+    SetTimer(ResetAltS, -1000)
+    Send("ß")
+}
 
 ; Alt + Shift for uppercase ÜÖÄẞ
-+!u::  ; Alt + Shift + u
-    Send, {ASC 0220}  ; Send the 'Ü' character
-    return
-
-+!a::  ; Alt + Shift + a
-    Send, {ASC 0196}  ; Send the 'Ä' character
-    return
-
-+!o::  ; Alt + Shift + o
-    Send, {ASC 0214}  ; Send the 'Ö' character
-    return
-
-+!s::  ; Alt + Shift + s
-    Send, {U+1E9E}  ; Send the 'ẞ' character
-    return
++!u::Send("Ü")  ; Alt + Shift + u
++!a::Send("Ä")  ; Alt + Shift + a
++!o::Send("Ö")  ; Alt + Shift + o
++!s::Send("ẞ")  ; Alt + Shift + s
 
 ;; ======= Text Editing Shortcuts =======
 ; Alt + Backspace: Lösche ein Wort
-!Backspace::
-    Send, ^+{Left}  ; Markiere das vorherige Wort
-    Send, {Del}     ; Lösche die Markierung
-    return
+!Backspace:: {
+    Send("^+{Left}")  ; Markiere das vorherige Wort
+    Send("{Del}")     ; Lösche die Markierung
+}
 
 ; Ctrl + Backspace: Lösche die gesamte Zeile
-^Backspace::
-    Send, {Home}    ; Bewege den Cursor an den Anfang der Zeile
-    Send, +{Down}   ; Markiere die gesamte Zeile (inklusive Zeilenumbruch)
-    Send, {Del}     ; Lösche die Markierung
-    return
+^Backspace:: {
+    Send("{Home}")    ; Bewege den Cursor an den Anfang der Zeile
+    Send("+{Down}")   ; Markiere die gesamte Zeile (inklusive Zeilenumbruch)
+    Send("{Del}")     ; Lösche die Markierung
+}
 
 ; Alt + h: Ctrl + Left (ein Wort nach links)
-!h::
-    Send, ^{Left}
-    return
+!h::Send("^{Left}")
 
 ; Alt + l: Ctrl + Right (ein Wort nach rechts)
-!l::
-    Send, ^{Right}
-    return
+!l::Send("^{Right}")
 
 ; Alt + Shift + h: Ctrl + Shift + Left (markiere ein Wort nach links)
-+!h::
-    Send, ^+{Left}
-    return
++!h::Send("^+{Left}")
 
 ; Alt + Shift + l: Ctrl + Shift + Right (markiere ein Wort nach rechts)
-+!l::
-    Send, ^+{Right}
-    return
++!l::Send("^+{Right}")
 
-;; ======= Reset Timers =======
-ResetAltU:
-    AltU_Pressed := false
-    return
-ResetAltA:
-    AltA_Pressed := false
-    return
-ResetAltO:
-    AltO_Pressed := false
-    return
-ResetAltS:
-    AltS_Pressed := false
-    return
+;; ======= Reset Timer Functions =======
+ResetAltU() {
+    global AltU_Pressed := false
+}
+ResetAltA() {
+    global AltA_Pressed := false
+}
+ResetAltO() {
+    global AltO_Pressed := false
+}
+ResetAltS() {
+    global AltS_Pressed := false
+}
 
