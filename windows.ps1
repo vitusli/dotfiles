@@ -21,6 +21,8 @@ $REPOS = @(
     @{ url = "git@github.com:vitusli/codespace.git"; path = "$HOME" }
     @{ url = "git@github.com:vitusli/vtools_dev.git"; path = "$HOME" }
     @{ url = "git@github.com:vitusli/obsidian"; path = "$HOME\Dokumente" }
+    @{ url = "git@github.com:vitusli/extensions.git"; path = "$HOME\Dokumente\blenderlokal" }
+    @{ url = "git@github.com:vitusli/zmk-config.git"; path = "$HOME\Documents" }
 )
 
 # ============================================================================

@@ -40,6 +40,7 @@ REPOS=(
     "git@github.com:vitusli/vtools_dev.git|$HOME"
     "git@github.com:vitusli/obsidian.git|$HOME/Documents"
     "git@github.com:vitusli/extensions.git|$HOME/Documents/blenderlokal"
+    "git@github.com:vitusli/zmk-config.git|$HOME/Documents"
 )
 
 FORMULAE=(
