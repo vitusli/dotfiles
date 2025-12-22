@@ -376,7 +376,7 @@ function Enable-ScoopCompletion {
     # Ensure profile file exists
     if (-not (Test-Path $PROFILE)) { New-Item -Path $PROFILE -ItemType File -Force | Out-Null }
 
-    $importLine = "Import-Module \"$modulePath\""
+    $importLine = "Import-Module '$modulePath'"
     $profileContent = Get-Content -Path $PROFILE -Raw
 
     if ($profileContent -notmatch [Regex]::Escape($importLine)) {
