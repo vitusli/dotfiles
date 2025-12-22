@@ -326,9 +326,9 @@ function Install-ScoopPackages {
     $toInstall = @()
     
     foreach ($package in $SCOOP_PACKAGES) {
-        $installed = scoop list | Select-String "^\s*$package\s" -Quiet
+        $result = @(scoop list $package 2>$null | Where-Object { $_.Name -eq $package })
         
-        if ($installed) {
+        if ($result.Count -gt 0) {
             Log-Success "$package"
         } else {
             Log-Warning "$package (will be installed)"
