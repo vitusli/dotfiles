@@ -25,8 +25,3 @@ alias la='ls -A'
 alias l='ls -CF'
 alias ..='cd ..'
 alias ...='cd ../..'
-
-# Auto-start zsh if interactive and zsh exists
-if [[ $- == *i* ]] && command -v zsh &>/dev/null; then
-    exec zsh
-fi
