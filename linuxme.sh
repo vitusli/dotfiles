@@ -22,6 +22,7 @@ APT_PACKAGES=(
     curl
     git
     zoxide
+    lazygit
 )
 
 # ============================================================================
@@ -133,6 +134,88 @@ install_lf() {
 }
 
 # ============================================================================
+# GITHUB CLI (gh)
+# ============================================================================
+
+install_gh() {
+    log_header "Installing GitHub CLI (gh)"
+    
+    if command_exists gh; then
+        log_success "gh already installed"
+        return
+    fi
+    
+    log_info "Adding GitHub CLI repository (official method)..."
+    
+    # Official Debian/Ubuntu installation method
+    if (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) \
+        && sudo mkdir -p -m 755 /etc/apt/keyrings \
+        && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+        && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+        && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+        && sudo apt update >> "$LOG_FILE" 2>&1 \
+        && sudo apt install -y gh >> "$LOG_FILE" 2>&1; then
+        log_success "gh installed"
+    else
+        log_warning "Failed to install gh - skipping"
+    fi
+}
+
+# ============================================================================
+# GIT CONFIG
+# ============================================================================
+
+setup_git_config() {
+    log_header "Setting up Git Configuration"
+    
+    if git config --global user.email &>/dev/null; then
+        log_success "Git already configured: $(git config --global user.name) <$(git config --global user.email)>"
+    else
+        log_info "Configuring git..."
+        read -p "Enter your Git email: " git_email
+        read -p "Enter your Git name: " git_name
+        git config --global user.email "$git_email"
+        git config --global user.name "$git_name"
+        log_success "Git configured"
+    fi
+}
+
+# ============================================================================
+# SSH KEY SETUP
+# ============================================================================
+
+setup_ssh_key() {
+    log_header "Setting up SSH Key"
+    
+    local ssh_key="$HOME/.ssh/id_ed25519"
+    
+    if [ -f "$ssh_key" ]; then
+        log_success "SSH key already exists"
+    else
+        log_info "Generating SSH key..."
+        mkdir -p "$HOME/.ssh"
+        
+        read -p "Enter your email for SSH key: " ssh_email
+        ssh-keygen -t ed25519 -C "$ssh_email" -f "$ssh_key" -N ""
+        
+        log_success "SSH key generated"
+        log_info "Add this key to GitHub:"
+        echo ""
+        cat "${ssh_key}.pub"
+        echo ""
+        
+        if command_exists gh; then
+            read -p "Add to GitHub now with gh? (y/n): " add_gh
+            if [[ "$add_gh" =~ ^[yY]$ ]]; then
+                gh auth login
+                gh ssh-key add "${ssh_key}.pub" --title "WSL $(hostname)"
+                log_success "SSH key added to GitHub"
+            fi
+        fi
+    fi
+}
+
+# ============================================================================
 # CHEZMOI SETUP
 # ============================================================================
 
@@ -222,7 +305,8 @@ main() {
     echo ""
     echo "This script will install:"
     echo "  - zsh with plugins (autosuggestions, syntax-highlighting)"
-    echo "  - fzf, bat, and other CLI tools"
+    echo "  - fzf, bat, lazygit, lf and other CLI tools"
+    echo "  - GitHub CLI (gh) for authentication"
     echo "  - chezmoi for dotfile management"
     echo "  - Apply dotfiles from github.com/vitusli/dotfiles"
     echo ""
@@ -243,6 +327,9 @@ main() {
     # Run setup
     install_apt_packages
     install_lf
+    install_gh
+    setup_git_config
+    setup_ssh_key
     install_chezmoi
     apply_dotfiles
     setup_wsl_extras
