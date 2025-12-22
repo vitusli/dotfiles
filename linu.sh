@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Download and run with bash:
-# curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linuxme.sh | bash
+# curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linu.sh | bash
 
 # Don't use set -e because some commands may fail non-fatally
 set +e
@@ -11,17 +11,27 @@ set +e
 # ============================================================================
 LOG_FILE="$HOME/.local/share/chezmoi-setup-$(date +%Y%m%d-%H%M%S).log"
 
-# APT packages for zsh environment
-APT_PACKAGES=(
+# Homebrew packages (same as macOS where possible!)
+BREW_PACKAGES=(
     zsh
     fzf
     bat
-    xclip
+    lazygit
+    lf
+    gh
+    zoxide
+    chezmoi
     zsh-autosuggestions
     zsh-syntax-highlighting
+    zsh-abbr
+)
+
+# Minimal APT packages (only what Homebrew can't provide)
+APT_PACKAGES=(
+    build-essential
     curl
     git
-    zoxide
+    xclip
 )
 
 # ============================================================================
@@ -63,11 +73,61 @@ command_exists() {
 }
 
 # ============================================================================
-# APT PACKAGES
+# HOMEBREW INSTALLATION
+# ============================================================================
+
+install_homebrew() {
+    log_header "Installing Homebrew"
+    
+    if command_exists brew; then
+        log_success "Homebrew already installed"
+        return
+    fi
+    
+    log_info "Installing Homebrew (Linuxbrew)..."
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" >> "$LOG_FILE" 2>&1
+    
+    # Add to PATH for this session
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    
+    if command_exists brew; then
+        log_success "Homebrew installed"
+    else
+        log_error "Homebrew installation failed"
+        exit 1
+    fi
+}
+
+# ============================================================================
+# HOMEBREW PACKAGES
+# ============================================================================
+
+install_brew_packages() {
+    log_header "Installing Homebrew Packages"
+    
+    # Ensure brew is in PATH
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 2>/dev/null
+    
+    for pkg in "${BREW_PACKAGES[@]}"; do
+        if brew list "$pkg" &>/dev/null; then
+            log_success "$pkg (already installed)"
+        else
+            log_info "Installing $pkg..."
+            if brew install "$pkg" >> "$LOG_FILE" 2>&1; then
+                log_success "$pkg installed"
+            else
+                log_warning "Failed to install $pkg"
+            fi
+        fi
+    done
+}
+
+# ============================================================================
+# APT PACKAGES (minimal - just build deps)
 # ============================================================================
 
 install_apt_packages() {
-    log_header "Installing APT Packages"
+    log_header "Installing APT Prerequisites"
     
     log_info "Updating package lists..."
     sudo apt update >> "$LOG_FILE" 2>&1
@@ -79,7 +139,6 @@ install_apt_packages() {
             log_success "$pkg (already installed)"
         else
             to_install+=("$pkg")
-            log_warning "$pkg (will be installed)"
         fi
     done
     
@@ -88,113 +147,8 @@ install_apt_packages() {
         if sudo apt install -y "${to_install[@]}" >> "$LOG_FILE" 2>&1; then
             log_success "APT packages installed"
         else
-            log_warning "Some APT packages may have failed - check log"
+            log_warning "Some APT packages may have failed"
         fi
-    else
-        log_info "All required packages already installed"
-    fi
-}
-
-# ============================================================================
-# LF FILE MANAGER (not in Ubuntu repos, install via Go)
-# ============================================================================
-
-install_lf() {
-    log_header "Installing lf file manager"
-    
-    if command_exists lf; then
-        log_success "lf already installed"
-        return
-    fi
-    
-    # Try snap first (easiest)
-    if command_exists snap; then
-        log_info "Installing lf via snap..."
-        if sudo snap install lf-fm 2>> "$LOG_FILE"; then
-            log_success "lf installed via snap"
-            return
-        fi
-    fi
-    
-    # Fallback: download binary from GitHub releases
-    log_info "Installing lf from GitHub releases..."
-    local lf_version="r32"
-    local lf_url="https://github.com/gokcehan/lf/releases/download/${lf_version}/lf-linux-amd64.tar.gz"
-    
-    # Ensure ~/.local/bin exists
-    mkdir -p ~/.local/bin
-    
-    if curl -fsSL "$lf_url" | tar -xz -C ~/.local/bin 2>> "$LOG_FILE"; then
-        chmod +x ~/.local/bin/lf
-        log_success "lf installed to ~/.local/bin"
-    else
-        log_warning "Failed to install lf - skipping"
-    fi
-}
-
-# ============================================================================
-# LAZYGIT (not in Ubuntu repos)
-# ============================================================================
-
-install_lazygit() {
-    log_header "Installing lazygit"
-    
-    if command_exists lazygit; then
-        log_success "lazygit already installed"
-        return
-    fi
-    
-    # Try PPA first (Ubuntu only, gets auto-updates)
-    if command_exists add-apt-repository; then
-        log_info "Adding lazygit PPA..."
-        if sudo add-apt-repository -y ppa:lazygit-team/release >> "$LOG_FILE" 2>&1 && \
-           sudo apt update >> "$LOG_FILE" 2>&1 && \
-           sudo apt install -y lazygit >> "$LOG_FILE" 2>&1; then
-            log_success "lazygit installed via PPA"
-            return
-        fi
-    fi
-    
-    # Fallback: GitHub releases
-    log_info "Installing lazygit from GitHub releases..."
-    local lg_version="0.44.1"
-    local lg_url="https://github.com/jesseduffield/lazygit/releases/download/v${lg_version}/lazygit_${lg_version}_Linux_x86_64.tar.gz"
-    
-    mkdir -p ~/.local/bin
-    
-    if curl -fsSL "$lg_url" | tar -xz -C ~/.local/bin lazygit 2>> "$LOG_FILE"; then
-        chmod +x ~/.local/bin/lazygit
-        log_success "lazygit installed to ~/.local/bin"
-    else
-        log_warning "Failed to install lazygit - skipping"
-    fi
-}
-
-# ============================================================================
-# GITHUB CLI (gh)
-# ============================================================================
-
-install_gh() {
-    log_header "Installing GitHub CLI (gh)"
-    
-    if command_exists gh; then
-        log_success "gh already installed"
-        return
-    fi
-    
-    log_info "Adding GitHub CLI repository (official method)..."
-    
-    # Official Debian/Ubuntu installation method
-    if (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) \
-        && sudo mkdir -p -m 755 /etc/apt/keyrings \
-        && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
-        && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-        && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-        && sudo apt update >> "$LOG_FILE" 2>&1 \
-        && sudo apt install -y gh >> "$LOG_FILE" 2>&1; then
-        log_success "gh installed"
-    else
-        log_warning "Failed to install gh - skipping"
     fi
 }
 
@@ -291,21 +245,11 @@ setup_ssh_key() {
 # CHEZMOI SETUP
 # ============================================================================
 
-install_chezmoi() {
-    log_header "Installing chezmoi"
-    
-    if command_exists chezmoi; then
-        log_success "chezmoi already installed"
-    else
-        log_info "Installing chezmoi..."
-        sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/.local/bin >> "$LOG_FILE" 2>&1
-        export PATH="$HOME/.local/bin:$PATH"
-        log_success "chezmoi installed to ~/.local/bin"
-    fi
-}
-
 apply_dotfiles() {
     log_header "Applying Dotfiles with chezmoi"
+    
+    # Ensure brew's chezmoi is in PATH
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 2>/dev/null
     
     if [ -f "$HOME/.zshrc" ] && chezmoi verify &>/dev/null 2>&1; then
         log_success "Dotfiles already applied"
@@ -410,12 +354,13 @@ EOF
 
 main() {
     echo "════════════════════════════════════════════════════════════"
-    echo "  Linux/WSL Setup Script"
+    echo "  Linux/WSL Setup Script (Homebrew Edition)"
     echo "════════════════════════════════════════════════════════════"
     echo ""
     echo "This script will install:"
-    echo "  - zsh with plugins (autosuggestions, syntax-highlighting)"
-    echo "  - fzf, bat, lazygit, lf and other CLI tools"
+    echo "  - Homebrew (Linuxbrew)"
+    echo "  - zsh with plugins (autosuggestions, syntax-highlighting, abbr)"
+    echo "  - fzf, bat, lazygit, lf, zoxide and other CLI tools"
     echo "  - GitHub CLI (gh) for authentication"
     echo "  - chezmoi for dotfile management"
     echo "  - Apply dotfiles from github.com/vitusli/dotfiles"
@@ -435,13 +380,11 @@ main() {
     } > "$LOG_FILE"
     
     # Run setup
-    install_apt_packages
-    install_lf
-    install_lazygit
-    install_gh
+    install_apt_packages    # Minimal: build-essential, curl, git, xclip
+    install_homebrew        # The package manager
+    install_brew_packages   # All the good stuff
     setup_git_config
     setup_ssh_key
-    install_chezmoi
     apply_dotfiles
     setup_wsl_extras
     setup_zsh_default
