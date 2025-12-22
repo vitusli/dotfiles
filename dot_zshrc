@@ -17,6 +17,8 @@ source /opt/homebrew/etc/profile.d/z.sh
 
 # fzf - fuzzy finder
 source <(fzf --zsh)
+# Copy result to clipboard on Enter (in addition to normal output)
+export FZF_DEFAULT_OPTS="--bind 'enter:execute-silent(echo {} | pbcopy)+accept'"
 
 # zsh-abbr - add to FPATH before compinit
 if type brew &>/dev/null; then
