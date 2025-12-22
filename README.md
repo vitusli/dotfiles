@@ -33,23 +33,23 @@ curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linuxme.sh | 
 ```
 
 
-Or apply your dotfiles manually:
+Or apply your dotfiles manually (requires SSH key or `gh auth login` first):
 
 ### macOS
 ```bash
-chezmoi init --branch macos --apply git@github.com:vitusli/dotfiles.git
+chezmoi init --branch macos vitusli --apply
 ```
 
 ### Windows
 
 ```powershell
-chezmoi init --branch windows --apply git@github.com:vitusli/dotfiles.git
+chezmoi init --branch windows vitusli --apply
 ```
 
 ### Linux / WSL
 
 ```zsh
-chezmoi init --branch linux --apply git@github.com:vitusli/dotfiles.git
+chezmoi init --branch linux vitusli --apply
 ```
 
 
