@@ -13,7 +13,6 @@ LOG_FILE="$HOME/.local/share/chezmoi-setup-$(date +%Y%m%d-%H%M%S).log"
 
 # Homebrew packages (same as macOS where possible!)
 BREW_PACKAGES=(
-    zsh
     fzf
     bat
     lazygit
@@ -36,6 +35,7 @@ APT_PACKAGES=(
     curl
     git
     xclip
+    zsh        # needed for chsh (login shell)
 )
 
 # ============================================================================
