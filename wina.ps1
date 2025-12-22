@@ -9,9 +9,8 @@
 # CONFIGURATION
 # ============================================================================
 
-$DOTFILES_DIR = "$HOME\wotfiles"
-$LOG_DIR = "$DOTFILES_DIR\logs"
-$LOG_FILE = "$LOG_DIR\setup-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
+$LOG_DIR = "$HOME\.local\logs"
+$LOG_FILE = "$LOG_DIR\wina-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
 
 # ============================================================================
 # REPOSITORIES
@@ -60,7 +59,6 @@ $SCOOP_PACKAGES = @(
     "gsudo"
     
     # CLI Tools
-    "duti"
     "ffmpeg"
     "imagemagick"
     "jq"
@@ -201,7 +199,7 @@ Start Time: $(Get-Date)
 Log File: $LOG_FILE
 User: $env:USERNAME
 Hostname: $env:COMPUTERNAME
-Windows Version: $(Get-WmiObject -Class Win32_OperatingSystem).Caption
+Windows Version: $([System.Environment]::OSVersion.VersionString)
 ════════════════════════════════════════════════════════════
 
 "@
@@ -603,11 +601,13 @@ function Remove-Bloatware {
     
     foreach ($app in $bloatwareApps) {
         try {
-            $package = Get-AppxPackage -Name $app -AllUsers -ErrorAction SilentlyContinue
+            $packages = @(Get-AppxPackage -Name $app -AllUsers -ErrorAction SilentlyContinue)
             
-            if ($package) {
+            if ($packages.Count -gt 0) {
                 Log-Info "Removing $app..."
-                Remove-AppxPackage -Package $package.PackageFullName -ErrorAction SilentlyContinue
+                foreach ($pkg in $packages) {
+                    Remove-AppxPackage -Package $pkg.PackageFullName -ErrorAction SilentlyContinue
+                }
                 Log-Success "Removed $app"
             }
         }
@@ -629,7 +629,7 @@ function Install-VSCodeExtensions {
         return
     }
     
-    $installed = & code --list-extensions 2>/dev/null
+    $installed = & code --list-extensions 2>$null
     $toInstall = @()
     
     foreach ($extension in $VSCODE_EXTENSIONS) {

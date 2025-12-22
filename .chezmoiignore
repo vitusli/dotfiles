@@ -1,0 +1,9 @@
+# Setup scripts - not dotfiles
+linu.sh
+macme.sh
+wina.ps1
+winme.ps1
+
+# Repo files
+README.md
+LICENSE
