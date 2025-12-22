@@ -17,6 +17,7 @@ $LOG_FILE = "$LOG_DIR\wina-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
 # ============================================================================
 
 $REPOS = @(
+    @{ url = "git@github.com:vitusli/dotfiles.git"; path = "$HOME" }
     @{ url = "git@github.com:vitusli/codespace.git"; path = "$HOME" }
     @{ url = "git@github.com:vitusli/vtools_dev.git"; path = "$HOME" }
     @{ url = "git@github.com:vitusli/obsidian"; path = "$HOME\Dokumente" }
