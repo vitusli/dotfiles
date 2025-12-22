@@ -11,7 +11,7 @@ try {
 
 # Enable tab completion for chezmoi
 try {
-    Invoke-Expression (& chezmoi completion powershell)
+    chezmoi completion powershell | Out-String | Invoke-Expression
 } catch {
     Write-Verbose "Chezmoi completion registration failed: $($_.Exception.Message)"
 }
@@ -30,8 +30,6 @@ foreach ($module in $requiredModules) {
     Import-Module $module
 }
 
-Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
-
 # Define ViModeChange handler FIRST
 $OnViModeChange = [scriptblock]{
    if ($args[0] -eq 'Command') {
@@ -47,6 +45,9 @@ $OnViModeChange = [scriptblock]{
 # THEN enable Vim with the handler
 Set-PsReadLineOption -EditMode Vi
 Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler $OnViModeChange
+
+# MenuComplete AFTER Vi mode (Vi mode overrides Tab binding)
+Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
 # Set the initial cursor to a line for Insert Mode
 Write-Host -NoNewLine "`e[6 q"
