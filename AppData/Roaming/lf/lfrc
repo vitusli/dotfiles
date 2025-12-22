@@ -1,0 +1,186 @@
+# ============================================================================
+# LF FILE MANAGER CONFIG (Windows)
+# Adapted from macOS config
+# ============================================================================
+
+# Basic Settings
+set hidden false
+set ignorecase true
+set icons true
+set incfilter
+
+# Show only path in title (no user@host)
+set promptfmt "%d"
+
+# Two column view: current dir + preview (no parent dir)
+set ratios 1:1
+
+# Preview with bat (Windows)
+set previewer ~\AppData\Roaming\lf\preview.cmd
+# No cleaner needed on Windows
+
+# Shell settings for Windows
+set shell powershell
+set shellopts '-NoProfile'
+
+# ============================================================================
+# KEY BINDINGS (Marta-inspired)
+# ============================================================================
+
+# Navigation (hjkl vim-style)
+map k up
+map j down
+map h updir
+map l :setfilter; open
+map <enter> :setfilter; open
+
+# Selection (shift + k/j) - toggle current, then move
+map K :toggle; up
+map J :toggle; down
+
+# Clear selection, buffer, and filter (single Esc mapping)
+map <esc> :unselect; clear; setfilter
+
+# Go to top/bottom
+map g top
+map G bottom
+
+# File operations
+map r rename
+map f :touch
+map n :mkdir
+map <c-x> delete
+
+# Copy/Move (x = cut, c = copy, v = paste)
+map x cut
+map c copy
+map p paste
+
+# Path operations
+map y :yank-path
+map Y :yank-dirname
+
+# Toggle hidden files
+map H set hidden!
+
+# Open with (fzf)
+map o :open-with
+map O :open-with-dir
+
+# Reveal in Explorer
+map <c-r> $explorer /select,"$env:f"
+
+# Git
+map L $lazygit
+
+# Go to home
+map ~ cd ~
+
+# Jump to Downloads and start filter
+map D cd ~/Downloads; filter
+
+# Jump to Documents and start filter
+map C cd ~/codespace; filter
+
+# Jump to dotfiles
+map S cd ~/.local/share/chezmoi; filter
+
+# Open current directory in VS Code
+map V $code $env:PWD
+
+# Disable default 'd' (cut) as requested
+map d :echo "Cut is disabled"
+
+# Filter (classic lf filter)
+map / filter
+
+# Extended search (multiple directories)
+map <space> :fzf-extended
+
+# Open dotfiles in VS Code with lfrc editor
+map <c-s> $code ~/.local/share/chezmoi ~/AppData/Roaming/lf/lfrc
+
+# ============================================================================
+# COMMANDS (Windows PowerShell)
+# ============================================================================
+
+# Open file with application (using fzf)
+cmd open-with ${{
+    $apps = @("VS Code", "Explorer (reveal)", "Notepad")
+    $app = $apps | fzf --prompt="Open with: "
+    if (-not $app) { exit }
+    
+    switch ($app) {
+        "VS Code" { code $env:f }
+        "Explorer (reveal)" { explorer /select,"$env:f" }
+        "Notepad" { notepad $env:f }
+    }
+}}
+
+# Open current directory with application (using fzf)
+cmd open-with-dir ${{
+    $apps = @("VS Code", "Explorer", "Terminal")
+    $app = $apps | fzf --prompt="Open directory with: "
+    if (-not $app) { exit }
+    
+    switch ($app) {
+        "VS Code" { code $env:PWD }
+        "Explorer" { explorer $env:PWD }
+        "Terminal" { wt -d $env:PWD }
+    }
+}}
+
+# Create file
+cmd touch ${{
+    $name = Read-Host "File name"
+    if ($name) { New-Item -ItemType File -Name $name }
+}}
+
+# Create directory
+cmd mkdir ${{
+    $name = Read-Host "Directory name"
+    if ($name) { New-Item -ItemType Directory -Name $name }
+}}
+
+# Fuzzy search with fzf (recursive)
+cmd fzf ${{
+    $result = Get-ChildItem -Recurse -File | ForEach-Object { $_.FullName } | fzf --prompt="Search: "
+    if ($result) {
+        lf -remote "send $env:id select '$result'"
+    }
+}}
+
+# Extended search across multiple directories
+cmd fzf-extended ${{
+    $paths = @(
+        "$HOME\Downloads",
+        "$HOME\Documents", 
+        "$HOME\Desktop",
+        "$HOME\.local\share\chezmoi",
+        "$HOME\codespace"
+    )
+    $result = $paths | Where-Object { Test-Path $_ } | ForEach-Object {
+        Get-ChildItem -Path $_ -Recurse -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+    } | fzf --prompt=": "
+    
+    if ($result) {
+        Set-Clipboard -Value $result
+        if (Test-Path -PathType Leaf $result) {
+            lf -remote "send $env:id select '$result'"
+        } else {
+            lf -remote "send $env:id cd '$result'"
+        }
+    }
+}}
+
+# Yank path to clipboard (Windows)
+cmd yank-path ${{
+    Set-Clipboard -Value $env:f
+    lf -remote "send $env:id echo Copied: $env:f"
+}}
+
+# Yank directory path to clipboard (Windows)
+cmd yank-dirname ${{
+    Set-Clipboard -Value $env:PWD
+    lf -remote "send $env:id echo Copied: $env:PWD"
+}}
