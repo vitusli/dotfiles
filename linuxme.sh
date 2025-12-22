@@ -22,7 +22,6 @@ APT_PACKAGES=(
     curl
     git
     zoxide
-    lazygit
 )
 
 # ============================================================================
@@ -130,6 +129,44 @@ install_lf() {
         log_success "lf installed to ~/.local/bin"
     else
         log_warning "Failed to install lf - skipping"
+    fi
+}
+
+# ============================================================================
+# LAZYGIT (not in Ubuntu repos)
+# ============================================================================
+
+install_lazygit() {
+    log_header "Installing lazygit"
+    
+    if command_exists lazygit; then
+        log_success "lazygit already installed"
+        return
+    fi
+    
+    # Try PPA first (Ubuntu only, gets auto-updates)
+    if command_exists add-apt-repository; then
+        log_info "Adding lazygit PPA..."
+        if sudo add-apt-repository -y ppa:lazygit-team/release >> "$LOG_FILE" 2>&1 && \
+           sudo apt update >> "$LOG_FILE" 2>&1 && \
+           sudo apt install -y lazygit >> "$LOG_FILE" 2>&1; then
+            log_success "lazygit installed via PPA"
+            return
+        fi
+    fi
+    
+    # Fallback: GitHub releases
+    log_info "Installing lazygit from GitHub releases..."
+    local lg_version="0.44.1"
+    local lg_url="https://github.com/jesseduffield/lazygit/releases/download/v${lg_version}/lazygit_${lg_version}_Linux_x86_64.tar.gz"
+    
+    mkdir -p ~/.local/bin
+    
+    if curl -fsSL "$lg_url" | tar -xz -C ~/.local/bin lazygit 2>> "$LOG_FILE"; then
+        chmod +x ~/.local/bin/lazygit
+        log_success "lazygit installed to ~/.local/bin"
+    else
+        log_warning "Failed to install lazygit - skipping"
     fi
 }
 
@@ -327,6 +364,7 @@ main() {
     # Run setup
     install_apt_packages
     install_lf
+    install_lazygit
     install_gh
     setup_git_config
     setup_ssh_key
