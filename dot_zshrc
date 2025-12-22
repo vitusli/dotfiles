@@ -9,6 +9,29 @@ PROMPT='%1~ %% '
 export PATH="$PATH:$HOME/.local/bin"
 
 # ============================================================================
+# HOMEBREW PLUGINS (Linuxbrew)
+# ============================================================================
+
+# Determine Homebrew prefix
+if [[ -d /home/linuxbrew/.linuxbrew ]]; then
+  BREW_PREFIX="/home/linuxbrew/.linuxbrew"
+elif [[ -d /opt/homebrew ]]; then
+  BREW_PREFIX="/opt/homebrew"
+elif [[ -d /usr/local/Homebrew ]]; then
+  BREW_PREFIX="/usr/local"
+fi
+
+# zsh-autosuggestions
+if [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
+
+# zsh-syntax-highlighting (must be loaded before abbr)
+if [[ -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
+
+# ============================================================================
 # EXTERNAL TOOLS
 # ============================================================================
 
@@ -24,11 +47,6 @@ if command -v fzf &>/dev/null; then
   source <(fzf --zsh 2>/dev/null) || eval "$(fzf --zsh)"
 fi
 
-# zsh-abbr - abbreviations
-if [ -f /usr/share/zsh-abbr/zsh-abbr.zsh ]; then
-  FPATH="/usr/share/zsh-abbr:${FPATH}"
-fi
-
 # ============================================================================
 # LOAD MODULAR CONFIG
 # ============================================================================
@@ -38,7 +56,9 @@ for config_file in ~/.zsh/*.zsh; do
   source "$config_file"
 done
 
-# zsh-abbr - load after compinit (which is in completion.zsh)
-if [ -f /usr/share/zsh-abbr/zsh-abbr.zsh ]; then
+# zsh-abbr - load after compinit (Homebrew or APT path)
+if [[ -f "$BREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh" ]]; then
+  source "$BREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh"
+elif [[ -f /usr/share/zsh-abbr/zsh-abbr.zsh ]]; then
   source /usr/share/zsh-abbr/zsh-abbr.zsh
 fi
