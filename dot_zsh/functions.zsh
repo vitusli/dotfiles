@@ -2,49 +2,19 @@
 # CUSTOM FUNCTIONS
 # ============================================================================
 
-# / - Fuzzy find files/directories and open in app
-# Usage: / [-w] [app]  (e.g., / -w marta, / finder, or just /)
+# / - Fuzzy find files/directories and open in VS Code
+# Usage: /
 /() {
   local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace)
   local home_depth=3
-  local app=""  # If empty, we'll ask via fzf
-  
-  # Parse arguments
-  local wb_mode=false
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      -w)
-        search_dirs=()
-        home_depth=0
-        wb_mode=true
-        search_dirs+=("$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library")
-        search_dirs+=("$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects")
-        shift
-        ;;
-      *)
-        app="$1"
-        shift
-        ;;
-    esac
-  done
   
   # Build find command
-  local find_cmd=""
-  if [[ ${#search_dirs[@]} -gt 0 ]]; then
-    if [[ $wb_mode == true ]]; then
-      # For -w: only scan top-level directories (maxdepth 1, directories only)
-      find_cmd="find ${search_dirs[@]} -mindepth 1 -maxdepth 1 -type d 2>/dev/null"
-    else
-      # For regular dirs: full recursive search
-      find_cmd="find ${search_dirs[@]} 2>/dev/null"
-    fi
-  fi
+  local find_cmd="find ${search_dirs[@]} 2>/dev/null"
   if [[ $home_depth -gt 0 ]]; then
-    [[ -n $find_cmd ]] && find_cmd="$find_cmd; "
-    find_cmd="${find_cmd}find ~ -maxdepth $home_depth 2>/dev/null"
+    find_cmd="$find_cmd; find ~ -maxdepth $home_depth 2>/dev/null"
   fi
   
-  # 1) Pick target file/dir
+  # Pick target file/dir
   local target=$(eval "{ $find_cmd; }" | fzf --prompt=": " \
         --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' \
         --preview-window=right:60%:wrap)
@@ -54,60 +24,10 @@
     return $fzf_exit
   fi
   
-  # Copy target to clipboard
+  # Copy target to clipboard and open in VS Code
   echo -n "$target" | pbcopy
-  
-  # 2) Pick app if not provided as arg
-  if [[ -z "$app" ]]; then
-    local app_choice=$( {
-        echo "code";
-        echo "finder (reveal)";
-        echo "marta (open)";
-        find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null;
-      } | fzf --prompt="app: " )
-
-    local app_exit=$?
-    if [[ $app_exit -eq 130 ]] || [[ -z "$app_choice" ]]; then
-      return $app_exit
-    fi
-
-    case "$app_choice" in
-      "finder (reveal)")
-        app="finder"
-        ;;
-      "marta (open)")
-        app="marta"
-        ;;
-      *.app)
-        app=$(basename "$app_choice" .app)
-        ;;
-      *)
-        app="$app_choice"
-        ;;
-    esac
-  fi
-  
-  # 3) Open with chosen app
-  case "$app" in
-    marta)
-      open -a Marta "$target"
-      echo "Opened in Marta and copied to clipboard: $target"
-      ;;
-    finder)
-      open -R "$target"
-      echo "Revealed in Finder and copied to clipboard: $target"
-      ;;
-    *)
-      if [[ -n "$app" ]]; then
-        if open -a "$app" "$target" 2>/dev/null; then
-          echo "Opened with $app and copied to clipboard: $target"
-        else
-          "$app" "$target"
-          echo "Opened with $app (cli) and copied to clipboard: $target"
-        fi
-      fi
-      ;;
-  esac
+  code "$target"
+  echo "Opened in VS Code: $target"
 }
 
 # /app - Fuzzy-find and run macOS applications
