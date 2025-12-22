@@ -1,0 +1,207 @@
+# ============================================================================
+# LF FILE MANAGER CONFIG
+# Minimal config inspired by Marta setup
+# ============================================================================
+
+# Basic Settings
+set hidden false
+set ignorecase true
+set icons true
+set incfilter
+
+# Show only path in title (no user@host)
+set promptfmt "%d"
+
+# Two column view: current dir + preview (no parent dir)
+set ratios 1:1
+
+# Preview with bat
+set previewer ~/.config/lf/preview.sh
+set cleaner ~/.config/lf/cleaner.sh
+
+# ============================================================================
+# KEY BINDINGS (Marta-inspired)
+# ============================================================================
+
+# Navigation (hjkl vim-style)
+map k up
+map j down
+map h updir
+map l :setfilter; open
+map <enter> :setfilter; open
+
+# Selection (shift + k/j) - toggle current, then move
+map K :toggle; up
+map J :toggle; down
+
+# Clear selection, buffer, and filter (single Esc mapping)
+map <esc> :unselect; clear; setfilter
+
+# Go to top/bottom
+map g top
+map G bottom
+
+# File operations
+map r rename
+map f :touch
+map n :mkdir
+map <c-x> delete
+
+# Copy/Move (x = cut, c = copy, v = paste)
+map x cut
+map c copy
+map p paste
+
+# Path operations
+map y :yank-path
+map Y :yank-dirname
+
+# Toggle hidden files
+map H set hidden!
+
+# Open with (fzf)
+map o :open-with
+map O :open-with-dir
+
+# Open in file manager
+map <c-r> $xdg-open "$(dirname "$f")" 2>/dev/null &
+
+# Git
+map L $lazygit
+
+# Go to home
+map ~ cd ~
+
+# Jump to Downloads and start filter
+map D cd ~/Downloads; filter
+
+# Open current directory in VS Code
+map V & code "$PWD"
+
+# Disable default 'd' (cut) as requested
+map d :echo "Cut is disabled"
+
+# Filter (classic lf filter)
+map / filter
+
+# Extended search (multiple directories)
+map <space> :fzf-extended
+
+# Open dotfiles in VS Code with lfrc editor
+map <c-s> & code ~/.local/share/chezmoi ~/.local/share/chezmoi/dot_config/lf/lfrc
+
+# Toggle executable permission (Shift+X)
+map X :toggle-executable
+
+# ============================================================================
+# COMMANDS
+# ============================================================================
+
+# Open file with application (using fzf)
+cmd open-with ${{
+    app=$(printf "VS Code\nxdg-open\nnvim\nvim" | fzf --prompt="Open with: ")
+    [ -z "$app" ] && exit
+    
+    case "$app" in
+        "VS Code") code "$f" ;;
+        "xdg-open") xdg-open "$f" 2>/dev/null & ;;
+        *) $app "$f" ;;
+    esac
+}}
+
+# Open current directory with application (using fzf)
+cmd open-with-dir ${{
+    app=$(printf "VS Code\nxdg-open\nnautilus" | fzf --prompt="Open directory with: ")
+    [ -z "$app" ] && exit
+    
+    case "$app" in
+        "VS Code") code "$PWD" ;;
+        "xdg-open") xdg-open "$PWD" 2>/dev/null & ;;
+        "nautilus") nautilus "$PWD" 2>/dev/null & ;;
+        *) $app "$PWD" ;;
+    esac
+}}
+
+# Create file
+cmd touch ${{
+    read -p "File name: " name
+    touch "$name"
+}}
+
+# Create directory
+cmd mkdir ${{
+    read -p "Directory name: " name
+    mkdir -p "$name"
+}}
+
+# Fuzzy search with fzf (current dir only)
+cmd fzf-local ${{
+    result=$(ls -1A | fzf --prompt="Search (current): " --preview="bat --color=always --style=numbers {}")
+    if [ -n "$result" ]; then
+        lf -remote "send $id select \"$result\""
+    fi
+}}
+
+# Fuzzy search with fzf (recursive)
+cmd fzf ${{
+    result=$(find . -type f 2>/dev/null | fzf --prompt="Search (recursive): " --preview="bat --color=always --style=numbers {}")
+    if [ -n "$result" ]; then
+        lf -remote "send $id select \"$result\""
+    fi
+}}
+
+# Extended search across multiple directories (like zsh / function)
+cmd fzf-extended ${{
+    result=$({ 
+        find ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace 2>/dev/null
+        find ~ -maxdepth 3 2>/dev/null
+    } | fzf --prompt=": " --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' --preview-window=right:60%:wrap)
+    
+    if [ -n "$result" ]; then
+        # Copy to clipboard (WSL: clip.exe, Linux: xclip)
+        if command -v clip.exe >/dev/null 2>&1; then
+            printf "%s" "$result" | clip.exe
+        elif command -v xclip >/dev/null 2>&1; then
+            printf "%s" "$result" | xclip -selection clipboard
+        fi
+        
+        # If it's a file, select it; if directory, cd to it
+        if [ -f "$result" ]; then
+            lf -remote "send $id select \"$result\""
+        elif [ -d "$result" ]; then
+            lf -remote "send $id cd \"$result\""
+        fi
+    fi
+}}
+
+# Yank path to clipboard (Linux/WSL)
+cmd yank-path ${{
+    if command -v clip.exe >/dev/null 2>&1; then
+        printf "%s" "$f" | clip.exe
+    elif command -v xclip >/dev/null 2>&1; then
+        printf "%s" "$f" | xclip -selection clipboard
+    fi
+    lf -remote "send $id echo Copied: $f"
+}}
+
+# Yank directory path to clipboard (Linux/WSL)
+cmd yank-dirname ${{
+    if command -v clip.exe >/dev/null 2>&1; then
+        printf "%s" "$PWD" | clip.exe
+    elif command -v xclip >/dev/null 2>&1; then
+        printf "%s" "$PWD" | xclip -selection clipboard
+    fi
+    lf -remote "send $id echo Copied: $PWD"
+}}
+
+# Toggle executable permission
+cmd toggle-executable ${{
+    if [ -x "$f" ]; then
+        chmod -x "$f"
+        lf -remote "send $id echo Removed executable: $f"
+    else
+        chmod +x "$f"
+        lf -remote "send $id echo Made executable: $f"
+    fi
+    lf -remote "send $id reload"
+}}
