@@ -24,14 +24,6 @@ APT_PACKAGES=(
     lf
 )
 
-# Optional packages (nice to have)
-APT_OPTIONAL=(
-    zoxide
-    lf
-    vim
-    neovim
-)
-
 # ============================================================================
 # UTILITY FUNCTIONS
 # ============================================================================
@@ -98,21 +90,6 @@ install_apt_packages() {
     else
         log_info "All required packages already installed"
     fi
-}
-
-install_optional_packages() {
-    log_header "Installing Optional Packages"
-    
-    for pkg in "${APT_OPTIONAL[@]}"; do
-        if dpkg -l "$pkg" 2>/dev/null | grep -q "^ii"; then
-            log_success "$pkg (already installed)"
-        else
-            log_info "Installing $pkg..."
-            sudo apt install -y "$pkg" >> "$LOG_FILE" 2>&1 && \
-                log_success "$pkg installed" || \
-                log_warning "$pkg not available in repos"
-        fi
-    done
 }
 
 # ============================================================================
@@ -222,7 +199,6 @@ main() {
     
     # Run setup
     install_apt_packages
-    install_optional_packages
     install_chezmoi
     apply_dotfiles
     setup_wsl_extras

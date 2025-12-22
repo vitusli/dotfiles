@@ -20,7 +20,22 @@ dotfiles/
 curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macme.sh | zsh
 ```
 
-Or manually:
+### windows
+
+```powershell
+irm https://raw.githubusercontent.com/vitusli/dotfiles/main/winme.ps1 | iex
+```
+
+### linux / WSL
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linuxme.sh | bash
+```
+
+
+Or apply your dotfiles manually:
+
+### macOS
 ```bash
 chezmoi init --branch macos vitusli --apply
 ```
@@ -33,14 +48,10 @@ chezmoi init --branch windows vitusli --apply
 
 ### Linux / WSL
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linuxme.sh | bash
+```zsh
+chezmoi init --branch linux vitusli --apply
 ```
 
-Or manually:
-```bash
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply vitusli --branch linux
-```
 
 ## Updating on Existing Machines
 
