@@ -534,15 +534,19 @@ function Disable-Services {
         try {
             $serviceObj = Get-Service -Name $service -ErrorAction SilentlyContinue
             
-            if ($serviceObj) {
-                if ($serviceObj.Status -eq "Running") {
-                    Stop-Service -Name $service -Force | Out-Null
+            if (-not $serviceObj) {
+                continue  # Service doesn't exist, skip silently
+            }
+            
+            if ($serviceObj.Status -eq "Running") {
+                Stop-Service -Name $service -Force -ErrorAction SilentlyContinue | Out-Null
+                if ($?) {
                     Log-Info "Stopped $service"
                 }
-                
-                Set-Service -Name $service -StartupType Disabled | Out-Null
-                Log-Success "Disabled $service"
             }
+            
+            Set-Service -Name $service -StartupType Disabled -ErrorAction Stop | Out-Null
+            Log-Success "Disabled $service"
         }
         catch {
             Log-Warning "Failed to disable $service`: $_"
