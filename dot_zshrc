@@ -45,6 +45,8 @@ fi
 # fzf - fuzzy finder
 if command -v fzf &>/dev/null; then
   source <(fzf --zsh 2>/dev/null) || eval "$(fzf --zsh)"
+  # Copy result to clipboard on Enter (in addition to normal output)
+  export FZF_DEFAULT_OPTS="--bind 'enter:execute-silent(echo {} | pbcopy)+accept'"
 fi
 
 # ============================================================================
