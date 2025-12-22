@@ -5,7 +5,7 @@
 # / - Fuzzy find files/directories and open in app
 # Usage: / [-w] [app]  (e.g., / -w marta, / finder, or just /)
 /() {
-  local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/codespace)
+  local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace)
   local home_depth=3
   local app=""  # If empty, we'll ask via fzf
   

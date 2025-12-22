@@ -94,7 +94,7 @@ map / filter
 map <space> :fzf-extended
 
 # Open dotfiles in VS Code with lfrc editor
-map <c-s> & code ~/dotfiles ~/dotfiles/macOS/chezmoi/dot_config/lf/lfrc
+map <c-s> & code ~/.local/share/chezmoi ~/.local/share/chezmoi/dot_config/lf/lfrc
 
 # Toggle executable permission (Shift+X)
 map X :toggle-executable
@@ -159,7 +159,7 @@ cmd fzf ${{
 # Extended search across multiple directories (like zsh / function)
 cmd fzf-extended ${{
     result=$({ 
-        find ~/Downloads ~/Documents ~/Desktop ~/dotfiles ~/codespace 2>/dev/null
+        find ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace 2>/dev/null
         find ~ -maxdepth 3 2>/dev/null
     } | fzf --prompt=": " --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' --preview-window=right:60%:wrap)
     
