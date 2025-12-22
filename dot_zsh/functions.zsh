@@ -16,22 +16,11 @@ _clipboard_copy() {
   fi
 }
 
-# / - Fuzzy find files/directories and open in app
-# Usage: / [app]  (e.g., / code, / xdg-open, or just /)
+# / - Fuzzy find files/directories and open in VS Code
+# Usage: /
 /() {
   local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace)
   local home_depth=3
-  local app=""  # If empty, we'll ask via fzf
-  
-  # Parse arguments
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      *)
-        app="$1"
-        shift
-        ;;
-    esac
-  done
   
   # Build find command
   local find_cmd=""
@@ -43,7 +32,7 @@ _clipboard_copy() {
     find_cmd="${find_cmd}find ~ -maxdepth $home_depth 2>/dev/null"
   fi
   
-  # 1) Pick target file/dir
+  # Pick target file/dir
   local target=$(eval "{ $find_cmd; }" | fzf --prompt=": " \
         --preview='[[ -f {} ]] && bat --color=always --style=numbers {} 2>/dev/null || ls -la {}' \
         --preview-window=right:60%:wrap)
@@ -53,42 +42,10 @@ _clipboard_copy() {
     return $fzf_exit
   fi
   
-  # Copy target to clipboard
+  # Copy target to clipboard and open in VS Code
   echo -n "$target" | _clipboard_copy
-  
-  # 2) Pick app if not provided as arg
-  if [[ -z "$app" ]]; then
-    local app_choice=$( {
-        echo "code";
-        echo "xdg-open";
-        echo "nvim";
-        echo "vim";
-      } | fzf --prompt="app: " )
-
-    local app_exit=$?
-    if [[ $app_exit -eq 130 ]] || [[ -z "$app_choice" ]]; then
-      return $app_exit
-    fi
-    app="$app_choice"
-  fi
-  
-  # 3) Open with chosen app
-  case "$app" in
-    code)
-      code "$target"
-      echo "Opened in VS Code and copied to clipboard: $target"
-      ;;
-    xdg-open)
-      xdg-open "$target" 2>/dev/null &
-      echo "Opened with xdg-open and copied to clipboard: $target"
-      ;;
-    *)
-      if [[ -n "$app" ]]; then
-        "$app" "$target"
-        echo "Opened with $app and copied to clipboard: $target"
-      fi
-      ;;
-  esac
+  code "$target"
+  echo "Opened in VS Code: $target"
 }
 
 # lf - File manager with cd on exit
