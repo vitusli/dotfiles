@@ -3,7 +3,8 @@
 # Download and run with bash:
 # curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linuxme.sh | bash
 
-set -e
+# Don't use set -e because some commands may fail non-fatally
+set +e
 
 # ============================================================================
 # CONFIGURATION
@@ -21,7 +22,6 @@ APT_PACKAGES=(
     curl
     git
     zoxide
-    lf
 )
 
 # ============================================================================
@@ -85,10 +85,47 @@ install_apt_packages() {
     
     if [ ${#to_install[@]} -gt 0 ]; then
         log_info "Installing ${#to_install[@]} packages..."
-        sudo apt install -y "${to_install[@]}" >> "$LOG_FILE" 2>&1
-        log_success "APT packages installed"
+        if sudo apt install -y "${to_install[@]}" >> "$LOG_FILE" 2>&1; then
+            log_success "APT packages installed"
+        else
+            log_warning "Some APT packages may have failed - check log"
+        fi
     else
         log_info "All required packages already installed"
+    fi
+}
+
+# ============================================================================
+# LF FILE MANAGER (not in Ubuntu repos, install via Go)
+# ============================================================================
+
+install_lf() {
+    log_header "Installing lf file manager"
+    
+    if command_exists lf; then
+        log_success "lf already installed"
+        return
+    fi
+    
+    # Try snap first (easiest)
+    if command_exists snap; then
+        log_info "Installing lf via snap..."
+        if sudo snap install lf-fm 2>> "$LOG_FILE"; then
+            log_success "lf installed via snap"
+            return
+        fi
+    fi
+    
+    # Fallback: download binary from GitHub releases
+    log_info "Installing lf from GitHub releases..."
+    local lf_version="r32"
+    local lf_url="https://github.com/gokcehan/lf/releases/download/${lf_version}/lf-linux-amd64.tar.gz"
+    
+    if curl -fsSL "$lf_url" | tar -xz -C ~/.local/bin 2>> "$LOG_FILE"; then
+        chmod +x ~/.local/bin/lf
+        log_success "lf installed to ~/.local/bin"
+    else
+        log_warning "Failed to install lf - skipping"
     fi
 }
 
@@ -199,6 +236,7 @@ main() {
     
     # Run setup
     install_apt_packages
+    install_lf
     install_chezmoi
     apply_dotfiles
     setup_wsl_extras
