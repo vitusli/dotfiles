@@ -225,21 +225,23 @@ setup_ssh_key() {
     log_header "Setting up SSH Key"
     
     local ssh_key="$HOME/.ssh/id_ed25519"
+    local key_created=false
     
     if [ -f "$ssh_key" ]; then
-        log_success "SSH key already exists"
+        log_success "SSH key already exists at $ssh_key"
     else
         log_info "Generating SSH key..."
         mkdir -p "$HOME/.ssh"
         chmod 700 "$HOME/.ssh"
         
-        # Use git email if configured, otherwise ask
+        # Use git email if configured
         local ssh_email
         if git config --global user.email &>/dev/null; then
             ssh_email=$(git config --global user.email)
             log_info "Using git email: $ssh_email"
         else
-            read -p "Enter your email for SSH key: " ssh_email
+            ssh_email="user@$(hostname)"
+            log_info "Using default email: $ssh_email"
         fi
         
         ssh-keygen -t ed25519 -C "$ssh_email" -f "$ssh_key" -N ""
@@ -247,33 +249,41 @@ setup_ssh_key() {
         chmod 644 "${ssh_key}.pub"
         
         log_success "SSH key generated"
+        key_created=true
     fi
     
-    # Always offer to add to GitHub if not already there
+    # Try to add to GitHub if gh is available and authenticated
     if command_exists gh; then
-        # Check if key is already on GitHub
         local key_fingerprint=$(ssh-keygen -lf "${ssh_key}.pub" 2>/dev/null | awk '{print $2}')
         
         if gh ssh-key list 2>/dev/null | grep -q "$key_fingerprint"; then
             log_success "SSH key already on GitHub"
-        else
+        elif gh auth status &>/dev/null; then
+            # Already authenticated - add automatically
             log_info "Adding SSH key to GitHub..."
+            if gh ssh-key add "${ssh_key}.pub" --title "WSL $(hostname)" 2>> "$LOG_FILE"; then
+                log_success "SSH key added to GitHub"
+            else
+                log_warning "Failed to add SSH key to GitHub"
+                log_info "Add manually: https://github.com/settings/keys"
+                echo ""
+                cat "${ssh_key}.pub"
+                echo ""
+            fi
+        else
+            # Not authenticated - show key and instructions
+            log_info "GitHub CLI not authenticated"
+            log_info "Add this SSH key manually at https://github.com/settings/keys"
             echo ""
             cat "${ssh_key}.pub"
             echo ""
-            
-            read -p "Add this key to GitHub now? (y/n): " add_gh
-            if [[ "$add_gh" =~ ^[yY]$ ]]; then
-                if ! gh auth status &>/dev/null; then
-                    log_info "Authenticating with GitHub..."
-                    gh auth login
-                fi
-                gh ssh-key add "${ssh_key}.pub" --title "WSL $(hostname)"
-                log_success "SSH key added to GitHub"
-            else
-                log_info "Skipped - add manually at https://github.com/settings/keys"
-            fi
         fi
+    else
+        log_info "Install gh (GitHub CLI) to auto-add SSH key, or add manually:"
+        log_info "https://github.com/settings/keys"
+        echo ""
+        cat "${ssh_key}.pub"
+        echo ""
     fi
 }
 
