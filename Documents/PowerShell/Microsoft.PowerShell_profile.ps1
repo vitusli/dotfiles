@@ -20,7 +20,7 @@ try {
 $env:Path = "C:\Users\Vitus\scoop\shims;$env:Path"
 
 # fzf: Copy result to clipboard on Enter (in addition to normal output)
-$env:FZF_DEFAULT_OPTS = "--bind 'enter:execute-silent(echo {} | clip)+accept'"
+$env:FZF_DEFAULT_OPTS = "--bind 'enter:execute-silent(powershell -nop -c Set-Clipboard {})+accept'"
 
 # Module Management
 # Automatically install and import required modules
