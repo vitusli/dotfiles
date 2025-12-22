@@ -73,7 +73,7 @@ $SCOOP_PACKAGES = @(
     "sysinternals"
     
     # Fonts (nerd-fonts bucket)
-    "JetBrains-Mono-NF"
+    "JetBrainsMono-NF"
     "FiraCode-NF"
 )
 
