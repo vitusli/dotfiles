@@ -1,65 +1,47 @@
 # Dotfiles
 
-Cross-platform dotfiles for macOS, Windows, and Linux/WSL.
+Cross-platform dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 
 ## Structure
 
-```
-dotfiles/
-├── main branch      # This README + bootstrap scripts
-├── macos branch     # macOS dotfiles (chezmoi source)
-├── windows branch   # Windows dotfiles (chezmoi source)
-└── linux branch     # Linux/WSL dotfiles (chezmoi source)
-```
+| Branch | Platform |
+|--------|----------|
+| `main` | Bootstrap scripts |
+| `macos` | macOS dotfiles |
+| `windows` | Windows dotfiles |
+| `linux` | Linux/WSL dotfiles |
 
-## Quick Start
-
-### macOS
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macme.sh | zsh
-```
-
-### windows
-
-```powershell
-irm https://raw.githubusercontent.com/vitusli/dotfiles/main/wina.ps1 | iex
-```
-
-### linux / WSL
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linu.sh | bash
-```
-
-
-Or apply your dotfiles manually (requires SSH key or `gh auth login` first):
+## Bootstrap
 
 ### macOS
+
 ```bash
-chezmoi init --branch macos vitusli --apply
+curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macos.sh | zsh
 ```
 
 ### Windows
 
 ```powershell
-chezmoi init --branch windows vitusli --apply
+irm https://raw.githubusercontent.com/vitusli/dotfiles/main/windows.ps1 | iex
 ```
 
 ### Linux / WSL
 
-```zsh
-chezmoi init --branch linux vitusli --apply
+```bash
+curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linux.sh | bash
 ```
 
+## Manual Setup
 
-## Updating on Existing Machines
+Requires SSH key or `gh auth login`:
 
-After initial setup, update your dotfiles from the remote repository:
+```bash
+chezmoi init --branch <platform> vitusli --apply
+```
+
+## Update
 
 ```bash
 chezmoi update -v
 ```
-
-This pulls the latest changes from GitHub and applies them to your system (combines `git pull` + `chezmoi apply`).
 
