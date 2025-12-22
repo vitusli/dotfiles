@@ -231,22 +231,47 @@ setup_ssh_key() {
     else
         log_info "Generating SSH key..."
         mkdir -p "$HOME/.ssh"
+        chmod 700 "$HOME/.ssh"
         
-        read -p "Enter your email for SSH key: " ssh_email
+        # Use git email if configured, otherwise ask
+        local ssh_email
+        if git config --global user.email &>/dev/null; then
+            ssh_email=$(git config --global user.email)
+            log_info "Using git email: $ssh_email"
+        else
+            read -p "Enter your email for SSH key: " ssh_email
+        fi
+        
         ssh-keygen -t ed25519 -C "$ssh_email" -f "$ssh_key" -N ""
+        chmod 600 "$ssh_key"
+        chmod 644 "${ssh_key}.pub"
         
         log_success "SSH key generated"
-        log_info "Add this key to GitHub:"
-        echo ""
-        cat "${ssh_key}.pub"
-        echo ""
+    fi
+    
+    # Always offer to add to GitHub if not already there
+    if command_exists gh; then
+        # Check if key is already on GitHub
+        local key_fingerprint=$(ssh-keygen -lf "${ssh_key}.pub" 2>/dev/null | awk '{print $2}')
         
-        if command_exists gh; then
-            read -p "Add to GitHub now with gh? (y/n): " add_gh
+        if gh ssh-key list 2>/dev/null | grep -q "$key_fingerprint"; then
+            log_success "SSH key already on GitHub"
+        else
+            log_info "Adding SSH key to GitHub..."
+            echo ""
+            cat "${ssh_key}.pub"
+            echo ""
+            
+            read -p "Add this key to GitHub now? (y/n): " add_gh
             if [[ "$add_gh" =~ ^[yY]$ ]]; then
-                gh auth login
+                if ! gh auth status &>/dev/null; then
+                    log_info "Authenticating with GitHub..."
+                    gh auth login
+                fi
                 gh ssh-key add "${ssh_key}.pub" --title "WSL $(hostname)"
                 log_success "SSH key added to GitHub"
+            else
+                log_info "Skipped - add manually at https://github.com/settings/keys"
             fi
         fi
     fi
