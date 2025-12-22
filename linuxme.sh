@@ -121,6 +121,9 @@ install_lf() {
     local lf_version="r32"
     local lf_url="https://github.com/gokcehan/lf/releases/download/${lf_version}/lf-linux-amd64.tar.gz"
     
+    # Ensure ~/.local/bin exists
+    mkdir -p ~/.local/bin
+    
     if curl -fsSL "$lf_url" | tar -xz -C ~/.local/bin 2>> "$LOG_FILE"; then
         chmod +x ~/.local/bin/lf
         log_success "lf installed to ~/.local/bin"
@@ -169,9 +172,12 @@ setup_zsh_default() {
         log_success "zsh is already the default shell"
     else
         log_info "Changing default shell to zsh..."
-        chsh -s "$(which zsh)"
-        log_success "Default shell changed to zsh"
-        log_info "Please log out and back in for the change to take effect"
+        if chsh -s "$(which zsh)" 2>> "$LOG_FILE"; then
+            log_success "Default shell changed to zsh"
+            log_info "Please log out and back in for the change to take effect"
+        else
+            log_warning "chsh failed - run manually: chsh -s $(which zsh)"
+        fi
     fi
 }
 
