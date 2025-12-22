@@ -349,42 +349,6 @@ function Install-ScoopPackages {
     }
 }
 
-# Enable scoop-completion by importing the installed module in PowerShell profile
-function Enable-ScoopCompletion {
-    Log-Header "Enabling scoop-completion in PowerShell profile"
-
-    if (-not (Command-Exists scoop)) {
-        Log-Warning "Scoop not found; skipping scoop-completion enable"
-        return
-    }
-
-    # Determine module path as recommended by Moeologist's README
-    try {
-        $scoopRoot = (Get-Item (Get-Command scoop.ps1).Path).Directory.Parent.FullName
-        $modulePath = Join-Path $scoopRoot 'modules\scoop-completion'
-    } catch {
-        $modulePath = $null
-    }
-
-    if (-not $modulePath -or -not (Test-Path $modulePath)) {
-        Log-Warning "scoop-completion module path not found; ensure it is installed"
-        return
-    }
-
-    # Ensure profile file exists
-    if (-not (Test-Path $PROFILE)) { New-Item -Path $PROFILE -ItemType File -Force | Out-Null }
-
-    $importLine = "Import-Module '$modulePath'"
-    $profileContent = Get-Content -Path $PROFILE -Raw
-
-    if ($profileContent -notmatch [Regex]::Escape($importLine)) {
-        Add-Content -Path $PROFILE -Value "`n# scoop-completion (auto-added by windowme.ps1)`n$importLine`n"
-        Log-Success "Added scoop-completion Import-Module to profile"
-    } else {
-        Log-Info "scoop-completion Import-Module already present in profile"
-    }
-}
-
 # ============================================================================
 # GITHUB SETUP
 # ============================================================================
@@ -738,7 +702,6 @@ function Main {
     Setup-Scoop
     Add-ScoopBuckets
     Install-ScoopPackages
-    Enable-ScoopCompletion
     
     # GitHub
     Setup-GitHubAuth
