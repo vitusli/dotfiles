@@ -1,6 +1,6 @@
 # windowme.ps1 - Windows Setup & Configuration Script
 # Download and run with PowerShell: 
-# curl -fsSL https://github.com/vitusli/wotfiles/blob/master/windowme.ps1 | powershell -c "$input | iex"
+# curl -fsSL https://github.com/vitusli/wotfiles/blob/master/wina.ps1 | powershell -c "$input | iex"
 
 
 #Requires -RunAsAdministrator
