@@ -23,13 +23,13 @@ curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macme.sh | zs
 ### windows
 
 ```powershell
-irm https://raw.githubusercontent.com/vitusli/dotfiles/main/winme.ps1 | iex
+irm https://raw.githubusercontent.com/vitusli/dotfiles/main/wina.ps1 | iex
 ```
 
 ### linux / WSL
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linuxme.sh | bash
+curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linu.sh | bash
 ```
 
 
@@ -62,3 +62,4 @@ chezmoi update -v
 ```
 
 This pulls the latest changes from GitHub and applies them to your system (combines `git pull` + `chezmoi apply`).
+
