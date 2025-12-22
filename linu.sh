@@ -23,7 +23,11 @@ BREW_PACKAGES=(
     chezmoi
     zsh-autosuggestions
     zsh-syntax-highlighting
-    zsh-abbr
+)
+
+# Packages from taps (need to be installed separately)
+BREW_TAP_PACKAGES=(
+    "olets/tap/zsh-abbr"
 )
 
 # Minimal APT packages (only what Homebrew can't provide)
@@ -117,6 +121,21 @@ install_brew_packages() {
                 log_success "$pkg installed"
             else
                 log_warning "Failed to install $pkg"
+            fi
+        fi
+    done
+    
+    # Install packages from taps
+    for pkg in "${BREW_TAP_PACKAGES[@]}"; do
+        local pkg_name="${pkg##*/}"  # Get package name after last /
+        if brew list "$pkg_name" &>/dev/null; then
+            log_success "$pkg_name (already installed)"
+        else
+            log_info "Installing $pkg..."
+            if brew install "$pkg" >> "$LOG_FILE" 2>&1; then
+                log_success "$pkg_name installed"
+            else
+                log_warning "Failed to install $pkg_name"
             fi
         fi
     done
