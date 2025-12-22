@@ -5,7 +5,12 @@
 # Plattform: Linux / WSL (Ubuntu)
 ######################################################################
 
-## 1. Benutzerbinärdateien (pipx, eigene Skripte)
+## 1. Homebrew (Linuxbrew)
+if [ -d "/home/linuxbrew/.linuxbrew" ]; then
+	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+## 2. Benutzerbinärdateien (pipx, eigene Skripte)
 # Idempotent hinzufügen, nur wenn noch nicht vorhanden.
 case ":$PATH:" in
 	*":$HOME/.local/bin:"*) ;;
