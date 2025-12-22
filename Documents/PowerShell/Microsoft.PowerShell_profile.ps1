@@ -140,7 +140,7 @@ function / {
         "$HOME\Downloads",
         "$HOME\Documents",
         "$HOME\Desktop",
-        "$HOME\dotfiles",
+        "$HOME\.local\share\chezmoi",
         "$HOME\codespace",
         "$HOME\wotfiles"
     )
