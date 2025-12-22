@@ -475,7 +475,31 @@ function Apply-Dotfiles {
         return $false
     }
     
-    # Apply dotfiles with chezmoi init and apply
+    $chezmoiSource = "$HOME\.local\share\chezmoi"
+    
+    # Check if already initialized with correct branch
+    if (Test-Path "$chezmoiSource\.git") {
+        Push-Location $chezmoiSource
+        $currentBranch = git rev-parse --abbrev-ref HEAD 2>$null
+        Pop-Location
+        
+        if ($currentBranch -eq "windows") {
+            Log-Info "chezmoi already initialized on windows branch, updating..."
+            & chezmoi update --apply
+            if ($LASTEXITCODE -eq 0) {
+                Log-Success "Dotfiles updated successfully"
+                return $true
+            }
+        } else {
+            Log-Info "Switching chezmoi to windows branch..."
+            Push-Location $chezmoiSource
+            git fetch origin windows 2>$null
+            git checkout windows 2>$null
+            Pop-Location
+        }
+    }
+    
+    # Fresh init or apply after branch switch
     Log-Info "Initializing and applying dotfiles..."
     & chezmoi init --branch windows --apply git@github.com:vitusli/dotfiles.git
     if ($LASTEXITCODE -eq 0) {
