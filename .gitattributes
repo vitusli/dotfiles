@@ -1,0 +1,10 @@
+*.sh text eol=lf
+linu.sh text eol=lf
+maca.sh text eol=lf
+
+# All dotfiles (chezmoi dot_ prefix) need LF
+dot_* text eol=lf
+
+# Windows scripts get CRLF
+*.ps1 text eol=crlf
+wina.ps1 text eol=crlf
