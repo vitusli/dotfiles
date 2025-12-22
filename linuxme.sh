@@ -363,6 +363,31 @@ EOF
         fi
         
         
+        # Ensure WSL interop is enabled in config
+        if [ ! -f /etc/wsl.conf ] || ! grep -q "\[interop\]" /etc/wsl.conf 2>/dev/null; then
+            log_info "Configuring WSL interop..."
+            sudo tee -a /etc/wsl.conf > /dev/null << 'EOF'
+
+[interop]
+enabled = true
+appendWindowsPath = true
+EOF
+            log_success "WSL interop configured"
+        fi
+        
+        # Register WSLInterop in binfmt_misc if missing (allows running .exe from WSL)
+        if [ ! -f /proc/sys/fs/binfmt_misc/WSLInterop ]; then
+            log_info "Registering WSL interop for Windows exe support..."
+            sudo bash -c 'echo ":WSLInterop:M::MZ::/init:PF" > /proc/sys/fs/binfmt_misc/register' 2>/dev/null
+            if [ -f /proc/sys/fs/binfmt_misc/WSLInterop ]; then
+                log_success "WSL interop registered"
+            else
+                log_warning "Could not register WSL interop - restart WSL with 'wsl --shutdown'"
+            fi
+        else
+            log_success "WSL interop already active"
+        fi
+        
         # VS Code should work out of the box in WSL
         if command_exists code; then
             log_success "VS Code available via 'code' command"
