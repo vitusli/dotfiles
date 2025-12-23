@@ -25,11 +25,12 @@
   fi
   
   # Copy target to clipboard and open in VS Code
-  echo -n "$target" | pbcopy
+  echo -n "$target" | {{ .clipboardCopy }}
   code "$target"
   echo "Opened in VS Code: $target"
 }
 
+{{ if eq .chezmoi.os "darwin" -}}
 # /app - Fuzzy-find and run macOS applications
 /app() {
   local app_path=$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | fzf --prompt="Select app: ") || return 130
@@ -56,6 +57,7 @@
     return 1
   fi
 }
+{{- end }}
 
 # lf - File manager with cd on exit
 # Changes directory to last visited location when quitting lf
@@ -71,6 +73,7 @@ lf() {
   fi
 }
 
+{{ if eq .chezmoi.os "darwin" -}}
 # assets - Copy asset from library to project folder (Wandelbots workflow)
 assets() {
   local asset_library="$HOME/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"
@@ -130,6 +133,7 @@ assets() {
     return 1
   fi
 }
+{{- end }}
 
 # ============================================================================
 # stow - chezmoi edit with fzf (opens source, then apply)

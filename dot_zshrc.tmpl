@@ -13,12 +13,12 @@ export PATH="$PATH:$HOME/.local/bin"
 # ============================================================================
 
 # z - directory jumping
-source /opt/homebrew/etc/profile.d/z.sh
+source {{ .brewPrefix }}/etc/profile.d/z.sh
 
 # fzf - fuzzy finder
 source <(fzf --zsh)
 # Copy result to clipboard on Enter (in addition to normal output)
-export FZF_DEFAULT_OPTS="--bind 'enter:execute-silent(echo {} | pbcopy)+accept'"
+export FZF_DEFAULT_OPTS="--bind 'enter:execute-silent(echo {} | {{ .clipboardCopy }})+accept'"
 
 # zsh-abbr - add to FPATH before compinit
 if type brew &>/dev/null; then
@@ -35,4 +35,4 @@ for config_file in ~/.zsh/*.zsh; do
 done
 
 # zsh-abbr - load after compinit (which is in completion.zsh)
-source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
+source {{ .brewPrefix }}/share/zsh-abbr/zsh-abbr.zsh

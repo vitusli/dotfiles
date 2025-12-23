@@ -1,0 +1,27 @@
+# ============================================================================
+# CHEZMOI IGNORE FILE
+# ============================================================================
+
+# Bootstrap scripts - bleiben separat, werden manuell ausgeführt
+*.sh
+*.ps1
+README.md
+LICENSE
+
+# macOS-only files
+{{ if ne .chezmoi.os "darwin" }}
+Library/**
+dot_aerospace.toml
+dot_gvimrc
+{{ end }}
+
+# Windows-only files (falls später hinzugefügt)
+{{ if ne .chezmoi.os "windows" }}
+AppData/**
+Documents/WindowsPowerShell/**
+{{ end }}
+
+# Linux-only files (falls später hinzugefügt)
+{{ if not (or (eq .chezmoi.os "linux") (eq .chezmoi.os "windows")) }}
+dot_config/systemd/**
+{{ end }}

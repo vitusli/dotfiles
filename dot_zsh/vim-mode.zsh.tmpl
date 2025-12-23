@@ -28,10 +28,10 @@ zle -N zle-line-init
 # VIM MODE CLIPBOARD INTEGRATION
 # ============================================================================
 
-# Copy vim yank operations to macOS clipboard
+# Copy vim yank operations to system clipboard
 # Wraps widgets AFTER plugin loading to call builtin versions with leading dot
 _copy_cutbuffer_to_clipboard() {
-  [[ -n $CUTBUFFER ]] && printf '%s' "$CUTBUFFER" | pbcopy
+  [[ -n $CUTBUFFER ]] && printf '%s' "$CUTBUFFER" | {{ .clipboardCopy }}
 }
 
 vi_yank_wrapper() { zle .vi-yank; _copy_cutbuffer_to_clipboard }
