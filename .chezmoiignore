@@ -3,11 +3,6 @@
 # ============================================================================
 
 # Bootstrap scripts - bleiben separat, werden manuell ausgeführt
-**/*.sh
-**/*.ps1
-README.md
-LICENSE
-
 
 # ============================================================================
 # CHEZMOI IGNORE FILE (bereinigt)
