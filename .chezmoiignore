@@ -8,12 +8,6 @@
 # CHEZMOI IGNORE FILE (bereinigt)
 # ============================================================================
 
-# Bootstrap scripts - bleiben separat, werden manuell ausgeführt
-**/*.sh
-**/*.ps1
-README.md
-LICENSE
-
 # macOS-only files (immer ignorieren, außer auf macOS)
 {{ if ne .chezmoi.os "darwin" -}}
 Library/**
