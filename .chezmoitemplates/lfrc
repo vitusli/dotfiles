@@ -63,26 +63,37 @@ map H set hidden!
 map o :open-with
 map O :open-with-dir
 
-# Reveal in Finder
+# Reveal in file manager
+{{ if eq .osid "darwin" -}}
 map <c-r> $open -R "$f"
+{{- else if eq .osid "windows" -}}
+map <c-r> $explorer.exe /select,"$f"
+{{- else -}}
+map <c-r> $xdg-open "$(dirname "$f")"
+{{- end }}
 
 # Git
 map L $lazygit
 
 # Go to home
 map ~ cd ~
-
+{{ if eq .osid "darwin" }}
 # Jump to Omniverse projects and start filter
-map P cd "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects"; filter
+map P cd "{{ .chezmoi.homeDir }}/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects"; filter
 
 # Jump to Asset-Library and start filter
-map A cd "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"; filter
+map A cd "{{ .chezmoi.homeDir }}/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"; filter
+{{ end }}
 
 # Jump to Downloads and start filter
-map D cd "/Users/vituspacholleck/Downloads"; filter
+map D cd "{{ .chezmoi.homeDir }}/Downloads"; filter
 
 # Open current directory in VS Code
+{{ if eq .osid "darwin" -}}
 map V & open -a "Visual Studio Code" "$PWD"
+{{- else -}}
+map V & code "$PWD"
+{{- end }}
 
 # Disable default 'd' (cut) as requested
 map d :echo "Cut is disabled"
@@ -94,7 +105,7 @@ map / filter
 map <space> :fzf-extended
 
 # Open dotfiles in VS Code with lfrc editor
-map <c-s> & code ~/.local/share/chezmoi ~/.local/share/chezmoi/dot_config/lf/lfrc
+map <c-s> & code {{ .chezmoi.homeDir }}/.local/share/chezmoi {{ .chezmoi.homeDir }}/.local/share/chezmoi/dot_config/lf/lfrc
 
 # Toggle executable permission (Shift+X)
 map X :toggle-executable
@@ -102,9 +113,9 @@ map X :toggle-executable
 # ============================================================================
 # COMMANDS
 # ============================================================================
-
-# Open file with application (using fzf)
-cmd open-with ${{
+{{ if eq .osid "darwin" }}
+# Open file with application (using fzf) - macOS only
+cmd open-with ${{ "{{" }}
     app=$(printf "VS Code\nFinder (reveal)\nMacVim\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open with: ")
     [ -z "$app" ] && exit
     
@@ -113,10 +124,10 @@ cmd open-with ${{
         "Finder (reveal)") open -R "$f" ;;
         *) open -a "$app" "$f" ;;
     esac
-}}
+{{ "}}" }}
 
-# Open current directory with application (using fzf)
-cmd open-with-dir ${{
+# Open current directory with application (using fzf) - macOS only
+cmd open-with-dir ${{ "{{" }}
     app=$(printf "VS Code\nFinder\nMarta\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open directory with: ")
     [ -z "$app" ] && exit
     
@@ -126,46 +137,47 @@ cmd open-with-dir ${{
         "Marta") open -a "Marta" "$PWD" ;;
         *) open -a "$app" "$PWD" ;;
     esac
-}}
+{{ "}}" }}
+{{ end }}
 
 # Create file
-cmd touch ${{
+cmd touch ${{ "{{" }}
     read -p "File name: " name
     touch "$name"
-}}
+{{ "}}" }}
 
 # Create directory
-cmd mkdir ${{
+cmd mkdir ${{ "{{" }}
     read -p "Directory name: " name
     mkdir -p "$name"
-}}
+{{ "}}" }}
 
 # Fuzzy search with fzf (current dir only)
-cmd fzf-local ${{
+cmd fzf-local ${{ "{{" }}
     result=$(ls -1A | fzf --prompt="Search (current): " --preview="bat --color=always --style=numbers {}")
     if [ -n "$result" ]; then
         lf -remote "send $id select \"$result\""
     fi
-}}
+{{ "}}" }}
 
 # Fuzzy search with fzf (recursive)
-cmd fzf ${{
+cmd fzf ${{ "{{" }}
     result=$(find . -type f 2>/dev/null | fzf --prompt="Search (recursive): " --preview="bat --color=always --style=numbers {}")
     if [ -n "$result" ]; then
         lf -remote "send $id select \"$result\""
     fi
-}}
+{{ "}}" }}
 
 # Extended search across multiple directories (like zsh / function)
-cmd fzf-extended ${{
+cmd fzf-extended ${{ "{{" }}
     result=$({ 
-        find ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace 2>/dev/null
-        find ~ -maxdepth 3 2>/dev/null
+        find {{ .chezmoi.homeDir }}/Downloads {{ .chezmoi.homeDir }}/Documents {{ .chezmoi.homeDir }}/Desktop {{ .chezmoi.homeDir }}/.local/share/chezmoi {{ .chezmoi.homeDir }}/codespace 2>/dev/null
+        find {{ .chezmoi.homeDir }} -maxdepth 3 2>/dev/null
     } | fzf --prompt=": " --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' --preview-window=right:60%:wrap)
     
     if [ -n "$result" ]; then
         # Copy to clipboard
-        printf "%s" "$result" | pbcopy
+        printf "%s" "$result" | {{ .clipboardCopy }}
         
         # If it's a file, select it; if directory, cd to it
         if [ -f "$result" ]; then
@@ -174,22 +186,22 @@ cmd fzf-extended ${{
             lf -remote "send $id cd \"$result\""
         fi
     fi
-}}
+{{ "}}" }}
 
-# Yank path to clipboard (macOS)
-cmd yank-path ${{
-    printf "%s" "$f" | pbcopy
+# Yank path to clipboard
+cmd yank-path ${{ "{{" }}
+    printf "%s" "$f" | {{ .clipboardCopy }}
     lf -remote "send $id echo Copied: $f"
-}}
+{{ "}}" }}
 
-# Yank directory path to clipboard (macOS)
-cmd yank-dirname ${{
-    printf "%s" "$PWD" | pbcopy
+# Yank directory path to clipboard
+cmd yank-dirname ${{ "{{" }}
+    printf "%s" "$PWD" | {{ .clipboardCopy }}
     lf -remote "send $id echo Copied: $PWD"
-}}
+{{ "}}" }}
 
 # Toggle executable permission
-cmd toggle-executable ${{
+cmd toggle-executable ${{ "{{" }}
     if [ -x "$f" ]; then
         chmod -x "$f"
         lf -remote "send $id echo Removed executable: $f"
@@ -198,4 +210,4 @@ cmd toggle-executable ${{
         lf -remote "send $id echo Made executable: $f"
     fi
     lf -remote "send $id reload"
-}}
+{{ "}}" }}

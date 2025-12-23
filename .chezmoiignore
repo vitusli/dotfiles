@@ -8,20 +8,33 @@
 README.md
 LICENSE
 
-# macOS-only files
-{{ if ne .chezmoi.os "darwin" }}
+# macOS-only files (use Library/ path)
+{{ if ne .chezmoi.os "darwin" -}}
 Library/**
 dot_aerospace.toml
 dot_gvimrc
-{{ end }}
+{{- end }}
 
-# Windows-only files (falls später hinzugefügt)
-{{ if ne .chezmoi.os "windows" }}
+# Windows-only files (use AppData/ path)
+{{ if ne .chezmoi.os "windows" -}}
 AppData/**
 Documents/WindowsPowerShell/**
-{{ end }}
+{{- end }}
 
-# Linux-only files (falls später hinzugefügt)
-{{ if not (or (eq .chezmoi.os "linux") (eq .chezmoi.os "windows")) }}
-dot_config/systemd/**
-{{ end }}
+# VSCode & lf config paths differ per OS
+# On macOS: use Library/, ignore .config/Code & AppData/
+# On Linux/WSL: use .config/, ignore Library/ & AppData/
+# On Windows: use AppData/, ignore .config/ & Library/
+{{ if eq .chezmoi.os "darwin" -}}
+.config/Code
+.config/Code/**
+{{- end }}
+{{ if eq .chezmoi.os "windows" -}}
+.config/Code
+.config/Code/**
+.config/lf
+.config/lf/**
+{{- end }}
+{{ if eq .chezmoi.os "linux" -}}
+AppData/**
+{{- end }}

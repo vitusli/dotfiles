@@ -1,7 +1,9 @@
 set clipboard=unnamed
 
 " fzf.vim configuration
-set rtp+=/opt/homebrew/bin/fzf
+{{ if .brewPrefix -}}
+set rtp+={{ .brewPrefix }}/bin/fzf
+{{- end }}
 
 " FZF centered popup window (like Raycast/wilder.nvim)
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6, 'border': 'rounded' } }
@@ -9,7 +11,7 @@ let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6, 'border': 'rounded
 " Space: Scoped search in key directories (mirrors .zshrc)
 " Searches: Downloads, Documents, Desktop, chezmoi + Home (max depth 3)
 " vim interprets <C-@> as Ctrl+Space
-nnoremap <Space> :call fzf#run(fzf#wrap({'source': 'find ~/codespace ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi -maxdepth 10 2>/dev/null; find ~ -maxdepth 3 2>/dev/null', 'sink': 'e'}))<CR>
+nnoremap <Space> :call fzf#run(fzf#wrap({'source': 'find {{ .chezmoi.homeDir }}/codespace {{ .chezmoi.homeDir }}/Downloads {{ .chezmoi.homeDir }}/Documents {{ .chezmoi.homeDir }}/Desktop {{ .chezmoi.homeDir }}/.local/share/chezmoi -maxdepth 10 2>/dev/null; find {{ .chezmoi.homeDir }} -maxdepth 3 2>/dev/null', 'sink': 'e'}))<CR>
 
 " Relative line numbers (plus absolute cursor line)
 set number
