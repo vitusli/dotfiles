@@ -55,12 +55,6 @@
         "command": "workbench.action.terminal.kill",
         "when": "terminalFocus"
     },
-{{- else }}
-    {
-        "key": "ctrl+w",
-        "command": "workbench.action.terminal.kill",
-        "when": "terminalFocus && (terminalHasBeenCreated || terminalIsOpen || terminalProcessSupported)"
-    },
 {{- end }}
     {
         "key": "{{ $mod }}+shift+space",
@@ -89,6 +83,11 @@
         "key": "ctrl+w",
         "command": "workbench.action.closeWindow",
         "when": "!editorIsOpen"
+    },
+    {
+        "key": "ctrl+w",
+        "command": "workbench.action.terminal.kill",
+        "when": "terminalFocus && (terminalHasBeenCreated || terminalIsOpen || terminalProcessSupported)"
     },
 {{- end }}
 

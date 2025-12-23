@@ -1,0 +1,15 @@
+.gitignore
+.gitmodules
+dot_bashrc
+dot_config/lf/cleaner.sh
+dot_config/lf/lfrc
+dot_config/lf/preview.sh
+dot_config/zsh-abbr/user-abbreviations
+dot_hushlogin
+dot_profile
+dot_vimrc
+dot_zprofile
+dot_zsh/completion.zsh
+dot_zsh/functions.zsh
+dot_zsh/vim-mode.zsh
+dot_zshrc

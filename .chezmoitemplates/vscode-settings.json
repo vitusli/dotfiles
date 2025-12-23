@@ -41,19 +41,19 @@
         }
     ],
 
-    // Neovim
+    // Neovim (not on Windows)
+{{- if ne .osid "windows" }}
 {{- if eq .osid "darwin" }}
     "vscode-neovim.neovimExecutablePaths.darwin": "{{ .brewPrefix }}/bin/nvim",
 {{- else if eq .osid "linux" }}
     "vscode-neovim.neovimExecutablePaths.linux": "{{ .brewPrefix }}/bin/nvim",
 {{- else if eq .osid "wsl" }}
     "vscode-neovim.neovimExecutablePaths.linux": "{{ .brewPrefix }}/bin/nvim",
-{{- else if eq .osid "windows" }}
-    "vscode-neovim.neovimExecutablePaths.win32": "C:\\Program Files\\Neovim\\bin\\nvim.exe",
 {{- end }}
     "vscode-neovim.neovimInitVimPaths.darwin": "{{ .chezmoi.homeDir }}/.local/share/chezmoi/dot_config/nvim/init.vim",
     "vscode-neovim.useCtrlKeysForNormalMode": false,
     "vscode-neovim.useCtrlKeysForInsertMode": false,
+{{- end }}
 
     // Python
 {{- if .brewPrefix }}
@@ -93,11 +93,24 @@
     "window.commandCenter": false,
     "window.customTitleBarVisibility": "never",
 
+    // Vim Extension: ctrl+i nicht abfangen (nur Windows)
+{{- if eq .osid "windows" }}
+    "vim.handleKeys": {
+        "<C-i>": false
+    },
+{{- end }}
     // Workbench
     "chat.commandCenter.enabled": false,
     "workbench.colorTheme": "cursor midnight theme",
     "workbench.iconTheme": "sf-symbol-icons",
     "workbench.layoutControl.enabled": false,
     "workbench.startupEditor": "none",
+{{- if eq .osid "windows" }}
+    "workbench.tips.enabled": false,
+    "security.allowedUNCHosts": [
+        "wsl.localhost"
+    ]
+{{- else }}
     "workbench.tips.enabled": false
+{{- end }}
 }
