@@ -1,0 +1,83 @@
+environment {
+    textEditor "MacVim"
+}
+
+behavior {
+    theme "Cursor Dark Midnight"
+    layout {
+        showActionBar false
+    }
+    quickSelect {
+        activateOnAnyCharacter false
+        defaultMode "substring"
+        filterMatchedItems true
+
+        
+    }
+}
+
+
+
+keyBindings {    
+    "\\" "core.go"
+
+    "cmd+j" "core.terminal.toggle"
+    "cmd+shift+j" "core.terminal.activate"
+
+    "k" "core.move.up"
+    "j" "core.move.down"
+    "h" "core.go.up"
+    "l" "core.open"
+    
+    "shift+k" "core.select.move.up"
+    "shift+j" "core.select.move.down"
+    
+    "g" "core.move.left"
+    "shift+g" "core.move.right"
+    
+    "r" "core.rename"
+    
+    "n" "core.new.folder"
+    "f" "core.new.file"
+    
+    "ctrl+x" "core.trash"
+    
+    "y" "core.path"
+    "shift+y" "core.path.folder"
+    
+    "x" "core.move.inactive"
+    "c" "core.copy.inactive"
+    
+    "shift+h" "core.display.hidden"
+    
+    "cmd+alt+r" "core.finder.reveal"
+    
+    
+    "left" "core.clone.left"
+    "right" "core.clone.right"
+    
+    "shift+`" {
+        id "core.open.directory"
+        src "~"
+    }
+    
+    "shift+p" {
+        id "core.open.directory"
+        src "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects"
+    }
+    
+    "shift+a" {
+        id "core.open.directory"
+        src "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"
+    }
+    
+    "shift+d" {
+        id "core.open.directory"
+        src "/Users/vituspacholleck/Downloads"
+    }
+
+    "shift+v" {
+        id "vitusli.openInVSCode.openCurrentInVSCode"
+    }
+    
+}

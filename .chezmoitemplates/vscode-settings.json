@@ -1,0 +1,116 @@
+{
+    // Editor
+    "editor.accessibilitySupport": "off",
+
+    // Explorer
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+
+    // Extensions
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
+    "extensions.ignoreRecommendations": true,
+
+    // Files
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 0,
+
+    // Git
+    "git.openRepositoryInParentFolders": "always",
+
+    // GitHub Copilot
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": false,
+        "markdown": true,
+        "scminput": false
+    },
+
+    // Multi Command
+    "multiCommand.commands": [
+        {
+            "command": "runSlash",
+            "sequence": [
+                "workbench.action.terminal.focus",
+                {
+                    "command": "workbench.action.terminal.sendSequence",
+                    "args": { "text": "/\u000D" }
+                }
+            ]
+        }
+    ],
+
+    // Neovim (not on Windows)
+{{- if ne .osid "windows" }}
+{{- if eq .osid "darwin" }}
+    "vscode-neovim.neovimExecutablePaths.darwin": "{{ .brewPrefix }}/bin/nvim",
+{{- else if eq .osid "linux" }}
+    "vscode-neovim.neovimExecutablePaths.linux": "{{ .brewPrefix }}/bin/nvim",
+{{- else if eq .osid "wsl" }}
+    "vscode-neovim.neovimExecutablePaths.linux": "{{ .brewPrefix }}/bin/nvim",
+{{- end }}
+    "vscode-neovim.neovimInitVimPaths.darwin": "{{ .chezmoi.homeDir }}/.local/share/chezmoi/dot_config/nvim/init.vim",
+    "vscode-neovim.useCtrlKeysForNormalMode": false,
+    "vscode-neovim.useCtrlKeysForInsertMode": false,
+{{- end }}
+
+    // Python
+{{- if .brewPrefix }}
+    "python.defaultInterpreterPath": "{{ .brewPrefix }}/bin/python3",
+{{- else }}
+    "python.defaultInterpreterPath": "python3",
+{{- end }}
+
+    // Security
+    "security.workspace.trust.untrustedFiles": "open",
+
+    // Settings Sync
+    "settingsSync.keybindingsPerPlatform": false,
+    "settingsSync.ignoredExtensions": [],
+    "settingsSync.ignoredSettings": [],
+
+    // Terminal
+    "terminal.integrated.suggest.enabled": false,
+
+    // VS Code Custom CSS
+{{- if eq .osid "darwin" }}
+    "vscode_custom_css.imports": [
+        "file://{{ .chezmoi.homeDir }}/Library/Application Support/Code/User/custom-vscode.css"
+    ],
+{{- else if or (eq .osid "linux") (eq .osid "wsl") }}
+    "vscode_custom_css.imports": [
+        "file://{{ .chezmoi.homeDir }}/.config/Code/User/custom-vscode.css"
+    ],
+{{- else if eq .osid "windows" }}
+    "vscode_custom_css.imports": [
+        "file:///{{ .chezmoi.homeDir }}/AppData/Roaming/Code/User/custom-vscode.css"
+    ],
+{{- end }}
+    "vscode_custom_css.policy": true,
+
+    // Window
+    "window.commandCenter": false,
+    "window.customTitleBarVisibility": "never",
+
+    // Vim Extension: ctrl+i nicht abfangen (nur Windows)
+{{- if eq .osid "windows" }}
+    "vim.handleKeys": {
+        "<C-i>": false
+    },
+{{- end }}
+    // Workbench
+    "chat.commandCenter.enabled": false,
+    "workbench.colorTheme": "cursor midnight theme",
+    "workbench.iconTheme": "sf-symbol-icons",
+    "workbench.layoutControl.enabled": false,
+    "workbench.startupEditor": "none",
+{{- if eq .osid "windows" }}
+    "workbench.tips.enabled": false,
+    "security.allowedUNCHosts": [
+        "wsl.localhost"
+    ]
+{{- else }}
+    "workbench.tips.enabled": false
+{{- end }}
+}

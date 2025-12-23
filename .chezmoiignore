@@ -1,0 +1,69 @@
+# ============================================================================
+# CHEZMOI IGNORE FILE
+# ============================================================================
+
+# Bootstrap scripts - bleiben separat, werden manuell ausgeführt
+
+# ============================================================================
+# CHEZMOI IGNORE FILE (bereinigt)
+# ============================================================================
+
+# macOS-only files (immer ignorieren, außer auf macOS)
+{{ if ne .chezmoi.os "darwin" -}}
+Library/**
+.aerospace.toml
+.gvimrc
+.config/karabiner
+.config/karabiner/**
+{{- end }}
+
+# Unix-only files (nicht für Windows)
+{{ if eq .chezmoi.os "windows" -}}
+.zshrc
+.zprofile
+.zsh
+.zsh/**
+.config/zsh-abbr
+.config/zsh-abbr/**
+.profile
+.hushlogin
+.config/Code
+.config/Code/**
+.config/lf
+.config/lf/**
+.config/nvim
+.config/nvim/**
+.config/wezterm
+.config/wezterm/**
+{{- end }}
+
+# Windows-only files (immer ignorieren, außer auf Windows)
+{{ if ne .chezmoi.os "windows" -}}
+AppData/**
+Documents/PowerShell/**
+Documents/WindowsPowerShell/**
+private_AppData/**
+dot_bash_profile
+dot_bashrc
+dot_inputrc
+dot_config/wezterm
+dot_config/wezterm/**
+{{- end }}
+
+# Linux/WSL: ignore AppData, Library (Redundanz für Sicherheit)
+{{ if or (eq .chezmoi.os "linux") (eq .osid "wsl") -}}
+AppData/**
+Library/**
+{{- end }}
+
+# VSCode paths per OS
+{{ if eq .chezmoi.os "darwin" -}}
+.config/Code
+.config/Code/**
+{{- end }}
+
+.gitignore
+.gitattributes
+.gitmodules
+bootstrap/
+README.md

@@ -1,0 +1,213 @@
+# ============================================================================
+# LF FILE MANAGER CONFIG
+# Minimal config inspired by Marta setup
+# ============================================================================
+
+# Basic Settings
+set hidden false
+set ignorecase true
+set icons true
+set incfilter
+
+# Show only path in title (no user@host)
+set promptfmt "%d"
+
+# Two column view: current dir + preview (no parent dir)
+set ratios 1:1
+
+# Preview with bat
+set previewer ~/.config/lf/preview.sh
+set cleaner ~/.config/lf/cleaner.sh
+
+# ============================================================================
+# KEY BINDINGS (Marta-inspired)
+# ============================================================================
+
+# Navigation (hjkl vim-style)
+map k up
+map j down
+map h updir
+map l :setfilter; open
+map <enter> :setfilter; open
+
+# Selection (shift + k/j) - toggle current, then move
+map K :toggle; up
+map J :toggle; down
+
+# Clear selection, buffer, and filter (single Esc mapping)
+map <esc> :unselect; clear; setfilter
+
+# Go to top/bottom
+map g top
+map G bottom
+
+# File operations
+map r rename
+map f :touch
+map n :mkdir
+map <c-x> delete
+
+# Copy/Move (x = cut, c = copy, v = paste)
+map x cut
+map c copy
+map p paste
+
+# Path operations
+map y :yank-path
+map Y :yank-dirname
+
+# Toggle hidden files
+map H set hidden!
+
+# Open with (fzf)
+map o :open-with
+map O :open-with-dir
+
+# Reveal in file manager
+{{ if eq .osid "darwin" -}}
+map <c-r> $open -R "$f"
+{{- else if eq .osid "windows" -}}
+map <c-r> $explorer.exe /select,"$f"
+{{- else -}}
+map <c-r> $xdg-open "$(dirname "$f")"
+{{- end }}
+
+# Git
+map L $lazygit
+
+# Go to home
+map ~ cd ~
+{{ if eq .osid "darwin" }}
+# Jump to Omniverse projects and start filter
+map P cd "{{ .chezmoi.homeDir }}/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects"; filter
+
+# Jump to Asset-Library and start filter
+map A cd "{{ .chezmoi.homeDir }}/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"; filter
+{{ end }}
+
+# Jump to Downloads and start filter
+map D cd "{{ .chezmoi.homeDir }}/Downloads"; filter
+
+# Open current directory in VS Code
+{{ if eq .osid "darwin" -}}
+map V & open -a "Visual Studio Code" "$PWD"
+{{- else -}}
+map V & code "$PWD"
+{{- end }}
+
+# Disable default 'd' (cut) as requested
+map d :echo "Cut is disabled"
+
+# Filter (classic lf filter)
+map / filter
+
+# Extended search (multiple directories)
+map <space> :fzf-extended
+
+# Open dotfiles in VS Code with lfrc editor
+map <c-s> & code {{ .chezmoi.homeDir }}/.local/share/chezmoi {{ .chezmoi.homeDir }}/.local/share/chezmoi/dot_config/lf/lfrc
+
+# Toggle executable permission (Shift+X)
+map X :toggle-executable
+
+# ============================================================================
+# COMMANDS
+# ============================================================================
+{{ if eq .osid "darwin" }}
+# Open file with application (using fzf) - macOS only
+cmd open-with ${{ "{{" }}
+    app=$(printf "VS Code\nFinder (reveal)\nMacVim\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open with: ")
+    [ -z "$app" ] && exit
+    
+    case "$app" in
+        "VS Code") open -a "Visual Studio Code" "$f" ;;
+        "Finder (reveal)") open -R "$f" ;;
+        *) open -a "$app" "$f" ;;
+    esac
+{{ "}}" }}
+
+# Open current directory with application (using fzf) - macOS only
+cmd open-with-dir ${{ "{{" }}
+    app=$(printf "VS Code\nFinder\nMarta\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open directory with: ")
+    [ -z "$app" ] && exit
+    
+    case "$app" in
+        "VS Code") open -a "Visual Studio Code" "$PWD" ;;
+        "Finder") open "$PWD" ;;
+        "Marta") open -a "Marta" "$PWD" ;;
+        *) open -a "$app" "$PWD" ;;
+    esac
+{{ "}}" }}
+{{ end }}
+
+# Create file
+cmd touch ${{ "{{" }}
+    read -p "File name: " name
+    touch "$name"
+{{ "}}" }}
+
+# Create directory
+cmd mkdir ${{ "{{" }}
+    read -p "Directory name: " name
+    mkdir -p "$name"
+{{ "}}" }}
+
+# Fuzzy search with fzf (current dir only)
+cmd fzf-local ${{ "{{" }}
+    result=$(ls -1A | fzf --prompt="Search (current): " --preview="bat --color=always --style=numbers {}")
+    if [ -n "$result" ]; then
+        lf -remote "send $id select \"$result\""
+    fi
+{{ "}}" }}
+
+# Fuzzy search with fzf (recursive)
+cmd fzf ${{ "{{" }}
+    result=$(find . -type f 2>/dev/null | fzf --prompt="Search (recursive): " --preview="bat --color=always --style=numbers {}")
+    if [ -n "$result" ]; then
+        lf -remote "send $id select \"$result\""
+    fi
+{{ "}}" }}
+
+# Extended search across multiple directories (like zsh / function)
+cmd fzf-extended ${{ "{{" }}
+    result=$({ 
+        find {{ .chezmoi.homeDir }}/Downloads {{ .chezmoi.homeDir }}/Documents {{ .chezmoi.homeDir }}/Desktop {{ .chezmoi.homeDir }}/.local/share/chezmoi {{ .chezmoi.homeDir }}/codespace 2>/dev/null
+        find {{ .chezmoi.homeDir }} -maxdepth 3 2>/dev/null
+    } | fzf --prompt=": " --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' --preview-window=right:60%:wrap)
+    
+    if [ -n "$result" ]; then
+        # Copy to clipboard
+        printf "%s" "$result" | {{ .clipboardCopy }}
+        
+        # If it's a file, select it; if directory, cd to it
+        if [ -f "$result" ]; then
+            lf -remote "send $id select \"$result\""
+        elif [ -d "$result" ]; then
+            lf -remote "send $id cd \"$result\""
+        fi
+    fi
+{{ "}}" }}
+
+# Yank path to clipboard
+cmd yank-path ${{ "{{" }}
+    printf "%s" "$f" | {{ .clipboardCopy }}
+    lf -remote "send $id echo Copied: $f"
+{{ "}}" }}
+
+# Yank directory path to clipboard
+cmd yank-dirname ${{ "{{" }}
+    printf "%s" "$PWD" | {{ .clipboardCopy }}
+    lf -remote "send $id echo Copied: $PWD"
+{{ "}}" }}
+
+# Toggle executable permission
+cmd toggle-executable ${{ "{{" }}
+    if [ -x "$f" ]; then
+        chmod -x "$f"
+        lf -remote "send $id echo Removed executable: $f"
+    else
+        chmod +x "$f"
+        lf -remote "send $id echo Made executable: $f"
+    fi
+    lf -remote "send $id reload"
+{{ "}}" }}

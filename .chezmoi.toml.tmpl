@@ -1,0 +1,62 @@
+{{- /* ================================================================== */ -}}
+{{- /* OS DETECTION                                                       */ -}}
+{{- /* ================================================================== */ -}}
+
+{{- $osid := .chezmoi.os -}}
+
+{{- /* Robust WSL detection via 3 methods */ -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{-   if or
+        (env "WSL_DISTRO_NAME")
+        (and (hasKey .chezmoi.kernel "osrelease") (contains "microsoft" (.chezmoi.kernel.osrelease | lower)))
+        (and (hasKey .chezmoi.kernel "osrelease") (contains "WSL" .chezmoi.kernel.osrelease))
+-}}
+{{-     $osid = "wsl" -}}
+{{-   end -}}
+{{- end -}}
+
+{{- /* ================================================================== */ -}}
+{{- /* HOMEBREW PREFIX                                                    */ -}}
+{{- /* ================================================================== */ -}}
+
+{{- $brewPrefix := "" -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{-   if eq .chezmoi.arch "arm64" -}}
+{{-     $brewPrefix = "/opt/homebrew" -}}
+{{-   else -}}
+{{-     $brewPrefix = "/usr/local" -}}
+{{-   end -}}
+{{- else if or (eq $osid "linux") (eq $osid "wsl") -}}
+{{-   $brewPrefix = "/home/linuxbrew/.linuxbrew" -}}
+{{- end -}}
+
+{{- /* ================================================================== */ -}}
+{{- /* CLIPBOARD COMMANDS                                                 */ -}}
+{{- /* ================================================================== */ -}}
+
+{{- $clipboardCopy := "" -}}
+{{- $clipboardPaste := "" -}}
+
+{{- if eq .chezmoi.os "darwin" -}}
+{{-   $clipboardCopy = "pbcopy" -}}
+{{-   $clipboardPaste = "pbpaste" -}}
+{{- else if eq $osid "wsl" -}}
+{{-   $clipboardCopy = "clip.exe" -}}
+{{-   $clipboardPaste = "powershell.exe -NoProfile -Command Get-Clipboard" -}}
+{{- else if eq .chezmoi.os "linux" -}}
+{{-   $clipboardCopy = "xclip -selection clipboard" -}}
+{{-   $clipboardPaste = "xclip -selection clipboard -o" -}}
+{{- else if eq .chezmoi.os "windows" -}}
+{{-   $clipboardCopy = "clip.exe" -}}
+{{-   $clipboardPaste = "powershell.exe -NoProfile -Command Get-Clipboard" -}}
+{{- end -}}
+
+{{- /* ================================================================== */ -}}
+{{- /* CONFIG OUTPUT                                                      */ -}}
+{{- /* ================================================================== */ -}}
+
+[data]
+    osid = {{ $osid | quote }}
+    brewPrefix = {{ $brewPrefix | quote }}
+    clipboardCopy = {{ $clipboardCopy | quote }}
+    clipboardPaste = {{ $clipboardPaste | quote }}
