@@ -1,6 +1,0 @@
-.gitattributes
-.gitignore
-README.md
-linux.sh
-macos.sh
-windows.ps1
