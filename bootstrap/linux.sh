@@ -22,6 +22,7 @@ BREW_PACKAGES=(
     chezmoi
     zsh-autosuggestions
     zsh-syntax-highlighting
+    z
 )
 
 # Packages from taps (need to be installed separately)

@@ -5,6 +5,11 @@
 # Minimal prompt without username/hostname
 PROMPT='%1~ %% '
 
+# Homebrew initialisieren (Pfad und Umgebungsvariablen setzen)
+if [ -f {{ .brewPrefix }}/bin/brew ]; then
+  eval "$({{ .brewPrefix }}/bin/brew shellenv)"
+fi
+
 # Add local bin to PATH
 export PATH="$PATH:$HOME/.local/bin"
 
