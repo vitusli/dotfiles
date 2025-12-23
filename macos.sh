@@ -125,6 +125,7 @@ VSCODE_EXTENSIONS=(
     ms-python.python
     ms-python.vscode-pylance
     ms-python.vscode-python-envs
+    mhutchie.git-graph
 )
 
 DUTI_CONFIGS=(
