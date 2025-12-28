@@ -1,0 +1,13 @@
+# espanso configuration
+# https://espanso.org/docs/
+
+# Trigger-Verhalten
+toggle_key: OFF
+search_shortcut: ALT+SPACE
+
+# Backend (Wayland)
+backend: clipboard
+
+# Sonstige Einstellungen
+show_notifications: true
+preserve_clipboard: true
