@@ -1,0 +1,153 @@
+# ~/.config/sway/config
+# Übersetzt von AeroSpace (macOS) zu Sway (Linux/Wayland)
+# ============================================
+# Siehe auch: dot_config/sway/README.md für Abhängigkeiten
+
+# Modifier: Ctrl+Alt+Super (Cmd = Super auf Linux)
+set $mod Control+Mod1+Mod4
+
+# ============================================
+# OUTPUT (Monitor-Konfiguration)
+# ============================================
+# Finde deine Monitor-Namen mit: swaymsg -t get_outputs
+# Beispiel:
+# output HDMI-A-1 resolution 2560x1440 position 0,0
+# output eDP-1 resolution 1920x1080 position 2560,0
+
+# Hintergrundbild (kein feh nötig!)
+# output * bg ~/Bilder/wallpaper.jpg fill
+
+# ============================================
+# INPUT (Tastatur, Touchpad)
+# ============================================
+input type:keyboard {
+    xkb_layout de
+    xkb_options caps:escape
+}
+
+input type:touchpad {
+    tap enabled
+    natural_scroll enabled
+    dwt enabled
+}
+
+# ============================================
+# GAPS
+# ============================================
+gaps inner 14
+gaps outer 15
+
+# ============================================
+# ALLGEMEINE EINSTELLUNGEN
+# ============================================
+default_border pixel 2
+default_floating_border pixel 2
+
+# Standard-Layout (stacked ≈ accordion)
+workspace_layout stacked
+
+# Maus-Verhalten (ähnlich move-mouse window-lazy-center)
+focus_follows_mouse no
+mouse_warping container
+seat * hide_cursor 3000
+
+# ============================================
+# AUTOSTART
+# ============================================
+# Layout beim Start
+exec_always swaymsg "workspace 1; layout stacked"
+
+# Benachrichtigungen (mako statt dunst für Wayland)
+exec mako
+
+# Idle/Lock (optional)
+# exec swayidle -w \
+#     timeout 300 'swaylock -f -c 000000' \
+#     timeout 600 'swaymsg "output * dpms off"' \
+#     resume 'swaymsg "output * dpms on"'
+
+# ============================================
+# MAIN MODE BINDINGS
+# ============================================
+
+# Service-Modus aktivieren (/)
+bindsym $mod+slash mode "service"
+
+# Resize
+bindsym $mod+minus resize shrink width 200 px
+bindsym $mod+equal resize grow width 200 px
+
+# Focus Navigation (mit Workspace-Wechsel als Fallback)
+bindsym $mod+h exec swaymsg focus left || swaymsg workspace prev
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l exec swaymsg focus right || swaymsg workspace next
+
+# Workspace back-and-forth
+bindsym $mod+d workspace back_and_forth
+
+# Fenster zu Workspace verschieben + folgen
+bindsym $mod+1 move container to workspace number 1; workspace number 1
+bindsym $mod+2 move container to workspace number 2; workspace number 2
+
+# Move mit Workspace-Fallback (Shift+hjkl)
+bindsym $mod+Shift+h exec swaymsg move left || (swaymsg move container to workspace prev && swaymsg workspace prev)
+bindsym $mod+Shift+j exec swaymsg move down || (swaymsg move container to workspace 2 && swaymsg workspace 2)
+bindsym $mod+Shift+k exec swaymsg move up || (swaymsg move container to workspace 1 && swaymsg workspace 1)
+bindsym $mod+Shift+l exec swaymsg move right || (swaymsg move container to workspace next && swaymsg workspace next)
+
+# Layout Toggle (tiles/accordion ≈ split/stacked)
+bindsym $mod+space layout toggle stacked split
+bindsym $mod+Shift+space layout toggle splith splitv
+
+# Floating Toggle
+bindsym $mod+w floating toggle
+
+# ============================================
+# SERVICE MODE
+# ============================================
+mode "service" {
+    # Reload config
+    bindsym r reload; mode "default"
+    
+    # Exit Sway
+    bindsym q exec swaynag -t warning -m 'Sway beenden?' -B 'Ja' 'swaymsg exit'; mode "default"
+    
+    # Flatten/Reset Layout
+    bindsym e layout splith; mode "default"
+    
+    # Float toggle
+    bindsym f floating toggle; mode "default"
+    
+    # Alle Fenster außer aktuellem schließen
+    bindsym BackSpace exec "swaymsg '[workspace=__focused__] kill'"; mode "default"
+    
+    # Move im Service-Modus
+    bindsym $mod+h move left; mode "default"
+    bindsym $mod+j move down; mode "default"
+    bindsym $mod+k move up; mode "default"
+    bindsym $mod+l move right; mode "default"
+    
+    # Zurück zum Hauptmodus
+    bindsym Escape mode "default"
+}
+
+# ============================================
+# WORKSPACE-MONITOR-ZUWEISUNG
+# ============================================
+# Passe die Monitor-Namen an (nutze: swaymsg -t get_outputs)
+workspace 1 output eDP-1
+workspace 2 output HDMI-A-1 DP-1 eDP-1
+
+# ============================================
+# STATUSBAR (waybar empfohlen)
+# ============================================
+bar {
+    swaybar_command waybar
+}
+
+# Alternativ: Sway's eingebaute Bar
+# bar {
+#     position top
+#     status_command while date +'%Y-%m-%d %H:%M:%S'; do sleep 1; done
+# }
