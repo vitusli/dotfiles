@@ -1,0 +1,123 @@
+/* Waybar Style - Clean & Minimal */
+
+* {
+    font-family: "JetBrains Mono", "Symbols Nerd Font", monospace;
+    font-size: 13px;
+}
+
+window#waybar {
+    background-color: rgba(30, 30, 46, 0.9);
+    color: #cdd6f4;
+    border-bottom: 2px solid rgba(148, 226, 213, 0.5);
+}
+
+#workspaces button {
+    padding: 0 8px;
+    color: #6c7086;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+#workspaces button:hover {
+    background: rgba(148, 226, 213, 0.2);
+}
+
+#workspaces button.focused {
+    color: #94e2d5;
+    background: rgba(148, 226, 213, 0.1);
+    border-bottom: 2px solid #94e2d5;
+}
+
+#workspaces button.urgent {
+    color: #f38ba8;
+}
+
+#mode {
+    background: #f9e2af;
+    color: #1e1e2e;
+    padding: 0 10px;
+    margin: 4px;
+    border-radius: 4px;
+}
+
+#window {
+    color: #a6adc8;
+    padding: 0 10px;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#network,
+#pulseaudio,
+#tray {
+    padding: 0 10px;
+    margin: 4px 2px;
+}
+
+#clock {
+    color: #cba6f7;
+    font-weight: bold;
+}
+
+#battery {
+    color: #a6e3a1;
+}
+
+#battery.charging {
+    color: #a6e3a1;
+}
+
+#battery.warning:not(.charging) {
+    color: #f9e2af;
+}
+
+#battery.critical:not(.charging) {
+    color: #f38ba8;
+    animation: blink 0.5s linear infinite alternate;
+}
+
+@keyframes blink {
+    to {
+        color: #1e1e2e;
+        background-color: #f38ba8;
+    }
+}
+
+#cpu {
+    color: #89b4fa;
+}
+
+#memory {
+    color: #cba6f7;
+}
+
+#network {
+    color: #94e2d5;
+}
+
+#network.disconnected {
+    color: #f38ba8;
+}
+
+#pulseaudio {
+    color: #fab387;
+}
+
+#pulseaudio.muted {
+    color: #6c7086;
+}
+
+#tray {
+    padding: 0 10px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+}
