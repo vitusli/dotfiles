@@ -1,0 +1,75 @@
+# espanso Snippets
+# Basis-Snippets für den täglichen Gebrauch
+
+matches:
+  # Datum & Zeit
+  - trigger: ":date"
+    replace: "{{mydate}}"
+    vars:
+      - name: mydate
+        type: date
+        params:
+          format: "%Y-%m-%d"
+
+  - trigger: ":time"
+    replace: "{{mytime}}"
+    vars:
+      - name: mytime
+        type: date
+        params:
+          format: "%H:%M"
+
+  - trigger: ":now"
+    replace: "{{now}}"
+    vars:
+      - name: now
+        type: date
+        params:
+          format: "%Y-%m-%d %H:%M"
+
+  # E-Mail (passe an!)
+  - trigger: ":mail"
+    replace: "159196645+vitusli@users.noreply.github.com"
+
+  - trigger: ":sig"
+    replace: |
+      Mit freundlichen Grüßen
+      vitusli
+
+  # Code
+  - trigger: ":shebang"
+    replace: "#!/usr/bin/env bash"
+
+  - trigger: ":py"
+    replace: "#!/usr/bin/env python3"
+
+  # Symbole
+  - trigger: ":arrow"
+    replace: "→"
+
+  - trigger: ":check"
+    replace: "✓"
+
+  - trigger: ":x"
+    replace: "✗"
+
+  - trigger: ":shrug"
+    replace: "¯\\_(ツ)_/¯"
+
+  # Lorem Ipsum
+  - trigger: ":lorem"
+    replace: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+
+  # Markdown
+  - trigger: ":cb"
+    replace: "```\n$|$\n```"
+
+  - trigger: ":link"
+    replace: "[$|$](url)"
+
+  # Git
+  - trigger: ":gfix"
+    replace: "git commit --fixup "
+
+  - trigger: ":gwip"
+    replace: "git add -A && git commit -m 'WIP'"
