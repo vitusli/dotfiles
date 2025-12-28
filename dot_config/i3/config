@@ -1,0 +1,105 @@
+# ~/.config/i3/config
+# Übersetzt von AeroSpace (macOS) zu i3 (Linux)
+# ============================================
+# Siehe auch: dot_config/i3/README.md für Abhängigkeiten
+
+# Modifier: Ctrl+Alt+Super (Cmd = Super auf Linux)
+set $mod Control+Mod1+Mod4
+
+# ============================================
+# AUTOSTART
+# ============================================
+# Layout beim Start (stacked = ähnlich wie accordion)
+exec_always --no-startup-id i3-msg "workspace 1; layout stacked"
+
+# Maus folgt Fokus (ähnlich move-mouse window-lazy-center)
+focus_follows_mouse no
+mouse_warping output
+
+# ============================================
+# GAPS (benötigt i3-gaps)
+# ============================================
+gaps inner 14
+gaps outer 15
+
+# ============================================
+# ALLGEMEINE EINSTELLUNGEN
+# ============================================
+default_border pixel 2
+default_floating_border pixel 2
+
+# Standard-Layout (stacked ≈ accordion, tabbed auch möglich)
+workspace_layout stacked
+
+# ============================================
+# MAIN MODE BINDINGS
+# ============================================
+
+# Service-Modus aktivieren (/)
+bindsym $mod+slash mode "service"
+
+# Resize
+bindsym $mod+minus resize shrink width 200 px or 10 ppt
+bindsym $mod+equal resize grow width 200 px or 10 ppt
+
+# Focus Navigation (mit Workspace-Wechsel als Fallback)
+bindsym $mod+h exec --no-startup-id "i3-msg focus left || i3-msg workspace prev"
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l exec --no-startup-id "i3-msg focus right || i3-msg workspace next"
+
+# Workspace back-and-forth
+bindsym $mod+d workspace back_and_forth
+
+# Fenster zu Workspace verschieben + folgen
+bindsym $mod+1 move container to workspace number 1; workspace number 1
+bindsym $mod+2 move container to workspace number 2; workspace number 2
+
+# Move mit Workspace-Fallback (Shift+hjkl)
+bindsym $mod+Shift+h exec --no-startup-id "i3-msg move left || (i3-msg move container to workspace prev && i3-msg workspace prev)"
+bindsym $mod+Shift+j exec --no-startup-id "i3-msg move down || i3-msg move container to workspace 2 && i3-msg workspace 2"
+bindsym $mod+Shift+k exec --no-startup-id "i3-msg move up || i3-msg move container to workspace 1 && i3-msg workspace 1"
+bindsym $mod+Shift+l exec --no-startup-id "i3-msg move right || (i3-msg move container to workspace next && i3-msg workspace next)"
+
+# Layout Toggle (tiles/accordion ≈ split/stacked)
+bindsym $mod+space layout toggle stacked split
+bindsym $mod+Shift+space layout toggle splith splitv
+
+# Floating Toggle
+bindsym $mod+w floating toggle
+
+# ============================================
+# SERVICE MODE
+# ============================================
+mode "service" {
+    # Reload config
+    bindsym r reload; mode "default"
+    
+    # Restart i3
+    bindsym q restart; mode "default"
+    
+    # Flatten/Reset Layout
+    bindsym e layout splith; mode "default"
+    
+    # Float toggle
+    bindsym f floating toggle; mode "default"
+    
+    # Alle Fenster außer aktuellem schließen
+    bindsym BackSpace exec --no-startup-id "i3-msg '[workspace=__focused__] kill' && i3-msg focus parent"; mode "default"
+    
+    # Move im Service-Modus
+    bindsym $mod+h move left; mode "default"
+    bindsym $mod+j move down; mode "default"
+    bindsym $mod+k move up; mode "default"
+    bindsym $mod+l move right; mode "default"
+    
+    # Zurück zum Hauptmodus
+    bindsym Escape mode "default"
+}
+
+# ============================================
+# WORKSPACE-MONITOR-ZUWEISUNG
+# ============================================
+# Passe die Monitor-Namen an (nutze xrandr um Namen zu finden)
+workspace 1 output primary
+workspace 2 output HDMI-1 DP-1 eDP-1
