@@ -1,0 +1,67 @@
+/* Ulauncher Raycast Style Theme */
+/* GTK 3.0 - 3.18 */
+
+.app {
+    background-color: #1C1C1E;
+    border-radius: 12px;
+    border: 1px solid #3A3A3C;
+}
+
+.input {
+    background-color: transparent;
+    color: #FFFFFF;
+    font-size: 18px;
+    padding: 12px 16px;
+    border: none;
+    box-shadow: none;
+}
+
+.input *:selected {
+    background-color: #BF5AF2;
+    color: #FFFFFF;
+}
+
+.item-box {
+    padding: 8px 12px;
+    background-color: transparent;
+    border-bottom: 1px solid #2C2C2E;
+}
+
+.item-box:selected {
+    background-color: #BF5AF2;
+    border-radius: 8px;
+    border-bottom: 1px solid transparent;
+}
+
+.item-name {
+    color: #FFFFFF;
+    font-size: 14px;
+}
+
+.item-name:selected {
+    color: #FFFFFF;
+}
+
+.item-descr {
+    color: #8E8E93;
+    font-size: 12px;
+}
+
+.item-descr:selected {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.item-shortcut {
+    color: #636366;
+    font-size: 11px;
+}
+
+.prefs-btn {
+    background-color: transparent;
+    border: none;
+    color: #8E8E93;
+}
+
+.prefs-btn:hover {
+    color: #FFFFFF;
+}
