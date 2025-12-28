@@ -1,0 +1,98 @@
+/* Ulauncher Raycast Style Theme */
+/* GTK 3.20+ */
+
+/* Main Window */
+.ulauncher-window {
+    background-color: #1C1C1E;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+}
+
+/* Search Input */
+.input {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    caret-color: #BF5AF2;
+    color: #FFFFFF;
+    font-size: 20px;
+    padding: 16px 20px;
+}
+
+.input:focus {
+    box-shadow: none;
+    border: none;
+}
+
+/* Results List */
+.result-box {
+    background-color: transparent;
+    padding: 0 8px;
+}
+
+/* Result Item */
+.item-box {
+    background-color: transparent;
+    border-radius: 8px;
+    margin: 2px 0;
+    padding: 10px 12px;
+}
+
+.item-box:selected {
+    background-color: #BF5AF2;
+}
+
+/* Item Name */
+.item-name {
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.item-box:selected .item-name {
+    color: #FFFFFF;
+}
+
+/* Item Description */
+.item-descr {
+    color: #8E8E93;
+    font-size: 12px;
+}
+
+.item-box:selected .item-descr {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* Shortcut Hints */
+.item-shortcut {
+    color: #48484A;
+    font-size: 11px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.item-box:selected .item-shortcut {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+}
+
+/* Scrollbar */
+scrollbar slider {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    min-width: 6px;
+}
+
+/* Preferences Button */
+.prefs-btn {
+    background-color: transparent;
+    border: none;
+    opacity: 0.4;
+}
+
+.prefs-btn:hover {
+    opacity: 1.0;
+}
