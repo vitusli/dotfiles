@@ -12,17 +12,20 @@
 $LOG_DIR = "$HOME\.local\logs"
 $LOG_FILE = "$LOG_DIR\wina-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
 
+# Language-independent special folders
+$DOCUMENTS = [Environment]::GetFolderPath('MyDocuments')
+
 # ============================================================================
 # REPOSITORIES
 # ============================================================================
 
 $REPOS = @(
-    @{ url = "git@github.com:vitusli/dotfiles.git"; path = "$HOME" }
-    @{ url = "git@github.com:vitusli/codespace.git"; path = "$HOME" }
-    @{ url = "git@github.com:vitusli/vtools_dev.git"; path = "$HOME" }
-    @{ url = "git@github.com:vitusli/obsidian"; path = "$HOME\Dokumente" }
-    @{ url = "git@github.com:vitusli/extensions.git"; path = "$HOME\Dokumente\blenderlokal" }
-    @{ url = "git@github.com:vitusli/zmk-config.git"; path = "$HOME\Documents" }
+    @{ repo = "vitusli/dotfiles"; path = "$HOME" }
+    @{ repo = "vitusli/codespace"; path = "$HOME" }
+    @{ repo = "vitusli/vtools_dev"; path = "$HOME" }
+    @{ repo = "vitusli/obsidian"; path = "$DOCUMENTS" }
+    @{ repo = "vitusli/extensions"; path = "$HOME\Blender" }
+    @{ repo = "vitusli/zmk-config"; path = "$DOCUMENTS" }
 )
 
 # ============================================================================
@@ -41,38 +44,32 @@ $SCOOP_BUCKETS = @(
 # ============================================================================
 
 $SCOOP_PACKAGES = @(
-    # Development
+    # Core (aria2 makes Scoop downloads faster)
     "7zip"
     "aria2"
+    "git"
+    "git-lfs"
+    
+    # CLI Tools
     "bat"
-    "delta"
+    "chezmoi"
     "fd"
     "fzf"
     "gh"
-    "git"
-    "git-lfs"
+    "gsudo"
     "lazygit"
     "lf"
-    "nodejs"
-    "python"
+    "scoop-completion"
     "uv"
     "zoxide"
-    "scoop-completion"
-    "gsudo"
     
-    # CLI Tools
+    # Media
     "ffmpeg"
-    "imagemagick"
-    "jq"
-    "pandoc"
-    "ripgrep"
-    "tokei"
     "vlc"
     
-    # System Utilities
-    "autohotkey"
-    "nssm"
-    "sysinternals"
+    # Apps (extras bucket)
+    "blender"
+    "vscode"
     
     # Fonts (nerd-fonts bucket)
     "JetBrainsMono-NF"
@@ -117,45 +114,83 @@ $REGISTRY_TWEAKS = @(
     # Enable Developer Mode (allows symlinks without admin)
     @{ Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock"; Name = "AllowDevelopmentWithoutDevLicense"; Value = 1; Type = "DWORD" }
     
+    # ══════════════════════════════════════════════════════════════
+    # TELEMETRY & PRIVACY (Tiny11-Style)
+    # ══════════════════════════════════════════════════════════════
+    
+    # Disable Telemetry completely
+    @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection"; Name = "AllowTelemetry"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack"; Name = "ShowDiagTrackedNotifications"; Value = 0; Type = "DWORD" }
+    
+    # Disable Advertising ID
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo"; Name = "Enabled"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKLM:\Software\Policies\Microsoft\Windows\AdvertisingInfo"; Name = "DisabledForUser"; Value = 1; Type = "DWORD" }
+    
+    # Disable Tailored Experiences
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Privacy"; Name = "TailoredExperiencesWithDiagnosticDataEnabled"; Value = 0; Type = "DWORD" }
+    
+    # ══════════════════════════════════════════════════════════════
+    # SPONSORED APPS & CONTENT DELIVERY (Tiny11-Style)
+    # ══════════════════════════════════════════════════════════════
+    
+    # Disable all Content Delivery (prevents auto-install of sponsored apps)
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "ContentDeliveryAllowed"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "OemPreInstalledAppsEnabled"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "PreInstalledAppsEnabled"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "PreInstalledAppsEverEnabled"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "SilentInstalledAppsEnabled"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "SoftLandingEnabled"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "SubscribedContentEnabled"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "SubscribedContent-338388Enabled"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "SubscribedContent-338389Enabled"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "SubscribedContent-353694Enabled"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "SubscribedContent-353696Enabled"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "SystemPaneSuggestionsEnabled"; Value = 0; Type = "DWORD" }
+    
+    # Disable News and Interests
+    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "NewsAndInterestsEnabled"; Value = 0; Type = "DWORD" }
+    
+    # ══════════════════════════════════════════════════════════════
+    # XBOX & GAMING
+    # ══════════════════════════════════════════════════════════════
+    
     # Disable Xbox Game Bar
     @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR"; Name = "AppCaptureEnabled"; Value = 0; Type = "DWORD" }
     @{ Path = "HKCU:\System\GameConfigStore"; Name = "GameDVR_Enabled"; Value = 0; Type = "DWORD" }
-    
-    # Disable Game Bar hotkey (Win+G)
     @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR"; Name = "GameDVR_DXGIHotKeyEnabled"; Value = 0; Type = "DWORD" }
-    
-    # Disable Xbox App notifications
     @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Xbox.App"; Name = "Enabled"; Value = 0; Type = "DWORD" }
+    
+    # ══════════════════════════════════════════════════════════════
+    # CORTANA & SEARCH
+    # ══════════════════════════════════════════════════════════════
     
     # Disable Cortana
     @{ Path = "HKCU:\Software\Microsoft\Personalization\Settings"; Name = "AcceptedPrivacyPolicy"; Value = 0; Type = "DWORD" }
     @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"; Name = "AllowCortana"; Value = 0; Type = "DWORD" }
     
-    # Disable Search suggestions
+    # Disable Bing Search in Start Menu
     @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"; Name = "BingSearchEnabled"; Value = 0; Type = "DWORD" }
     @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"; Name = "AllowSearchToUseLocation"; Value = 0; Type = "DWORD" }
+    @{ Path = "HKCU:\Software\Policies\Microsoft\Windows\Explorer"; Name = "DisableSearchBoxSuggestions"; Value = 1; Type = "DWORD" }
+    
+    # ══════════════════════════════════════════════════════════════
+    # UI & EXPLORER
+    # ══════════════════════════════════════════════════════════════
     
     # Disable Windows Tips
     @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"; Name = "ShowSyncProviderNotifications"; Value = 0; Type = "DWORD" }
     
-    # Disable Advertising
-    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo"; Name = "Enabled"; Value = 0; Type = "DWORD" }
-    @{ Path = "HKLM:\Software\Policies\Microsoft\Windows\AdvertisingInfo"; Name = "DisabledForUser"; Value = 1; Type = "DWORD" }
-    
-    # Disable Telemetry
-    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack"; Name = "ShowDiagTrackedNotifications"; Value = 0; Type = "DWORD" }
-    
     # Remove Shortcut Arrow Overlay
     @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons"; Name = "29"; Value = ""; Type = "String" }
-    
-    # Disable News and Interests in Taskbar
-    @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"; Name = "NewsAndInterestsEnabled"; Value = 0; Type = "DWORD" }
     
     # Disable Gallery in Explorer
     @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"; Name = "LaunchTo"; Value = 1; Type = "DWORD" }
     @{ Path = "HKLM:\Software\Policies\Microsoft\Windows\Explorer"; Name = "DisableGallery"; Value = 1; Type = "DWORD" }
     
-    # Disable all UI animations (including virtual desktop switching)
+    # ══════════════════════════════════════════════════════════════
+    # ANIMATIONS (Disable All)
+    # ══════════════════════════════════════════════════════════════
+    
     @{ Path = "HKCU:\Control Panel\Desktop"; Name = "UserPreferencesMask"; Value = [byte[]](0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00); Type = "Binary" }
     @{ Path = "HKCU:\Control Panel\Desktop\WindowMetrics"; Name = "MinAnimate"; Value = "0"; Type = "String" }
     @{ Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"; Name = "TaskbarAnimations"; Value = 0; Type = "DWORD" }
@@ -167,16 +202,23 @@ $REGISTRY_TWEAKS = @(
 # ============================================================================
 
 $SERVICES_TO_DISABLE = @(
+    # Telemetry & Diagnostics
     "DiagTrack"                    # Connected User Experiences and Telemetry
-    "dmwappushservice"             # dm push notification service
-    "HomeGroupListener"            # HomeGroup Listener
-    "HomeGroupProvider"            # HomeGroup Provider
+    "dmwappushservice"             # WAP Push Message Routing Service
+    "diagnosticshub.standardcollector.service"  # Diagnostics Hub
+    
+    # Xbox Services
     "XblAuthManager"               # Xbox Live Auth Manager
     "XblGameSave"                  # Xbox Live Game Save Service
-    "xbladp"                       # Xbox Live Accelerated Networking Service
     "XboxNetApiSvc"                # Xbox Live Networking Service
     "XboxGipSvc"                   # Xbox Accessory Management Service
+    
+    # Other Bloat
+    "HomeGroupListener"            # HomeGroup Listener
+    "HomeGroupProvider"            # HomeGroup Provider
     "SharedAccess"                 # Internet Connection Sharing
+    "WMPNetworkSvc"                # Windows Media Player Network Sharing
+    "RemoteRegistry"               # Remote Registry
 )
 
 # ============================================================================
@@ -412,8 +454,7 @@ function Clone-Repositories {
     Log-Header "Cloning GitHub Repositories"
     
     foreach ($repo in $REPOS) {
-        # Use custom name if provided, otherwise extract from URL
-        $repoName = if ($repo.name) { $repo.name } else { Split-Path -Leaf $repo.url | Split-Path -LeafBase }
+        $repoName = $repo.repo.Split('/')[-1]
         $fullPath = Join-Path $repo.path $repoName
         
         if (Test-Path $fullPath) {
@@ -422,9 +463,7 @@ function Clone-Repositories {
             Log-Info "Cloning $repoName to $($repo.path)..."
             New-Item -ItemType Directory -Path $repo.path -Force | Out-Null
             
-            Push-Location $repo.path
-            git clone $repo.url $repoName
-            Pop-Location
+            gh repo clone $repo.repo $fullPath
             
             Log-Success "$repoName cloned"
         }
@@ -469,7 +508,7 @@ function Apply-Dotfiles {
     
     # Fresh init or apply after branch switch
     Log-Info "Initializing and applying dotfiles..."
-    & chezmoi init --branch windows --apply git@github.com:vitusli/dotfiles.git
+    & chezmoi init --branch windows --apply vitusli/dotfiles
     if ($LASTEXITCODE -eq 0) {
         Log-Success "Dotfiles applied successfully"
     } else {
@@ -576,35 +615,68 @@ function Disable-WindowsFeatures {
 # ============================================================================
 
 function Remove-Bloatware {
-    Log-Header "Removing Windows Bloatware"
+    Log-Header "Removing Windows Bloatware (Tiny11-Style)"
     
+    # Comprehensive bloatware list (based on Tiny11Builder)
     $bloatwareApps = @(
-        "Microsoft.XboxApp"
-        "Microsoft.XboxGameCallableUI"
-        "Microsoft.XboxIdentityProvider"
-        "Microsoft.XboxSpeechToTextOverlay"
-        "Microsoft.XboxGameOverlay"
-        "Microsoft.YourPhone"
-        "Microsoft.SkypeApp"
+        # Microsoft Apps
+        "Microsoft.BingNews"
+        "Microsoft.BingWeather"
+        "Microsoft.BingFinance"
+        "Microsoft.BingSports"
+        "Microsoft.GamingApp"
         "Microsoft.GetHelp"
         "Microsoft.Getstarted"
         "Microsoft.MicrosoftSolitaireCollection"
         "Microsoft.MixedReality.Portal"
         "Microsoft.3DBuilder"
+        "Microsoft.People"
+        "Microsoft.Print3D"
+        "Microsoft.WindowsFeedbackHub"
+        "Microsoft.WindowsMaps"
         "Microsoft.ZuneMusic"
         "Microsoft.ZuneVideo"
+        "Microsoft.YourPhone"
+        "Microsoft.Todos"
+        "Microsoft.PowerAutomateDesktop"
+        "Microsoft.549981C3F5F10"  # Cortana
+        "Microsoft.OutlookForWindows"
+        "Microsoft.SkypeApp"
+        
+        # Xbox Apps
+        "Microsoft.XboxApp"
+        "Microsoft.XboxGameCallableUI"
+        "Microsoft.XboxIdentityProvider"
+        "Microsoft.XboxSpeechToTextOverlay"
+        "Microsoft.XboxGameOverlay"
+        "Microsoft.Xbox.TCUI"
+        
+        # Third-party bloat
+        "Clipchamp.Clipchamp"
+        "MicrosoftTeams"
+        "Microsoft.MicrosoftOfficeHub"
+        
+        # Optional: uncomment to remove
+        # "Microsoft.Windows.Photos"
+        # "Microsoft.WindowsCamera"
+        # "Microsoft.WindowsCalculator"
     )
     
     foreach ($app in $bloatwareApps) {
         try {
+            # Remove for all users
             $packages = @(Get-AppxPackage -Name $app -AllUsers -ErrorAction SilentlyContinue)
-            
             if ($packages.Count -gt 0) {
                 Log-Info "Removing $app..."
-                foreach ($pkg in $packages) {
-                    Remove-AppxPackage -Package $pkg.PackageFullName -ErrorAction SilentlyContinue
-                }
+                Get-AppxPackage -Name $app -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
                 Log-Success "Removed $app"
+            }
+            
+            # Remove provisioned package (prevents reinstall)
+            $provisioned = Get-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -eq $app }
+            if ($provisioned) {
+                $provisioned | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null
+                Log-Info "Removed provisioned package: $app"
             }
         }
         catch {

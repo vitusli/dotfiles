@@ -35,12 +35,12 @@ DOTFILES_DIR="$HOME/dotfiles"
 LOG_DIR="$DOTFILES_DIR/logs"
 LOG_FILE="$LOG_DIR/setup-$(date +%Y%m%d-%H%M%S).log"
 REPOS=(
-    "git@github.com:vitusli/dotfiles.git|$HOME"
-    "git@github.com:vitusli/codespace.git|$HOME"
-    "git@github.com:vitusli/vtools_dev.git|$HOME"
-    "git@github.com:vitusli/obsidian.git|$HOME/Documents"
-    "git@github.com:vitusli/extensions.git|$HOME/Documents/blenderlokal"
-    "git@github.com:vitusli/zmk-config.git|$HOME/Documents"
+    "vitusli/dotfiles|$HOME"
+    "vitusli/codespace|$HOME"
+    "vitusli/vtools_dev|$HOME"
+    "vitusli/obsidian|$HOME/Documents"
+    "vitusli/extensions|$HOME/Blender"
+    "vitusli/zmk-config|$HOME/Documents"
 )
 
 FORMULAE=(
@@ -96,7 +96,7 @@ CASKS=(
     onedrive
     openvpn-connect
     raycast
-    rhino
+    rhino-app
     sf-symbols
     slack
     spotify
@@ -459,9 +459,9 @@ clone_repositories() {
     log_header "Cloning GitHub Repositories"
     
     for repo_info in "${REPOS[@]}"; do
-        local repo_url="${repo_info%|*}"
+        local repo="${repo_info%|*}"
         local repo_path="${repo_info#*|}"
-        local repo_name=$(basename "$repo_url" .git)
+        local repo_name="${repo##*/}"
         local full_path="$repo_path/$repo_name"
         
         if [ -d "$full_path" ]; then
@@ -469,7 +469,7 @@ clone_repositories() {
         else
             log_info "Cloning $repo_name to $repo_path..."
             mkdir -p "$repo_path"
-            git clone "$repo_url" "$full_path"
+            gh repo clone "$repo" "$full_path"
             log_success "$repo_name cloned"
         fi
     done
