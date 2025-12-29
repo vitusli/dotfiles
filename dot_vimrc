@@ -15,6 +15,14 @@ nnoremap <Space> :call fzf#run(fzf#wrap({'source': 'find ~/codespace ~/Downloads
 set number
 set relativenumber
 
+" H/L für Zeilenanfang/-ende (wie 0/$)
+nnoremap H ^
+nnoremap L $
+vnoremap H ^
+vnoremap L $
+onoremap H ^
+onoremap L $
+
 " Reduce ESC delay (similar to Zsh KEYTIMEOUT)
 set ttimeout
 set ttimeoutlen=10   " time to wait for terminal key codes (ESC sequences)
