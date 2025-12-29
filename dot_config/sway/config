@@ -21,7 +21,7 @@ set $mod Control+Mod1+Mod4
 # INPUT (Tastatur, Touchpad)
 # ============================================
 input type:keyboard {
-    xkb_layout de
+    xkb_layout us
     xkb_options caps:escape
 }
 
@@ -40,8 +40,8 @@ gaps outer 15
 # ============================================
 # ALLGEMEINE EINSTELLUNGEN
 # ============================================
-default_border pixel 2
-default_floating_border pixel 2
+default_border none
+default_floating_border none
 
 # Standard-Layout (stacked ≈ accordion)
 workspace_layout stacked
