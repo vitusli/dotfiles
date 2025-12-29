@@ -53,7 +53,6 @@ $SCOOP_PACKAGES = @(
     "git-lfs"
     "lazygit"
     "lf"
-    "neovim"
     "nodejs"
     "python"
     "uv"
