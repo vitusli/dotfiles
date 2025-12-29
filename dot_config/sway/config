@@ -140,14 +140,8 @@ workspace 1 output eDP-1
 workspace 2 output HDMI-A-1 DP-1 eDP-1
 
 # ============================================
-# STATUSBAR (waybar empfohlen)
+# STATUSBAR
 # ============================================
 bar {
     swaybar_command waybar
 }
-
-# Alternativ: Sway's eingebaute Bar
-# bar {
-#     position top
-#     status_command while date +'%Y-%m-%d %H:%M:%S'; do sleep 1; done
-# }
