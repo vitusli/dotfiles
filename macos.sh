@@ -39,7 +39,7 @@ REPOS=(
     "vitusli/codespace|$HOME"
     "vitusli/vtools_dev|$HOME"
     "vitusli/obsidian|$HOME/Documents"
-    "vitusli/extensions|$HOME/Blender"
+    "vitusli/extensions|$HOME/blender"
     "vitusli/zmk-config|$HOME/Documents"
 )
 
