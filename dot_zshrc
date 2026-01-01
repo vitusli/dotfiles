@@ -9,47 +9,22 @@ PROMPT='%1~ %% '
 export PATH="$PATH:$HOME/.local/bin"
 
 # ============================================================================
-# HOMEBREW PLUGINS (Linuxbrew)
+# ZSH PLUGINS (Arch Linux - pacman)
 # ============================================================================
 
-# Determine Homebrew prefix
-if [[ -d /home/linuxbrew/.linuxbrew ]]; then
-  BREW_PREFIX="/home/linuxbrew/.linuxbrew"
-elif [[ -d /opt/homebrew ]]; then
-  BREW_PREFIX="/opt/homebrew"
-elif [[ -d /usr/local/Homebrew ]]; then
-  BREW_PREFIX="/usr/local"
-fi
-
-# zsh-autosuggestions
-if [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-  source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-fi
-
-# zsh-syntax-highlighting (must be loaded before abbr)
-if [[ -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
-  source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-fi
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # ============================================================================
 # EXTERNAL TOOLS
 # ============================================================================
 
-# z - directory jumping (apt: zoxide or z.lua)
-if command -v zoxide &>/dev/null; then
-  eval "$(zoxide init zsh)"
-elif [ -f /usr/share/z/z.sh ]; then
-  source /usr/share/z/z.sh
-fi
+# zoxide - directory jumping
+eval "$(zoxide init zsh)"
 
 # fzf - fuzzy finder
-if command -v fzf &>/dev/null; then
-  source <(fzf --zsh 2>/dev/null) || eval "$(fzf --zsh)"
-  # Copy result to clipboard on Enter
-  if command -v xclip &>/dev/null; then
-    export FZF_DEFAULT_OPTS="--bind 'enter:execute-silent(echo {} | xclip -selection clipboard)+accept'"
-  fi
-fi
+source <(fzf --zsh)
+export FZF_DEFAULT_OPTS="--bind 'enter:execute-silent(echo {} | wl-copy)+accept'"
 
 # ============================================================================
 # LOAD MODULAR CONFIG
@@ -60,9 +35,5 @@ for config_file in ~/.zsh/*.zsh; do
   source "$config_file"
 done
 
-# zsh-abbr - load after compinit (Homebrew or APT path)
-if [[ -f "$BREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh" ]]; then
-  source "$BREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh"
-elif [[ -f /usr/share/zsh-abbr/zsh-abbr.zsh ]]; then
-  source /usr/share/zsh-abbr/zsh-abbr.zsh
-fi
+# zsh-abbr - load after compinit (from AUR)
+source /usr/share/zsh/plugins/zsh-abbr/zsh-abbr.zsh
