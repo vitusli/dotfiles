@@ -158,12 +158,8 @@ cmd fzf-extended ${{
     } | fzf --prompt=": " --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' --preview-window=right:60%:wrap)
     
     if [ -n "$result" ]; then
-        # Copy to clipboard (WSL: clip.exe, Linux: xclip)
-        if command -v clip.exe >/dev/null 2>&1; then
-            printf "%s" "$result" | clip.exe
-        elif command -v xclip >/dev/null 2>&1; then
-            printf "%s" "$result" | xclip -selection clipboard
-        fi
+        # Copy to clipboard (Wayland)
+        printf "%s" "$result" | wl-copy
         
         # If it's a file, select it; if directory, cd to it
         if [ -f "$result" ]; then
@@ -174,23 +170,15 @@ cmd fzf-extended ${{
     fi
 }}
 
-# Yank path to clipboard (Linux/WSL)
+# Yank path to clipboard (Wayland)
 cmd yank-path ${{
-    if command -v clip.exe >/dev/null 2>&1; then
-        printf "%s" "$f" | clip.exe
-    elif command -v xclip >/dev/null 2>&1; then
-        printf "%s" "$f" | xclip -selection clipboard
-    fi
+    printf "%s" "$f" | wl-copy
     lf -remote "send $id echo Copied: $f"
 }}
 
-# Yank directory path to clipboard (Linux/WSL)
+# Yank directory path to clipboard (Wayland)
 cmd yank-dirname ${{
-    if command -v clip.exe >/dev/null 2>&1; then
-        printf "%s" "$PWD" | clip.exe
-    elif command -v xclip >/dev/null 2>&1; then
-        printf "%s" "$PWD" | xclip -selection clipboard
-    fi
+    printf "%s" "$PWD" | wl-copy
     lf -remote "send $id echo Copied: $PWD"
 }}
 

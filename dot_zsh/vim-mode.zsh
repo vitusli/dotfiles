@@ -25,23 +25,13 @@ zle -N zle-keymap-select
 zle -N zle-line-init
 
 # ============================================================================
-# VIM MODE CLIPBOARD INTEGRATION (WSL)
+# VIM MODE CLIPBOARD INTEGRATION (Wayland)
 # ============================================================================
 
-# Copy vim yank operations to Windows/WSL clipboard
-# Uses clip.exe which is available in WSL
+# Copy vim yank operations to Wayland clipboard
 _copy_cutbuffer_to_clipboard() {
   if [[ -n $CUTBUFFER ]]; then
-    if command -v clip.exe &>/dev/null; then
-      # WSL: use Windows clip.exe
-      printf '%s' "$CUTBUFFER" | clip.exe
-    elif command -v xclip &>/dev/null; then
-      # Native Linux with X11
-      printf '%s' "$CUTBUFFER" | xclip -selection clipboard
-    elif command -v xsel &>/dev/null; then
-      # Alternative X11 clipboard
-      printf '%s' "$CUTBUFFER" | xsel --clipboard --input
-    fi
+    printf '%s' "$CUTBUFFER" | wl-copy
   fi
 }
 

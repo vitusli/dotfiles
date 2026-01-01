@@ -1,19 +1,10 @@
 # ============================================================================
-# CUSTOM FUNCTIONS (Linux / WSL)
+# CUSTOM FUNCTIONS (Arch Linux)
 # ============================================================================
 
-# Clipboard helper for WSL/Linux
+# Clipboard helper for Wayland
 _clipboard_copy() {
-  if command -v clip.exe &>/dev/null; then
-    # WSL: use Windows clip.exe
-    cat | clip.exe
-  elif command -v xclip &>/dev/null; then
-    cat | xclip -selection clipboard
-  elif command -v xsel &>/dev/null; then
-    cat | xsel --clipboard --input
-  else
-    cat > /dev/null  # silently discard if no clipboard available
-  fi
+  wl-copy
 }
 
 # / - Fuzzy find files/directories and open in VS Code
