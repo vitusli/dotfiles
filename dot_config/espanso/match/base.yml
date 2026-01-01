@@ -1,9 +1,31 @@
-# espanso Snippets
-# Basis-Snippets für den täglichen Gebrauch
+  # ============================================================================
+  # Raycast Snippets (imported)
+  # ============================================================================
 
-matches:
-  # Datum & Zeit
-  - trigger: ":date"
+  # Kontakt
+  - trigger: "?A"
+    replace: "Vitus Pacholleck \nBodenbacher Straße 30\n01277 Dresden"
+
+  - trigger: "?tu"
+    replace: "vitus.pacholleck@mailbox.tu-dresden.de"
+
+  - trigger: "?vp"
+    replace: "vituspach@gmail.com"
+
+  - trigger: "?wb"
+    replace: "vitus.pacholleck@wandelbots.com"
+
+  - trigger: "?op"
+    replace: "theorbitproduction@gmail.com"
+
+  - trigger: "vipa"
+    replace: "Vitus Pacholleck"
+
+  - trigger: "vilipa"
+    replace: "Vitus-Lion Pacholleck"
+
+  # Datum (Espanso format)
+  - trigger: "?D"
     replace: "{{mydate}}"
     vars:
       - name: mydate
@@ -11,65 +33,44 @@ matches:
         params:
           format: "%Y-%m-%d"
 
-  - trigger: ":time"
-    replace: "{{mytime}}"
+  # Anführungszeichen mit Cursor
+  - trigger: ",,"
+    replace: "„$|$""
+
+  # Text Bausteine
+  - trigger: "ue5"
+    replace: "Unreal Engine 5"
+
+  - trigger: "sgf"
+    replace: "Sehr geehrte Frau"
+
+  - trigger: "sgh"
+    replace: "Sehr geehrter Herr"
+
+  - trigger: "vg"
+    replace: "Viele Grüße,\nVitus Pacholleck"
+
+  - trigger: "lg"
+    replace: "Liebe Grüße,\nVitus"
+
+  # Code & Dev
+  - trigger: "?W"
+    replace: "```\n{{clipboard}}\n```"
     vars:
-      - name: mytime
-        type: date
-        params:
-          format: "%H:%M"
+      - name: clipboard
+        type: clipboard
 
-  - trigger: ":now"
-    replace: "{{now}}"
-    vars:
-      - name: now
-        type: date
-        params:
-          format: "%Y-%m-%d %H:%M"
+  - trigger: "?C"
+    replace: "%s/$|$//gc"
 
-  # E-Mail (passe an!)
-  - trigger: ":mail"
-    replace: "159196645+vitusli@users.noreply.github.com"
+  - trigger: "??"
+    replace: "\"- [ ]\""
 
-  - trigger: ":sig"
-    replace: |
-      Mit freundlichen Grüßen
-      vitusli
+  - trigger: "-->"
+    replace: "→ "
 
-  # Code
-  - trigger: ":shebang"
-    replace: "#!/usr/bin/env bash"
+  - trigger: "?*"
+    replace: "%s/\\*\\*//g"
 
-  - trigger: ":py"
-    replace: "#!/usr/bin/env python3"
-
-  # Symbole
-  - trigger: ":arrow"
-    replace: "→"
-
-  - trigger: ":check"
-    replace: "✓"
-
-  - trigger: ":x"
-    replace: "✗"
-
-  - trigger: ":shrug"
-    replace: "¯\\_(ツ)_/¯"
-
-  # Lorem Ipsum
-  - trigger: ":lorem"
-    replace: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-
-  # Markdown
-  - trigger: ":cb"
-    replace: "```\n$|$\n```"
-
-  - trigger: ":link"
-    replace: "[$|$](url)"
-
-  # Git
-  - trigger: ":gfix"
-    replace: "git commit --fixup "
-
-  - trigger: ":gwip"
-    replace: "git add -A && git commit -m 'WIP'"
+  - trigger: "?N"
+    replace: "Schau hier #file:wandelbots-nova und 'github_repo' https://github.com/wandelbotsgmbh/wandelbots-nova. Nur Syntax verwenden, den es gibt."
