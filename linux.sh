@@ -36,8 +36,10 @@ PACMAN_PACKAGES=(
     
     # Sway & Wayland
     sway
+    swaylock
     waybar
     wofi
+    mako
     xdg-desktop-portal-wlr
     
     # Audio
