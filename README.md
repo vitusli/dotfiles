@@ -7,13 +7,13 @@ Cross-platform dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 | Branch | Platform |
 |--------|----------|
 | `main` | Bootstrap scripts |
-| `macos` | macOS dotfiles |
+| `macos` | MacOS dotfiles |
 | `windows` | Windows dotfiles |
-| `linux` | Linux/WSL dotfiles |
+| `linux` | Arch dotfiles |
 
 ## Bootstrap
 
-### macOS
+### MacOS
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macos.sh | zsh
@@ -25,7 +25,7 @@ curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macos.sh | zs
 irm https://raw.githubusercontent.com/vitusli/dotfiles/main/windows.ps1 | iex
 ```
 
-### Linux / WSL
+### Arch Linux
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linux.sh | bash

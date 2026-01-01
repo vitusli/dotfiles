@@ -1,42 +1,94 @@
 #!/bin/bash
 
-# Download and run with bash:
-# curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linu.sh | bash
+# Arch Linux Bootstrap Script
+# ============================
+# Download and run with:
+# curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/arch.sh | bash
 
-# Don't use set -e because some commands may fail non-fatally
-set +e
+set +e  # Don't exit on errors
 
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
-LOG_FILE="$HOME/.local/share/chezmoi-setup-$(date +%Y%m%d-%H%M%S).log"
+LOG_FILE="$HOME/dotfiles/arch-setup-$(date +%Y%m%d-%H%M%S).log"
 
-# Homebrew packages (same as macOS where possible!)
-BREW_PACKAGES=(
+# Pacman packages
+PACMAN_PACKAGES=(
+    # Build essentials
+    base-devel
+    git
+    curl
+    wget
+    
+    # Shell
+    zsh
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    
+    # CLI tools (these are all in official repos!)
     fzf
     bat
     lazygit
     lf
-    gh
+    github-cli          # 'gh' command
     zoxide
     chezmoi
-    zsh-autosuggestions
-    zsh-syntax-highlighting
+    
+    # Sway & Wayland
+    sway
+    waybar
+    wofi
+    xdg-desktop-portal-wlr
+    
+    # Audio
+    pipewire
+    wireplumber
+    pipewire-pulse
+    pipewire-alsa
+    
+    # Wayland utilities
+    grim
+    slurp
+    wl-clipboard
+    
+    # System utilities
+    polkit
+    brightnessctl
+    playerctl
+    
+    # Fonts
+    ttf-dejavu
+    ttf-liberation
+    noto-fonts
+    noto-fonts-emoji
+    
+    # Terminal
+    foot
+    
+    # Apps
+    firefox
+    blender
 )
 
-# Packages from taps (need to be installed separately)
-BREW_TAP_PACKAGES=(
-    "olets/tap/zsh-abbr"
+# NVIDIA packages
+NVIDIA_PACKAGES=(
+    nvidia
+    nvidia-utils
+    nvidia-settings
+    libva-nvidia-driver
 )
 
-# Minimal APT packages (only what Homebrew can't provide)
-APT_PACKAGES=(
-    build-essential
-    curl
-    git
-    xclip
-    zsh        # needed for chsh (login shell)
+# AUR packages (installed via yay)
+AUR_PACKAGES=(
+    visual-studio-code-bin
+    ulauncher
+    espanso-wayland
+    ttf-nerd-fonts-symbols
+    zsh-abbr                # not in official repos
 )
+
+# NOTE: No Homebrew needed on Arch!
+# All CLI tools are available via pacman/AUR
 
 # ============================================================================
 # UTILITY FUNCTIONS
@@ -77,47 +129,48 @@ command_exists() {
 }
 
 # ============================================================================
-# HOMEBREW INSTALLATION
+# PACMAN PACKAGES
 # ============================================================================
 
-install_homebrew() {
-    log_header "Installing Homebrew"
+install_pacman_packages() {
+    log_header "Installing Pacman Packages"
     
-    if command_exists brew; then
-        log_success "Homebrew already installed"
-        return
-    fi
+    log_info "Updating system..."
+    sudo pacman -Syu --noconfirm >> "$LOG_FILE" 2>&1
     
-    log_info "Installing Homebrew (Linuxbrew)..."
-    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" >> "$LOG_FILE" 2>&1
-    
-    # Add to PATH for this session
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    
-    if command_exists brew; then
-        log_success "Homebrew installed"
-    else
-        log_error "Homebrew installation failed"
-        exit 1
-    fi
-}
-
-# ============================================================================
-# HOMEBREW PACKAGES
-# ============================================================================
-
-install_brew_packages() {
-    log_header "Installing Homebrew Packages"
-    
-    # Ensure brew is in PATH
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 2>/dev/null
-    
-    for pkg in "${BREW_PACKAGES[@]}"; do
-        if brew list "$pkg" &>/dev/null; then
+    for pkg in "${PACMAN_PACKAGES[@]}"; do
+        if pacman -Qi "$pkg" &>/dev/null; then
             log_success "$pkg (already installed)"
         else
             log_info "Installing $pkg..."
-            if brew install "$pkg" >> "$LOG_FILE" 2>&1; then
+            if sudo pacman -S --noconfirm "$pkg" >> "$LOG_FILE" 2>&1; then
+                log_success "$pkg installed"
+            else
+                log_warning "Failed to install $pkg"
+            fi
+        fi
+    done
+}
+
+# ============================================================================
+# NVIDIA DRIVER
+# ============================================================================
+
+install_nvidia() {
+    log_header "Installing NVIDIA Driver"
+    
+    # Check if NVIDIA GPU present
+    if ! lspci | grep -i nvidia &>/dev/null; then
+        log_info "No NVIDIA GPU detected, skipping"
+        return
+    fi
+    
+    for pkg in "${NVIDIA_PACKAGES[@]}"; do
+        if pacman -Qi "$pkg" &>/dev/null; then
+            log_success "$pkg (already installed)"
+        else
+            log_info "Installing $pkg..."
+            if sudo pacman -S --noconfirm "$pkg" >> "$LOG_FILE" 2>&1; then
                 log_success "$pkg installed"
             else
                 log_warning "Failed to install $pkg"
@@ -125,50 +178,81 @@ install_brew_packages() {
         fi
     done
     
-    # Install packages from taps
-    for pkg in "${BREW_TAP_PACKAGES[@]}"; do
-        local pkg_name="${pkg##*/}"  # Get package name after last /
-        if brew list "$pkg_name" &>/dev/null; then
-            log_success "$pkg_name (already installed)"
-        else
-            log_info "Installing $pkg..."
-            if brew install "$pkg" >> "$LOG_FILE" 2>&1; then
-                log_success "$pkg_name installed"
-            else
-                log_warning "Failed to install $pkg_name"
-            fi
-        fi
-    done
+    # Configure NVIDIA for Wayland
+    log_info "Configuring NVIDIA for Wayland..."
+    
+    # Kernel parameter
+    sudo mkdir -p /etc/modprobe.d
+    echo "options nvidia_drm modeset=1 fbdev=1" | sudo tee /etc/modprobe.d/nvidia.conf > /dev/null
+    
+    # Environment variables for Sway
+    sudo mkdir -p /etc/environment.d
+    cat << 'EOF' | sudo tee /etc/environment.d/nvidia-wayland.conf > /dev/null
+WLR_NO_HARDWARE_CURSORS=1
+LIBVA_DRIVER_NAME=nvidia
+GBM_BACKEND=nvidia-drm
+__GLX_VENDOR_LIBRARY_NAME=nvidia
+EOF
+    
+    # Rebuild initramfs
+    log_info "Rebuilding initramfs..."
+    sudo mkinitcpio -P >> "$LOG_FILE" 2>&1
+    
+    log_success "NVIDIA configured for Wayland"
+    log_warning "Reboot required for NVIDIA changes to take effect"
 }
 
 # ============================================================================
-# APT PACKAGES (minimal - just build deps)
+# YAY (AUR HELPER)
 # ============================================================================
 
-install_apt_packages() {
-    log_header "Installing APT Prerequisites"
+install_yay() {
+    log_header "Installing yay (AUR Helper)"
     
-    log_info "Updating package lists..."
-    sudo apt update >> "$LOG_FILE" 2>&1
+    if command_exists yay; then
+        log_success "yay already installed"
+        return
+    fi
     
-    local to_install=()
+    log_info "Building yay from AUR..."
+    local temp_dir=$(mktemp -d)
+    git clone https://aur.archlinux.org/yay.git "$temp_dir/yay" >> "$LOG_FILE" 2>&1
+    cd "$temp_dir/yay"
+    makepkg -si --noconfirm >> "$LOG_FILE" 2>&1
+    cd - > /dev/null
+    rm -rf "$temp_dir"
     
-    for pkg in "${APT_PACKAGES[@]}"; do
-        if dpkg -l "$pkg" 2>/dev/null | grep -q "^ii"; then
+    if command_exists yay; then
+        log_success "yay installed"
+    else
+        log_error "yay installation failed"
+    fi
+}
+
+# ============================================================================
+# AUR PACKAGES
+# ============================================================================
+
+install_aur_packages() {
+    log_header "Installing AUR Packages"
+    
+    if ! command_exists yay; then
+        log_error "yay not available, skipping AUR packages"
+        return
+    fi
+    
+    for pkg in "${AUR_PACKAGES[@]}"; do
+        if yay -Qi "$pkg" &>/dev/null; then
             log_success "$pkg (already installed)"
         else
-            to_install+=("$pkg")
+            log_info "Installing $pkg from AUR..."
+            if yay -S --noconfirm "$pkg" >> "$LOG_FILE" 2>&1; then
+                log_success "$pkg installed"
+            else
+                log_warning "Failed to install $pkg"
+            fi
         fi
     done
-    
-    if [ ${#to_install[@]} -gt 0 ]; then
-        log_info "Installing ${#to_install[@]} packages..."
-        if sudo apt install -y "${to_install[@]}" >> "$LOG_FILE" 2>&1; then
-            log_success "APT packages installed"
-        else
-            log_warning "Some APT packages may have failed"
-        fi
-    fi
 }
 
 # ============================================================================
@@ -267,9 +351,6 @@ setup_ssh_key() {
 apply_dotfiles() {
     log_header "Applying Dotfiles with chezmoi"
     
-    # Ensure brew's chezmoi is in PATH
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 2>/dev/null
-    
     if [ -f "$HOME/.zshrc" ] && chezmoi verify &>/dev/null 2>&1; then
         log_success "Dotfiles already applied"
     else
@@ -300,70 +381,66 @@ setup_zsh_default() {
 }
 
 # ============================================================================
-# WSL SPECIFIC
+# SERVICES
 # ============================================================================
 
-setup_wsl_extras() {
-    log_header "WSL Configuration"
+enable_services() {
+    log_header "Enabling Services"
     
-    # Check if running in WSL
-    if grep -qi microsoft /proc/version 2>/dev/null; then
-        log_info "Detected WSL environment"
-        
-        # Ensure ~/.local/bin exists
-        mkdir -p "$HOME/.local/bin"
-# Ensure WSL interop is enabled (allows running .exe from WSL)
-        if [ ! -f /etc/wsl.conf ] || ! grep -q "enabled.*=.*true" /etc/wsl.conf 2>/dev/null; then
-            log_info "Enabling WSL interop..."
-            sudo tee /etc/wsl.conf > /dev/null << 'EOF'
-[interop]
-enabled = true
-appendWindowsPath = true
-EOF
-            log_success "WSL interop configured (restart WSL for changes: wsl --shutdown)"
+    # System services
+    local system_services=(
+        NetworkManager
+    )
+    
+    for svc in "${system_services[@]}"; do
+        if systemctl is-enabled "$svc" &>/dev/null; then
+            log_success "$svc (already enabled)"
         else
-            log_success "WSL interop already enabled"
+            log_info "Enabling $svc..."
+            sudo systemctl enable --now "$svc" >> "$LOG_FILE" 2>&1
+            log_success "$svc enabled"
         fi
-        
-        
-        # Ensure WSL interop is enabled in config
-        if [ ! -f /etc/wsl.conf ] || ! grep -q "\[interop\]" /etc/wsl.conf 2>/dev/null; then
-            log_info "Configuring WSL interop..."
-            sudo tee -a /etc/wsl.conf > /dev/null << 'EOF'
+    done
+    
+    # User services (pipewire)
+    local user_services=(
+        pipewire
+        wireplumber
+        pipewire-pulse
+    )
+    
+    for svc in "${user_services[@]}"; do
+        if systemctl --user is-enabled "$svc" &>/dev/null; then
+            log_success "$svc (user, already enabled)"
+        else
+            log_info "Enabling $svc (user)..."
+            systemctl --user enable --now "$svc" >> "$LOG_FILE" 2>&1
+            log_success "$svc enabled"
+        fi
+    done
+}
 
-[interop]
-enabled = true
-appendWindowsPath = true
-EOF
-            log_success "WSL interop configured"
-        fi
-        
-        # Register WSLInterop in binfmt_misc if missing (allows running .exe from WSL)
-        if [ ! -f /proc/sys/fs/binfmt_misc/WSLInterop ]; then
-            log_info "Registering WSL interop for Windows exe support..."
-            sudo bash -c 'echo ":WSLInterop:M::MZ::/init:PF" > /proc/sys/fs/binfmt_misc/register' 2>/dev/null
-            if [ -f /proc/sys/fs/binfmt_misc/WSLInterop ]; then
-                log_success "WSL interop registered"
-            else
-                log_warning "Could not register WSL interop - restart WSL with 'wsl --shutdown'"
-            fi
-        else
-            log_success "WSL interop already active"
-        fi
-        
-        # VS Code should work out of the box in WSL
-        if command_exists code; then
-            log_success "VS Code available via 'code' command"
-        else
-            log_warning "VS Code not detected - install 'Remote - WSL' extension in Windows VS Code"
-        fi
-        
-        # Clipboard works via clip.exe
-        if command_exists clip.exe; then
-            log_success "Windows clipboard available via clip.exe"
-        fi
+# ============================================================================
+# SWAY AUTOSTART
+# ============================================================================
+
+setup_sway_autostart() {
+    log_header "Configuring Sway Autostart"
+    
+    local zprofile="$HOME/.zprofile"
+    
+    if [ -f "$zprofile" ] && grep -q "exec sway" "$zprofile"; then
+        log_success "Sway autostart already configured"
     else
-        log_info "Native Linux environment (not WSL)"
+        log_info "Adding Sway autostart to .zprofile..."
+        cat >> "$zprofile" << 'EOF'
+
+# Start Sway on TTY1
+if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
+    exec sway
+fi
+EOF
+        log_success "Sway autostart configured"
     fi
 }
 
@@ -373,45 +450,69 @@ EOF
 
 main() {
     echo "════════════════════════════════════════════════════════════"
-    echo "  Linux/WSL Setup Script (Homebrew Edition)"
+    echo "  Arch Linux Setup Script"
+    echo "  For Design/Dev Workflow with Sway + NVIDIA"
     echo "════════════════════════════════════════════════════════════"
     echo ""
     echo "This script will install:"
-    echo "  - Homebrew (Linuxbrew)"
-    echo "  - zsh with plugins (autosuggestions, syntax-highlighting, abbr)"
-    echo "  - fzf, bat, lazygit, lf, zoxide and other CLI tools"
-    echo "  - GitHub CLI (gh) for authentication"
-    echo "  - chezmoi for dotfile management"
-    echo "  - Apply dotfiles from github.com/vitusli/dotfiles"
+    echo "  - NVIDIA drivers (if GPU detected)"
+    echo "  - Sway + Waybar + Wofi (Wayland desktop)"
+    echo "  - Pipewire (audio)"
+    echo "  - CLI tools (fzf, bat, lazygit, lf, zoxide, chezmoi)"
+    echo "  - VS Code, Blender, Firefox (via AUR)"
+    echo "  - Ulauncher, Espanso"
+    echo "  - zsh with plugins"
+    echo "  - Dotfiles via chezmoi"
     echo ""
     echo "Log file: $LOG_FILE"
     echo ""
+    read -p "Press Enter to continue or Ctrl+C to abort..."
     
     # Initialize log
     mkdir -p "$(dirname "$LOG_FILE")"
     {
         echo "════════════════════════════════════════════════════════════"
-        echo "Linux/WSL Setup Log"
+        echo "Arch Linux Setup Log"
         echo "Start: $(date)"
         echo "User: $(whoami)"
         echo "Host: $(hostname)"
         echo "════════════════════════════════════════════════════════════"
     } > "$LOG_FILE"
     
-    # Run setup
-    install_apt_packages    # Minimal: build-essential, curl, git, xclip
-    install_homebrew        # The package manager
-    install_brew_packages   # All the good stuff
+    # Run setup steps
+    install_pacman_packages
+    install_nvidia
+    install_yay
+    install_aur_packages
     setup_git_config
     setup_ssh_key
     apply_dotfiles
-    setup_wsl_extras
+    enable_services
     setup_zsh_default
+    setup_sway_autostart
     
     # Done
     log_header "Setup Complete!"
     echo ""
-    echo "✓ All done! Start a new terminal or run: exec zsh"
+    echo "════════════════════════════════════════════════════════════"
+    echo "  ✓ Installation complete!"
+    echo "════════════════════════════════════════════════════════════"
+    echo ""
+    echo "Next steps:"
+    echo "  1. Reboot your system (required for NVIDIA)"
+    echo "     sudo reboot"
+    echo ""
+    echo "  2. After reboot, Sway will start automatically on TTY1"
+    echo "     Or start manually: sway"
+    echo ""
+    echo "  3. Open VS Code: code"
+    echo "     Open Blender: blender"
+    echo ""
+    echo "Keybindings (Sway defaults):"
+    echo "  Super+Enter     → Terminal"
+    echo "  Super+D         → App launcher (wofi)"
+    echo "  Super+Shift+Q   → Close window"
+    echo "  Super+Shift+E   → Exit Sway"
     echo ""
     echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
     echo "End: $(date)" >> "$LOG_FILE"
