@@ -66,7 +66,6 @@ PACMAN_PACKAGES=(
     foot
     
     # Apps
-    firefox
     blender
 )
 
@@ -84,7 +83,8 @@ AUR_PACKAGES=(
     ulauncher
     espanso-wayland
     ttf-nerd-fonts-symbols
-    zsh-abbr                # not in official repos
+    zsh-abbr
+    zen-browser-bin
 )
 
 # NOTE: No Homebrew needed on Arch!
