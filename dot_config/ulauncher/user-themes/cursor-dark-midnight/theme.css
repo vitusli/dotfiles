@@ -1,0 +1,67 @@
+/* Ulauncher Cursor Dark Midnight Theme */
+/* GTK 3.0 - 3.18 */
+
+.app {
+    background-color: #191c22;
+    border-radius: 12px;
+    border: 1px solid #272c36;
+}
+
+.input {
+    background-color: transparent;
+    color: #d8dee9;
+    font-size: 18px;
+    padding: 12px 16px;
+    border: none;
+    box-shadow: none;
+}
+
+.input *:selected {
+    background-color: #88c0d0;
+    color: #191c22;
+}
+
+.item-box {
+    padding: 8px 12px;
+    background-color: transparent;
+    border-bottom: 1px solid #272c36;
+}
+
+.item-box:selected {
+    background-color: #434c5e;
+    border-radius: 8px;
+    border-bottom: 1px solid transparent;
+}
+
+.item-name {
+    color: #d8dee9;
+    font-size: 14px;
+}
+
+.item-name:selected {
+    color: #eceff4;
+}
+
+.item-descr {
+    color: #7b88a1;
+    font-size: 12px;
+}
+
+.item-descr:selected {
+    color: #d8dee9;
+}
+
+.item-shortcut {
+    color: #4c566a;
+    font-size: 11px;
+}
+
+.prefs-btn {
+    background-color: transparent;
+    border: none;
+    color: #7b88a1;
+}
+
+.prefs-btn:hover {
+    color: #88c0d0;
+}
