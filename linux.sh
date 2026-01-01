@@ -320,7 +320,7 @@ setup_ssh_key() {
         elif gh auth status &>/dev/null; then
             # Already authenticated - add automatically
             log_info "Adding SSH key to GitHub..."
-            if gh ssh-key add "${ssh_key}.pub" --title "WSL $(hostname)" 2>> "$LOG_FILE"; then
+            if gh ssh-key add "${ssh_key}.pub" --title "Arch $(hostname)" 2>> "$LOG_FILE"; then
                 log_success "SSH key added to GitHub"
             else
                 log_warning "Failed to add SSH key to GitHub"
