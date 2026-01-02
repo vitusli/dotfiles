@@ -42,8 +42,8 @@ outer.right =      15
 
 ctrl-alt-cmd-slash = ['mode service']
 
-#ctrl-alt-cmd-i = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace prev']
-#ctrl-alt-cmd-o = ['exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace next']
+ctrl-alt-cmd-i = 'workspace --no-stdin prev'
+ctrl-alt-cmd-o = 'workspace --no-stdin next'
 ctrl-alt-cmd-minus = ['resize smart -200']
 ctrl-alt-cmd-equal = ['resize smart +200']
 
