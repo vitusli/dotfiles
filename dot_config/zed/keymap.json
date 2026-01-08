@@ -19,7 +19,6 @@
     },
   },
   {
-    "context": "Editor",
     "bindings": {
       "cmd-i": "agent::ToggleFocus",
     },
