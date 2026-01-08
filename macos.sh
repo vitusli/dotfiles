@@ -60,6 +60,7 @@ FORMULAE=(
     pandoc
     pandoc-crossref
     rar
+    serie
     uv
     z
     zsh-autocomplete
