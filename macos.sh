@@ -701,6 +701,8 @@ setup_system_defaults() {
     # Disable full screen toolbar animations
     # Disable browser column animations
     defaults write -g NSBrowserColumnAnimationSpeedMultiplier -float 0
+    # Reduce motion system-wide
+    defaults write com.apple.universalaccess.plist reduceMotion -bool true
     
     # Dock Settings
     # Disable bouncing animation of Applications in Dock
