@@ -12,8 +12,8 @@ export PATH="$PATH:$HOME/.local/bin"
 # EXTERNAL TOOLS
 # ============================================================================
 
-# z - directory jumping
-source /opt/homebrew/etc/profile.d/z.sh
+# zoxide - smarter directory jumping
+eval "$(zoxide init zsh)"
 
 # fzf - fuzzy finder
 source <(fzf --zsh)
