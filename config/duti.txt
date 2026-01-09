@@ -15,3 +15,6 @@ company.thebrowser.Browser|http|all
 company.thebrowser.Browser|https|all
 org.vim.MacVim|.txt|all
 org.yanex.marta|public.folder|all
+
+# Manuell ausführen ohne Bootstrap-Skript:
+# grep -v '^#' config/duti.txt | grep -v '^$' | while IFS='|' read -r app ext role; do duti -s "$app" "$ext" "$role"; done

@@ -45,3 +45,7 @@ chezmoi init --branch <platform> vitusli --apply
 chezmoi update -v
 ```
 
+## Config
+
+Shared package lists in `config/`. Use `#macos`, `#linux`, or `#windows` tags for platform-specific packages. Untagged = all platforms.
+

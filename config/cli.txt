@@ -16,7 +16,7 @@ pandoc
 serie #macos #linux
 uv
 zoxide
-zsh #macos #linux
-zsh-abbr #linux
+zsh #linux
+zsh-abbr #macos
 zsh-autosuggestions #macos #linux
 zsh-syntax-highlighting #macos #linux
