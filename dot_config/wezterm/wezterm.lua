@@ -16,10 +16,10 @@ config.line_height = 1.2
 -- ==========================
 config.window_decorations = "RESIZE|MACOS_FORCE_DISABLE_SHADOW"
 config.window_padding = {
-  left = 18,
-  right = 18,
-  top = 16,
-  bottom = 16,
+  left = 40,
+  right = 40,
+  top = 60,
+  bottom = 60,
 }
 
 -- Background
@@ -30,6 +30,14 @@ config.macos_window_background_blur = 30
 
 -- Disable annoying close confirmation
 config.window_close_confirmation = 'NeverPrompt'
+
+-- ==========================
+-- Command Palette (CursorDarkMidnight theme)
+-- ==========================
+config.command_palette_font_size = 14.0
+config.command_palette_bg_color = '#191c22'
+config.command_palette_fg_color = '#d8dee9'
+config.command_palette_rows = 12
 
 -- ==========================
 -- Colors (CursorDarkMidnight theme)
