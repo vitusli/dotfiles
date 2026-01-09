@@ -34,123 +34,49 @@ handle_fatal_error() {
 DOTFILES_DIR="$HOME/dotfiles"
 LOG_DIR="$DOTFILES_DIR/logs"
 LOG_FILE="$LOG_DIR/setup-$(date +%Y%m%d-%H%M%S).log"
-REPOS=(
-    "vitusli/dotfiles|$HOME"
-    "vitusli/codespace|$HOME"
-    "vitusli/vtools_dev|$HOME"
-    "vitusli/obsidian|$HOME/Documents"
-    "vitusli/extensions|$HOME/blender"
-    "vitusli/zmk-config|$HOME/Documents"
-)
+CONFIG_URL="https://raw.githubusercontent.com/vitusli/dotfiles/main/config"
 
-FORMULAE=(
-    bat
-    chezmoi
-    duti
-    ffmpeg
-    fzf
-    gh
-    git
-    git-lfs
-    lazygit
-    lf
-    mas
-    nvim
-    olets/tap/zsh-abbr
-    pandoc
-    pandoc-crossref
-    rar
-    serie
-    uv
-    z
-    zsh-autocomplete
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-)
+# ============================================================================
+# CONFIG LOADING FUNCTIONS
+# ============================================================================
 
-CASKS=(
-    ableton-live-suite
-    adobe-creative-cloud
-    aerospace
-    affinity
-    alt-tab
-    arc
-    basictex
-    blender
-    bridge
-    chatgpt
-    darktable
-    figma
-    ghostty@tip
-    github
-    google-drive
-    homerow
-    karabiner-elements
-    keepassxc
-    keeweb
-    logi-options+
-    macvim
-    marta
-    microsoft-outlook
-    microsoft-teams
-    obsidian
-    onedrive
-    openvpn-connect
-    raycast
-    rhino-app
-    sf-symbols
-    slack
-    spotify
-    superwhisper
-    visual-studio-code
-    windows-app
-    zotero
-)
+# Load packages from remote config file
+# Usage: load_packages "cli.txt" "macos"
+# Returns packages that either have no tag OR have the specified platform tag
+load_packages() {
+    local file="$1"
+    local platform="$2"
+    local url="${CONFIG_URL}/${file}"
+    
+    curl -fsSL "$url" 2>/dev/null | \
+        grep -v '^#' | \
+        grep -v '^$' | \
+        awk -v p="#${platform}" '!/#/ || $0 ~ p' | \
+        grep -v "^[^#]*#linux[[:space:]]*$" | \
+        grep -v "^[^#]*#windows[[:space:]]*$" | \
+        sed 's/ *#.*//'
+}
 
-MAS_APPS=(
-    "1291898086|toggltrack"
-    "1423210932|flow"
-    "1609342064|octane-x"
-)
+# Load all packages (no platform filtering, just strip comments)
+load_all() {
+    local file="$1"
+    local url="${CONFIG_URL}/${file}"
+    
+    curl -fsSL "$url" 2>/dev/null | \
+        grep -v '^#' | \
+        grep -v '^$' | \
+        sed 's/ *#.*//'
+}
 
-VSCODE_EXTENSIONS=(
-    asvetliakov.vscode-neovim
-    be5invis.vscode-custom-css
-    extr0py.vscode-relative-line-numbers
-    github.copilot
-    github.copilot-chat
-    james-yu.latex-workshop
-    manitejapratha.cursor-midnight-theme
-    michelemelluso.gitignore
-    ms-python.debugpy
-    ms-python.python
-    ms-python.vscode-pylance
-    ms-python.vscode-python-envs
-    mhutchie.git-graph
-)
-
-DUTI_CONFIGS=(
-    # Text editors
-    "com.microsoft.VSCode|public.plain-text|all"
-    "com.microsoft.VSCode|.sh|all"
-    "com.microsoft.VSCode|.zsh|all"
-    "com.microsoft.VSCode|.bash|all"
-    "com.microsoft.VSCode|.py|all"
-    "com.microsoft.VSCode|.js|all"
-    "com.microsoft.VSCode|.ts|all"
-    "com.microsoft.VSCode|.json|all"
-    "com.microsoft.VSCode|.yaml|all"
-    "com.microsoft.VSCode|.yml|all"
-    "com.microsoft.VSCode|.md|all"
-    "org.vim.MacVim|.txt|all"
-    # File manager
-    "org.yanex.marta|public.folder|all"
-    # Default browser: Arc
-    "company.thebrowser.Browser|http|all"
-    "company.thebrowser.Browser|https|all"
-    "company.thebrowser.Browser|public.url|all"
-    "company.thebrowser.Browser|.webloc|all"
-)
+# Load config preserving format (for repos, mas, duti)
+load_config() {
+    local file="$1"
+    local url="${CONFIG_URL}/${file}"
+    
+    curl -fsSL "$url" 2>/dev/null | \
+        grep -v '^#' | \
+        grep -v '^$'
+}
 
 # ============================================================================
 # UTILITY FUNCTIONS
@@ -336,9 +262,14 @@ setup_brew() {
 install_formulae() {
     log_header "Installing Homebrew Formulae"
     
+    log_info "Loading CLI packages from config..."
+    local formulae=($(load_packages "cli.txt" "macos"))
+    # Add macOS-specific tools
+    formulae+=(duti mas)
+    
     local to_install=()
     
-    for formula in "${FORMULAE[@]}"; do
+    for formula in "${formulae[@]}"; do
         if is_installed "$formula" "formula"; then
             log_success "$formula"
         else
@@ -359,9 +290,12 @@ install_formulae() {
 install_casks() {
     log_header "Installing Homebrew Casks"
     
+    log_info "Loading GUI apps from config..."
+    local casks=($(load_packages "gui.txt" "macos"))
+    
     local to_install=()
     
-    for cask in "${CASKS[@]}"; do
+    for cask in "${casks[@]}"; do
         if is_installed "$cask" "cask"; then
             log_success "$cask"
         else
@@ -391,8 +325,14 @@ install_mas_apps() {
         return 1
     fi
     
-    for app_info in "${MAS_APPS[@]}"; do
-        local app_id="${app_info%|*}"
+    log_info "Loading Mac App Store apps from config..."
+    local mas_apps=()
+    while IFS= read -r line; do
+        mas_apps+=("$line")
+    done < <(load_config "mas.txt")
+    
+    for app_info in "${mas_apps[@]}"; do
+        local app_id="${app_info%%|*}"
         local app_name="${app_info#*|}"
         
         if mas list 2>/dev/null | grep -q "^$app_id"; then
@@ -459,9 +399,17 @@ setup_ssh_key() {
 clone_repositories() {
     log_header "Cloning GitHub Repositories"
     
-    for repo_info in "${REPOS[@]}"; do
-        local repo="${repo_info%|*}"
+    log_info "Loading repositories from config..."
+    local repos=()
+    while IFS= read -r line; do
+        repos+=("$line")
+    done < <(load_config "repos.txt")
+    
+    for repo_info in "${repos[@]}"; do
+        local repo="${repo_info%%|*}"
         local repo_path="${repo_info#*|}"
+        # Expand variables like $HOME and $DOCUMENTS
+        repo_path=$(eval echo "$repo_path")
         local repo_name="${repo##*/}"
         local full_path="$repo_path/$repo_name"
         
@@ -510,9 +458,11 @@ install_vscode_extensions() {
         return 1
     fi
     
+    log_info "Loading VS Code extensions from config..."
+    local extensions=($(load_all "vscode.txt"))
     local to_install=()
     
-    for extension in "${VSCODE_EXTENSIONS[@]}"; do
+    for extension in "${extensions[@]}"; do
         if code --list-extensions 2>/dev/null | grep -qi "^$extension$"; then
             log_info "Already installed: $extension"
         else
@@ -614,10 +564,13 @@ setup_default_apps() {
         return 1
     fi
     
-    for config in "${DUTI_CONFIGS[@]}"; do
-        # Skip comments
-        [[ "$config" =~ ^#.*$ ]] && continue
-        
+    log_info "Loading duti config from config..."
+    local duti_configs=()
+    while IFS= read -r line; do
+        duti_configs+=("$line")
+    done < <(load_config "duti.txt")
+    
+    for config in "${duti_configs[@]}"; do
         # Parse config: bundle_id|uti|role
         local bundle_id="${config%%|*}"
         local rest="${config#*|}"

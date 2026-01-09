@@ -1,0 +1,17 @@
+# Default Apps (bundle_id|extension|role)
+
+com.microsoft.VSCode|.bash|all
+com.microsoft.VSCode|.js|all
+com.microsoft.VSCode|.json|all
+com.microsoft.VSCode|.md|all
+com.microsoft.VSCode|.py|all
+com.microsoft.VSCode|.sh|all
+com.microsoft.VSCode|.ts|all
+com.microsoft.VSCode|.yaml|all
+com.microsoft.VSCode|.yml|all
+com.microsoft.VSCode|.zsh|all
+com.microsoft.VSCode|public.plain-text|all
+company.thebrowser.Browser|http|all
+company.thebrowser.Browser|https|all
+org.vim.MacVim|.txt|all
+org.yanex.marta|public.folder|all

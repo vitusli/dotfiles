@@ -1,0 +1,26 @@
+# GUI Apps
+
+ableton-live-suite #macos
+aerospace #macos
+affinity #macos
+alt-tab #macos
+arc #macos
+blender
+darktable #macos
+figma #macos
+karabiner-elements #macos
+keepassxc
+marta #macos
+microsoft-outlook #macos
+microsoft-teams #macos
+obsidian
+raycast #macos
+rhino-app #macos
+slack
+visual-studio-code #macos
+visual-studio-code-bin #linux
+vscode #windows
+wezterm
+zed #macos #linux
+zen-browser-bin #linux
+zotero #macos

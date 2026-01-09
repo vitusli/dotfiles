@@ -11,28 +11,53 @@ set +e  # Don't exit on errors
 # CONFIGURATION
 # ============================================================================
 LOG_FILE="$HOME/dotfiles/arch-setup-$(date +%Y%m%d-%H%M%S).log"
+CONFIG_URL="https://raw.githubusercontent.com/vitusli/dotfiles/main/config"
 
-# Pacman packages
-PACMAN_PACKAGES=(
+# ============================================================================
+# CONFIG LOADING FUNCTIONS
+# ============================================================================
+
+# Load packages from remote config file for Linux
+load_packages() {
+    local file="$1"
+    local url="${CONFIG_URL}/${file}"
+    
+    curl -fsSL "$url" 2>/dev/null | \
+        grep -v '^#' | \
+        grep -v '^$' | \
+        awk '!/#/ || /#linux/' | \
+        grep -v "^[^#]*#macos[[:space:]]*$" | \
+        grep -v "^[^#]*#windows[[:space:]]*$" | \
+        sed 's/ *#.*//'
+}
+
+# Load all packages (no platform filtering)
+load_all() {
+    local file="$1"
+    local url="${CONFIG_URL}/${file}"
+    
+    curl -fsSL "$url" 2>/dev/null | \
+        grep -v '^#' | \
+        grep -v '^$' | \
+        sed 's/ *#.*//'
+}
+
+# Load config preserving format
+load_config() {
+    local file="$1"
+    local url="${CONFIG_URL}/${file}"
+    
+    curl -fsSL "$url" 2>/dev/null | \
+        grep -v '^#' | \
+        grep -v '^$'
+}
+
+# Arch-specific packages (not in shared config)
+ARCH_SPECIFIC=(
     # Build essentials
     base-devel
-    git
     curl
     wget
-    
-    # Shell
-    zsh
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-    
-    # CLI tools (these are all in official repos!)
-    fzf
-    bat
-    lazygit
-    lf
-    github-cli          # 'gh' command
-    zoxide
-    chezmoi
     
     # Sway & Wayland
     sway
@@ -66,9 +91,6 @@ PACMAN_PACKAGES=(
     
     # Terminal
     foot
-    
-    # Apps
-    blender
 )
 
 # NVIDIA packages
@@ -79,18 +101,12 @@ NVIDIA_PACKAGES=(
     libva-nvidia-driver
 )
 
-# AUR packages (installed via yay)
-AUR_PACKAGES=(
-    visual-studio-code-bin
+# AUR-only packages (not available in pacman)
+AUR_ONLY=(
     ulauncher
     espanso-wayland
     ttf-nerd-fonts-symbols
-    zsh-abbr
-    zen-browser-bin
 )
-
-# NOTE: No Homebrew needed on Arch!
-# All CLI tools are available via pacman/AUR
 
 # ============================================================================
 # UTILITY FUNCTIONS
@@ -140,16 +156,25 @@ install_pacman_packages() {
     log_info "Updating system..."
     sudo pacman -Syu --noconfirm >> "$LOG_FILE" 2>&1
     
-    for pkg in "${PACMAN_PACKAGES[@]}"; do
+    log_info "Loading packages from config..."
+    local cli_packages=($(load_packages "cli.txt"))
+    local gui_packages=($(load_packages "gui.txt"))
+    
+    # Combine with arch-specific packages
+    local all_packages=("${ARCH_SPECIFIC[@]}" "${cli_packages[@]}" "${gui_packages[@]}")
+    
+    for pkg in "${all_packages[@]}"; do
         if pacman -Qi "$pkg" &>/dev/null; then
             log_success "$pkg (already installed)"
-        else
+        elif pacman -Ss "^${pkg}$" &>/dev/null; then
             log_info "Installing $pkg..."
             if sudo pacman -S --noconfirm "$pkg" >> "$LOG_FILE" 2>&1; then
                 log_success "$pkg installed"
             else
-                log_warning "Failed to install $pkg"
+                log_warning "Failed to install $pkg (may be AUR)"
             fi
+        else
+            log_info "$pkg not in repos (will try AUR)"
         fi
     done
 }
@@ -243,10 +268,18 @@ install_aur_packages() {
         return
     fi
     
-    for pkg in "${AUR_PACKAGES[@]}"; do
+    log_info "Loading AUR packages from config..."
+    local cli_packages=($(load_packages "cli.txt"))
+    local gui_packages=($(load_packages "gui.txt"))
+    
+    # Combine config packages with AUR-only packages
+    local all_aur=("${AUR_ONLY[@]}" "${cli_packages[@]}" "${gui_packages[@]}")
+    
+    for pkg in "${all_aur[@]}"; do
         if yay -Qi "$pkg" &>/dev/null; then
             log_success "$pkg (already installed)"
-        else
+        elif ! pacman -Qi "$pkg" &>/dev/null; then
+            # Only install via AUR if not already in pacman
             log_info "Installing $pkg from AUR..."
             if yay -S --noconfirm "$pkg" >> "$LOG_FILE" 2>&1; then
                 log_success "$pkg installed"

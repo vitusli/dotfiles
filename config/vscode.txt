@@ -1,0 +1,15 @@
+# VS Code Extensions
+
+asvetliakov.vscode-neovim
+be5invis.vscode-custom-css
+extr0py.vscode-relative-line-numbers
+github.copilot
+github.copilot-chat
+james-yu.latex-workshop
+manitejapratha.cursor-midnight-theme
+mhutchie.git-graph
+michelemelluso.gitignore
+ms-python.debugpy
+ms-python.python
+ms-python.vscode-pylance
+ms-python.vscode-python-envs

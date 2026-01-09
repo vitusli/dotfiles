@@ -1,0 +1,22 @@
+# CLI Packages
+
+bat
+chezmoi
+ffmpeg
+fzf
+gh #macos #windows
+github-cli #linux
+git
+git-lfs
+lazygit
+lf
+nvim
+olets/tap/zsh-abbr #macos
+pandoc
+serie #macos #linux
+uv
+zoxide
+zsh #macos #linux
+zsh-abbr #linux
+zsh-autosuggestions #macos #linux
+zsh-syntax-highlighting #macos #linux

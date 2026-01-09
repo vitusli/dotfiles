@@ -11,22 +11,80 @@
 
 $LOG_DIR = "$HOME\.local\logs"
 $LOG_FILE = "$LOG_DIR\wina-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
+$CONFIG_URL = "https://raw.githubusercontent.com/vitusli/dotfiles/main/config"
 
 # Language-independent special folders
 $DOCUMENTS = [Environment]::GetFolderPath('MyDocuments')
 
 # ============================================================================
-# REPOSITORIES
+# CONFIG LOADING FUNCTIONS
 # ============================================================================
 
-$REPOS = @(
-    @{ repo = "vitusli/dotfiles"; path = "$HOME" }
-    @{ repo = "vitusli/codespace"; path = "$HOME" }
-    @{ repo = "vitusli/vtools_dev"; path = "$HOME" }
-    @{ repo = "vitusli/obsidian"; path = "$DOCUMENTS" }
-    @{ repo = "vitusli/extensions"; path = "$HOME\Blender" }
-    @{ repo = "vitusli/zmk-config"; path = "$DOCUMENTS" }
-)
+function Load-Packages {
+    param(
+        [string]$File,
+        [string]$Platform = "windows"
+    )
+    
+    $url = "$CONFIG_URL/$File"
+    
+    try {
+        $content = (Invoke-WebRequest -Uri $url -UseBasicParsing).Content
+        $lines = $content -split "`n" | ForEach-Object { $_.Trim() } | Where-Object {
+            $_ -and -not $_.StartsWith('#')
+        } | Where-Object {
+            # Include if: no tag at all
+            if ($_ -notmatch '#') { return $true }
+            # Include if: has our platform tag
+            if ($_ -match "#$Platform") { return $true }
+            # Exclude if: has other platform tags but NOT ours
+            return $false
+        } | ForEach-Object {
+            # Strip tags
+            $_ -replace '\s*#.*$', ''
+        }
+        return $lines
+    } catch {
+        Log-Warning "Failed to load $File from config: $_"
+        return @()
+    }
+}
+
+function Load-AllPackages {
+    param([string]$File)
+    
+    $url = "$CONFIG_URL/$File"
+    
+    try {
+        $content = (Invoke-WebRequest -Uri $url -UseBasicParsing).Content
+        $lines = $content -split "`n" | ForEach-Object { $_.Trim() } | Where-Object {
+            $_ -and -not $_.StartsWith('#')
+        } | ForEach-Object {
+            $_ -replace '\s*#.*$', ''
+        }
+        return $lines
+    } catch {
+        Log-Warning "Failed to load $File from config: $_"
+        return @()
+    }
+}
+
+function Load-Config {
+    param([string]$File)
+    
+    $url = "$CONFIG_URL/$File"
+    
+    try {
+        $content = (Invoke-WebRequest -Uri $url -UseBasicParsing).Content
+        $lines = $content -split "`n" | ForEach-Object { $_.Trim() } | Where-Object {
+            $_ -and -not $_.StartsWith('#')
+        }
+        return $lines
+    } catch {
+        Log-Warning "Failed to load $File from config: $_"
+        return @()
+    }
+}
 
 # ============================================================================
 # SCOOP BUCKETS
@@ -40,70 +98,26 @@ $SCOOP_BUCKETS = @(
 )
 
 # ============================================================================
-# SCOOP PACKAGES
+# WINDOWS-SPECIFIC PACKAGES (not in shared config)
 # ============================================================================
 
-$SCOOP_PACKAGES = @(
+$WINDOWS_SPECIFIC = @(
     # Core (aria2 makes Scoop downloads faster)
     "7zip"
     "aria2"
-    "git"
     "git-lfs"
     
     # CLI Tools
-    "bat"
-    "chezmoi"
     "fd"
-    "fzf"
-    "gh"
     "gsudo"
-    "lazygit"
-    "lf"
     "scoop-completion"
-    "uv"
-    "zoxide"
     
     # Media
-    "ffmpeg"
     "vlc"
-    
-    # Apps (extras bucket)
-    "blender"
-    "vscode"
     
     # Fonts (nerd-fonts bucket)
     "JetBrainsMono-NF"
     "FiraCode-NF"
-)
-
-# ============================================================================
-# WINDOWS APPS (via Winget as fallback)
-# ============================================================================
-
-$WINGET_PACKAGES = @(
-    # This is a fallback - prefer Scoop above
-    # Format: "Publisher.App"
-)
-
-# ============================================================================
-# VS CODE EXTENSIONS
-# ============================================================================
-
-$VSCODE_EXTENSIONS = @(
-    "vscodevim.vim"
-    "be5invis.vscode-custom-css"
-    "extr0py.vscode-relative-line-numbers"
-    "github.copilot"
-    "github.copilot-chat"
-    "james-yu.latex-workshop"
-    "manitejapratha.cursor-midnight-theme"
-    "michelemelluso.gitignore"
-    "ms-python.debugpy"
-    "ms-python.python"
-    "ms-python.vscode-pylance"
-    "ms-python.vscode-python-envs"
-    "mhutchie.git-graph"
-
 )
 
 # ============================================================================
@@ -369,9 +383,16 @@ function Add-ScoopBuckets {
 function Install-ScoopPackages {
     Log-Header "Installing Scoop Packages"
     
+    Log-Info "Loading packages from config..."
+    $cliPackages = Load-Packages "cli.txt" "windows"
+    $guiPackages = Load-Packages "gui.txt" "windows"
+    
+    # Combine with Windows-specific packages
+    $allPackages = $WINDOWS_SPECIFIC + $cliPackages + $guiPackages
+    
     $toInstall = @()
     
-    foreach ($package in $SCOOP_PACKAGES) {
+    foreach ($package in $allPackages) {
         $result = @(scoop list $package 2>$null | Where-Object { $_.Name -eq $package })
         
         if ($result.Count -gt 0) {
@@ -453,17 +474,27 @@ function Setup-SSHKey {
 function Clone-Repositories {
     Log-Header "Cloning GitHub Repositories"
     
-    foreach ($repo in $REPOS) {
-        $repoName = $repo.repo.Split('/')[-1]
-        $fullPath = Join-Path $repo.path $repoName
+    Log-Info "Loading repositories from config..."
+    $repos = Load-Config "repos.txt"
+    
+    foreach ($repoLine in $repos) {
+        $parts = $repoLine -split '\|'
+        $repo = $parts[0]
+        $pathTemplate = $parts[1]
+        
+        # Expand variables
+        $path = $pathTemplate -replace '\$HOME', $HOME -replace '\$DOCUMENTS', $DOCUMENTS
+        
+        $repoName = $repo.Split('/')[-1]
+        $fullPath = Join-Path $path $repoName
         
         if (Test-Path $fullPath) {
             Log-Success "$repoName (already cloned)"
         } else {
-            Log-Info "Cloning $repoName to $($repo.path)..."
-            New-Item -ItemType Directory -Path $repo.path -Force | Out-Null
+            Log-Info "Cloning $repoName to $path..."
+            New-Item -ItemType Directory -Path $path -Force | Out-Null
             
-            gh repo clone $repo.repo $fullPath
+            gh repo clone $repo $fullPath
             
             Log-Success "$repoName cloned"
         }
@@ -697,10 +728,13 @@ function Install-VSCodeExtensions {
         return
     }
     
+    Log-Info "Loading VS Code extensions from config..."
+    $extensions = Load-AllPackages "vscode.txt"
+    
     $installed = & code --list-extensions 2>$null
     $toInstall = @()
     
-    foreach ($extension in $VSCODE_EXTENSIONS) {
+    foreach ($extension in $extensions) {
         if ($installed -match [regex]::Escape($extension)) {
             Log-Info "Already installed: $extension"
         } else {
