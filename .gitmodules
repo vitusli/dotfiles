@@ -7,3 +7,6 @@
 [submodule "dot_vim/pack/plugins/start/fzf.vim"]
 	path = dot_vim/pack/plugins/start/fzf.vim
 	url = https://github.com/junegunn/fzf.vim.git
+[submodule "dot_vim/pack/plugins/start/vim-surround"]
+	path = dot_vim/pack/plugins/start/vim-surround
+	url = https://github.com/tpope/vim-surround.git

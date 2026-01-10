@@ -28,24 +28,25 @@ case "${1:-install}" in
   install)
     echo "Installing vim plugins as submodules..."
     mkdir -p "$PLUGINS_DIR"
-    
+
     # Add plugins as submodules
     git submodule add --force https://github.com/junegunn/fzf.git "$PLUGINS_DIR/fzf" 2>/dev/null || echo "✓ fzf already exists"
     git submodule add --force https://github.com/junegunn/fzf.vim.git "$PLUGINS_DIR/fzf.vim" 2>/dev/null || echo "✓ fzf.vim already exists"
     git submodule add --force https://github.com/gelguy/wilder.nvim.git "$PLUGINS_DIR/wilder.nvim" 2>/dev/null || echo "✓ wilder.nvim already exists"
-    
+    git submodule add --force https://github.com/tpope/vim-surround.git "$PLUGINS_DIR/vim-surround" 2>/dev/null || echo "✓ vim-surround already exists"
+
     git submodule update --init --recursive
     echo "✓ All plugins installed"
     apply_chezmoi
     ;;
-    
+
   update)
     echo "Updating vim plugins..."
     git submodule update --remote --merge
     echo "✓ All plugins updated"
     apply_chezmoi
     ;;
-    
+
   remove)
     if [[ -z "$2" ]]; then
       echo "Usage: $0 remove <plugin-name>"
@@ -58,7 +59,7 @@ case "${1:-install}" in
     echo "✓ Plugin $2 removed"
     apply_chezmoi
     ;;
-    
+
   *)
     echo "Usage: $0 [install|update|remove <plugin>]"
     exit 1

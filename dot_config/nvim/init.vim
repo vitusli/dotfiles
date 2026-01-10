@@ -1,8 +1,15 @@
-" VSCode Neovim Configuration
+" Neovim Configuration
+
+" ============================================================================
+" Shared settings (both VSCode and standalone Neovim)
+" ============================================================================
+
+" Use Vim's plugin directory so both Vim and Neovim share the same plugins
+set runtimepath^=~/.vim
+set packpath^=~/.vim
+
 " Clipboard integration for macOS
 set clipboard=unnamed
-
-" Use system clipboard for yank, delete, change, and put operations
 if has('clipboard')
     set clipboard=unnamed
     if has('unnamedplus')
@@ -10,8 +17,52 @@ if has('clipboard')
     endif
 endif
 
-" Additional settings for better VSCode integration
+" Search settings
 set ignorecase
 set smartcase
 set incsearch
 set hlsearch
+
+" ============================================================================
+" VSCode Neovim specific settings
+" ============================================================================
+if exists('g:vscode')
+    " VSCode handles these, so we don't need to configure them here
+    " Plugins like vim-surround will still work!
+
+" ============================================================================
+" Standalone Neovim specific settings
+" ============================================================================
+else
+    " Transparent background - no ugly background color
+    augroup TransparentBackground
+        autocmd!
+        autocmd ColorScheme * highlight Normal guibg=NONE ctermbg=NONE
+        autocmd ColorScheme * highlight NonText guibg=NONE ctermbg=NONE
+        autocmd ColorScheme * highlight EndOfBuffer guibg=NONE ctermbg=NONE
+    augroup END
+
+    " Apply immediately if no colorscheme is set later
+    highlight Normal guibg=NONE ctermbg=NONE
+    highlight NonText guibg=NONE ctermbg=NONE
+    highlight EndOfBuffer guibg=NONE ctermbg=NONE
+
+    " Line numbers
+    set number
+    set relativenumber
+
+    " Better editing experience
+    set expandtab
+    set tabstop=4
+    set shiftwidth=4
+    set autoindent
+    set smartindent
+
+    " Visual improvements
+    set cursorline
+    set scrolloff=8
+    set signcolumn=yes
+
+    " Faster update time
+    set updatetime=300
+endif
