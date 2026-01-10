@@ -1,20 +1,20 @@
 # Default Apps (bundle_id|extension|role)
 
-com.microsoft.VSCode|.bash|all
-com.microsoft.VSCode|.js|all
-com.microsoft.VSCode|.json|all
-com.microsoft.VSCode|.md|all
-com.microsoft.VSCode|.py|all
-com.microsoft.VSCode|.sh|all
-com.microsoft.VSCode|.ts|all
-com.microsoft.VSCode|.yaml|all
-com.microsoft.VSCode|.yml|all
-com.microsoft.VSCode|.zsh|all
-com.microsoft.VSCode|public.plain-text|all
+dev.zed.Zed|.bash|all
+dev.zed.Zed|.js|all
+dev.zed.Zed|.json|all
+dev.zed.Zed|.md|all
+dev.zed.Zed|.py|all
+dev.zed.Zed|.sh|all
+dev.zed.Zed|.ts|all
+dev.zed.Zed|.yaml|all
+dev.zed.Zed|.yml|all
+dev.zed.Zed|.zsh|all
+dev.zed.Zed|public.plain-text|all
 company.thebrowser.Browser|http|all
 company.thebrowser.Browser|https|all
 org.vim.MacVim|.txt|all
 org.yanex.marta|public.folder|all
 
 # Manuell ausführen ohne Bootstrap-Skript:
-# grep -v '^#' config/duti.txt | grep -v '^$' | while IFS='|' read -r app ext role; do duti -s "$app" "$ext" "$role"; done
+# grep -v '^#' ~/dotfiles/config/macos-duti.txt | grep -v '^$' | while IFS='|' read -r app ext role; do duti -s "$app" "$ext" "$role"; done
