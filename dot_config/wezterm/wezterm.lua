@@ -4,6 +4,12 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
+-- Force wezterm launch in the foreground (macOS)
+wezterm.on("gui-startup", function(cmd)
+  local _, _, window = wezterm.mux.spawn_window(cmd or {})
+  window:gui_window():focus()
+end)
+
 -- ==========================
 -- Font
 -- ==========================
@@ -46,16 +52,16 @@ config.colors = {
   -- Background and foreground
   background = '#191c22',
   foreground = '#7b88a1',
-  
+
   -- Cursor
   cursor_bg = '#8fbcbb',
   cursor_fg = '#191c22',
   cursor_border = '#8fbcbb',
-  
+
   -- Selection
   selection_bg = '#21242b',
   selection_fg = '#7b88a1',
-  
+
   -- Normal colors
   ansi = {
     '#3b4252', -- black
@@ -67,7 +73,7 @@ config.colors = {
     '#88c0d0', -- cyan
     '#e5e9f0', -- white
   },
-  
+
   -- Bright colors
   brights = {
     '#4c566a', -- bright black
@@ -141,7 +147,7 @@ config.keys = {
     mods = 'CMD|SHIFT',
     action = wezterm.action.ActivateCommandPalette,
   },
-  
+
   -- Split Navigation - Cmd + Shift + h/j/k/l
   -- Navigate to left pane
   {
@@ -167,7 +173,7 @@ config.keys = {
     mods = 'CMD|SHIFT',
     action = wezterm.action.ActivatePaneDirection 'Right',
   },
-  
+
   -- New Split - Cmd + n (split right), Cmd + Shift + n (split down)
   {
     key = 'n',
@@ -185,7 +191,7 @@ config.keys = {
       size = { Percent = 50 },
     },
   },
-  
+
   -- Equalize Splits - Cmd + Shift + e
   {
     key = 'e',
@@ -197,14 +203,14 @@ config.keys = {
       wezterm.action.AdjustPaneSize { 'Down', 100 },
     },
   },
-  
+
   -- Toggle Pane Zoom - Ctrl + Space
   {
     key = ' ',
     mods = 'CTRL',
     action = wezterm.action.TogglePaneZoomState,
   },
-  
+
   -- Tab Management
   -- New Tab - Cmd + t
   {
