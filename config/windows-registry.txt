@@ -1,0 +1,114 @@
+# Windows Registry Tweaks
+# Format: path|name|type|value
+# Types: DWORD, String, Binary
+# Binary values: comma-separated hex bytes (e.g. 90,12,03,80)
+
+# ══════════════════════════════════════════════════════════════
+# DEVELOPER MODE
+# ══════════════════════════════════════════════════════════════
+
+# Enable Developer Mode (allows symlinks without admin)
+HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock|AllowDevelopmentWithoutDevLicense|DWORD|1
+
+# ══════════════════════════════════════════════════════════════
+# TELEMETRY & PRIVACY
+# ══════════════════════════════════════════════════════════════
+
+# Disable Telemetry
+HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection|AllowTelemetry|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack|ShowDiagTrackedNotifications|DWORD|0
+
+# Disable Advertising ID
+HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo|Enabled|DWORD|0
+HKLM:\Software\Policies\Microsoft\Windows\AdvertisingInfo|DisabledForUser|DWORD|1
+
+# Disable Tailored Experiences
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Privacy|TailoredExperiencesWithDiagnosticDataEnabled|DWORD|0
+
+# ══════════════════════════════════════════════════════════════
+# CONTENT DELIVERY & SPONSORED APPS
+# ══════════════════════════════════════════════════════════════
+
+# Disable Content Delivery (prevents auto-install of sponsored apps)
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|ContentDeliveryAllowed|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|OemPreInstalledAppsEnabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|PreInstalledAppsEnabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|PreInstalledAppsEverEnabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SilentInstalledAppsEnabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SoftLandingEnabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SubscribedContentEnabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SubscribedContent-338388Enabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SubscribedContent-338389Enabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SubscribedContent-353694Enabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SubscribedContent-353696Enabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SystemPaneSuggestionsEnabled|DWORD|0
+
+# Disable News and Interests
+HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|NewsAndInterestsEnabled|DWORD|0
+
+# ══════════════════════════════════════════════════════════════
+# XBOX & GAMING
+# ══════════════════════════════════════════════════════════════
+
+# Disable Xbox Game Bar
+HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR|AppCaptureEnabled|DWORD|0
+HKCU:\System\GameConfigStore|GameDVR_Enabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR|GameDVR_DXGIHotKeyEnabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Xbox.App|Enabled|DWORD|0
+
+# ══════════════════════════════════════════════════════════════
+# CORTANA & SEARCH
+# ══════════════════════════════════════════════════════════════
+
+# Disable Cortana
+HKCU:\Software\Microsoft\Personalization\Settings|AcceptedPrivacyPolicy|DWORD|0
+HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search|AllowCortana|DWORD|0
+
+# Disable Bing Search in Start Menu
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Search|BingSearchEnabled|DWORD|0
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Search|AllowSearchToUseLocation|DWORD|0
+HKCU:\Software\Policies\Microsoft\Windows\Explorer|DisableSearchBoxSuggestions|DWORD|1
+
+# ══════════════════════════════════════════════════════════════
+# UI & EXPLORER
+# ══════════════════════════════════════════════════════════════
+
+# Disable Windows Tips
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|ShowSyncProviderNotifications|DWORD|0
+
+# Remove Shortcut Arrow Overlay
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons|29|String|
+
+# Open Explorer to This PC (not Quick Access)
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|LaunchTo|DWORD|1
+
+# Disable Gallery in Explorer
+HKLM:\Software\Policies\Microsoft\Windows\Explorer|DisableGallery|DWORD|1
+
+# Show file extensions
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|HideFileExt|DWORD|0
+
+# Show hidden files
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|Hidden|DWORD|1
+
+# Show super hidden files
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|ShowSuperHidden|DWORD|1
+
+# Dark theme for apps
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize|AppsUseLightTheme|DWORD|0
+
+# ══════════════════════════════════════════════════════════════
+# ANIMATIONS (DISABLE ALL)
+# ══════════════════════════════════════════════════════════════
+
+# User preferences mask (disables most animations)
+HKCU:\Control Panel\Desktop|UserPreferencesMask|Binary|90,12,03,80,10,00,00,00
+
+# Disable minimize animations
+HKCU:\Control Panel\Desktop\WindowMetrics|MinAnimate|String|0
+
+# Disable taskbar animations
+HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|TaskbarAnimations|DWORD|0
+
+# Disable Aero Peek
+HKCU:\Software\Microsoft\Windows\DWM|EnableAeroPeek|DWORD|0

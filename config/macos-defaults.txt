@@ -1,0 +1,192 @@
+# macOS System Defaults
+# Format: domain|key|type|value
+# Types: bool, int, float, string, array
+# Use 'sudo' prefix for commands requiring sudo
+# Use '-currentHost' or '-g' as domain prefix where needed
+
+# ══════════════════════════════════════════════════════════════
+# KEYBOARD & INPUT
+# ══════════════════════════════════════════════════════════════
+
+# Fastest key repeat rate (1 = fastest)
+NSGlobalDomain|KeyRepeat|int|1
+
+# Disable automatic spell correction
+NSGlobalDomain|NSAutomaticSpellingCorrectionEnabled|bool|false
+
+# Disable smart quotes
+NSGlobalDomain|NSAutomaticQuoteSubstitutionEnabled|bool|false
+
+# Disable smart dashes
+NSGlobalDomain|NSAutomaticDashSubstitutionEnabled|bool|false
+
+# Full keyboard access for all UI controls (Tab in dialogs)
+NSGlobalDomain|AppleKeyboardUIMode|int|3
+
+# Enable press-and-hold for accents menu
+NSGlobalDomain|ApplePressAndHoldEnabled|bool|true
+
+# F1/F2 as standard function keys
+NSGlobalDomain|com.apple.keyboard.fnState|bool|true
+
+# fn key does nothing
+com.apple.HIToolbox|AppleFnUsageType|int|0
+
+# Clear text replacements
+-g|NSUserDictionaryReplacementItems|array|
+
+# Disable Ctrl+Space (Input Source switching)
+com.apple.symbolichotkeys|AppleSymbolicHotKeys|dict-add|60 "<dict><key>enabled</key><false/></dict>"
+
+# ══════════════════════════════════════════════════════════════
+# TRACKPAD & MOUSE
+# ══════════════════════════════════════════════════════════════
+
+# Enable tap to click
+com.apple.driver.AppleBluetoothMultitouch.trackpad|Clicking|bool|true
+-currentHost NSGlobalDomain|com.apple.mouse.tapBehavior|int|1
+NSGlobalDomain|com.apple.mouse.tapBehavior|int|1
+
+# Trackpad speed
+NSGlobalDomain|com.apple.mouse.scaling|float|.875
+
+# Enable three-finger drag
+com.apple.AppleMultitouchTrackpad|TrackpadThreeFingerDrag|bool|true
+
+# ══════════════════════════════════════════════════════════════
+# ANIMATIONS (DISABLE ALL)
+# ══════════════════════════════════════════════════════════════
+
+# Disable window animations
+NSGlobalDomain|NSAutomaticWindowAnimationsEnabled|bool|false
+
+# Disable scroll animations
+-g|NSScrollAnimationEnabled|bool|false
+
+# Instant window resize
+-g|NSWindowResizeTime|float|0.001
+
+# Disable Quick Look animations
+-g|QLPanelAnimationDuration|float|0
+
+# Disable document revision animations
+-g|NSDocumentRevisionsWindowTransformAnimation|bool|false
+
+# Disable browser column animations
+-g|NSBrowserColumnAnimationSpeedMultiplier|float|0
+
+# Reduce motion system-wide
+com.apple.universalaccess.plist|reduceMotion|bool|true
+
+# ══════════════════════════════════════════════════════════════
+# DOCK
+# ══════════════════════════════════════════════════════════════
+
+# Disable bouncing
+com.apple.dock|no-bouncing|bool|true
+
+# Auto-hide dock
+com.apple.dock|autohide|bool|true
+
+# No auto-hide delay
+com.apple.dock|autohide-delay|float|0
+
+# No hide animation
+com.apple.dock|autohide-time-modifier|float|0
+
+# Disable Mission Control animation
+com.apple.dock|expose-animation-duration|float|0.1
+
+# Disable Launchpad animations
+com.apple.dock|springboard-show-duration|float|0
+com.apple.dock|springboard-hide-duration|float|0
+com.apple.dock|springboard-page-duration|float|0
+
+# Don't rearrange Spaces by recent use
+com.apple.dock|mru-spaces|bool|false
+
+# Group windows by app in Mission Control
+com.apple.dock|expose-group-by-app|bool|true
+
+# ══════════════════════════════════════════════════════════════
+# SPACES
+# ══════════════════════════════════════════════════════════════
+
+# Span displays (no separate spaces per display)
+com.apple.spaces|spans-displays|bool|true
+
+# ══════════════════════════════════════════════════════════════
+# FINDER
+# ══════════════════════════════════════════════════════════════
+
+# Column view by default
+com.apple.finder|FXPreferredViewStyle|string|clmv
+
+# Disable all animations
+com.apple.finder|DisableAllAnimations|bool|true
+
+# Show external drives on desktop
+com.apple.finder|ShowExternalHardDrivesOnDesktop|bool|true
+
+# Text selection in Quick Look
+com.apple.finder|QLEnableTextSelection|bool|true
+
+# No warning when changing extension
+com.apple.finder|FXEnableExtensionChangeWarning|bool|false
+
+# Show all extensions
+NSGlobalDomain|AppleShowAllExtensions|bool|true
+
+# No .DS_Store on network volumes
+com.apple.desktopservices|DSDontWriteNetworkStores|bool|true
+
+# ══════════════════════════════════════════════════════════════
+# SECURITY & GATEKEEPER
+# ══════════════════════════════════════════════════════════════
+
+# Disable quarantine for downloaded files
+com.apple.LaunchServices|LSQuarantine|bool|false
+
+# ══════════════════════════════════════════════════════════════
+# DIALOGS
+# ══════════════════════════════════════════════════════════════
+
+# Expand save panel by default
+NSGlobalDomain|NSNavPanelExpandedStateForSaveMode|bool|true
+
+# Expand print panel by default
+NSGlobalDomain|PMPrintingExpandedStateForPrint|bool|true
+NSGlobalDomain|PMPrintingExpandedStateForPrint2|bool|true
+
+# ══════════════════════════════════════════════════════════════
+# APPS
+# ══════════════════════════════════════════════════════════════
+
+# Quit printer app after jobs complete
+com.apple.print.PrintingPrefs|Quit When Finished|bool|true
+
+# Don't reopen windows on login
+NSGlobalDomain|NSQuitAlwaysKeepsWindows|bool|false
+
+# Save to disk by default (not iCloud)
+NSGlobalDomain|NSDocumentSaveNewDocumentsToCloud|bool|false
+
+# Disable Mail animations
+com.apple.mail|DisableSendAnimations|bool|true
+com.apple.mail|DisableReplyAnimations|bool|true
+
+# Don't prompt for Time Machine on new drives
+com.apple.TimeMachine|DoNotOfferNewDisksForBackup|bool|true
+
+# ══════════════════════════════════════════════════════════════
+# TRANSMISSION
+# ══════════════════════════════════════════════════════════════
+
+# No download confirmation
+org.m0k.transmission|DownloadAsk|bool|false
+
+# Use incomplete folder
+org.m0k.transmission|UseIncompleteDownloadFolder|bool|true
+
+# Incomplete folder path
+org.m0k.transmission|IncompleteDownloadFolder|string|${HOME}/Downloads/Incomplete

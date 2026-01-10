@@ -19,7 +19,7 @@ handle_fatal_error() {
         echo "Error Time: $(date)"
         echo "════════════════════════════════════════════════════════════"
     } | tee -a "$LOG_FILE"
-    
+
     echo ""
     echo "✗ Setup script encountered a fatal error!"
     echo "ℹ Check the log file for details: $LOG_FILE"
@@ -47,7 +47,7 @@ load_packages() {
     local file="$1"
     local platform="$2"
     local url="${CONFIG_URL}/${file}"
-    
+
     curl -fsSL "$url" 2>/dev/null | \
         grep -v '^#' | \
         grep -v '^$' | \
@@ -61,7 +61,7 @@ load_packages() {
 load_all() {
     local file="$1"
     local url="${CONFIG_URL}/${file}"
-    
+
     curl -fsSL "$url" 2>/dev/null | \
         grep -v '^#' | \
         grep -v '^$' | \
@@ -72,7 +72,7 @@ load_all() {
 load_config() {
     local file="$1"
     local url="${CONFIG_URL}/${file}"
-    
+
     curl -fsSL "$url" 2>/dev/null | \
         grep -v '^#' | \
         grep -v '^$'
@@ -85,7 +85,7 @@ load_config() {
 # Initialize logging
 init_logging() {
     mkdir -p "$LOG_DIR"
-    
+
     # Add header to log file
     {
         echo "════════════════════════════════════════════════════════════"
@@ -106,7 +106,7 @@ log_header() {
     echo "\n════════════════════════════════════════════════════════════"
     echo "$msg"
     echo "════════════════════════════════════════════════════════════"
-    
+
     echo "" >> "$LOG_FILE"
     echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
     echo "$msg" >> "$LOG_FILE"
@@ -142,15 +142,15 @@ check_error() {
     local exit_code=$1
     local description=$2
     local output=$3
-    
+
     # If exit code is 0, it's fine
     [ $exit_code -eq 0 ] && return 0
-    
+
     # If exit code is non-zero but output contains expected keywords, it's likely fine
     if echo "$output" | grep -qi "already\|skipped\|up.to.date"; then
         return 0
     fi
-    
+
     # Only report if it contains error keywords
     if echo "$output" | grep -qi "error\|failed\|fatal\|permission denied\|no such file"; then
         log_error "$description"
@@ -158,7 +158,7 @@ check_error() {
         SCRIPT_ERROR=1
         return 1
     fi
-    
+
     # Default: don't report (too noisy otherwise)
     return 0
 }
@@ -170,7 +170,7 @@ command_exists() {
 is_installed() {
     local package=$1
     local type=$2
-    
+
     if [ "$type" = "formula" ]; then
         brew list "$package" &> /dev/null 2>&1
     elif [ "$type" = "cask" ]; then
@@ -184,7 +184,7 @@ is_installed() {
 
 setup_sudo() {
     log_header "Setting up sudo privileges"
-    
+
     if sudo -n true 2>/dev/null; then
         log_success "sudo already available"
     else
@@ -192,7 +192,7 @@ setup_sudo() {
         sudo -v
         log_success "sudo verified"
     fi
-    
+
     # Keep sudo session alive
     while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 }
@@ -203,14 +203,14 @@ setup_sudo() {
 
 setup_xcode() {
     log_header "Setting up Xcode Command Line Tools"
-    
+
     if xcode-select -p &>/dev/null && [ -d "$(xcode-select --print-path)" ] 2>/dev/null; then
         log_success "Xcode Command Line Tools already installed"
     else
         log_info "Installing Xcode Command Line Tools..."
         # Interactive dialog needs background execution
         (xcode-select --install &) 2>/dev/null || true
-        
+
         # Wait up to 5 minutes for installation
         log_info "Waiting for Xcode installation... (check the popup if it appeared)"
         local timeout=300
@@ -219,7 +219,7 @@ setup_xcode() {
             sleep 5
             ((elapsed+=5))
         done
-        
+
         if xcode-select -p &>/dev/null; then
             log_success "Xcode Command Line Tools installed"
         else
@@ -230,7 +230,7 @@ setup_xcode() {
 
 setup_brew() {
     log_header "Setting up Homebrew"
-    
+
     if command_exists brew; then
         log_success "Homebrew already installed"
     else
@@ -241,7 +241,7 @@ setup_brew() {
         }
         log_success "Homebrew installed"
     fi
-    
+
     # Ensure brew environment is loaded
     if [ -f /opt/homebrew/bin/brew ]; then
         if ! grep -q 'eval.*brew shellenv' ~/.zprofile 2>/dev/null; then
@@ -261,14 +261,14 @@ setup_brew() {
 
 install_formulae() {
     log_header "Installing Homebrew Formulae"
-    
+
     log_info "Loading CLI packages from config..."
     local formulae=($(load_packages "cli.txt" "macos"))
     # Add macOS-specific tools
     formulae+=(duti mas)
-    
+
     local to_install=()
-    
+
     for formula in "${formulae[@]}"; do
         if is_installed "$formula" "formula"; then
             log_success "$formula"
@@ -277,7 +277,7 @@ install_formulae() {
             to_install+=("$formula")
         fi
     done
-    
+
     if [ ${#to_install[@]} -gt 0 ]; then
         log_info "Installing ${#to_install[@]} new formulae..."
         brew install "${to_install[@]}"
@@ -289,12 +289,12 @@ install_formulae() {
 
 install_casks() {
     log_header "Installing Homebrew Casks"
-    
+
     log_info "Loading GUI apps from config..."
     local casks=($(load_packages "gui.txt" "macos"))
-    
+
     local to_install=()
-    
+
     for cask in "${casks[@]}"; do
         if is_installed "$cask" "cask"; then
             log_success "$cask"
@@ -303,7 +303,7 @@ install_casks() {
             to_install+=("$cask")
         fi
     done
-    
+
     if [ ${#to_install[@]} -gt 0 ]; then
         log_info "Installing ${#to_install[@]} new casks..."
         brew install --cask "${to_install[@]}"
@@ -319,22 +319,22 @@ install_casks() {
 
 install_mas_apps() {
     log_header "Installing App Store Apps with mas"
-    
+
     if ! command_exists mas; then
         log_error "mas not found. Install mas first."
         return 1
     fi
-    
+
     log_info "Loading Mac App Store apps from config..."
     local mas_apps=()
     while IFS= read -r line; do
         mas_apps+=("$line")
     done < <(load_config "mas.txt")
-    
+
     for app_info in "${mas_apps[@]}"; do
         local app_id="${app_info%%|*}"
         local app_name="${app_info#*|}"
-        
+
         if mas list 2>/dev/null | grep -q "^$app_id"; then
             log_success "$app_name (already installed)"
         else
@@ -351,12 +351,12 @@ install_mas_apps() {
 
 setup_github_auth() {
     log_header "Setting up GitHub Authentication"
-    
+
     if ! command_exists gh; then
         log_error "GitHub CLI not found"
         return 1
     fi
-    
+
     if gh auth status &> /dev/null; then
         log_success "GitHub CLI already authenticated"
     else
@@ -368,9 +368,9 @@ setup_github_auth() {
 
 setup_ssh_key() {
     log_header "Setting up SSH Key"
-    
+
     local ssh_key="$HOME/.ssh/id_ed25519"
-    
+
     if [ -f "$ssh_key" ]; then
         log_success "SSH key already exists"
     else
@@ -379,7 +379,7 @@ setup_ssh_key() {
         ssh-keygen -t ed25519 -C "vituspach@gmail.com" -f "$ssh_key" -N ""
         eval "$(ssh-agent -s)"
         ssh-add --apple-use-keychain "$ssh_key"
-        
+
         if command_exists gh; then
             log_info "Adding SSH key to GitHub..."
             echo -n "Enter a name for this Mac (e.g. 'MacBook Pro Work'): "
@@ -387,7 +387,7 @@ setup_ssh_key() {
             key_title="${key_title:-MacBook $(date +%Y-%m-%d)}"
             gh ssh-key add "${ssh_key}.pub" --title "$key_title"
         fi
-        
+
         log_success "SSH key created and configured"
     fi
 }
@@ -398,13 +398,13 @@ setup_ssh_key() {
 
 clone_repositories() {
     log_header "Cloning GitHub Repositories"
-    
+
     log_info "Loading repositories from config..."
     local repos=()
     while IFS= read -r line; do
         repos+=("$line")
     done < <(load_config "repos.txt")
-    
+
     for repo_info in "${repos[@]}"; do
         local repo="${repo_info%%|*}"
         local repo_path="${repo_info#*|}"
@@ -412,7 +412,7 @@ clone_repositories() {
         repo_path=$(eval echo "$repo_path")
         local repo_name="${repo##*/}"
         local full_path="$repo_path/$repo_name"
-        
+
         if [ -d "$full_path" ]; then
             log_success "$repo_name (already cloned)"
         else
@@ -430,12 +430,12 @@ clone_repositories() {
 
 apply_dotfiles() {
     log_header "Applying Dotfiles with chezmoi"
-    
+
     if ! command_exists chezmoi; then
         log_error "chezmoi not found"
         return 1
     fi
-    
+
     # Check if dotfiles are already applied
     if [ -f "$HOME/.zshrc" ] && chezmoi verify &>/dev/null; then
         log_success "Dotfiles already applied"
@@ -452,16 +452,16 @@ apply_dotfiles() {
 
 install_vscode_extensions() {
     log_header "Installing VS Code Extensions"
-    
+
     if ! command_exists code; then
         log_warning "VS Code not installed, skipping extensions"
         return 1
     fi
-    
+
     log_info "Loading VS Code extensions from config..."
     local extensions=($(load_all "vscode.txt"))
     local to_install=()
-    
+
     for extension in "${extensions[@]}"; do
         if code --list-extensions 2>/dev/null | grep -qi "^$extension$"; then
             log_info "Already installed: $extension"
@@ -470,7 +470,7 @@ install_vscode_extensions() {
             log_info "Queued: $extension"
         fi
     done
-    
+
     if [ ${#to_install[@]} -gt 0 ]; then
         for extension in "${to_install[@]}"; do
             log_info "Installing: $extension"
@@ -489,19 +489,19 @@ install_vscode_extensions() {
 
 link_obsidian() {
     log_header "Linking Obsidian Configuration"
-    
+
     # Shared Obsidian configuration via symlinks.
     # Creates symlink from each vault's .obsidian to the shared config.
     # Automatically applies to ALL vault directories inside
     # $HOME/Documents/obsidian except:
     #   - hidden directories (names starting with . like .git)
     #   - the shared config directory itself (obsidian_shared)
-    
+
     local obsidian_dir="$HOME/Documents/obsidian"
     local shared_config="obsidian_shared"
     local shared_path="$obsidian_dir/$shared_config/.obsidian"
     local vaults=()
-    
+
     # Build vault list dynamically
     if [ -d "$obsidian_dir" ]; then
         for v in "$obsidian_dir"/*; do
@@ -514,23 +514,23 @@ link_obsidian() {
             vaults+=("$v")
         done
     fi
-    
+
     if [ ${#vaults[@]} -eq 0 ]; then
         log_warning "No Obsidian vaults found in $obsidian_dir (non-hidden)."
         return
     fi
-    
+
     log_info "Detected ${#vaults[@]} Obsidian vault(s): ${vaults[@]##*/}"
-    
+
     if [ ! -d "$shared_path" ]; then
         log_warning "Shared Obsidian config not found at $shared_path. Skipping."
         return
     fi
-    
+
     for vault in "${vaults[@]}"; do
         local target_link="$vault/.obsidian"
         local relative_path="../$shared_config/.obsidian"
-        
+
         # Check if already correctly symlinked
         if [ -L "$target_link" ] && [ "$(readlink "$target_link")" = "$relative_path" ]; then
             log_success "Obsidian config already linked for $(basename "$vault")"
@@ -541,10 +541,10 @@ link_obsidian() {
                 log_warning "Backing up existing .obsidian in $(basename "$vault") to $backup_path"
                 mv "$target_link" "$backup_path"
             fi
-            
+
             # Remove old symlink if pointing elsewhere
             [ -L "$target_link" ] && rm "$target_link"
-            
+
             log_info "Linking Obsidian config for $(basename "$vault")..."
             ln -s "$relative_path" "$target_link"
             log_success "Obsidian config linked for $(basename "$vault")"
@@ -558,29 +558,29 @@ link_obsidian() {
 
 setup_default_apps() {
     log_header "Setting up Default Applications with duti"
-    
+
     if ! command_exists duti; then
         log_error "duti not found. Install duti first."
         return 1
     fi
-    
+
     log_info "Loading duti config from config..."
     local duti_configs=()
     while IFS= read -r line; do
         duti_configs+=("$line")
     done < <(load_config "duti.txt")
-    
+
     for config in "${duti_configs[@]}"; do
         # Parse config: bundle_id|uti|role
         local bundle_id="${config%%|*}"
         local rest="${config#*|}"
         local uti="${rest%|*}"
         local role="${rest##*|}"
-        
+
         log_info "Setting $uti -> $bundle_id ($role)"
         echo -e "${bundle_id}\t${uti}\t${role}" | duti >> "$LOG_FILE" 2>&1
     done
-    
+
     log_success "Default applications configured"
 }
 
@@ -590,9 +590,9 @@ setup_default_apps() {
 
 setup_marta() {
     log_header "Configuring Marta"
-    
+
     local launcher="/Applications/Marta.app/Contents/Resources/launcher"
-    
+
     if [ -f "$launcher" ]; then
         if [ -L "/usr/local/bin/marta" ]; then
             log_success "Marta launcher symlink already exists"
@@ -601,7 +601,7 @@ setup_marta() {
             sudo ln -sf "$launcher" /usr/local/bin/marta
             log_success "Marta launcher configured"
         fi
-        
+
         # Default folder handler is now set via duti (see duti/duti config)
         # log_info "Setting Marta as default folder opener..."
         # defaults write -g NSFileViewer -string org.yanex.marta
@@ -618,152 +618,68 @@ setup_marta() {
 
 setup_system_defaults() {
     log_header "Configuring macOS System Defaults"
-    
-    # Global System Settings
-    # Set fastest key repeat rate (1 = fastest)
-    defaults write NSGlobalDomain KeyRepeat -int 1
-    # Disable automatic spell correction
-    defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
-    
-    # Trackpad & Mouse
-    # Enable tap to click (Trackpad) for this user and for the login screen
-    defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-    defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-    defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-    # Trackpad speed 
-    defaults write NSGlobalDomain com.apple.mouse.scaling -float .875
-    # Enable three-finger drag on trackpad
-    defaults write com.apple.AppleMultitouchTrackpad "TrackpadThreeFingerDrag" -bool "true"
-    # Disable separate spaces per display (span all displays)
-    defaults write com.apple.spaces spans-displays -bool true
-    
-    # Keyboard Shortcuts / Input Sources
-    # Disable Ctrl+Space (Input Source switching)
-    defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 60 "<dict><key>enabled</key><false/></dict>"
-    
-    # Animation Settings (Disable All)
-    # Disable window opening/closing animations
-    defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
-    # Disable scroll animations
-    defaults write -g NSScrollAnimationEnabled -bool false
-    # Speed up window resize animations (0.001 = no delay)
-    defaults write -g NSWindowResizeTime -float 0.001
-    # Disable Quick Look panel animations
-    defaults write -g QLPanelAnimationDuration -float 0
-    # Disable document revision window animations
-    defaults write -g NSDocumentRevisionsWindowTransformAnimation -bool false
-    # Disable full screen toolbar animations
-    # Disable browser column animations
-    defaults write -g NSBrowserColumnAnimationSpeedMultiplier -float 0
-    # Reduce motion system-wide
-    defaults write com.apple.universalaccess.plist reduceMotion -bool true
-    
-    # Dock Settings
-    # Disable bouncing animation of Applications in Dock
-    defaults write com.apple.dock no-bouncing -bool TRUE
-    # Enable Dock auto-hide
-    defaults write com.apple.dock autohide -bool true
-    # Remove auto-hide delay (instant show on mouse over)
-    defaults write com.apple.dock autohide-delay -float 0
-    # Remove auto-hide animation time
-    defaults write com.apple.dock autohide-time-modifier -float 0
-    # Disable Mission Control animation
-    defaults write com.apple.dock expose-animation-duration -float 0
-    # Disable Launchpad show animation
-    defaults write com.apple.dock springboard-show-duration -float 0
-    # Disable Launchpad hide animation
-    defaults write com.apple.dock springboard-hide-duration -float 0
-    # Disable Launchpad page animation
-    defaults write com.apple.dock springboard-page-duration -float 0
-    # Don't automatically rearrange Spaces based on most recent use
-    defaults write com.apple.dock mru-spaces -bool false
-    # Speed up Mission Control animation (0.1 = fast)
-    defaults write com.apple.dock expose-animation-duration -float 0.1
-    # Group Mission Control windows by application
-    defaults write com.apple.dock "expose-group-by-app" -bool true
-    
-    # Finder Settings
-    # Use column view in Finder (Clmv = column view)
-    defaults write com.apple.finder FXPreferredViewStyle clmv
-    # Disable all Finder animations
-    defaults write com.apple.finder DisableAllAnimations -bool true
-    # Show external hard drives and USB on desktop
-    defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
-    # Enable text selection in Quick Look preview
-    defaults write com.apple.finder QLEnableTextSelection -bool TRUE
-    # Don't warn when changing file extension
-    defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
-    
-    # File Extensions
-    # Show all filename extensions in Finder
-    defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-    # Avoid .DS_Store files on network volumes
-    defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
-    
-    # Security & Gatekeeper
-    # Disable Gatekeeper (allow any app installation)
+
+    log_info "Loading defaults from config..."
+
+    while IFS='|' read -r domain key type value; do
+        # Skip empty lines
+        [[ -z "$domain" ]] && continue
+
+        # Expand variables like ${HOME}
+        value=$(eval echo "$value")
+
+        # Handle special domain prefixes
+        local cmd="defaults write"
+        local target_domain="$domain"
+
+        if [[ "$domain" == "-g" ]]; then
+            target_domain="-g"
+        elif [[ "$domain" == -currentHost* ]]; then
+            cmd="defaults -currentHost write"
+            target_domain="${domain#-currentHost }"
+        fi
+
+        # Build and execute command based on type
+        case "$type" in
+            bool)
+                $cmd "$target_domain" "$key" -bool "$value" 2>/dev/null
+                ;;
+            int)
+                $cmd "$target_domain" "$key" -int "$value" 2>/dev/null
+                ;;
+            float)
+                $cmd "$target_domain" "$key" -float "$value" 2>/dev/null
+                ;;
+            string)
+                $cmd "$target_domain" "$key" -string "$value" 2>/dev/null
+                ;;
+            array)
+                $cmd "$target_domain" "$key" -array $value 2>/dev/null
+                ;;
+            dict-add)
+                $cmd "$target_domain" "$key" -dict-add $value 2>/dev/null
+                ;;
+            *)
+                log_warning "Unknown type: $type for $domain|$key"
+                ;;
+        esac
+    done < <(load_config "macos-defaults.txt")
+
+    # These require sudo - keep separate
+    log_info "Applying sudo defaults..."
     sudo spctl --master-disable 2>/dev/null || true
-    # Disable system policy restrictions
     sudo defaults write /var/db/SystemPolicy-prefs.plist enabled -string no 2>/dev/null || true
-    # Disable quarantine attributes for downloaded files
-    defaults write com.apple.LaunchServices LSQuarantine -bool false
-    
-    # Save & Print Dialogs
-    # Expand save panel by default
-    defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
-    # Expand print panel by default
-    defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
-    # Expand print panel for all apps
-    defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
-    
-    # App-Specific Settings
-    # Automatically quit printer app after print jobs complete
-    defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
-    # Disable system-wide resume (don't reopen windows on login)
-    defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false
-    # Save to disk by default instead of iCloud
-    defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
-    # Disable Mail send animations
-    defaults write com.apple.mail DisableSendAnimations -bool true
-    # Disable Mail reply animations
-    defaults write com.apple.mail DisableReplyAnimations -bool true
-    # Don't prompt to use new hard drives as Time Machine backup
-    defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
-    
-    # Text & Keyboard
-    # Disable smart quotes (useful for programming)
-    defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
-    # Disable smart dashes (useful for programming)
-    defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
-    # Enable full keyboard access for all UI controls (Tab in dialogs)
-    defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
-    # Enable press-and-hold for accents menu
-    defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
-    # F1/F2 keys behave as standard function keys (not media control)
-    defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
-    # fn key does nothing (opposite of above)
-    defaults write com.apple.HIToolbox AppleFnUsageType -int "0"
-    # Clear all text replacements (for Raycast Snippets)
-    defaults write -g NSUserDictionaryReplacementItems -array
-    
-    # Download Manager (Transmission)
-    # Don't prompt for confirmation before downloading
-    defaults write org.m0k.transmission DownloadAsk -bool false
-    # Use incomplete folder for downloads in progress
-    defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool true
-    # Set incomplete downloads folder location
-    defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Downloads/Incomplete"
-    
+
     log_success "All macOS defaults configured"
 }
 
 apply_system_changes() {
     log_header "Applying System Changes"
-    
+
     log_info "Killing Dock to apply changes..."
     killall Dock 2>/dev/null || true
     killall SystemUIServer 2>/dev/null || true
-    
+
     log_success "System changes applied"
 }
 
@@ -777,40 +693,40 @@ main() {
     echo "This script can be run multiple times safely."
     echo ""
     log_info "Log file: $LOG_FILE"
-    
+
     # Core setup
     setup_sudo
     setup_xcode
     setup_brew
-    
+
     # Brew packages
     install_formulae
     install_casks
     install_mas_apps
-    
+
     # GitHub
     setup_github_auth
     setup_ssh_key
     clone_repositories
-    
+
     # Dotfiles
     apply_dotfiles
     link_obsidian
-    
+
     # VS Code
     install_vscode_extensions
-    
+
     # Default applications
     setup_default_apps
-    
+
     # macOS configuration
     setup_marta
     setup_system_defaults
     apply_system_changes
-    
+
     # Final summary
     log_header "Setup Complete!"
-    
+
     local end_time=$(date)
     echo "✓ All tasks completed successfully!" | tee -a "$LOG_FILE"
     echo "" | tee -a "$LOG_FILE"
@@ -821,7 +737,7 @@ main() {
     echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
     echo "End Time: $end_time" >> "$LOG_FILE"
     echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
-    
+
     read -r "?Do you want to log out now? (y/n) " response
     if [[ "$response" =~ ^[yY]$ ]]; then
         log_info "Logging out..."

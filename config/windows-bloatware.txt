@@ -1,0 +1,57 @@
+# Windows Bloatware Apps to Remove
+# One app package name per line
+# Comments start with #
+
+# ══════════════════════════════════════════════════════════════
+# MICROSOFT APPS
+# ══════════════════════════════════════════════════════════════
+
+Microsoft.BingNews
+Microsoft.BingWeather
+Microsoft.BingFinance
+Microsoft.BingSports
+Microsoft.GamingApp
+Microsoft.GetHelp
+Microsoft.Getstarted
+Microsoft.MicrosoftSolitaireCollection
+Microsoft.MixedReality.Portal
+Microsoft.3DBuilder
+Microsoft.People
+Microsoft.Print3D
+Microsoft.WindowsFeedbackHub
+Microsoft.WindowsMaps
+Microsoft.ZuneMusic
+Microsoft.ZuneVideo
+Microsoft.YourPhone
+Microsoft.Todos
+Microsoft.PowerAutomateDesktop
+Microsoft.549981C3F5F10
+Microsoft.OutlookForWindows
+Microsoft.SkypeApp
+
+# ══════════════════════════════════════════════════════════════
+# XBOX APPS
+# ══════════════════════════════════════════════════════════════
+
+Microsoft.XboxApp
+Microsoft.XboxGameCallableUI
+Microsoft.XboxIdentityProvider
+Microsoft.XboxSpeechToTextOverlay
+Microsoft.XboxGameOverlay
+Microsoft.Xbox.TCUI
+
+# ══════════════════════════════════════════════════════════════
+# THIRD-PARTY BLOAT
+# ══════════════════════════════════════════════════════════════
+
+Clipchamp.Clipchamp
+MicrosoftTeams
+Microsoft.MicrosoftOfficeHub
+
+# ══════════════════════════════════════════════════════════════
+# OPTIONAL (uncomment to remove)
+# ══════════════════════════════════════════════════════════════
+
+# Microsoft.Windows.Photos
+# Microsoft.WindowsCamera
+# Microsoft.WindowsCalculator
