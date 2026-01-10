@@ -7,15 +7,9 @@
 // from the command palette.
 [
   {
-    "context": "Workspace",
+    "context": "vim_mode == visual",
     "bindings": {
-      "shift shift": "file_finder::Toggle",
-    },
-  },
-  {
-    "context": "Editor && vim_mode == insert",
-    "bindings": {
-      // "j k": "vim::NormalBefore"
+      "shift-s": "vim::PushAddSurrounds",
     },
   },
   {
