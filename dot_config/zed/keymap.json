@@ -15,6 +15,7 @@
   {
     "bindings": {
       "cmd-i": "agent::ToggleFocus",
+      "cmd-shift-j": "terminal_panel::ToggleFocus",
     },
   },
 ]

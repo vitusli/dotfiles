@@ -4,6 +4,10 @@
 " Shared settings (both VSCode and standalone Neovim)
 " ============================================================================
 
+" Disable intro screen and start directly in insert mode
+set shortmess+=I
+autocmd VimEnter * startinsert
+
 " Use Vim's plugin directory so both Vim and Neovim share the same plugins
 set runtimepath^=~/.vim
 set packpath^=~/.vim
