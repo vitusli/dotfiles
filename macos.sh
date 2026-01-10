@@ -329,7 +329,7 @@ install_mas_apps() {
     local mas_apps=()
     while IFS= read -r line; do
         mas_apps+=("$line")
-    done < <(load_config "mas.txt")
+    done < <(load_config "macos-mas.txt")
 
     for app_info in "${mas_apps[@]}"; do
         local app_id="${app_info%%|*}"
@@ -568,7 +568,7 @@ setup_default_apps() {
     local duti_configs=()
     while IFS= read -r line; do
         duti_configs+=("$line")
-    done < <(load_config "duti.txt")
+    done < <(load_config "macos-duti.txt")
 
     for config in "${duti_configs[@]}"; do
         # Parse config: bundle_id|uti|role

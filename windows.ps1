@@ -97,28 +97,7 @@ $SCOOP_BUCKETS = @(
     "nerd-fonts"
 )
 
-# ============================================================================
-# WINDOWS-SPECIFIC PACKAGES (not in shared config)
-# ============================================================================
-
-$WINDOWS_SPECIFIC = @(
-    # Core (aria2 makes Scoop downloads faster)
-    "7zip"
-    "aria2"
-    "git-lfs"
-
-    # CLI Tools
-    "fd"
-    "gsudo"
-    "scoop-completion"
-
-    # Media
-    "vlc"
-
-    # Fonts (nerd-fonts bucket)
-    "JetBrainsMono-NF"
-    "FiraCode-NF"
-)
+# Windows-specific packages are now in cli.txt and gui.txt with #windows tag
 
 # ============================================================================
 # REGISTRY CONFIGURATIONS (Remove Consumer Bloat)
@@ -286,8 +265,7 @@ function Install-ScoopPackages {
     $cliPackages = Load-Packages "cli.txt" "windows"
     $guiPackages = Load-Packages "gui.txt" "windows"
 
-    # Combine with Windows-specific packages
-    $allPackages = $WINDOWS_SPECIFIC + $cliPackages + $guiPackages
+    $allPackages = $cliPackages + $guiPackages
 
     $toInstall = @()
 

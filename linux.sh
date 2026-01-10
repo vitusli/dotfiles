@@ -21,7 +21,7 @@ CONFIG_URL="https://raw.githubusercontent.com/vitusli/dotfiles/main/config"
 load_packages() {
     local file="$1"
     local url="${CONFIG_URL}/${file}"
-    
+
     curl -fsSL "$url" 2>/dev/null | \
         grep -v '^#' | \
         grep -v '^$' | \
@@ -35,7 +35,7 @@ load_packages() {
 load_all() {
     local file="$1"
     local url="${CONFIG_URL}/${file}"
-    
+
     curl -fsSL "$url" 2>/dev/null | \
         grep -v '^#' | \
         grep -v '^$' | \
@@ -46,67 +46,13 @@ load_all() {
 load_config() {
     local file="$1"
     local url="${CONFIG_URL}/${file}"
-    
+
     curl -fsSL "$url" 2>/dev/null | \
         grep -v '^#' | \
         grep -v '^$'
 }
 
-# Arch-specific packages (not in shared config)
-ARCH_SPECIFIC=(
-    # Build essentials
-    base-devel
-    curl
-    wget
-    
-    # Sway & Wayland
-    sway
-    swaylock
-    waybar
-    wofi
-    mako
-    xdg-desktop-portal-wlr
-    
-    # Audio
-    pipewire
-    wireplumber
-    pipewire-pulse
-    pipewire-alsa
-    
-    # Wayland utilities
-    grim
-    slurp
-    wl-clipboard
-    
-    # System utilities
-    polkit
-    brightnessctl
-    playerctl
-    
-    # Fonts
-    ttf-dejavu
-    ttf-liberation
-    noto-fonts
-    noto-fonts-emoji
-    
-    # Terminal
-    foot
-)
-
-# NVIDIA packages
-NVIDIA_PACKAGES=(
-    nvidia
-    nvidia-utils
-    nvidia-settings
-    libva-nvidia-driver
-)
-
-# AUR-only packages (not available in pacman)
-AUR_ONLY=(
-    ulauncher
-    espanso-wayland
-    ttf-nerd-fonts-symbols
-)
+# Arch-specific packages are now in config/linux-packages.txt
 
 # ============================================================================
 # UTILITY FUNCTIONS
@@ -152,18 +98,22 @@ command_exists() {
 
 install_pacman_packages() {
     log_header "Installing Pacman Packages"
-    
+
     log_info "Updating system..."
     sudo pacman -Syu --noconfirm >> "$LOG_FILE" 2>&1
-    
+
     log_info "Loading packages from config..."
     local cli_packages=($(load_packages "cli.txt"))
     local gui_packages=($(load_packages "gui.txt"))
-    
-    # Combine with arch-specific packages
-    local all_packages=("${ARCH_SPECIFIC[@]}" "${cli_packages[@]}" "${gui_packages[@]}")
-    
+    local arch_packages=($(load_config "linux-packages.txt" | grep -v '^#'))
+
+    # Combine all packages
+    local all_packages=("${arch_packages[@]}" "${cli_packages[@]}" "${gui_packages[@]}")
+
     for pkg in "${all_packages[@]}"; do
+        # Skip nvidia and aur markers
+        [[ "$pkg" == "#nvidia" || "$pkg" == "#aur" ]] && continue
+
         if pacman -Qi "$pkg" &>/dev/null; then
             log_success "$pkg (already installed)"
         elif pacman -Ss "^${pkg}$" &>/dev/null; then
@@ -185,14 +135,17 @@ install_pacman_packages() {
 
 install_nvidia() {
     log_header "Installing NVIDIA Driver"
-    
+
     # Check if NVIDIA GPU present
     if ! lspci | grep -i nvidia &>/dev/null; then
         log_info "No NVIDIA GPU detected, skipping"
         return
     fi
-    
-    for pkg in "${NVIDIA_PACKAGES[@]}"; do
+
+    # Load nvidia packages from config (lines after #nvidia until next # or EOF)
+    local nvidia_packages=($(load_config "linux-packages.txt" | sed -n '/#nvidia/,/^#[^n]/p' | grep -v '^#'))
+
+    for pkg in "${nvidia_packages[@]}"; do
         if pacman -Qi "$pkg" &>/dev/null; then
             log_success "$pkg (already installed)"
         else
@@ -204,14 +157,14 @@ install_nvidia() {
             fi
         fi
     done
-    
+
     # Configure NVIDIA for Wayland
     log_info "Configuring NVIDIA for Wayland..."
-    
+
     # Kernel parameter
     sudo mkdir -p /etc/modprobe.d
     echo "options nvidia_drm modeset=1 fbdev=1" | sudo tee /etc/modprobe.d/nvidia.conf > /dev/null
-    
+
     # Environment variables for Sway
     sudo mkdir -p /etc/environment.d
     cat << 'EOF' | sudo tee /etc/environment.d/nvidia-wayland.conf > /dev/null
@@ -220,11 +173,11 @@ LIBVA_DRIVER_NAME=nvidia
 GBM_BACKEND=nvidia-drm
 __GLX_VENDOR_LIBRARY_NAME=nvidia
 EOF
-    
+
     # Rebuild initramfs
     log_info "Rebuilding initramfs..."
     sudo mkinitcpio -P >> "$LOG_FILE" 2>&1
-    
+
     log_success "NVIDIA configured for Wayland"
     log_warning "Reboot required for NVIDIA changes to take effect"
 }
@@ -235,12 +188,12 @@ EOF
 
 install_yay() {
     log_header "Installing yay (AUR Helper)"
-    
+
     if command_exists yay; then
         log_success "yay already installed"
         return
     fi
-    
+
     log_info "Building yay from AUR..."
     local temp_dir=$(mktemp -d)
     git clone https://aur.archlinux.org/yay.git "$temp_dir/yay" >> "$LOG_FILE" 2>&1
@@ -248,7 +201,7 @@ install_yay() {
     makepkg -si --noconfirm >> "$LOG_FILE" 2>&1
     cd - > /dev/null
     rm -rf "$temp_dir"
-    
+
     if command_exists yay; then
         log_success "yay installed"
     else
@@ -262,19 +215,19 @@ install_yay() {
 
 install_aur_packages() {
     log_header "Installing AUR Packages"
-    
+
     if ! command_exists yay; then
         log_error "yay not available, skipping AUR packages"
         return
     fi
-    
+
     log_info "Loading AUR packages from config..."
     local cli_packages=($(load_packages "cli.txt"))
     local gui_packages=($(load_packages "gui.txt"))
-    
+
     # Combine config packages with AUR-only packages
     local all_aur=("${AUR_ONLY[@]}" "${cli_packages[@]}" "${gui_packages[@]}")
-    
+
     for pkg in "${all_aur[@]}"; do
         if yay -Qi "$pkg" &>/dev/null; then
             log_success "$pkg (already installed)"
@@ -296,7 +249,7 @@ install_aur_packages() {
 
 setup_git_config() {
     log_header "Setting up Git Configuration"
-    
+
     if git config --global user.email &>/dev/null; then
         log_success "Git already configured: $(git config --global user.name) <$(git config --global user.email)>"
     else
@@ -315,17 +268,17 @@ setup_git_config() {
 
 setup_ssh_key() {
     log_header "Setting up SSH Key"
-    
+
     local ssh_key="$HOME/.ssh/id_ed25519"
     local key_created=false
-    
+
     if [ -f "$ssh_key" ]; then
         log_success "SSH key already exists at $ssh_key"
     else
         log_info "Generating SSH key..."
         mkdir -p "$HOME/.ssh"
         chmod 700 "$HOME/.ssh"
-        
+
         # Use git email if configured
         local ssh_email
         if git config --global user.email &>/dev/null; then
@@ -335,19 +288,19 @@ setup_ssh_key() {
             ssh_email="user@$(hostname)"
             log_info "Using default email: $ssh_email"
         fi
-        
+
         ssh-keygen -t ed25519 -C "$ssh_email" -f "$ssh_key" -N ""
         chmod 600 "$ssh_key"
         chmod 644 "${ssh_key}.pub"
-        
+
         log_success "SSH key generated"
         key_created=true
     fi
-    
+
     # Try to add to GitHub if gh is available and authenticated
     if command_exists gh; then
         local key_fingerprint=$(ssh-keygen -lf "${ssh_key}.pub" 2>/dev/null | awk '{print $2}')
-        
+
         if gh ssh-key list 2>/dev/null | grep -q "$key_fingerprint"; then
             log_success "SSH key already on GitHub"
         elif gh auth status &>/dev/null; then
@@ -385,7 +338,7 @@ setup_ssh_key() {
 
 apply_dotfiles() {
     log_header "Applying Dotfiles with chezmoi"
-    
+
     if [ -f "$HOME/.zshrc" ] && chezmoi verify &>/dev/null 2>&1; then
         log_success "Dotfiles already applied"
     else
@@ -401,7 +354,7 @@ apply_dotfiles() {
 
 setup_zsh_default() {
     log_header "Setting zsh as Default Shell"
-    
+
     if [ "$SHELL" = "$(which zsh)" ]; then
         log_success "zsh is already the default shell"
     else
@@ -421,12 +374,12 @@ setup_zsh_default() {
 
 enable_services() {
     log_header "Enabling Services"
-    
+
     # System services
     local system_services=(
         NetworkManager
     )
-    
+
     for svc in "${system_services[@]}"; do
         if systemctl is-enabled "$svc" &>/dev/null; then
             log_success "$svc (already enabled)"
@@ -436,14 +389,14 @@ enable_services() {
             log_success "$svc enabled"
         fi
     done
-    
+
     # User services (pipewire)
     local user_services=(
         pipewire
         wireplumber
         pipewire-pulse
     )
-    
+
     for svc in "${user_services[@]}"; do
         if systemctl --user is-enabled "$svc" &>/dev/null; then
             log_success "$svc (user, already enabled)"
@@ -461,9 +414,9 @@ enable_services() {
 
 setup_sway_autostart() {
     log_header "Configuring Sway Autostart"
-    
+
     local zprofile="$HOME/.zprofile"
-    
+
     if [ -f "$zprofile" ] && grep -q "exec sway" "$zprofile"; then
         log_success "Sway autostart already configured"
     else
@@ -502,7 +455,7 @@ main() {
     echo "Log file: $LOG_FILE"
     echo ""
     read -p "Press Enter to continue or Ctrl+C to abort..."
-    
+
     # Initialize log
     mkdir -p "$(dirname "$LOG_FILE")"
     {
@@ -513,7 +466,7 @@ main() {
         echo "Host: $(hostname)"
         echo "════════════════════════════════════════════════════════════"
     } > "$LOG_FILE"
-    
+
     # Run setup steps
     install_pacman_packages
     install_nvidia
@@ -525,7 +478,7 @@ main() {
     enable_services
     setup_zsh_default
     setup_sway_autostart
-    
+
     # Done
     log_header "Setup Complete!"
     echo ""
@@ -554,4 +507,3 @@ main() {
 }
 
 main "$@"
-

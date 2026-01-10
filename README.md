@@ -25,7 +25,7 @@ curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macos.sh | zs
 irm https://raw.githubusercontent.com/vitusli/dotfiles/main/windows.ps1 | iex
 ```
 
-### Arch Linux
+### Arch Linux (WIP)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linux.sh | bash
