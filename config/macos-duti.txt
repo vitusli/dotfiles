@@ -13,7 +13,7 @@ dev.zed.Zed|.zsh|all
 dev.zed.Zed|public.plain-text|all
 company.thebrowser.Browser|http|all
 company.thebrowser.Browser|https|all
-org.vim.MacVim|.txt|all
+dev.zed.Zed|.txt|all
 org.yanex.marta|public.folder|all
 
 # Manuell ausführen ohne Bootstrap-Skript:

@@ -28,6 +28,7 @@ Microsoft.PowerAutomateDesktop
 Microsoft.549981C3F5F10
 Microsoft.OutlookForWindows
 Microsoft.SkypeApp
+Microsoft.MicrosoftOfficeHub
 
 # ══════════════════════════════════════════════════════════════
 # XBOX APPS
@@ -45,13 +46,12 @@ Microsoft.Xbox.TCUI
 # ══════════════════════════════════════════════════════════════
 
 Clipchamp.Clipchamp
-MicrosoftTeams
-Microsoft.MicrosoftOfficeHub
 
 # ══════════════════════════════════════════════════════════════
 # OPTIONAL (uncomment to remove)
 # ══════════════════════════════════════════════════════════════
 
+# MicrosoftTeams
 # Microsoft.Windows.Photos
 # Microsoft.WindowsCamera
 # Microsoft.WindowsCalculator

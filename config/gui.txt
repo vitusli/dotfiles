@@ -5,6 +5,7 @@ aerospace #macos
 affinity #macos
 alt-tab #macos
 arc #macos
+TheBrowserCompany.Arc #windows
 blender
 darktable #macos
 figma #macos
@@ -21,6 +22,6 @@ visual-studio-code #macos
 visual-studio-code-bin #linux
 vscode #windows
 wezterm
-zed #macos #linux
+zed
 zen-browser-bin #linux
 zotero #macos
