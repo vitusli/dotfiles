@@ -4,8 +4,6 @@ ableton-live-suite #macos
 aerospace #macos
 affinity #macos
 alt-tab #macos
-arc #macos
-TheBrowserCompany.Arc #windows
 blender
 darktable #macos
 figma #macos
@@ -15,7 +13,7 @@ marta #macos
 microsoft-outlook #macos
 microsoft-teams #macos
 obsidian
-raycast #macos
+raycast #macos #windows
 rhino-app #macos
 slack
 visual-studio-code #macos
@@ -23,5 +21,7 @@ visual-studio-code-bin #linux
 vscode #windows
 wezterm
 zed
+zen #macos
 zen-browser-bin #linux
+Zen-Team.Zen-Browser #windows
 zotero #macos
