@@ -1,14 +1,14 @@
 plugin {
-    id = "vitusli.openInVSCode",
-    name = "Open Current Folder in VS Code",
+    id = "vitusli.openInZed",
+    name = "Open Current Folder in Zed",
     apiVersion = "2.2",
     author = "vitusli",
     email = "vituspach@gmail.com"
 }
 
 action {
-    id = "openCurrentInVSCode",
-    name = "Open Current Folder in VS Code",
+    id = "openCurrentInZed",
+    name = "Open Current Folder in Zed",
     apply = function(context)
         local pane = context.activePane
         if not pane then return end
@@ -17,7 +17,7 @@ action {
         local folder = model.folder
         if not folder then return end
         local path = folder.path.rawValue
-        -- Open the folder in Visual Studio Code via bundle identifier
-        martax.openFiles(path, "com.microsoft.VSCode")
+        -- Open the folder in Zed using the open command
+        martax.execute("/usr/bin/open", {"-a", "Zed", path})
     end
 }
