@@ -30,7 +30,7 @@ qlmarkdown #macos
 raycast #macos #windows
 rhino-app #macos
 slack #macos #windows
-sf-symbols
+sf-symbols #macos
 superwhisper #macos
 visual-studio-code #macos
 visual-studio-code-bin #linux
