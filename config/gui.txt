@@ -16,7 +16,7 @@ homerow #macos
 karabiner-elements #macos
 keeweb #macos
 keepassxc
-logi-options+ #macos
+linearmouse #macos
 macvim-app #macos
 marta #macos
 microsoft-outlook #macos

@@ -50,6 +50,9 @@ NSGlobalDomain|com.apple.mouse.tapBehavior|int|1
 # Trackpad speed
 NSGlobalDomain|com.apple.mouse.scaling|float|.875
 
+# Mouse tracking speed (0-3, ~90% = 2.7)
+com.apple.mouse|mouseSpeedScaling|float|2.7
+
 # Enable three-finger drag
 com.apple.AppleMultitouchTrackpad|TrackpadThreeFingerDrag|bool|true
 
