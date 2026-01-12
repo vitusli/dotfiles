@@ -39,7 +39,7 @@ vscode #windows
 wezterm
 windows-app #macos
 zed
-zen #macos #linux
+zen #macos
 zen-browser-bin #linux
-Zen-Team.Zen-Browser #windows
+zen-browser #windows
 zotero #macos
