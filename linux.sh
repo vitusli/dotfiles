@@ -10,7 +10,10 @@ set +e  # Don't exit on errors
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
-LOG_FILE="$HOME/dotfiles/arch-setup-$(date +%Y%m%d-%H%M%S).log"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOG_DIR="$SCRIPT_DIR/logs"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/arch-setup-$(date +%Y%m%d-%H%M%S).log"
 CONFIG_URL="https://raw.githubusercontent.com/vitusli/dotfiles/main/config"
 
 # ============================================================================
