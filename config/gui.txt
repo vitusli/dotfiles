@@ -4,24 +4,38 @@ ableton-live-suite #macos
 aerospace #macos
 affinity #macos
 alt-tab #macos
+basictex #macos
 blender
+bridge #macos
 darktable #macos
 figma #macos
+google-drive #macos
+homerow #macos
 karabiner-elements #macos
+keeweb #macos
 keepassxc
+logi-options+ #macos
+macvim-app #macos
 marta #macos
 microsoft-outlook #macos
 microsoft-teams #macos
 obsidian
+onedrive #macos
+parsec
+powershell
+qlmarkdown
 raycast #macos #windows
 rhino-app #macos
 slack
+superwhisper
 visual-studio-code #macos
 visual-studio-code-bin #linux
+vlc
 vscode #windows
 wezterm
+windows-app #macos
 zed
-zen #macos
+zen #macos #linux
 zen-browser-bin #linux
 Zen-Team.Zen-Browser #windows
 zotero #macos

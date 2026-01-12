@@ -5,28 +5,33 @@ chezmoi
 ffmpeg
 fzf
 gh #macos #windows
-github-cli #linux
 git
 git-lfs
+github-cli #linux
+glab #macos
 lazygit
 lf
+nova #macos
 nvim
 olets/tap/zsh-abbr #macos
 pandoc
+restic #macos
 serie #macos #linux
 uv
 zoxide
 zsh #linux
 zsh-abbr #macos
+zsh-autocomplete #macos
 zsh-autosuggestions #macos #linux
 zsh-syntax-highlighting #macos #linux
 
 # Windows-specific (Scoop)
+
 7zip #windows
 aria2 #windows
 fd #windows
+FiraCode-NF #windows
 gsudo #windows
+JetBrainsMono-NF #windows
 scoop-completion #windows
 vlc #windows
-JetBrainsMono-NF #windows
-FiraCode-NF #windows

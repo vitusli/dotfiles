@@ -314,6 +314,133 @@ install_casks() {
 }
 
 # ============================================================================
+# BREW CLEANUP (Uninstall packages not in config)
+# ============================================================================
+
+cleanup_brew() {
+    log_header "Cleaning up Homebrew (removing unlisted packages)"
+
+    # Load desired packages from config
+    log_info "Loading desired packages from config..."
+    local desired_formulae=($(load_packages "cli.txt" "macos"))
+    # Add macOS-specific tools that are always needed
+    desired_formulae+=(duti mas)
+
+    local desired_casks=($(load_packages "gui.txt" "macos"))
+
+    # Get all installed formulae and casks
+    local installed_formulae=($(brew list --formula -1 2>/dev/null))
+    local installed_casks=($(brew list --cask -1 2>/dev/null))
+
+    # Build a list of all dependencies (packages required by other packages)
+    log_info "Analyzing dependencies..."
+    local all_deps=()
+    local deps_output=$(brew deps --installed --for-each 2>/dev/null)
+
+    # Parse dependencies: each line is "package: dep1 dep2 dep3"
+    while IFS= read -r line; do
+        # Extract dependencies (everything after the colon)
+        local deps_part="${line#*: }"
+        if [[ "$deps_part" != "$line" ]]; then
+            for dep in $deps_part; do
+                all_deps+=("$dep")
+            done
+        fi
+    done <<< "$deps_output"
+
+    # Remove duplicates from dependencies
+    local unique_deps=($(printf '%s\n' "${all_deps[@]}" | sort -u))
+
+    # Helper function to check if item is in array
+    is_in_array() {
+        local item="$1"
+        shift
+        local arr=("$@")
+        for element in "${arr[@]}"; do
+            [[ "$element" == "$item" ]] && return 0
+        done
+        return 1
+    }
+
+    # Find formulae to remove (not in desired list AND not a dependency)
+    local formulae_to_remove=()
+    for formula in "${installed_formulae[@]}"; do
+        if ! is_in_array "$formula" "${desired_formulae[@]}" && \
+           ! is_in_array "$formula" "${unique_deps[@]}"; then
+            formulae_to_remove+=("$formula")
+        fi
+    done
+
+    # Find casks to remove (not in desired list)
+    # Casks don't have dependencies in the same way
+    local casks_to_remove=()
+    for cask in "${installed_casks[@]}"; do
+        if ! is_in_array "$cask" "${desired_casks[@]}"; then
+            casks_to_remove+=("$cask")
+        fi
+    done
+
+    # Report findings
+    if [ ${#formulae_to_remove[@]} -eq 0 ] && [ ${#casks_to_remove[@]} -eq 0 ]; then
+        log_success "No packages to remove - Homebrew is clean"
+        return 0
+    fi
+
+    # Show what will be removed
+    if [ ${#formulae_to_remove[@]} -gt 0 ]; then
+        log_warning "Formulae to remove (${#formulae_to_remove[@]}):"
+        for formula in "${formulae_to_remove[@]}"; do
+            echo "  - $formula"
+        done
+    fi
+
+    if [ ${#casks_to_remove[@]} -gt 0 ]; then
+        log_warning "Casks to remove (${#casks_to_remove[@]}):"
+        for cask in "${casks_to_remove[@]}"; do
+            echo "  - $cask"
+        done
+    fi
+
+    # Ask for confirmation
+    echo ""
+    read -r "?Do you want to remove these packages? (y/n) " confirm
+    if [[ ! "$confirm" =~ ^[yY]$ ]]; then
+        log_info "Cleanup skipped by user"
+        return 0
+    fi
+
+    # Remove casks first (they might depend on formulae)
+    if [ ${#casks_to_remove[@]} -gt 0 ]; then
+        log_info "Removing ${#casks_to_remove[@]} casks..."
+        for cask in "${casks_to_remove[@]}"; do
+            log_info "Removing cask: $cask"
+            brew uninstall --cask "$cask" 2>&1 | tee -a "$LOG_FILE" || true
+        done
+        log_success "Casks removed"
+    fi
+
+    # Remove formulae
+    if [ ${#formulae_to_remove[@]} -gt 0 ]; then
+        log_info "Removing ${#formulae_to_remove[@]} formulae..."
+        for formula in "${formulae_to_remove[@]}"; do
+            log_info "Removing formula: $formula"
+            brew uninstall "$formula" 2>&1 | tee -a "$LOG_FILE" || true
+        done
+        log_success "Formulae removed"
+    fi
+
+    # Run brew autoremove to clean up any orphaned dependencies
+    log_info "Running brew autoremove..."
+    brew autoremove 2>&1 | tee -a "$LOG_FILE" || true
+
+    # Run brew cleanup
+    log_info "Running brew cleanup..."
+    brew cleanup 2>&1 | tee -a "$LOG_FILE" || true
+
+    log_success "Homebrew cleanup complete"
+}
+
+# ============================================================================
 # APP STORE
 # ============================================================================
 
@@ -702,6 +829,7 @@ main() {
     # Brew packages
     install_formulae
     install_casks
+    cleanup_brew
     install_mas_apps
 
     # GitHub
