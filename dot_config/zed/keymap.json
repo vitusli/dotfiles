@@ -1,0 +1,21 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "context": "vim_mode == visual",
+    "bindings": {
+      "shift-s": "vim::PushAddSurrounds",
+    },
+  },
+  {
+    "bindings": {
+      "cmd-i": "agent::ToggleFocus",
+      "cmd-shift-j": "terminal_panel::ToggleFocus",
+    },
+  },
+]

@@ -1,5 +1,9 @@
 set clipboard=unnamed
 
+" Disable intro screen and start in insert mode
+set shortmess+=I
+autocmd VimEnter * startinsert
+
 " fzf.vim configuration
 set rtp+=/opt/homebrew/bin/fzf
 
