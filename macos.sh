@@ -35,20 +35,34 @@ DOTFILES_DIR="$HOME/dotfiles"
 LOG_DIR="$DOTFILES_DIR/logs"
 LOG_FILE="$LOG_DIR/setup-$(date +%Y%m%d-%H%M%S).log"
 CONFIG_URL="https://raw.githubusercontent.com/vitusli/dotfiles/main/config"
+CONFIG_DIR="$DOTFILES_DIR/config"
 
 # ============================================================================
 # CONFIG LOADING FUNCTIONS
 # ============================================================================
 
-# Load packages from remote config file
+# Load raw content from local file or remote URL (fallback)
+# Usage: load_raw "cli.txt"
+load_raw() {
+    local file="$1"
+    local local_path="${CONFIG_DIR}/${file}"
+    local url="${CONFIG_URL}/${file}"
+
+    if [ -f "$local_path" ]; then
+        cat "$local_path"
+    else
+        curl -fsSL "$url" 2>/dev/null
+    fi
+}
+
+# Load packages from config file (local preferred, remote fallback)
 # Usage: load_packages "cli.txt" "macos"
 # Returns packages that either have no tag OR have the specified platform tag
 load_packages() {
     local file="$1"
     local platform="$2"
-    local url="${CONFIG_URL}/${file}"
 
-    curl -fsSL "$url" 2>/dev/null | \
+    load_raw "$file" | \
         grep -v '^#' | \
         grep -v '^$' | \
         awk -v p="#${platform}" '!/#/ || $0 ~ p' | \
@@ -60,9 +74,8 @@ load_packages() {
 # Load all packages (no platform filtering, just strip comments)
 load_all() {
     local file="$1"
-    local url="${CONFIG_URL}/${file}"
 
-    curl -fsSL "$url" 2>/dev/null | \
+    load_raw "$file" | \
         grep -v '^#' | \
         grep -v '^$' | \
         sed 's/ *#.*//'
@@ -71,9 +84,8 @@ load_all() {
 # Load config preserving format (for repos, mas, duti)
 load_config() {
     local file="$1"
-    local url="${CONFIG_URL}/${file}"
 
-    curl -fsSL "$url" 2>/dev/null | \
+    load_raw "$file" | \
         grep -v '^#' | \
         grep -v '^$'
 }
@@ -193,8 +205,14 @@ setup_sudo() {
         log_success "sudo verified"
     fi
 
-    # Keep sudo session alive
-    while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+    # Keep sudo session alive - refresh every 30 seconds
+    (while true; do sudo -n true; sleep 30; kill -0 "$$" || exit; done) 2>/dev/null &
+    SUDO_KEEPALIVE_PID=$!
+}
+
+# Refresh sudo before operations that might need it
+refresh_sudo() {
+    sudo -v 2>/dev/null || true
 }
 
 # ============================================================================
@@ -306,7 +324,10 @@ install_casks() {
 
     if [ ${#to_install[@]} -gt 0 ]; then
         log_info "Installing ${#to_install[@]} new casks..."
-        brew install --cask "${to_install[@]}"
+        for cask in "${to_install[@]}"; do
+            log_info "Installing cask: $cask"
+            brew install --cask "$cask" 2>&1 | tee -a "$LOG_FILE" || log_error "Failed to install $cask"
+        done
         log_success "Casks installation complete"
     else
         log_info "All casks already installed"
@@ -320,6 +341,9 @@ install_casks() {
 cleanup_brew() {
     log_header "Cleaning up Homebrew (removing unlisted packages)"
 
+    # Refresh sudo to avoid password prompts during uninstall
+    refresh_sudo
+
     # Load desired packages from config
     log_info "Loading desired packages from config..."
     local desired_formulae=($(load_packages "cli.txt" "macos"))
@@ -328,28 +352,12 @@ cleanup_brew() {
 
     local desired_casks=($(load_packages "gui.txt" "macos"))
 
-    # Get all installed formulae and casks
-    local installed_formulae=($(brew list --formula -1 2>/dev/null))
+    # Get top-level formulae only (brew leaves excludes dependencies automatically)
+    # This is the key insight: we only care about "leaf" packages that aren't
+    # dependencies of other packages. Everything else is a dependency and should stay.
+    log_info "Analyzing installed packages..."
+    local leaf_formulae=($(brew leaves 2>/dev/null))
     local installed_casks=($(brew list --cask -1 2>/dev/null))
-
-    # Build a list of all dependencies (packages required by other packages)
-    log_info "Analyzing dependencies..."
-    local all_deps=()
-    local deps_output=$(brew deps --installed --for-each 2>/dev/null)
-
-    # Parse dependencies: each line is "package: dep1 dep2 dep3"
-    while IFS= read -r line; do
-        # Extract dependencies (everything after the colon)
-        local deps_part="${line#*: }"
-        if [[ "$deps_part" != "$line" ]]; then
-            for dep in $deps_part; do
-                all_deps+=("$dep")
-            done
-        fi
-    done <<< "$deps_output"
-
-    # Remove duplicates from dependencies
-    local unique_deps=($(printf '%s\n' "${all_deps[@]}" | sort -u))
 
     # Helper function to check if item is in array
     is_in_array() {
@@ -362,17 +370,16 @@ cleanup_brew() {
         return 1
     }
 
-    # Find formulae to remove (not in desired list AND not a dependency)
+    # Find formulae to remove (leaf packages not in desired list)
+    # Only leaf packages can be safely removed - dependencies are handled by brew autoremove
     local formulae_to_remove=()
-    for formula in "${installed_formulae[@]}"; do
-        if ! is_in_array "$formula" "${desired_formulae[@]}" && \
-           ! is_in_array "$formula" "${unique_deps[@]}"; then
+    for formula in "${leaf_formulae[@]}"; do
+        if ! is_in_array "$formula" "${desired_formulae[@]}"; then
             formulae_to_remove+=("$formula")
         fi
     done
 
     # Find casks to remove (not in desired list)
-    # Casks don't have dependencies in the same way
     local casks_to_remove=()
     for cask in "${installed_casks[@]}"; do
         if ! is_in_array "$cask" "${desired_casks[@]}"; then
@@ -413,6 +420,8 @@ cleanup_brew() {
     if [ ${#casks_to_remove[@]} -gt 0 ]; then
         log_info "Removing ${#casks_to_remove[@]} casks..."
         for cask in "${casks_to_remove[@]}"; do
+            # Refresh sudo before each cask to prevent password prompts
+            sudo -v 2>/dev/null || true
             log_info "Removing cask: $cask"
             brew uninstall --cask "$cask" 2>&1 | tee -a "$LOG_FILE" || true
         done
@@ -430,7 +439,7 @@ cleanup_brew() {
     fi
 
     # Run brew autoremove to clean up any orphaned dependencies
-    log_info "Running brew autoremove..."
+    log_info "Running brew autoremove to clean orphaned dependencies..."
     brew autoremove 2>&1 | tee -a "$LOG_FILE" || true
 
     # Run brew cleanup

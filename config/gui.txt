@@ -1,8 +1,10 @@
 # GUI Apps
 
 ableton-live-suite #macos
+adobe-acrobat-reader #macos
 aerospace #macos
 affinity #macos
+arc #macos
 alt-tab #macos
 basictex #macos
 blender
@@ -21,16 +23,17 @@ microsoft-outlook #macos
 microsoft-teams #macos
 obsidian
 onedrive #macos
-parsec
+openvpn-connect #macos
+parsec #macos #windows
 powershell
-qlmarkdown
+qlmarkdown #macos
 raycast #macos #windows
 rhino-app #macos
-slack
-superwhisper
+slack #macos #windows
+superwhisper #macos
 visual-studio-code #macos
 visual-studio-code-bin #linux
-vlc
+vlc #macos
 vscode #windows
 wezterm
 windows-app #macos

@@ -11,10 +11,11 @@ github-cli #linux
 glab #macos
 lazygit
 lf
-nova #macos
-nvim
+neovim
+wandelbotsgmbh/wandelbots/nova #macos
 olets/tap/zsh-abbr #macos
-pandoc
+pandoc #macos
+pandoc-crossref #macos
 restic #macos
 serie #macos #linux
 uv
