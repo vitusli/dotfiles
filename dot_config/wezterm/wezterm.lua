@@ -236,6 +236,13 @@ config.keys = {
     mods = 'CMD|ALT',
     action = wezterm.action.ActivateTabRelative(-1),
   },
+
+  -- Clear Terminal - Cmd + k
+  {
+    key = 'k',
+    mods = 'CMD',
+    action = wezterm.action.ClearScrollback 'ScrollbackAndViewport',
+  },
 }
 
 -- ==========================
