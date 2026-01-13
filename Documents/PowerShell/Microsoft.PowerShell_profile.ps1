@@ -67,12 +67,12 @@ $function:prompt = {
 # Abbreviations - expand on Space
 $Abbreviations = @{
     'p'   = 'uv run python'
+    'c' = 'chezmoi'
     'ov'  = 'A:\isaac-sim\isaac-sim.bat'
     'l'   = 'lazygit'
-    'wmre' = 'komorebic stop; komorebic start'
     'rl' = '. $PROFILE'
     'ahk' = 'Get-Process | Where-Object {$_.Name -like "*AutoHotkey*"} | Stop-Process -Force; Start-Process "c:\Users\Vitus\wotfiles\ahkv1\macish.ahk"'
-    'ff' = '$f = Get-ChildItem -File -Recurse | ForEach-Object { $_.FullName } | fzf; if ($f) { Set-Location (Split-Path $f) }'
+    'zf' = '$f = Get-ChildItem -File -Recurse | ForEach-Object { $_.FullName } | fzf; if ($f) { Set-Location (Split-Path $f) }'
     '..' = 'Set-Location ..\..'
     '...' = 'Set-Location ..\..\..'
 }
@@ -81,10 +81,10 @@ Set-PSReadLineKeyHandler -Key ' ' -ScriptBlock {
     $line = $null
     $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
-    
+
     $tokens = $line -split '\s+'
     $firstToken = $tokens[0]
-    
+
     if ($Abbreviations.ContainsKey($firstToken)) {
         [Microsoft.PowerShell.PSConsoleReadLine]::Replace(0, $firstToken.Length, $Abbreviations[$firstToken])
     }
@@ -95,10 +95,10 @@ Set-PSReadLineKeyHandler -Key 'Enter' -ScriptBlock {
     $line = $null
     $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
-    
+
     $tokens = $line -split '\s+'
     $firstToken = $tokens[0]
-    
+
     if ($Abbreviations.ContainsKey($firstToken)) {
         [Microsoft.PowerShell.PSConsoleReadLine]::Replace(0, $firstToken.Length, $Abbreviations[$firstToken])
     }
@@ -151,7 +151,7 @@ function / {
         "$HOME\wotfiles"
     )
     $homeDepth = 3
-    
+
     # Use fd for fast file finding, fallback to Get-ChildItem if fd not available
     if (Get-Command fd -ErrorAction SilentlyContinue) {
         $target = & {
@@ -172,11 +172,11 @@ function / {
             Get-ChildItem -Path $HOME -Depth $homeDepth -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
         } | fzf --prompt=": "
     }
-    
+
     if ([string]::IsNullOrEmpty($target)) {
         return
     }
-    
+
     Set-Clipboard -Value $target
     code $target
     Write-Host "Opened in VS Code: $target"
