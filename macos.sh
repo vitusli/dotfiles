@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # Download manually and run with zsh
-# curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macme.sh | zsh
+# curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macos.sh | zsh
 
 # Error handler - be selective about what to report
 # Don't use set -e because interactive commands like xcode-select --install will break
@@ -36,6 +36,99 @@ LOG_DIR="$DOTFILES_DIR/logs"
 LOG_FILE="$LOG_DIR/setup-$(date +%Y%m%d-%H%M%S).log"
 CONFIG_URL="https://raw.githubusercontent.com/vitusli/dotfiles/main/config"
 CONFIG_DIR="$DOTFILES_DIR/config"
+
+# Ensure log directory exists early (before any potential fatal errors)
+mkdir -p "$LOG_DIR"
+
+# ============================================================================
+# ARGUMENT PARSING
+# ============================================================================
+
+# Available flags
+FLAG_DEFAULTS=false
+FLAG_REPOS=false
+FLAG_DUTI=false
+FLAG_GUI=false
+FLAG_CLI=false
+FLAG_VSCODE=false
+FLAG_SOFTWAREUPDATE=false
+FLAG_MAS=false
+FLAG_GITHUB=false
+FLAG_DOTFILES=false
+FLAG_MARTA=false
+FLAG_OBSIDIAN=false
+FLAG_CLEANUP=false
+FLAG_BREW=false
+FLAG_ALL=false
+SELECTIVE_MODE=false
+
+show_help() {
+    echo "Usage: zsh macos.sh [OPTIONS]"
+    echo ""
+    echo "If no options are provided, runs the full setup."
+    echo ""
+    echo "Options:"
+    echo "  --brew            Install Homebrew only (no packages)"
+    echo "  --cli             Install CLI tools (Homebrew formulae)"
+    echo "  --gui             Install GUI apps (Homebrew casks)"
+    echo "  --mas             Install Mac App Store apps"
+    echo "  --cleanup         Remove unlisted Homebrew packages"
+    echo "  --defaults        Apply macOS system defaults"
+    echo "  --duti            Set default applications"
+    echo "  --marta           Configure Marta file manager"
+    echo "  --vscode          Install VS Code extensions"
+    echo "  --dotfiles        Apply dotfiles with chezmoi"
+    echo "  --obsidian        Link shared Obsidian configuration"
+    echo "  --github          Setup GitHub auth & SSH key"
+    echo "  --repos           Clone GitHub repositories"
+    echo "  --softwareupdate  Download macOS software updates"
+    echo "  --all             Run full setup (same as no flags)"
+    echo "  --help            Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  zsh macos.sh --defaults --softwareupdate"
+    echo "  zsh macos.sh --cli --gui"
+    echo "  zsh macos.sh --vscode --dotfiles"
+    exit 0
+}
+
+# Check for --help FIRST before doing anything else
+for arg in "$@"; do
+    [[ "$arg" == "--help" || "$arg" == "-h" ]] && show_help
+done
+
+# Parse all other arguments
+for arg in "$@"; do
+    case "$arg" in
+        --defaults)      FLAG_DEFAULTS=true; SELECTIVE_MODE=true ;;
+        --repos)         FLAG_REPOS=true; SELECTIVE_MODE=true ;;
+        --duti)          FLAG_DUTI=true; SELECTIVE_MODE=true ;;
+        --gui)           FLAG_GUI=true; SELECTIVE_MODE=true ;;
+        --cli)           FLAG_CLI=true; SELECTIVE_MODE=true ;;
+        --brew)          FLAG_BREW=true; SELECTIVE_MODE=true ;;
+        --vscode)        FLAG_VSCODE=true; SELECTIVE_MODE=true ;;
+        --softwareupdate) FLAG_SOFTWAREUPDATE=true; SELECTIVE_MODE=true ;;
+        --mas)           FLAG_MAS=true; SELECTIVE_MODE=true ;;
+        --github)        FLAG_GITHUB=true; SELECTIVE_MODE=true ;;
+        --dotfiles)      FLAG_DOTFILES=true; SELECTIVE_MODE=true ;;
+        --marta)         FLAG_MARTA=true; SELECTIVE_MODE=true ;;
+        --obsidian)      FLAG_OBSIDIAN=true; SELECTIVE_MODE=true ;;
+        --cleanup)       FLAG_CLEANUP=true; SELECTIVE_MODE=true ;;
+        --all)           FLAG_ALL=true ;;
+        *)               echo "Unknown option: $arg"; show_help ;;
+    esac
+done
+
+# Helper function to check if a section should run
+should_run() {
+    local flag_name="$1"
+    # If no selective mode, run everything
+    if [ "$SELECTIVE_MODE" = false ] || [ "$FLAG_ALL" = true ]; then
+        return 0
+    fi
+    # Otherwise check the specific flag
+    eval "[ \"\$FLAG_$flag_name\" = true ]"
+}
 
 # ============================================================================
 # CONFIG LOADING FUNCTIONS
@@ -518,8 +611,7 @@ setup_ssh_key() {
 
         if command_exists gh; then
             log_info "Adding SSH key to GitHub..."
-            echo -n "Enter a name for this Mac (e.g. 'MacBook Pro Work'): "
-            read key_title
+            read -r "key_title?Enter a name for this Mac (e.g. 'MacBook Pro Work'): "
             key_title="${key_title:-MacBook $(date +%Y-%m-%d)}"
             gh ssh-key add "${ssh_key}.pub" --title "$key_title"
         fi
@@ -805,6 +897,7 @@ setup_system_defaults() {
     log_info "Applying sudo defaults..."
     sudo spctl --master-disable 2>/dev/null || true
     sudo defaults write /var/db/SystemPolicy-prefs.plist enabled -string no 2>/dev/null || true
+    sudo nvram StartupMute=%01 2>/dev/null || true
 
     log_success "All macOS defaults configured"
 }
@@ -812,11 +905,69 @@ setup_system_defaults() {
 apply_system_changes() {
     log_header "Applying System Changes"
 
+    log_info "Aktiviere Systemeinstellungen..."
+    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true
+
     log_info "Killing Dock to apply changes..."
     killall Dock 2>/dev/null || true
     killall SystemUIServer 2>/dev/null || true
+    killall Finder 2>/dev/null || true
 
     log_success "System changes applied"
+}
+
+# ============================================================================
+# SOFTWARE UPDATES
+# ============================================================================
+
+download_software_updates() {
+    log_header "Downloading Software Updates"
+
+    # Check for regular software updates
+    log_info "Checking for software updates..."
+    local updates
+    updates=$(softwareupdate --list 2>&1)
+
+    if echo "$updates" | grep -q "No new software available"; then
+        log_success "No software updates available"
+    else
+        log_info "Software updates found, downloading..."
+        softwareupdate --download --all --verbose 2>&1 | tee -a "$LOG_FILE"
+        log_success "Software updates downloaded"
+    fi
+}
+
+download_full_installer() {
+    log_header "Checking for Full macOS Installer"
+
+    log_info "Fetching available macOS installers..."
+    local installers
+    installers=$(softwareupdate --list-full-installers 2>&1)
+
+    if echo "$installers" | grep -q "No available"; then
+        log_info "No full installers available"
+        return 0
+    fi
+
+    # Get the latest version (first entry after the header)
+    local latest_version
+    latest_version=$(echo "$installers" | grep "Title:" | head -1 | sed 's/.*Version: \([0-9.]*\).*/\1/')
+
+    if [ -z "$latest_version" ]; then
+        log_info "Could not determine latest macOS version"
+        return 0
+    fi
+
+    log_info "Latest available macOS version: $latest_version"
+
+    read -r "?Do you want to download the full macOS $latest_version installer? (y/n) " response
+    if [[ "$response" =~ ^[yY]$ ]]; then
+        log_info "Downloading macOS $latest_version installer..."
+        softwareupdate --fetch-full-installer --full-installer-version "$latest_version" 2>&1 | tee -a "$LOG_FILE"
+        log_success "macOS installer downloaded to /Applications"
+    else
+        log_info "Full installer download skipped"
+    fi
 }
 
 # ============================================================================
@@ -830,59 +981,116 @@ main() {
     echo ""
     log_info "Log file: $LOG_FILE"
 
-    # Core setup
+    if [ "$SELECTIVE_MODE" = true ]; then
+        log_info "Running in selective mode with specified flags"
+    else
+        log_info "Running full setup (no flags specified)"
+    fi
+
+    # Core setup (always needed)
     setup_sudo
-    setup_xcode
-    setup_brew
+
+    # Only run xcode/brew setup if needed (many flags depend on brew packages)
+    if should_run "BREW" || should_run "CLI" || should_run "GUI" || should_run "CLEANUP" || should_run "MAS" || \
+       should_run "DUTI" || should_run "MARTA" || should_run "VSCODE" || should_run "GITHUB" || \
+       should_run "REPOS" || should_run "DOTFILES"; then
+        setup_xcode
+        setup_brew
+    fi
 
     # Brew packages
-    install_formulae
-    install_casks
-    cleanup_brew
-    install_mas_apps
+    if should_run "CLI"; then
+        install_formulae
+    fi
+
+    if should_run "GUI"; then
+        install_casks
+    fi
+
+    if should_run "CLEANUP"; then
+        cleanup_brew
+    fi
+
+    if should_run "MAS"; then
+        install_mas_apps
+    fi
 
     # GitHub
-    setup_github_auth
-    setup_ssh_key
-    clone_repositories
+    if should_run "GITHUB"; then
+        setup_github_auth
+        setup_ssh_key
+    fi
+
+    if should_run "REPOS"; then
+        # Ensure GitHub is set up for repos
+        if [ "$SELECTIVE_MODE" = true ] && [ "$FLAG_GITHUB" = false ]; then
+            setup_github_auth
+            setup_ssh_key
+        fi
+        clone_repositories
+    fi
 
     # Dotfiles
-    apply_dotfiles
-    link_obsidian
+    if should_run "DOTFILES"; then
+        apply_dotfiles
+    fi
+
+    if should_run "OBSIDIAN"; then
+        link_obsidian
+    fi
 
     # VS Code
-    install_vscode_extensions
+    if should_run "VSCODE"; then
+        install_vscode_extensions
+    fi
 
     # Default applications
-    setup_default_apps
+    if should_run "DUTI"; then
+        setup_default_apps
+    fi
 
     # macOS configuration
-    setup_marta
-    setup_system_defaults
-    apply_system_changes
+    if should_run "MARTA"; then
+        setup_marta
+    fi
+
+    if should_run "DEFAULTS"; then
+        setup_system_defaults
+        apply_system_changes
+    fi
+
+    # Software updates
+    if should_run "SOFTWAREUPDATE"; then
+        download_software_updates
+        download_full_installer
+    fi
 
     # Final summary
     log_header "Setup Complete!"
 
     local end_time=$(date)
     echo "✓ All tasks completed successfully!" | tee -a "$LOG_FILE"
-    echo "" | tee -a "$LOG_FILE"
-    echo "ℹ Replacing Spotlight with Raycast..." | tee -a "$LOG_FILE"
-    open "raycast://extensions/raycast/raycast/replace-spotlight-with-raycast"
-    log_success "Spotlight replaced with Raycast"
-    echo "" | tee -a "$LOG_FILE"
-    echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
-    echo "End Time: $end_time" >> "$LOG_FILE"
-    echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
 
-    read -r "?Do you want to log out now? (y/n) " response
-    if [[ "$response" =~ ^[yY]$ ]]; then
-        log_info "Logging out..."
-        echo "User chose to log out at $(date)" >> "$LOG_FILE"
-        osascript -e 'tell application "System Events" to log out'
-    else
-        log_info "Logout skipped. Please log out manually if needed."
-        echo "User skipped logout at $(date)" >> "$LOG_FILE"
+    # Only do these in full mode
+    if [ "$SELECTIVE_MODE" = false ]; then
+        echo "" | tee -a "$LOG_FILE"
+        echo "ℹ Replacing Spotlight with Raycast..." | tee -a "$LOG_FILE"
+        open "raycast://extensions/raycast/raycast/replace-spotlight-with-raycast"
+        log_success "Spotlight replaced with Raycast"
+        echo "" | tee -a "$LOG_FILE"
+        echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
+        echo "End Time: $end_time" >> "$LOG_FILE"
+        echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
+
+        read -r "?Do you want to log out now? (y/n) " response
+        if [[ "$response" =~ ^[yY]$ ]]; then
+            log_info "Logging out..."
+            echo "User chose to log out at $(date)" >> "$LOG_FILE"
+            osascript -e 'tell application "System Events" to log out'
+        else
+            log_info "Logout skipped. Please log out manually if needed."
+            echo "User skipped logout at $(date)" >> "$LOG_FILE"
+        fi
     fi
 }
 

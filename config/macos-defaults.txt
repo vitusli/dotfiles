@@ -30,13 +30,16 @@ NSGlobalDomain|ApplePressAndHoldEnabled|bool|true
 NSGlobalDomain|com.apple.keyboard.fnState|bool|true
 
 # fn key does nothing
-com.apple.HIToolbox|AppleFnUsageType|int|0
+com.apple.HIToolbox|AppleFnUsageType|int|1
 
 # Clear text replacements
 -g|NSUserDictionaryReplacementItems|array|
 
 # Disable Ctrl+Space (Input Source switching)
 com.apple.symbolichotkeys|AppleSymbolicHotKeys|dict-add|60 "<dict><key>enabled</key><false/></dict>"
+
+# Disable Cmd+Space (Spotlight)
+com.apple.symbolichotkeys|AppleSymbolicHotKeys|dict-add|64 "<dict><key>enabled</key><false/></dict>"
 
 # ══════════════════════════════════════════════════════════════
 # TRACKPAD & MOUSE
@@ -78,12 +81,12 @@ NSGlobalDomain|NSAutomaticWindowAnimationsEnabled|bool|false
 # Disable browser column animations
 -g|NSBrowserColumnAnimationSpeedMultiplier|float|0
 
-# Reduce motion system-wide
-com.apple.universalaccess.plist|reduceMotion|bool|true
-
 # ══════════════════════════════════════════════════════════════
 # DOCK
 # ══════════════════════════════════════════════════════════════
+
+# Remove all apps from dock
+com.apple.dock|persistent-apps|array|
 
 # Disable bouncing
 com.apple.dock|no-bouncing|bool|true
@@ -193,3 +196,6 @@ org.m0k.transmission|UseIncompleteDownloadFolder|bool|true
 
 # Incomplete folder path
 org.m0k.transmission|IncompleteDownloadFolder|string|${HOME}/Downloads/Incomplete
+
+# Manuell ausführen ohne Bootstrap-Skript:
+# curl -sL https://raw.githubusercontent.com/vitusli/dotfiles/main/config/macos-defaults.txt | bash -c 'while IFS="|" read -r d k t v; do [[ $d =~ ^# ]] || [ -z "$d" ] && continue; defaults write "$d" "$k" -"$t" $v; done' && killall Dock Finder
