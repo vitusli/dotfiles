@@ -9,12 +9,12 @@
 # CONFIGURATION
 # ============================================================================
 
-$LOG_DIR = "$HOME\.local\logs"
+$LOG_DIR = "$PSScriptRoot\logs"
 $LOG_FILE = "$LOG_DIR\wina-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
 $CONFIG_URL = "https://raw.githubusercontent.com/vitusli/dotfiles/main/config"
 
-# Language-independent special folders
-$DOCUMENTS = [Environment]::GetFolderPath('MyDocuments')
+# Use explicit English path to avoid localized folder names (e.g., "Dokumente" on German Windows)
+$DOCUMENTS = "$HOME\Documents"
 
 # ============================================================================
 # CONFIG LOADING FUNCTIONS
