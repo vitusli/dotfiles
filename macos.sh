@@ -985,8 +985,10 @@ main() {
     # Core setup (always needed)
     setup_sudo
 
-    # Only run xcode/brew setup if needed
-    if should_run "CLI" || should_run "GUI" || should_run "CLEANUP" || should_run "MAS"; then
+    # Only run xcode/brew setup if needed (many flags depend on brew packages)
+    if should_run "CLI" || should_run "GUI" || should_run "CLEANUP" || should_run "MAS" || \
+       should_run "DUTI" || should_run "MARTA" || should_run "VSCODE" || should_run "GITHUB" || \
+       should_run "REPOS" || should_run "DOTFILES"; then
         setup_xcode
         setup_brew
     fi
