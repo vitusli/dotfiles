@@ -193,3 +193,6 @@ org.m0k.transmission|UseIncompleteDownloadFolder|bool|true
 
 # Incomplete folder path
 org.m0k.transmission|IncompleteDownloadFolder|string|${HOME}/Downloads/Incomplete
+
+# Manuell ausführen ohne Bootstrap-Skript:
+# curl -sL https://raw.githubusercontent.com/vitusli/dotfiles/main/config/macos-defaults.txt | bash -c 'while IFS="|" read -r d k t v; do [[ $d =~ ^# ]] || [ -z "$d" ] && continue; defaults write "$d" "$k" -"$t" $v; done' && killall Dock Finder
