@@ -30,13 +30,16 @@ NSGlobalDomain|ApplePressAndHoldEnabled|bool|true
 NSGlobalDomain|com.apple.keyboard.fnState|bool|true
 
 # fn key does nothing
-com.apple.HIToolbox|AppleFnUsageType|int|0
+com.apple.HIToolbox|AppleFnUsageType|int|1
 
 # Clear text replacements
 -g|NSUserDictionaryReplacementItems|array|
 
 # Disable Ctrl+Space (Input Source switching)
 com.apple.symbolichotkeys|AppleSymbolicHotKeys|dict-add|60 "<dict><key>enabled</key><false/></dict>"
+
+# Disable Cmd+Space (Spotlight)
+com.apple.symbolichotkeys|AppleSymbolicHotKeys|dict-add|64 "<dict><key>enabled</key><false/></dict>"
 
 # ══════════════════════════════════════════════════════════════
 # TRACKPAD & MOUSE
