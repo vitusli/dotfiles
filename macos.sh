@@ -55,6 +55,7 @@ FLAG_DOTFILES=false
 FLAG_MARTA=false
 FLAG_OBSIDIAN=false
 FLAG_CLEANUP=false
+FLAG_BREW=false
 FLAG_ALL=false
 SELECTIVE_MODE=false
 
@@ -64,6 +65,7 @@ show_help() {
     echo "If no options are provided, runs the full setup."
     echo ""
     echo "Options:"
+    echo "  --brew            Install Homebrew only (no packages)"
     echo "  --cli             Install CLI tools (Homebrew formulae)"
     echo "  --gui             Install GUI apps (Homebrew casks)"
     echo "  --mas             Install Mac App Store apps"
@@ -100,8 +102,9 @@ for arg in "$@"; do
         --duti)          FLAG_DUTI=true; SELECTIVE_MODE=true ;;
         --gui)           FLAG_GUI=true; SELECTIVE_MODE=true ;;
         --cli)           FLAG_CLI=true; SELECTIVE_MODE=true ;;
+        --brew)          FLAG_BREW=true; SELECTIVE_MODE=true ;;
         --vscode)        FLAG_VSCODE=true; SELECTIVE_MODE=true ;;
-        --softwareupdate|--firmware) FLAG_SOFTWAREUPDATE=true; SELECTIVE_MODE=true ;;
+        --softwareupdate) FLAG_SOFTWAREUPDATE=true; SELECTIVE_MODE=true ;;
         --mas)           FLAG_MAS=true; SELECTIVE_MODE=true ;;
         --github)        FLAG_GITHUB=true; SELECTIVE_MODE=true ;;
         --dotfiles)      FLAG_DOTFILES=true; SELECTIVE_MODE=true ;;
@@ -986,7 +989,7 @@ main() {
     setup_sudo
 
     # Only run xcode/brew setup if needed (many flags depend on brew packages)
-    if should_run "CLI" || should_run "GUI" || should_run "CLEANUP" || should_run "MAS" || \
+    if should_run "BREW" || should_run "CLI" || should_run "GUI" || should_run "CLEANUP" || should_run "MAS" || \
        should_run "DUTI" || should_run "MARTA" || should_run "VSCODE" || should_run "GITHUB" || \
        should_run "REPOS" || should_run "DOTFILES"; then
         setup_xcode
