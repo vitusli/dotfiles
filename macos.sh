@@ -38,6 +38,93 @@ CONFIG_URL="https://raw.githubusercontent.com/vitusli/dotfiles/main/config"
 CONFIG_DIR="$DOTFILES_DIR/config"
 
 # ============================================================================
+# ARGUMENT PARSING
+# ============================================================================
+
+# Available flags
+FLAG_DEFAULTS=false
+FLAG_REPOS=false
+FLAG_DUTI=false
+FLAG_GUI=false
+FLAG_CLI=false
+FLAG_VSCODE=false
+FLAG_SOFTWAREUPDATE=false
+FLAG_MAS=false
+FLAG_GITHUB=false
+FLAG_DOTFILES=false
+FLAG_MARTA=false
+FLAG_OBSIDIAN=false
+FLAG_CLEANUP=false
+FLAG_ALL=false
+SELECTIVE_MODE=false
+
+show_help() {
+    echo "Usage: zsh macos.sh [OPTIONS]"
+    echo ""
+    echo "If no options are provided, runs the full setup."
+    echo ""
+    echo "Options:"
+    echo "  --cli             Install CLI tools (Homebrew formulae)"
+    echo "  --gui             Install GUI apps (Homebrew casks)"
+    echo "  --mas             Install Mac App Store apps"
+    echo "  --cleanup         Remove unlisted Homebrew packages"
+    echo "  --defaults        Apply macOS system defaults"
+    echo "  --duti            Set default applications"
+    echo "  --marta           Configure Marta file manager"
+    echo "  --vscode          Install VS Code extensions"
+    echo "  --dotfiles        Apply dotfiles with chezmoi"
+    echo "  --obsidian        Link shared Obsidian configuration"
+    echo "  --github          Setup GitHub auth & SSH key"
+    echo "  --repos           Clone GitHub repositories"
+    echo "  --softwareupdate  Download macOS software updates"
+    echo "  --all             Run full setup (same as no flags)"
+    echo "  --help            Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  zsh macos.sh --defaults --softwareupdate"
+    echo "  zsh macos.sh --cli --gui"
+    echo "  zsh macos.sh --vscode --dotfiles"
+    exit 0
+}
+
+# Check for --help FIRST before doing anything else
+for arg in "$@"; do
+    [[ "$arg" == "--help" || "$arg" == "-h" ]] && show_help
+done
+
+# Parse all other arguments
+for arg in "$@"; do
+    case "$arg" in
+        --defaults)      FLAG_DEFAULTS=true; SELECTIVE_MODE=true ;;
+        --repos)         FLAG_REPOS=true; SELECTIVE_MODE=true ;;
+        --duti)          FLAG_DUTI=true; SELECTIVE_MODE=true ;;
+        --gui)           FLAG_GUI=true; SELECTIVE_MODE=true ;;
+        --cli)           FLAG_CLI=true; SELECTIVE_MODE=true ;;
+        --vscode)        FLAG_VSCODE=true; SELECTIVE_MODE=true ;;
+        --softwareupdate|--firmware) FLAG_SOFTWAREUPDATE=true; SELECTIVE_MODE=true ;;
+        --mas)           FLAG_MAS=true; SELECTIVE_MODE=true ;;
+        --github)        FLAG_GITHUB=true; SELECTIVE_MODE=true ;;
+        --dotfiles)      FLAG_DOTFILES=true; SELECTIVE_MODE=true ;;
+        --marta)         FLAG_MARTA=true; SELECTIVE_MODE=true ;;
+        --obsidian)      FLAG_OBSIDIAN=true; SELECTIVE_MODE=true ;;
+        --cleanup)       FLAG_CLEANUP=true; SELECTIVE_MODE=true ;;
+        --all)           FLAG_ALL=true ;;
+        *)               echo "Unknown option: $arg"; show_help ;;
+    esac
+done
+
+# Helper function to check if a section should run
+should_run() {
+    local flag_name="$1"
+    # If no selective mode, run everything
+    if [ "$SELECTIVE_MODE" = false ] || [ "$FLAG_ALL" = true ]; then
+        return 0
+    fi
+    # Otherwise check the specific flag
+    eval "[ \"\$FLAG_$flag_name\" = true ]"
+}
+
+# ============================================================================
 # CONFIG LOADING FUNCTIONS
 # ============================================================================
 
@@ -889,63 +976,114 @@ main() {
     echo ""
     log_info "Log file: $LOG_FILE"
 
-    # Core setup
+    if [ "$SELECTIVE_MODE" = true ]; then
+        log_info "Running in selective mode with specified flags"
+    else
+        log_info "Running full setup (no flags specified)"
+    fi
+
+    # Core setup (always needed)
     setup_sudo
-    setup_xcode
-    setup_brew
+
+    # Only run xcode/brew setup if needed
+    if should_run "CLI" || should_run "GUI" || should_run "CLEANUP" || should_run "MAS"; then
+        setup_xcode
+        setup_brew
+    fi
 
     # Brew packages
-    install_formulae
-    install_casks
-    cleanup_brew
-    install_mas_apps
+    if should_run "CLI"; then
+        install_formulae
+    fi
+
+    if should_run "GUI"; then
+        install_casks
+    fi
+
+    if should_run "CLEANUP"; then
+        cleanup_brew
+    fi
+
+    if should_run "MAS"; then
+        install_mas_apps
+    fi
 
     # GitHub
-    setup_github_auth
-    setup_ssh_key
-    clone_repositories
+    if should_run "GITHUB"; then
+        setup_github_auth
+        setup_ssh_key
+    fi
+
+    if should_run "REPOS"; then
+        # Ensure GitHub is set up for repos
+        if [ "$SELECTIVE_MODE" = true ] && [ "$FLAG_GITHUB" = false ]; then
+            setup_github_auth
+            setup_ssh_key
+        fi
+        clone_repositories
+    fi
 
     # Dotfiles
-    apply_dotfiles
-    link_obsidian
+    if should_run "DOTFILES"; then
+        apply_dotfiles
+    fi
+
+    if should_run "OBSIDIAN"; then
+        link_obsidian
+    fi
 
     # VS Code
-    install_vscode_extensions
+    if should_run "VSCODE"; then
+        install_vscode_extensions
+    fi
 
     # Default applications
-    setup_default_apps
+    if should_run "DUTI"; then
+        setup_default_apps
+    fi
 
     # macOS configuration
-    setup_marta
-    setup_system_defaults
-    apply_system_changes
+    if should_run "MARTA"; then
+        setup_marta
+    fi
+
+    if should_run "DEFAULTS"; then
+        setup_system_defaults
+        apply_system_changes
+    fi
 
     # Software updates
-    download_software_updates
-    download_full_installer
+    if should_run "SOFTWAREUPDATE"; then
+        download_software_updates
+        download_full_installer
+    fi
 
     # Final summary
     log_header "Setup Complete!"
 
     local end_time=$(date)
     echo "✓ All tasks completed successfully!" | tee -a "$LOG_FILE"
-    echo "" | tee -a "$LOG_FILE"
-    echo "ℹ Replacing Spotlight with Raycast..." | tee -a "$LOG_FILE"
-    open "raycast://extensions/raycast/raycast/replace-spotlight-with-raycast"
-    log_success "Spotlight replaced with Raycast"
-    echo "" | tee -a "$LOG_FILE"
-    echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
-    echo "End Time: $end_time" >> "$LOG_FILE"
-    echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
 
-    read -r "?Do you want to log out now? (y/n) " response
-    if [[ "$response" =~ ^[yY]$ ]]; then
-        log_info "Logging out..."
-        echo "User chose to log out at $(date)" >> "$LOG_FILE"
-        osascript -e 'tell application "System Events" to log out'
-    else
-        log_info "Logout skipped. Please log out manually if needed."
-        echo "User skipped logout at $(date)" >> "$LOG_FILE"
+    # Only do these in full mode
+    if [ "$SELECTIVE_MODE" = false ]; then
+        echo "" | tee -a "$LOG_FILE"
+        echo "ℹ Replacing Spotlight with Raycast..." | tee -a "$LOG_FILE"
+        open "raycast://extensions/raycast/raycast/replace-spotlight-with-raycast"
+        log_success "Spotlight replaced with Raycast"
+        echo "" | tee -a "$LOG_FILE"
+        echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
+        echo "End Time: $end_time" >> "$LOG_FILE"
+        echo "════════════════════════════════════════════════════════════" >> "$LOG_FILE"
+
+        read -r "?Do you want to log out now? (y/n) " response
+        if [[ "$response" =~ ^[yY]$ ]]; then
+            log_info "Logging out..."
+            echo "User chose to log out at $(date)" >> "$LOG_FILE"
+            osascript -e 'tell application "System Events" to log out'
+        else
+            log_info "Logout skipped. Please log out manually if needed."
+            echo "User skipped logout at $(date)" >> "$LOG_FILE"
+        fi
     fi
 }
 
