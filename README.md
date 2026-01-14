@@ -19,13 +19,25 @@ Cross-platform dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macos.sh | zsh
 ```
 
-### Windows
+#### Selective Execution
+
+Run specific parts of the setup by passing flags:
+
+```bash
+# Locally
+zsh macos.sh --help
+
+# With curl (use process substitution)
+zsh <(curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macos.sh) --defaults --softwareupdate
+```
+
+### Windows (WIP)
 
 ```powershell
 irm https://raw.githubusercontent.com/vitusli/dotfiles/main/windows.ps1 | iex
 ```
 
-### Arch Linux (WIP)
+### Arch Linux (untested)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/linux.sh | bash
