@@ -78,12 +78,12 @@ NSGlobalDomain|NSAutomaticWindowAnimationsEnabled|bool|false
 # Disable browser column animations
 -g|NSBrowserColumnAnimationSpeedMultiplier|float|0
 
-# Reduce motion system-wide
-com.apple.universalaccess.plist|reduceMotion|bool|true
-
 # ══════════════════════════════════════════════════════════════
 # DOCK
 # ══════════════════════════════════════════════════════════════
+
+# Remove all apps from dock
+com.apple.dock|persistent-apps|array|
 
 # Disable bouncing
 com.apple.dock|no-bouncing|bool|true

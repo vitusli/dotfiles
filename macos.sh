@@ -805,6 +805,7 @@ setup_system_defaults() {
     log_info "Applying sudo defaults..."
     sudo spctl --master-disable 2>/dev/null || true
     sudo defaults write /var/db/SystemPolicy-prefs.plist enabled -string no 2>/dev/null || true
+    sudo nvram StartupMute=%01 2>/dev/null || true
 
     log_success "All macOS defaults configured"
 }
