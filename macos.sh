@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # Download manually and run with zsh
-# curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macme.sh | zsh
+# curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/macos.sh | zsh
 
 # Error handler - be selective about what to report
 # Don't use set -e because interactive commands like xcode-select --install will break
@@ -36,6 +36,9 @@ LOG_DIR="$DOTFILES_DIR/logs"
 LOG_FILE="$LOG_DIR/setup-$(date +%Y%m%d-%H%M%S).log"
 CONFIG_URL="https://raw.githubusercontent.com/vitusli/dotfiles/main/config"
 CONFIG_DIR="$DOTFILES_DIR/config"
+
+# Ensure log directory exists early (before any potential fatal errors)
+mkdir -p "$LOG_DIR"
 
 # ============================================================================
 # ARGUMENT PARSING
@@ -608,8 +611,7 @@ setup_ssh_key() {
 
         if command_exists gh; then
             log_info "Adding SSH key to GitHub..."
-            echo -n "Enter a name for this Mac (e.g. 'MacBook Pro Work'): "
-            read key_title
+            read -r "key_title?Enter a name for this Mac (e.g. 'MacBook Pro Work'): "
             key_title="${key_title:-MacBook $(date +%Y-%m-%d)}"
             gh ssh-key add "${ssh_key}.pub" --title "$key_title"
         fi
