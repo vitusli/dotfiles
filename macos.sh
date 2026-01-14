@@ -809,6 +809,12 @@ setup_default_apps() {
         echo -e "${bundle_id}\t${uti}\t${role}" | duti >> "$LOG_FILE" 2>&1
     done
 
+    # Set default browser (triggers macOS confirmation dialog on first run)
+    if command_exists defaultbrowser; then
+        log_info "Setting Zen Browser as default browser..."
+        defaultbrowser zen >> "$LOG_FILE" 2>&1
+    fi
+
     log_success "Default applications configured"
 }
 
