@@ -813,11 +813,69 @@ setup_system_defaults() {
 apply_system_changes() {
     log_header "Applying System Changes"
 
+    log_info "Aktiviere Systemeinstellungen..."
+    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true
+
     log_info "Killing Dock to apply changes..."
     killall Dock 2>/dev/null || true
     killall SystemUIServer 2>/dev/null || true
+    killall Finder 2>/dev/null || true
 
     log_success "System changes applied"
+}
+
+# ============================================================================
+# SOFTWARE UPDATES
+# ============================================================================
+
+download_software_updates() {
+    log_header "Downloading Software Updates"
+
+    # Check for regular software updates
+    log_info "Checking for software updates..."
+    local updates
+    updates=$(softwareupdate --list 2>&1)
+
+    if echo "$updates" | grep -q "No new software available"; then
+        log_success "No software updates available"
+    else
+        log_info "Software updates found, downloading..."
+        softwareupdate --download --all --verbose 2>&1 | tee -a "$LOG_FILE"
+        log_success "Software updates downloaded"
+    fi
+}
+
+download_full_installer() {
+    log_header "Checking for Full macOS Installer"
+
+    log_info "Fetching available macOS installers..."
+    local installers
+    installers=$(softwareupdate --list-full-installers 2>&1)
+
+    if echo "$installers" | grep -q "No available"; then
+        log_info "No full installers available"
+        return 0
+    fi
+
+    # Get the latest version (first entry after the header)
+    local latest_version
+    latest_version=$(echo "$installers" | grep "Title:" | head -1 | sed 's/.*Version: \([0-9.]*\).*/\1/')
+
+    if [ -z "$latest_version" ]; then
+        log_info "Could not determine latest macOS version"
+        return 0
+    fi
+
+    log_info "Latest available macOS version: $latest_version"
+
+    read -r "?Do you want to download the full macOS $latest_version installer? (y/n) " response
+    if [[ "$response" =~ ^[yY]$ ]]; then
+        log_info "Downloading macOS $latest_version installer..."
+        softwareupdate --fetch-full-installer --full-installer-version "$latest_version" 2>&1 | tee -a "$LOG_FILE"
+        log_success "macOS installer downloaded to /Applications"
+    else
+        log_info "Full installer download skipped"
+    fi
 }
 
 # ============================================================================
@@ -861,6 +919,10 @@ main() {
     setup_marta
     setup_system_defaults
     apply_system_changes
+
+    # Software updates
+    download_software_updates
+    download_full_installer
 
     # Final summary
     log_header "Setup Complete!"
