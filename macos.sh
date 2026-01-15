@@ -863,40 +863,67 @@ setup_system_defaults() {
         value=$(eval echo "$value")
 
         # Handle special domain prefixes
-        local cmd="defaults write"
+        local use_currenthost=false
         local target_domain="$domain"
 
         if [[ "$domain" == "-g" ]]; then
             target_domain="-g"
         elif [[ "$domain" == -currentHost* ]]; then
-            cmd="defaults -currentHost write"
+            use_currenthost=true
             target_domain="${domain#-currentHost }"
         fi
 
         # Build and execute command based on type
-        case "$type" in
-            bool)
-                $cmd "$target_domain" "$key" -bool "$value" 2>/dev/null
-                ;;
-            int)
-                $cmd "$target_domain" "$key" -int "$value" 2>/dev/null
-                ;;
-            float)
-                $cmd "$target_domain" "$key" -float "$value" 2>/dev/null
-                ;;
-            string)
-                $cmd "$target_domain" "$key" -string "$value" 2>/dev/null
-                ;;
-            array)
-                $cmd "$target_domain" "$key" -array $value 2>/dev/null
-                ;;
-            dict-add)
-                $cmd "$target_domain" "$key" -dict-add $value 2>/dev/null
-                ;;
-            *)
-                log_warning "Unknown type: $type for $domain|$key"
-                ;;
-        esac
+        # Note: We can't use $cmd with spaces, so we branch explicitly
+        if [[ "$use_currenthost" == true ]]; then
+            case "$type" in
+                bool)
+                    defaults -currentHost write "$target_domain" "$key" -bool "$value" 2>/dev/null
+                    ;;
+                int)
+                    defaults -currentHost write "$target_domain" "$key" -int "$value" 2>/dev/null
+                    ;;
+                float)
+                    defaults -currentHost write "$target_domain" "$key" -float "$value" 2>/dev/null
+                    ;;
+                string)
+                    defaults -currentHost write "$target_domain" "$key" -string "$value" 2>/dev/null
+                    ;;
+                array)
+                    defaults -currentHost write "$target_domain" "$key" -array $value 2>/dev/null
+                    ;;
+                dict-add)
+                    defaults -currentHost write "$target_domain" "$key" -dict-add $value 2>/dev/null
+                    ;;
+                *)
+                    log_warning "Unknown type: $type for $domain|$key"
+                    ;;
+            esac
+        else
+            case "$type" in
+                bool)
+                    defaults write "$target_domain" "$key" -bool "$value" 2>/dev/null
+                    ;;
+                int)
+                    defaults write "$target_domain" "$key" -int "$value" 2>/dev/null
+                    ;;
+                float)
+                    defaults write "$target_domain" "$key" -float "$value" 2>/dev/null
+                    ;;
+                string)
+                    defaults write "$target_domain" "$key" -string "$value" 2>/dev/null
+                    ;;
+                array)
+                    defaults write "$target_domain" "$key" -array $value 2>/dev/null
+                    ;;
+                dict-add)
+                    defaults write "$target_domain" "$key" -dict-add $value 2>/dev/null
+                    ;;
+                *)
+                    log_warning "Unknown type: $type for $domain|$key"
+                    ;;
+            esac
+        fi
     done < <(load_config "macos-defaults.txt")
 
     # These require sudo - keep separate
