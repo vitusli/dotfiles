@@ -1,198 +1,217 @@
+# ══════════════════════════════════════════════════════════════
 # macOS System Defaults
-# Format: domain|key|type|value
-# Types: bool, int, float, string, array
-# Use 'sudo' prefix for commands requiring sudo
-# Use '-currentHost' or '-g' as domain prefix where needed
+# ══════════════════════════════════════════════════════════════
+# Just shell commands. Run with: source macos-defaults.txt
+# Or execute line by line. No parsing, no magic.
 
 # ══════════════════════════════════════════════════════════════
 # KEYBOARD & INPUT
 # ══════════════════════════════════════════════════════════════
 
 # Fastest key repeat rate (1 = fastest)
-NSGlobalDomain|KeyRepeat|int|1
+defaults write NSGlobalDomain KeyRepeat -int 1
 
 # Disable automatic spell correction
-NSGlobalDomain|NSAutomaticSpellingCorrectionEnabled|bool|false
+defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
 # Disable smart quotes
-NSGlobalDomain|NSAutomaticQuoteSubstitutionEnabled|bool|false
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 
 # Disable smart dashes
-NSGlobalDomain|NSAutomaticDashSubstitutionEnabled|bool|false
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 
 # Full keyboard access for all UI controls (Tab in dialogs)
-NSGlobalDomain|AppleKeyboardUIMode|int|3
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
 # Enable press-and-hold for accents menu
-NSGlobalDomain|ApplePressAndHoldEnabled|bool|true
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
 
 # F1/F2 as standard function keys
-NSGlobalDomain|com.apple.keyboard.fnState|bool|true
+defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
 
 # fn key does nothing
-com.apple.HIToolbox|AppleFnUsageType|int|1
+defaults write com.apple.HIToolbox AppleFnUsageType -int 1
 
 # Clear text replacements
--g|NSUserDictionaryReplacementItems|array|
+defaults write -g NSUserDictionaryReplacementItems -array
 
 # Disable Ctrl+Space (Input Source switching)
-com.apple.symbolichotkeys|AppleSymbolicHotKeys|dict-add|60 "<dict><key>enabled</key><false/></dict>"
+/usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:60:enabled false" ~/Library/Preferences/com.apple.symbolichotkeys.plist 2>/dev/null || \
+/usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:60:enabled bool false" ~/Library/Preferences/com.apple.symbolichotkeys.plist
 
 # Disable Cmd+Space (Spotlight)
-com.apple.symbolichotkeys|AppleSymbolicHotKeys|dict-add|64 "<dict><key>enabled</key><false/></dict>"
+/usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:64:enabled false" ~/Library/Preferences/com.apple.symbolichotkeys.plist 2>/dev/null || \
+/usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:64:enabled bool false" ~/Library/Preferences/com.apple.symbolichotkeys.plist
 
 # ══════════════════════════════════════════════════════════════
 # TRACKPAD & MOUSE
 # ══════════════════════════════════════════════════════════════
 
-# Enable tap to click
-com.apple.driver.AppleBluetoothMultitouch.trackpad|Clicking|bool|true
--currentHost NSGlobalDomain|com.apple.mouse.tapBehavior|int|1
-NSGlobalDomain|com.apple.mouse.tapBehavior|int|1
+# Enable tap to click (built-in trackpad)
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+
+# Enable tap to click (Bluetooth trackpad)
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+
+# Enable tap to click (login screen)
+defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
 # Trackpad speed
-NSGlobalDomain|com.apple.mouse.scaling|float|.875
+defaults write NSGlobalDomain com.apple.mouse.scaling -float 0.875
 
 # Mouse tracking speed (0-3, ~90% = 2.7)
-com.apple.mouse|mouseSpeedScaling|float|2.7
+defaults write com.apple.mouse mouseSpeedScaling -float 2.7
 
-# Enable three-finger drag
-com.apple.AppleMultitouchTrackpad|TrackpadThreeFingerDrag|bool|true
+# Enable three-finger drag (built-in trackpad)
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
+
+# Enable three-finger drag (Bluetooth trackpad)
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
 
 # ══════════════════════════════════════════════════════════════
 # ANIMATIONS (DISABLE ALL)
 # ══════════════════════════════════════════════════════════════
 
 # Disable window animations
-NSGlobalDomain|NSAutomaticWindowAnimationsEnabled|bool|false
+defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 
 # Disable scroll animations
--g|NSScrollAnimationEnabled|bool|false
+defaults write -g NSScrollAnimationEnabled -bool false
 
 # Instant window resize
--g|NSWindowResizeTime|float|0.001
+defaults write -g NSWindowResizeTime -float 0.001
 
 # Disable Quick Look animations
--g|QLPanelAnimationDuration|float|0
+defaults write -g QLPanelAnimationDuration -float 0
 
 # Disable document revision animations
--g|NSDocumentRevisionsWindowTransformAnimation|bool|false
+defaults write -g NSDocumentRevisionsWindowTransformAnimation -bool false
 
 # Disable browser column animations
--g|NSBrowserColumnAnimationSpeedMultiplier|float|0
+defaults write -g NSBrowserColumnAnimationSpeedMultiplier -float 0
 
 # ══════════════════════════════════════════════════════════════
 # DOCK
 # ══════════════════════════════════════════════════════════════
 
 # Remove all apps from dock
-com.apple.dock|persistent-apps|array|
+defaults write com.apple.dock persistent-apps -array
 
 # Disable bouncing
-com.apple.dock|no-bouncing|bool|true
+defaults write com.apple.dock no-bouncing -bool true
 
 # Auto-hide dock
-com.apple.dock|autohide|bool|true
+defaults write com.apple.dock autohide -bool true
 
 # No auto-hide delay
-com.apple.dock|autohide-delay|float|0
+defaults write com.apple.dock autohide-delay -float 0
 
 # No hide animation
-com.apple.dock|autohide-time-modifier|float|0
+defaults write com.apple.dock autohide-time-modifier -float 0
 
 # Disable Mission Control animation
-com.apple.dock|expose-animation-duration|float|0.1
+defaults write com.apple.dock expose-animation-duration -float 0.1
 
 # Disable Launchpad animations
-com.apple.dock|springboard-show-duration|float|0
-com.apple.dock|springboard-hide-duration|float|0
-com.apple.dock|springboard-page-duration|float|0
+defaults write com.apple.dock springboard-show-duration -float 0
+defaults write com.apple.dock springboard-hide-duration -float 0
+defaults write com.apple.dock springboard-page-duration -float 0
 
 # Don't rearrange Spaces by recent use
-com.apple.dock|mru-spaces|bool|false
+defaults write com.apple.dock mru-spaces -bool false
 
 # Group windows by app in Mission Control
-com.apple.dock|expose-group-by-app|bool|true
+defaults write com.apple.dock expose-group-by-app -bool true
 
 # ══════════════════════════════════════════════════════════════
 # SPACES
 # ══════════════════════════════════════════════════════════════
 
 # Span displays (no separate spaces per display)
-com.apple.spaces|spans-displays|bool|true
+defaults write com.apple.spaces spans-displays -bool true
 
 # ══════════════════════════════════════════════════════════════
 # FINDER
 # ══════════════════════════════════════════════════════════════
 
 # Column view by default
-com.apple.finder|FXPreferredViewStyle|string|clmv
+defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
 
 # Disable all animations
-com.apple.finder|DisableAllAnimations|bool|true
+defaults write com.apple.finder DisableAllAnimations -bool true
 
 # Show external drives on desktop
-com.apple.finder|ShowExternalHardDrivesOnDesktop|bool|true
+defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
 
 # Text selection in Quick Look
-com.apple.finder|QLEnableTextSelection|bool|true
+defaults write com.apple.finder QLEnableTextSelection -bool true
 
 # No warning when changing extension
-com.apple.finder|FXEnableExtensionChangeWarning|bool|false
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 
 # Show all extensions
-NSGlobalDomain|AppleShowAllExtensions|bool|true
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
 # No .DS_Store on network volumes
-com.apple.desktopservices|DSDontWriteNetworkStores|bool|true
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 
 # ══════════════════════════════════════════════════════════════
 # SECURITY & GATEKEEPER
 # ══════════════════════════════════════════════════════════════
 
 # Disable quarantine for downloaded files
-com.apple.LaunchServices|LSQuarantine|bool|false
+defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 # ══════════════════════════════════════════════════════════════
 # DIALOGS
 # ══════════════════════════════════════════════════════════════
 
 # Expand save panel by default
-NSGlobalDomain|NSNavPanelExpandedStateForSaveMode|bool|true
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
 
 # Expand print panel by default
-NSGlobalDomain|PMPrintingExpandedStateForPrint|bool|true
-NSGlobalDomain|PMPrintingExpandedStateForPrint2|bool|true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
 # ══════════════════════════════════════════════════════════════
 # APPS
 # ══════════════════════════════════════════════════════════════
 
 # Quit printer app after jobs complete
-com.apple.print.PrintingPrefs|Quit When Finished|bool|true
+defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
 # Don't reopen windows on login
-NSGlobalDomain|NSQuitAlwaysKeepsWindows|bool|false
+defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false
 
 # Save to disk by default (not iCloud)
-NSGlobalDomain|NSDocumentSaveNewDocumentsToCloud|bool|false
+defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 
 # Disable Mail animations
-com.apple.mail|DisableSendAnimations|bool|true
-com.apple.mail|DisableReplyAnimations|bool|true
+defaults write com.apple.mail DisableSendAnimations -bool true
+defaults write com.apple.mail DisableReplyAnimations -bool true
 
 # Don't prompt for Time Machine on new drives
-com.apple.TimeMachine|DoNotOfferNewDisksForBackup|bool|true
+defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
 # ══════════════════════════════════════════════════════════════
 # TRANSMISSION
 # ══════════════════════════════════════════════════════════════
 
 # No download confirmation
-org.m0k.transmission|DownloadAsk|bool|false
+defaults write org.m0k.transmission DownloadAsk -bool false
 
 # Use incomplete folder
-org.m0k.transmission|UseIncompleteDownloadFolder|bool|true
+defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool true
 
 # Incomplete folder path
-org.m0k.transmission|IncompleteDownloadFolder|string|${HOME}/Downloads/Incomplete
+defaults write org.m0k.transmission IncompleteDownloadFolder -string "$HOME/Downloads/Incomplete"
+
+# ══════════════════════════════════════════════════════════════
+# SUDO COMMANDS (run separately with sudo)
+# ══════════════════════════════════════════════════════════════
+
+# These require sudo - uncomment and run manually or with sudo:
+# sudo spctl --master-disable
+# sudo defaults write /var/db/SystemPolicy-prefs.plist enabled -string no
+# sudo nvram StartupMute=%01
