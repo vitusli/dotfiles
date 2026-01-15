@@ -43,6 +43,12 @@
       "ExtensionRecommendations": false,
       "FeatureRecommendations": false,
       "SkipOnboarding": true
+    },
+    "Preferences": {
+      "browser.translations.automaticallyPopup": {
+        "Value": false,
+        "Status": "locked"
+      }
     }
   }
 }
