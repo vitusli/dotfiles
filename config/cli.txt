@@ -11,6 +11,9 @@ github-cli #linux
 glab #macos
 lazygit
 lf
+p7zip #macos
+poppler #macos
+unar #macos
 neovim
 wandelbotsgmbh/wandelbots/nova #macos
 olets/tap/zsh-abbr #macos
@@ -25,6 +28,8 @@ zsh-abbr #macos
 zsh-autocomplete #macos
 zsh-autosuggestions #macos #linux
 zsh-syntax-highlighting #macos #linux
+
+# p7zip poppler unar are lf preview programms
 
 # Windows-specific (Scoop)
 
