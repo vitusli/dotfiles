@@ -880,7 +880,10 @@ apply_system_changes() {
     log_info "Aktiviere Systemeinstellungen..."
     /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true
 
-    log_info "Killing Dock to apply changes..."
+    log_info "Reloading preferences daemon..."
+    killall cfprefsd 2>/dev/null || true
+
+    log_info "Killing system processes to apply changes..."
     killall Dock 2>/dev/null || true
     killall SystemUIServer 2>/dev/null || true
     killall Finder 2>/dev/null || true
