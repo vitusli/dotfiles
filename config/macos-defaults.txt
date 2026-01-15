@@ -29,8 +29,8 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
 # F1/F2 as standard function keys
 defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
 
-# fn key does nothing
-defaults write com.apple.HIToolbox AppleFnUsageType -int 1
+# fn key switches input source
+defaults write com.apple.HIToolbox AppleFnUsageType -int 0
 
 # Clear text replacements
 defaults write -g NSUserDictionaryReplacementItems -array
@@ -123,6 +123,13 @@ defaults write com.apple.dock mru-spaces -bool false
 
 # Group windows by app in Mission Control
 defaults write com.apple.dock expose-group-by-app -bool true
+
+# ══════════════════════════════════════════════════════════════
+# SCREENSHOTS
+# ══════════════════════════════════════════════════════════════
+
+# Save screenshots to clipboard instead of file
+defaults write com.apple.screencapture target -string "clipboard"
 
 # ══════════════════════════════════════════════════════════════
 # SPACES
