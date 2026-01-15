@@ -124,6 +124,9 @@ defaults write com.apple.dock mru-spaces -bool false
 # Group windows by app in Mission Control
 defaults write com.apple.dock expose-group-by-app -bool true
 
+# Don't show recent applications in Dock
+defaults write com.apple.dock show-recents -bool false
+
 # ══════════════════════════════════════════════════════════════
 # SCREENSHOTS
 # ══════════════════════════════════════════════════════════════
