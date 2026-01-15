@@ -1,0 +1,88 @@
+════════════════════════════════════════════════════════════
+macOS Setup & Configuration Script Log
+════════════════════════════════════════════════════════════
+Start Time: Do 15 Jan 2026 12:04:22 CET
+Log File: /Users/johanna/dotfiles/logs/setup-20260115-120422.log
+User: johanna
+Hostname: MacBook-Pro-von-Johanna.local
+macOS Version: 15.7.1
+════════════════════════════════════════════════════════════
+
+
+════════════════════════════════════════════════════════════
+▶ macOS Setup & Configuration Script (Idempotent)
+════════════════════════════════════════════════════════════
+ℹ Log file: /Users/johanna/dotfiles/logs/setup-20260115-120422.log
+ℹ Running in selective mode with specified flags
+
+════════════════════════════════════════════════════════════
+▶ Setting up sudo privileges
+════════════════════════════════════════════════════════════
+✓ sudo verified
+
+════════════════════════════════════════════════════════════
+▶ Setting up Xcode Command Line Tools
+════════════════════════════════════════════════════════════
+ℹ Installing Xcode Command Line Tools...
+ℹ Waiting for Xcode installation... (check the popup if it appeared)
+⚠ Xcode installation may still be in progress. Please wait and run the script again if needed.
+
+════════════════════════════════════════════════════════════
+▶ Setting up Homebrew
+════════════════════════════════════════════════════════════
+ℹ Installing Homebrew...
+✓ Homebrew installed
+ℹ Adding Homebrew to ~/.zprofile
+✓ Homebrew environment configured
+
+════════════════════════════════════════════════════════════
+▶ Configuring macOS System Defaults
+════════════════════════════════════════════════════════════
+ℹ Loading defaults from config...
+ℹ Applying sudo defaults...
+✓ All macOS defaults configured
+
+════════════════════════════════════════════════════════════
+▶ Applying System Changes
+════════════════════════════════════════════════════════════
+ℹ Aktiviere Systemeinstellungen...
+ℹ Killing Dock to apply changes...
+✓ System changes applied
+
+════════════════════════════════════════════════════════════
+▶ Downloading Software Updates
+════════════════════════════════════════════════════════════
+ℹ Checking for software updates...
+ℹ Software updates found, downloading...
+Software Update Tool
+
+Finding available software
+Downloading macOS Sequoia 15.7.3
+Downloading: 0.10%Downloading: 1.00%Downloading: 1.90%Downloading: 2.00%Downloading: 2.90%Downloading: 2.90%Downloading: 2.90%Downloading: 2.90%Downloading: 4.00%Downloading: 4.90%Downloading: 5.00%Downloading: 5.00%Downloading: 6.90%Downloading: 7.00%Downloading: 7.00%Downloading: 8.90%Downloading: 9.00%Downloading: 9.00%Downloading: 9.90%Downloading: 10.00%Downloading: 10.00%Downloading: 10.00%Downloading: 10.00%Downloading: 10.00%Downloading: 15.00%Downloading: 15.00%Downloading: 15.00%Downloading: 15.00%Downloading: 15.00%Downloading: 15.00%Downloading: 15.00%Downloading: 15.00%Downloading: 15.00%Downloading: 15.00%Downloading: 17.25%Downloading: 17.25%Downloading: 17.50%Downloading: 17.50%Downloading: 17.77%Downloading: 17.77%Downloading: 18.06%Downloading: 18.06%Downloading: 18.32%Downloading: 18.32%Downloading: 18.58%Downloading: 18.58%Downloading: 18.82%Downloading: 18.82%Downloading: 19.10%Downloading: 19.10%Downloading: 19.35%Downloading: 19.35%Downloading: 19.62%Downloading: 19.62%Downloading: 19.91%Downloading: 19.91%Downloading: 20.18%Downloading: 20.18%Downloading: 20.45%Downloading: 20.45%Downloading: 20.73%Downloading: 20.73%Downloading: 20.97%Downloading: 20.97%Downloading: 21.25%Downloading: 21.25%Downloading: 21.52%Downloading: 21.52%Downloading: 21.81%Downloading: 21.81%Downloading: 22.05%Downloading: 22.05%Downloading: 22.29%Downloading: 22.29%Downloading: 22.55%Downloading: 22.55%Downloading: 22.79%Downloading: 22.79%Downloading: 23.04%Downloading: 23.04%Downloading: 23.28%Downloading: 23.28%Downloading: 23.56%Downloading: 23.56%Downloading: 23.86%Downloading: 23.86%Downloading: 24.15%Downloading: 24.15%Downloading: 24.44%Downloading: 24.44%Downloading: 24.68%Downloading: 24.68%Downloading: 24.96%Downloading: 24.96%Downloading: 25.24%Downloading: 25.24%Downloading: 25.51%Downloading: 25.51%Downloading: 25.78%Downloading: 25.78%Downloading: 26.11%Downloading: 26.11%Downloading: 26.37%Downloading: 26.37%Downloading: 26.64%Downloading: 26.64%Downloading: 26.92%Downloading: 26.92%Downloading: 27.23%Downloading: 27.23%Downloading: 27.52%Downloading: 27.52%Downloading: 27.81%Downloading: 27.81%Downloading: 28.13%Downloading: 28.13%Downloading: 28.40%Downloading: 28.40%Downloading: 28.67%Downloading: 28.67%Downloading: 28.90%Downloading: 30.00%Downloading: 30.00%Downloading: 30.00%Downloading: 30.00%Downloading: 30.00%Downloading: 30.00%Downloading: 30.00%Downloading: 30.00%Downloading: 30.00%Downloading: 30.00%Downloading: 35.61%Downloading: 35.61%Downloading: 36.21%Downloading: 36.21%Downloading: 36.76%Downloading: 36.76%Downloading: 37.14%Downloading: 37.14%Downloading: 37.72%Downloading: 37.72%Downloading: 38.27%Downloading: 38.27%Downloading: 38.87%Downloading: 38.87%Downloading: 39.54%Downloading: 39.54%Downloading: 40.19%Downloading: 40.19%Downloading: 40.84%Downloading: 40.84%Downloading: 41.49%Downloading: 41.49%Downloading: 42.12%Downloading: 42.12%Downloading: 42.73%Downloading: 42.73%Downloading: 43.36%Downloading: 43.36%Downloading: 43.97%Downloading: 43.97%Downloading: 44.71%Downloading: 44.71%Downloading: 45.38%Downloading: 45.38%Downloading: 45.91%Downloading: 45.91%Downloading: 46.51%Downloading: 46.51%Downloading: 47.10%Downloading: 47.10%Downloading: 47.71%Downloading: 47.71%Downloading: 48.20%Downloading: 48.20%Downloading: 48.71%Downloading: 48.71%Downloading: 49.27%Downloading: 49.27%Downloading: 49.84%Downloading: 49.84%Downloading: 50.40%Downloading: 50.40%Downloading: 50.99%Downloading: 50.99%Downloading: 51.47%Downloading: 51.47%Downloading: 51.88%Downloading: 51.88%Downloading: 52.45%Downloading: 52.45%Downloading: 52.98%Downloading: 52.98%Downloading: 53.57%Downloading: 53.57%Downloading: 53.98%Downloading: 53.98%Downloading: 54.52%Downloading: 54.52%Downloading: 55.14%Downloading: 55.14%Downloading: 55.78%Downloading: 55.78%Downloading: 56.40%Downloading: 56.40%Downloading: 56.94%Downloading: 56.94%Downloading: 57.57%Downloading: 57.57%Downloading: 58.07%Downloading: 58.07%Downloading: 58.52%Downloading: 58.52%Downloading: 58.90%Downloading: 58.90%Downloading: 59.90%Downloading: 60.00%Downloading: 60.00%Downloading: 60.00%Downloading: 65.00%Downloading: 65.00%Downloading: 65.00%Downloading: 65.00%Downloading: 65.01%Downloading: 65.01%Downloading: 65.01%Downloading: 65.01%Downloading: 65.01%Downloading: 65.01%Downloading: 65.01%Downloading: 65.01%Downloading: 66.14%Downloading: 66.14%Downloading: 67.00%Downloading: 67.00%Downloading: 67.43%Downloading: 67.43%Downloading: 67.43%Downloading: 67.94%Downloading: 67.94%Downloading: 68.51%Downloading: 68.51%Downloading: 69.23%Downloading: 69.23%Downloading: 70.19%Downloading: 70.19%Downloading: 71.04%Downloading: 71.04%Downloading: 71.60%Downloading: 71.60%Downloading: 72.07%Downloading: 72.07%Downloading: 73.33%Downloading: 73.33%Downloading: 73.87%Downloading: 73.87%Downloading: 74.48%Downloading: 74.48%Downloading: 75.21%Downloading: 75.21%Downloading: 75.85%Downloading: 75.85%Downloading: 76.41%Downloading: 76.41%Downloading: 76.41%Downloading: 77.10%Downloading: 77.10%Downloading: 77.62%Downloading: 77.62%Downloading: 78.18%Downloading: 78.18%Downloading: 78.72%Downloading: 78.72%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.44%Downloading: 79.80%Downloading: 79.80%Downloading: 79.80%Downloading: 79.80%Downloading: 79.80%Downloading: 79.80%Downloading: 79.80%Downloading: 80.19%Downloading: 80.19%Downloading: 81.93%Downloading: 81.93%Downloading: 81.93%Downloading: 82.72%Downloading: 82.72%Downloading: 83.07%Downloading: 83.07%Downloading: 83.07%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 83.44%Downloading: 84.76%Downloading: 84.76%Downloading: 84.76%Downloading: 84.76%Downloading: 84.76%Downloading: 84.76%Downloading: 85.31%Downloading: 85.31%Downloading: 85.31%Downloading: 85.31%Downloading: 85.77%Downloading: 85.77%Downloading: 85.77%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 86.14%Downloading: 87.15%Downloading: 87.15%Downloading: 87.15%Downloading: 87.15%Downloading: 87.15%Downloading: 87.85%Downloading: 87.85%Downloading: 88.87%Downloading: 88.87%Downloading: 89.88%Downloading: 89.88%Downloading: 90.91%Downloading: 90.91%Downloading: 90.91%Downloading: 92.40%Downloading: 92.40%Downloading: 93.11%Downloading: 93.11%Downloading: 93.67%Downloading: 93.67%Downloading: 94.60%Downloading: 94.60%Downloading: 95.17%Downloading: 95.17%Downloading: 95.57%Downloading: 95.57%Downloading: 95.57%Downloading: 96.04%Downloading: 96.04%Downloading: 96.63%Downloading: 96.63%Downloading: 97.22%Downloading: 97.22%Downloading: 97.74%Downloading: 97.74%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 98.51%Downloading: 99.90%Downloading: 100.00%Attempting to quit apps: (
+    "com.apple.Safari.SafariQuickLookPreview",
+    "com.apple.Safari"
+)
+Waiting for user to quit any relevant apps
+
+Downloaded: macOS Sequoia 15.7.3
+Successfully quit all apps
+
+Downloading Safari
+Downloaded Safari
+Done.
+✓ Software updates downloaded
+
+════════════════════════════════════════════════════════════
+▶ Checking for Full macOS Installer
+════════════════════════════════════════════════════════════
+ℹ Fetching available macOS installers...
+ℹ Latest available macOS version: 26.2
+ℹ Downloading macOS 26.2 installer...
+Scanning for 26.2 installer
+Installing: 1.0%Installing: 2.0%Installing: 3.0%Installing: 4.0%Installing: 5.0%Installing: 6.0%Installing: 7.0%Installing: 8.0%Installing: 9.0%Installing: 10.0%Installing: 11.0%Installing: 12.0%Installing: 13.0%Installing: 14.0%Installing: 15.0%Installing: 16.0%Installing: 17.0%Installing: 18.0%Installing: 19.0%Installing: 20.0%Installing: 21.0%Installing: 22.0%Installing: 23.0%Installing: 24.0%Installing: 25.0%Installing: 26.0%Installing: 27.0%Installing: 28.0%Installing: 29.0%Installing: 30.0%Installing: 31.0%Installing: 32.0%Installing: 33.0%Installing: 34.0%Installing: 35.0%Installing: 36.0%Installing: 37.0%Installing: 38.0%Installing: 39.0%Installing: 40.0%Installing: 41.0%Installing: 42.0%Installing: 43.0%Installing: 44.0%Installing: 45.0%Installing: 46.0%Installing: 47.0%Installing: 48.0%Installing: 49.0%Installing: 50.0%Installing: 51.0%Installing: 52.0%Installing: 53.0%Installing: 54.0%Installing: 55.0%Installing: 56.0%Installing: 57.0%Installing: 58.0%Installing: 59.0%Installing: 60.0%Installing: 61.0%Installing: 62.0%Installing: 63.0%Installing: 64.0%Installing: 65.0%Installing: 66.0%Installing: 67.0%Installing: 68.0%Installing: 69.0%Installing: 70.0%Installing: 71.0%Installing: 72.0%Installing: 73.0%Installing: 74.0%Installing: 75.0%Installing: 76.0%Installing: 77.0%Installing: 78.0%Installing: 79.0%Installing: 80.0%Installing: 81.0%Installing: 82.0%Installing: 83.0%Installing: 84.0%Installing: 85.0%Installing: 86.0%Installing: 87.0%Installing: 88.0%Installing: 89.0%Install finished successfully
+✓ macOS installer downloaded to /Applications
+
+════════════════════════════════════════════════════════════
+▶ Setup Complete!
+════════════════════════════════════════════════════════════
+✓ All tasks completed successfully!
