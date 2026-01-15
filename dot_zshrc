@@ -8,6 +8,10 @@ PROMPT='%1~ %% '
 # Add local bin to PATH
 export PATH="$PATH:$HOME/.local/bin"
 
+# Default editors
+export EDITOR="vim"
+export VISUAL="zed"
+
 # ============================================================================
 # EXTERNAL TOOLS
 # ============================================================================
