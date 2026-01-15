@@ -11,10 +11,7 @@ dev.zed.Zed|.yaml|all
 dev.zed.Zed|.yml|all
 dev.zed.Zed|.zsh|all
 dev.zed.Zed|public.plain-text|all
-company.thebrowser.Browser|http|all
-company.thebrowser.Browser|https|all
+app.zen-browser.zen|http|all
+app.zen-browser.zen|https|all
 dev.zed.Zed|.txt|all
 org.yanex.marta|public.folder|all
-
-# Manuell ausführen ohne Bootstrap-Skript:
-# grep -v '^#' ~/dotfiles/config/macos-duti.txt | grep -v '^$' | while IFS='|' read -r app ext role; do duti -s "$app" "$ext" "$role"; done

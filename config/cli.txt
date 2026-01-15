@@ -2,6 +2,7 @@
 
 bat
 chezmoi
+defaultbrowser #macos
 ffmpeg
 fzf
 gh #macos #windows

@@ -1,0 +1,7 @@
+# Direct download URLs for installers
+# Format: URL|optional_filename
+# Use #windows, #macos, #linux tags for platform-specific downloads
+# Files will be downloaded to ~/Downloads and executed if they are .msi or .exe
+
+https://github.com/nkallen/plasticity/releases/download/v25.1.9/Plasticity.msi #windows
+https://files.mcneel.com/dujour/exe/20251223/rhino_en-us_8.27.25357.11371.exe #windows

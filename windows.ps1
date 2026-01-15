@@ -582,6 +582,62 @@ function Remove-Bloatware {
 }
 
 # ============================================================================
+# WGET DOWNLOADS
+# ============================================================================
+
+function Install-WgetPackages {
+    Log-Header "Downloading and Installing wget packages"
+
+    Log-Info "Loading wget URLs from config..."
+    $wgetUrls = Load-Packages "wget.txt" "windows"
+
+    $downloadPath = "$HOME\Downloads"
+
+    foreach ($line in $wgetUrls) {
+        if (-not $line -or $line.StartsWith('#')) { continue }
+
+        $parts = $line -split '\|'
+        $url = $parts[0]
+
+        # Extract filename from URL or use custom name
+        if ($parts.Count -ge 2 -and $parts[1]) {
+            $filename = $parts[1]
+        } else {
+            $filename = [System.IO.Path]::GetFileName($url)
+        }
+
+        $filePath = Join-Path $downloadPath $filename
+
+        try {
+            # Check if file already exists
+            if (Test-Path $filePath) {
+                Log-Success "$filename already downloaded"
+            } else {
+                Log-Info "Downloading $filename..."
+                Invoke-WebRequest -Uri $url -OutFile $filePath -UseBasicParsing
+                Log-Success "Downloaded $filename"
+            }
+
+            # Install if it's an MSI or EXE
+            $extension = [System.IO.Path]::GetExtension($filename).ToLower()
+
+            if ($extension -eq ".msi") {
+                Log-Info "Installing $filename..."
+                Start-Process msiexec.exe -ArgumentList "/i `"$filePath`" /quiet /norestart" -Wait -NoNewWindow
+                Log-Success "Installed $filename"
+            } elseif ($extension -eq ".exe") {
+                Log-Info "Installing $filename..."
+                Start-Process -FilePath $filePath -ArgumentList "/S" -Wait -NoNewWindow
+                Log-Success "Installed $filename"
+            }
+        }
+        catch {
+            Log-Warning "Failed to download/install $filename`: $_"
+        }
+    }
+}
+
+# ============================================================================
 # VS CODE EXTENSIONS
 # ============================================================================
 
@@ -695,6 +751,9 @@ function Main {
 
     # VS Code
     Install-VSCodeExtensions
+
+    # Wget downloads
+    Install-WgetPackages
 
     # Final summary
     Log-Header "Setup Complete!"
