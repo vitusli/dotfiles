@@ -1,0 +1,40 @@
+════════════════════════════════════════════════════════════
+macOS Setup & Configuration Script Log
+════════════════════════════════════════════════════════════
+Start Time: Do. 15 Jan. 2026 15:58:35 CET
+Log File: /Users/johanna/dotfiles/logs/setup-20260115-155835.log
+User: johanna
+Hostname: MacBook-Pro-von-Johanna.local
+macOS Version: 26.2
+════════════════════════════════════════════════════════════
+
+
+════════════════════════════════════════════════════════════
+▶ macOS Setup & Configuration Script (Idempotent)
+════════════════════════════════════════════════════════════
+ℹ Log file: /Users/johanna/dotfiles/logs/setup-20260115-155835.log
+ℹ Running in selective mode with specified flags
+
+════════════════════════════════════════════════════════════
+▶ Setting up sudo privileges
+════════════════════════════════════════════════════════════
+✓ sudo verified
+
+════════════════════════════════════════════════════════════
+▶ Configuring macOS System Defaults
+════════════════════════════════════════════════════════════
+ℹ Loading defaults from config...
+ℹ Applying sudo defaults...
+✓ All macOS defaults configured
+
+════════════════════════════════════════════════════════════
+▶ Applying System Changes
+════════════════════════════════════════════════════════════
+ℹ Aktiviere Systemeinstellungen...
+ℹ Killing Dock to apply changes...
+✓ System changes applied
+
+════════════════════════════════════════════════════════════
+▶ Setup Complete!
+════════════════════════════════════════════════════════════
+✓ All tasks completed successfully!

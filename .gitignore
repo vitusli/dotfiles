@@ -6,4 +6,4 @@
 .Trashes
 
 # Karabiner backups
-dot_config/karabiner/automatic_backups
+dot_config/karabiner/private_automatic_backups

@@ -81,8 +81,8 @@ map A cd "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/As
 # Jump to Downloads and start filter
 map D cd "/Users/vituspacholleck/Downloads"; filter
 
-# Open current directory in VS Code
-map V & open -a "Visual Studio Code" "$PWD"
+# Open current directory in VISUAL editor
+map V & $VISUAL "$PWD"
 
 # Disable default 'd' (cut) as requested
 map d :echo "Cut is disabled"
@@ -93,8 +93,8 @@ map / filter
 # Extended search (multiple directories)
 map <space> :fzf-extended
 
-# Open dotfiles in VS Code with lfrc editor
-map <c-s> & code ~/.local/share/chezmoi ~/.local/share/chezmoi/dot_config/lf/lfrc
+# Open dotfiles in VISUAL editor
+map <c-s> & $VISUAL ~/.local/share/chezmoi ~/.local/share/chezmoi/dot_config/lf/lfrc
 
 # Toggle executable permission (Shift+X)
 map X :toggle-executable
@@ -105,11 +105,11 @@ map X :toggle-executable
 
 # Open file with application (using fzf)
 cmd open-with ${{
-    app=$(printf "VS Code\nFinder (reveal)\nMacVim\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open with: ")
+    app=$(printf "VISUAL Editor\nFinder (reveal)\nMacVim\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open with: ")
     [ -z "$app" ] && exit
-    
+
     case "$app" in
-        "VS Code") open -a "Visual Studio Code" "$f" ;;
+        "VISUAL Editor") $VISUAL "$f" ;;
         "Finder (reveal)") open -R "$f" ;;
         *) open -a "$app" "$f" ;;
     esac
@@ -117,11 +117,11 @@ cmd open-with ${{
 
 # Open current directory with application (using fzf)
 cmd open-with-dir ${{
-    app=$(printf "VS Code\nFinder\nMarta\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open directory with: ")
+    app=$(printf "VISUAL Editor\nFinder\nMarta\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open directory with: ")
     [ -z "$app" ] && exit
-    
+
     case "$app" in
-        "VS Code") open -a "Visual Studio Code" "$PWD" ;;
+        "VISUAL Editor") $VISUAL "$PWD" ;;
         "Finder") open "$PWD" ;;
         "Marta") open -a "Marta" "$PWD" ;;
         *) open -a "$app" "$PWD" ;;
@@ -158,15 +158,15 @@ cmd fzf ${{
 
 # Extended search across multiple directories (like zsh / function)
 cmd fzf-extended ${{
-    result=$({ 
+    result=$({
         find ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace 2>/dev/null
         find ~ -maxdepth 3 2>/dev/null
     } | fzf --prompt=": " --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' --preview-window=right:60%:wrap)
-    
+
     if [ -n "$result" ]; then
         # Copy to clipboard
         printf "%s" "$result" | pbcopy
-        
+
         # If it's a file, select it; if directory, cd to it
         if [ -f "$result" ]; then
             lf -remote "send $id select \"$result\""

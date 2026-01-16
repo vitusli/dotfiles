@@ -1,14 +1,14 @@
 plugin {
-    id = "vitusli.openInZed",
-    name = "Open Current Folder in Zed",
+    id = "vitusli.openInVisualEditor",
+    name = "Open Current Folder in VISUAL Editor",
     apiVersion = "2.2",
     author = "vitusli",
     email = "vituspach@gmail.com"
 }
 
 action {
-    id = "openCurrentInZed",
-    name = "Open Current Folder in Zed",
+    id = "openCurrentInVisualEditor",
+    name = "Open Current Folder in VISUAL Editor",
     apply = function(context)
         local pane = context.activePane
         if not pane then return end
@@ -17,7 +17,8 @@ action {
         local folder = model.folder
         if not folder then return end
         local path = folder.path.rawValue
-        -- Open the folder in Zed using the open command
-        martax.execute("/usr/bin/open", {"-a", "Zed", path})
+        -- Open the folder using $VISUAL environment variable (defaults to zed)
+        local visual = os.getenv("VISUAL") or "zed"
+        martax.execute("/bin/sh", {"-c", visual .. " " .. "'" .. path .. "'"})
     end
 }
