@@ -20,27 +20,15 @@ echo "Installing Homebrew packages..."
 # Formulae (CLI tools)
 # =============================================================================
 FORMULAE=(
-    # Shell & Terminal
     zsh-autosuggestions
     zsh-syntax-highlighting
     zsh-abbr
-
-    # Navigation & Search
     zoxide
     fzf
     lf
-
-    # Editors
     neovim
-
-    # Git tools
     lazygit
-    chezmoi
-
-    # Utilities
     bat
-    restic
-
     # Preview dependencies (for lf)
     poppler      # pdftotext
     p7zip        # 7z
