@@ -1,6 +1,9 @@
 #Requires AutoHotkey v2.0
 SendMode("Input")
 
+;; Disable Language Switching
+#Space::Return
+
 ;;LWin::LCtrl
 ;;LCtrl::LWin
 ;;RWin::RCtrl
