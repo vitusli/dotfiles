@@ -22,6 +22,10 @@ $env:Path = "C:\Users\Vitus\scoop\shims;$env:Path"
 # fzf: Copy result to clipboard on Enter (in addition to normal output)
 $env:FZF_DEFAULT_OPTS = "--bind 'enter:execute-silent(powershell -nop -c Set-Clipboard {})+accept'"
 
+# Default editor (like VISUAL/EDITOR in zsh)
+$env:EDITOR = "nvim"
+$env:VISUAL = "code"
+
 # Module Management
 # Automatically install and import required modules
 $requiredModules = @('PSReadLine', 'ZLocation')
@@ -178,6 +182,6 @@ function / {
     }
 
     Set-Clipboard -Value $target
-    code $target
-    Write-Host "Opened in VS Code: $target"
+    & $env:VISUAL $target
+    Write-Host "Opened in $($env:VISUAL): $target"
 }

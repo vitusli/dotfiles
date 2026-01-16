@@ -8,7 +8,7 @@ local config = wezterm.config_builder()
 -- Font
 -- ==========================
 config.font = wezterm.font('JetBrains Mono', { weight = 'Medium' })
-config.font_size = 12.0
+config.font_size = 9.0
 config.line_height = 1.2
 
 -- ==========================
