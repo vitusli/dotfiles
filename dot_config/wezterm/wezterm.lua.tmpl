@@ -1,38 +1,42 @@
 -- WezTerm Configuration
--- Ported from Ghostty config with macOS-specific keybindings
+-- Cross-platform config with OS-specific keybindings
 
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
--- Force wezterm launch in the foreground (macOS)
+{{- if eq .chezmoi.os "darwin" }}
+-- macOS: Force wezterm launch in foreground
 wezterm.on("gui-startup", function(cmd)
   local _, _, window = wezterm.mux.spawn_window(cmd or {})
   window:gui_window():focus()
 end)
+{{- end }}
 
 -- ==========================
 -- Font
 -- ==========================
 config.font = wezterm.font('JetBrains Mono', { weight = 'Medium' })
+{{- if eq .chezmoi.os "darwin" }}
 config.font_size = 12.0
+{{- end }}
+{{- if eq .chezmoi.os "windows" }}
+config.font_size = 9.0
+{{- end }}
+{{- if eq .chezmoi.os "linux" }}
+config.font_size = 9.0
+{{- end }}
 config.line_height = 1.2
 
 -- ==========================
 -- Window Appearance
 -- ==========================
-config.window_decorations = "RESIZE|MACOS_FORCE_DISABLE_SHADOW"
+config.window_decorations = "RESIZE"
 config.window_padding = {
   left = 40,
   right = 40,
   top = 60,
   bottom = 60,
 }
-
--- Background
-config.window_background_opacity = 1.0
-
--- macOS-specific: Native window blur
-config.macos_window_background_blur = 30
 
 -- Disable annoying close confirmation
 config.window_close_confirmation = 'NeverPrompt'
@@ -119,7 +123,6 @@ config.colors = {
 config.enable_tab_bar = true
 config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = false  -- Retro tab bar looks cleaner
-config.tab_bar_at_bottom = false
 config.tab_max_width = 32
 config.show_tab_index_in_tab_bar = false
 config.show_new_tab_button_in_tab_bar = false
@@ -136,48 +139,61 @@ wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_wid
 end)
 
 -- ==========================
--- Keybindings (macOS-optimized)
+-- Keybindings
 -- ==========================
--- Note: On macOS, we use CMD instead of CTRL for consistency with macOS conventions
+-- macOS: CMD as modifier
+-- Windows/Linux: CTRL as modifier
+
+{{- if eq .chezmoi.os "darwin" }}
+local mod = 'CMD'
+local mod_shift = 'CMD|SHIFT'
+local mod_alt = 'CMD|ALT'
+{{- end }}
+{{- if eq .chezmoi.os "windows" }}
+local mod = 'CTRL'
+local mod_shift = 'CTRL|SHIFT'
+local mod_alt = 'CTRL|ALT'
+{{- end }}
+{{- if eq .chezmoi.os "linux" }}
+local mod = 'CTRL'
+local mod_shift = 'CTRL|SHIFT'
+local mod_alt = 'CTRL|ALT'
+{{- end }}
 
 config.keys = {
-  -- Command Palette - Cmd + Shift + p
+  -- Command Palette
   {
     key = 'p',
-    mods = 'CMD|SHIFT',
+    mods = mod_shift,
     action = wezterm.action.ActivateCommandPalette,
   },
 
-  -- Split Navigation - Cmd + Shift + h/j/k/l
-  -- Navigate to left pane
+  -- Split Navigation - h/j/k/l
   {
     key = 'h',
-    mods = 'CMD|SHIFT',
+    mods = mod_shift,
     action = wezterm.action.ActivatePaneDirection 'Left',
   },
-  -- Navigate to bottom pane
   {
     key = 'j',
-    mods = 'CMD|SHIFT',
+    mods = mod_shift,
     action = wezterm.action.ActivatePaneDirection 'Down',
   },
-  -- Navigate to top pane
   {
     key = 'k',
-    mods = 'CMD|SHIFT',
+    mods = mod_shift,
     action = wezterm.action.ActivatePaneDirection 'Up',
   },
-  -- Navigate to right pane
   {
     key = 'l',
-    mods = 'CMD|SHIFT',
+    mods = mod_shift,
     action = wezterm.action.ActivatePaneDirection 'Right',
   },
 
-  -- New Split - Cmd + n (split right), Cmd + Shift + n (split down)
+  -- New Split
   {
     key = 'n',
-    mods = 'CMD',
+    mods = mod,
     action = wezterm.action.SplitPane {
       direction = 'Right',
       size = { Percent = 50 },
@@ -185,17 +201,17 @@ config.keys = {
   },
   {
     key = 'n',
-    mods = 'CMD|SHIFT',
+    mods = mod_shift,
     action = wezterm.action.SplitPane {
       direction = 'Down',
       size = { Percent = 50 },
     },
   },
 
-  -- Equalize Splits - Cmd + Shift + e
+  -- Equalize Splits
   {
     key = 'e',
-    mods = 'CMD|SHIFT',
+    mods = mod_shift,
     action = wezterm.action.Multiple {
       wezterm.action.AdjustPaneSize { 'Left', 100 },
       wezterm.action.AdjustPaneSize { 'Right', 100 },
@@ -204,7 +220,7 @@ config.keys = {
     },
   },
 
-  -- Toggle Pane Zoom - Ctrl + Space
+  -- Toggle Pane Zoom
   {
     key = ' ',
     mods = 'CTRL',
@@ -212,35 +228,31 @@ config.keys = {
   },
 
   -- Tab Management
-  -- New Tab - Cmd + t
   {
     key = 't',
-    mods = 'CMD',
+    mods = mod,
     action = wezterm.action.SpawnTab 'CurrentPaneDomain',
   },
-  -- Close Pane (or Tab if last pane) - Cmd + w
   {
     key = 'w',
-    mods = 'CMD',
+    mods = mod,
     action = wezterm.action.CloseCurrentPane { confirm = false },
   },
-  -- Switch to next tab - Cmd + Option + Right
   {
     key = 'RightArrow',
-    mods = 'CMD|ALT',
+    mods = mod_alt,
     action = wezterm.action.ActivateTabRelative(1),
   },
-  -- Switch to previous tab - Cmd + Option + Left
   {
     key = 'LeftArrow',
-    mods = 'CMD|ALT',
+    mods = mod_alt,
     action = wezterm.action.ActivateTabRelative(-1),
   },
 
-  -- Clear Terminal - Cmd + k
+  -- Clear Terminal
   {
     key = 'k',
-    mods = 'CMD',
+    mods = mod,
     action = wezterm.action.ClearScrollback 'ScrollbackAndViewport',
   },
 }
@@ -248,13 +260,18 @@ config.keys = {
 -- ==========================
 -- Additional Settings
 -- ==========================
--- Unzoom when switching panes
 config.unzoom_on_switch_pane = true
-
--- Scrollback
 config.scrollback_lines = 10000
 
--- Default program (zsh on macOS)
+-- Default shell
+{{- if eq .chezmoi.os "darwin" }}
 config.default_prog = { '/bin/zsh', '-l' }
+{{- end }}
+{{- if eq .chezmoi.os "windows" }}
+config.default_prog = { 'pwsh.exe', '-NoLogo' }
+{{- end }}
+{{- if eq .chezmoi.os "linux" }}
+config.default_prog = { '/usr/bin/zsh', '-l' }
+{{- end }}
 
 return config
