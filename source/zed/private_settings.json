@@ -1,9 +1,4 @@
 {
-  "file_types": {
-    "Python": ["**/user-abbreviations.tmpl"],
-    "JSON": ["**/keymap.json.tmpl", "**/settings.json.tmpl"],
-    "Lua": ["**/wezterm.lua.tmpl"]
-  },
   "tab_bar": {
     "show": false
   },
