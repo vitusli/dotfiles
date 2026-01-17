@@ -49,7 +49,7 @@ require("lazy").setup({
     "nvim-telescope/telescope.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     keys = {
-      { "<Space>", "<cmd>Telescope find_files<cr>", desc = "Find files" },
+      { "<Space>", "<cmd>Telescope find_files search_dirs={'~'} find_command={'fd','--type','f','--max-depth','3'}<cr>", desc = "Find files" },
       { "<leader>g", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
       { "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
     },
@@ -70,7 +70,7 @@ require("lazy").setup({
     config = true,
   },
 
-  -- Wilder alternative: noice.nvim for better cmdline
+  -- noice.nvim for centered cmdline popup
   {
     "folke/noice.nvim",
     event = "VeryLazy",
@@ -94,6 +94,46 @@ require("lazy").setup({
         command_palette = true,
       },
     },
+  },
+
+  -- nvim-cmp for autocompletion
+  {
+    "hrsh7th/nvim-cmp",
+    event = { "InsertEnter", "CmdlineEnter" },
+    dependencies = {
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline",
+    },
+    config = function()
+      local cmp = require("cmp")
+      cmp.setup({
+        mapping = cmp.mapping.preset.insert({
+          ["<Tab>"] = cmp.mapping.select_next_item(),
+          ["<S-Tab>"] = cmp.mapping.select_prev_item(),
+          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+        }),
+        sources = {
+          { name = "buffer" },
+          { name = "path" },
+        },
+      })
+      -- Cmdline : completion
+      cmp.setup.cmdline(":", {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = "path" },
+          { name = "cmdline" },
+        },
+      })
+      -- Cmdline / completion
+      cmp.setup.cmdline("/", {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = "buffer" },
+        },
+      })
+    end,
   },
 })
 EOF
