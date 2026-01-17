@@ -10,6 +10,7 @@ abbreviations:
   # ---------------------------------------------------------------------------
   universal:
     c: "chezmoi"
+    ca: "chezmoi apply -v"
     gc: "git checkout"
     l: "lazygit"
     p: "uv run python"
