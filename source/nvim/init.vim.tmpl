@@ -1,0 +1,99 @@
+" Neovim Configuration - Bootstrap to Lua
+
+lua << EOF
+-- Bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- Basic settings
+vim.opt.clipboard = "unnamedplus"
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.incsearch = true
+vim.opt.hlsearch = true
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.shortmess:append("I")
+vim.opt.termguicolors = true
+
+-- Transparent background
+vim.api.nvim_create_autocmd("ColorScheme", {
+  callback = function()
+    vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+    vim.api.nvim_set_hl(0, "NonText", { bg = "NONE" })
+    vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "NONE" })
+  end,
+})
+vim.cmd("highlight Normal guibg=NONE ctermbg=NONE")
+vim.cmd("highlight NonText guibg=NONE ctermbg=NONE")
+vim.cmd("highlight EndOfBuffer guibg=NONE ctermbg=NONE")
+
+-- H/L for line start/end
+vim.keymap.set({"n", "v", "o"}, "H", "^", { noremap = true })
+vim.keymap.set({"n", "v", "o"}, "L", "$", { noremap = true })
+
+-- Plugins
+require("lazy").setup({
+  -- Telescope (fuzzy finder)
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    keys = {
+      { "<Space>", "<cmd>Telescope find_files<cr>", desc = "Find files" },
+      { "<leader>g", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
+      { "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
+    },
+    opts = {
+      defaults = {
+        layout_strategy = "center",
+        layout_config = {
+          center = { width = 0.9, height = 0.6 },
+        },
+      },
+    },
+  },
+
+  -- nvim-surround (native Lua surround)
+  {
+    "kylechui/nvim-surround",
+    event = "VeryLazy",
+    config = true,
+  },
+
+  -- Wilder alternative: noice.nvim for better cmdline
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+    },
+    opts = {
+      cmdline = {
+        view = "cmdline_popup",
+        format = {
+          cmdline = { icon = ":" },
+          search_down = { icon = "/" },
+          search_up = { icon = "?" },
+        },
+      },
+      popupmenu = {
+        enabled = true,
+        backend = "nui",
+      },
+      presets = {
+        command_palette = true,
+      },
+    },
+  },
+})
+EOF
