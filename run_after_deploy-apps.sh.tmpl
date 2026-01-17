@@ -77,9 +77,9 @@ VIMDIR_NAME="vimfiles"
 chezmoi execute-template < "$VIM_SOURCE/vimrc.tmpl" > "$VIM_TARGET/$VIMRC_NAME"
 
 # Copy vim plugins directory
-if [ -d "{{ .chezmoi.sourceDir }}/dot_vim/pack" ]; then
+if [ -d "$VIM_SOURCE/pack" ]; then
     mkdir -p "$VIM_TARGET/$VIMDIR_NAME/pack"
-    cp -r "{{ .chezmoi.sourceDir }}/dot_vim/pack/plugins" "$VIM_TARGET/$VIMDIR_NAME/pack/"
+    cp -r "$VIM_SOURCE/pack/plugins" "$VIM_TARGET/$VIMDIR_NAME/pack/"
 fi
 
 echo "Vim config deployed to $VIM_TARGET/$VIMRC_NAME"

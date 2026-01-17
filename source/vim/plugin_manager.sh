@@ -1,12 +1,12 @@
 #!/bin/bash
 # Vim Plugin Manager using git submodules
-# Usage: ./dot_vim/plugin_manager.sh [install|update|remove <plugin>]
+# Usage: ./source/vim/plugin_manager.sh [install|update|remove <plugin>]
 
 set -e
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOTFILES_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+DOTFILES_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 PLUGINS_DIR="$SCRIPT_DIR/pack/plugins/start"
 
 cd "$DOTFILES_ROOT"
@@ -57,7 +57,7 @@ case "${1:-install}" in
     echo "Removing plugin: $2..."
     git submodule deinit -f "$PLUGINS_DIR/$2"
     git rm -f "$PLUGINS_DIR/$2"
-    rm -rf ".git/modules/dot_vim/pack/plugins/start/$2"
+    rm -rf ".git/modules/source/vim/pack/plugins/start/$2"
     echo "✓ Plugin $2 removed"
     apply_chezmoi
     ;;
