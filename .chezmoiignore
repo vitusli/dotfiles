@@ -15,3 +15,7 @@ run_once_setup-git-plist-filter.sh
 AppData
 Documents
 {{- end }}
+
+{{- if ne .chezmoi.os "linux" }} # Linux-only
+# (nothing yet)
+{{- end }}
