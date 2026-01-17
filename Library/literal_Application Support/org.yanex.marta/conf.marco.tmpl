@@ -63,17 +63,17 @@ keyBindings {
 
     "shift+p" {
         id "core.open.directory"
-        src "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects"
+        src "{{ .chezmoi.homeDir }}/Library/CloudStorage/OneDrive-WandelbotsGmbH/nvidia_omniverse/projects"
     }
 
     "shift+a" {
         id "core.open.directory"
-        src "/Users/vituspacholleck/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"
+        src "{{ .chezmoi.homeDir }}/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"
     }
 
     "shift+d" {
         id "core.open.directory"
-        src "/Users/vituspacholleck/Downloads"
+        src "{{ .chezmoi.homeDir }}/Downloads"
     }
 
     "shift+v" {
@@ -81,7 +81,8 @@ keyBindings {
     }
 
     "shift+c" {
-        src "/Users/vituspacholleck/codespace"
+        id "core.open.directory"
+        src "{{ .chezmoi.homeDir }}/codespace"
     }
 
 }
