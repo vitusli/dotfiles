@@ -1,5 +1,5 @@
 environment {
-    textEditor "MacVim"
+    textEditor "Zed"
 }
 
 behavior {
@@ -78,6 +78,10 @@ keyBindings {
 
     "shift+v" {
         id "vitusli.openInZed.openCurrentInZed"
+    }
+
+    "shift+c" {
+        src "/Users/vituspacholleck/codespace"
     }
 
 }
