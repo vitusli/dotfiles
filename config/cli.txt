@@ -5,6 +5,7 @@ chezmoi
 defaultbrowser #macos
 ffmpeg
 fzf
+fd
 gh #macos #windows
 git
 git-lfs
