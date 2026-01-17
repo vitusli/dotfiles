@@ -3,12 +3,12 @@
 # Deploy application configurations to OS-specific paths
 # This script runs after chezmoi apply
 
-SOURCE_DIR="{{ .chezmoi.sourceDir }}/source"
+SHARED_DIR="{{ .chezmoi.sourceDir }}/shared"
 
 # ==========================
 # VSCode
 # ==========================
-VSCODE_SOURCE="$SOURCE_DIR/vscode"
+VSCODE_SOURCE="$SHARED_DIR/vscode"
 
 {{- if eq .chezmoi.os "darwin" }}
 VSCODE_TARGET="$HOME/Library/Application Support/Code/User"
@@ -34,7 +34,7 @@ echo "VSCode config deployed to $VSCODE_TARGET"
 # ==========================
 # Zed
 # ==========================
-ZED_SOURCE="$SOURCE_DIR/zed"
+ZED_SOURCE="$SHARED_DIR/zed"
 
 {{- if eq .chezmoi.os "darwin" }}
 ZED_TARGET="$HOME/.config/zed"
@@ -58,7 +58,7 @@ echo "Zed config deployed to $ZED_TARGET"
 # ==========================
 # Neovim
 # ==========================
-NVIM_SOURCE="$SOURCE_DIR/nvim"
+NVIM_SOURCE="$SHARED_DIR/nvim"
 
 {{- if eq .chezmoi.os "darwin" }}
 NVIM_TARGET="$HOME/.config/nvim"
@@ -77,7 +77,7 @@ echo "Neovim config deployed to $NVIM_TARGET"
 # ==========================
 # lf File Manager
 # ==========================
-LF_SOURCE="$SOURCE_DIR/lf"
+LF_SOURCE="$SHARED_DIR/lf"
 
 {{- if eq .chezmoi.os "darwin" }}
 LF_TARGET="$HOME/.config/lf"
