@@ -1,5 +1,4 @@
-{{- if ne .chezmoi.os "darwin" }}
-# macOS-only apps - ignore on Windows/Linux
+{{- if ne .chezmoi.os "darwin" }} # macOS-only
 dot_aerospace.toml
 dot_config/karabiner
 Library
@@ -8,11 +7,9 @@ dot_zprofile
 dot_zsh
 dot_hushlogin
 
-# macOS-only run scripts
 run_once_install-packages.sh
 run_once_setup-git-plist-filter.sh
 {{- end }}
 
-{{- if ne .chezmoi.os "windows" }}
-# Windows-only files - ignore on macOS/Linux
+{{- if ne .chezmoi.os "windows" }} # Windows-only
 {{- end }}

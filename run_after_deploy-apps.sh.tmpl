@@ -54,3 +54,49 @@ chezmoi execute-template < "$ZED_SOURCE/keymap.json.tmpl" > "$ZED_TARGET/keymap.
 cp "$ZED_SOURCE/private_settings.json" "$ZED_TARGET/settings.json"
 
 echo "Zed config deployed to $ZED_TARGET"
+
+# ==========================
+# Vim
+# ==========================
+VIM_SOURCE="$SOURCE_DIR/vim"
+
+{{- if eq .chezmoi.os "darwin" }}
+VIM_TARGET="$HOME"
+VIMRC_NAME=".vimrc"
+VIMDIR_NAME=".vim"
+{{- else if eq .chezmoi.os "linux" }}
+VIM_TARGET="$HOME"
+VIMRC_NAME=".vimrc"
+VIMDIR_NAME=".vim"
+{{- else if eq .chezmoi.os "windows" }}
+VIM_TARGET="$USERPROFILE"
+VIMRC_NAME="_vimrc"
+VIMDIR_NAME="vimfiles"
+{{- end }}
+
+chezmoi execute-template < "$VIM_SOURCE/vimrc.tmpl" > "$VIM_TARGET/$VIMRC_NAME"
+
+# Copy vim plugins directory
+if [ -d "{{ .chezmoi.sourceDir }}/dot_vim/pack" ]; then
+    mkdir -p "$VIM_TARGET/$VIMDIR_NAME/pack"
+    cp -r "{{ .chezmoi.sourceDir }}/dot_vim/pack/plugins" "$VIM_TARGET/$VIMDIR_NAME/pack/"
+fi
+
+echo "Vim config deployed to $VIM_TARGET/$VIMRC_NAME"
+
+# ==========================
+# Neovim
+# ==========================
+{{- if eq .chezmoi.os "darwin" }}
+NVIM_TARGET="$HOME/.config/nvim"
+{{- else if eq .chezmoi.os "linux" }}
+NVIM_TARGET="$HOME/.config/nvim"
+{{- else if eq .chezmoi.os "windows" }}
+NVIM_TARGET="$LOCALAPPDATA/nvim"
+{{- end }}
+
+mkdir -p "$NVIM_TARGET"
+
+chezmoi execute-template < "$VIM_SOURCE/nvim-init.vim.tmpl" > "$NVIM_TARGET/init.vim"
+
+echo "Neovim config deployed to $NVIM_TARGET"

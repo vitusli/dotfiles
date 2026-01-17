@@ -9,10 +9,15 @@ set shortmess+=I
 autocmd VimEnter * startinsert
 
 " Use Vim's plugin directory so both Vim and Neovim share the same plugins
+{{- if eq .chezmoi.os "windows" }}
+set runtimepath^=~/vimfiles
+set packpath^=~/vimfiles
+{{- else }}
 set runtimepath^=~/.vim
 set packpath^=~/.vim
+{{- end }}
 
-" Clipboard integration for macOS
+" Clipboard integration
 set clipboard=unnamed
 if has('clipboard')
     set clipboard=unnamed

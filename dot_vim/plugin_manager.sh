@@ -1,11 +1,13 @@
-#!/bin/zsh
+#!/bin/bash
 # Vim Plugin Manager using git submodules
-# Usage: ./macOS/chezmoi/dot_vim/plugin_manager.sh [install|update|remove <plugin>]
+# Usage: ./dot_vim/plugin_manager.sh [install|update|remove <plugin>]
 
 set -e
 
-DOTFILES_ROOT="${0:h:h:h}"
-PLUGINS_DIR="${0:h}/pack/plugins/start"
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PLUGINS_DIR="$SCRIPT_DIR/pack/plugins/start"
 
 cd "$DOTFILES_ROOT"
 
@@ -13,7 +15,7 @@ cd "$DOTFILES_ROOT"
 apply_chezmoi() {
   if command -v chezmoi >/dev/null 2>&1; then
     echo "Applying dotfiles with chezmoi..."
-    if chezmoi -S "$DOTFILES_ROOT/chezmoi" apply; then
+    if chezmoi apply; then
       echo "✓ chezmoi apply completed"
     else
       echo "✗ chezmoi apply failed"
@@ -48,14 +50,14 @@ case "${1:-install}" in
     ;;
 
   remove)
-    if [[ -z "$2" ]]; then
+    if [ -z "$2" ]; then
       echo "Usage: $0 remove <plugin-name>"
       exit 1
     fi
     echo "Removing plugin: $2..."
     git submodule deinit -f "$PLUGINS_DIR/$2"
     git rm -f "$PLUGINS_DIR/$2"
-    rm -rf ".git/modules/macOS/chezmoi/dot_vim/pack/plugins/start/$2"
+    rm -rf ".git/modules/dot_vim/pack/plugins/start/$2"
     echo "✓ Plugin $2 removed"
     apply_chezmoi
     ;;

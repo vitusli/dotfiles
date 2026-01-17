@@ -4,16 +4,26 @@ set clipboard=unnamed
 set shortmess+=I
 autocmd VimEnter * startinsert
 
-" fzf.vim configuration
+" fzf.vim configuration (OS-specific paths)
+{{- if eq .chezmoi.os "darwin" }}
 set rtp+=/opt/homebrew/bin/fzf
+{{- else if eq .chezmoi.os "linux" }}
+set rtp+=/usr/bin/fzf
+{{- else if eq .chezmoi.os "windows" }}
+set rtp+=~/scoop/apps/fzf/current
+{{- end }}
 
 " FZF centered popup window (like Raycast/wilder.nvim)
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6, 'border': 'rounded' } }
 
-" Space: Scoped search in key directories (mirrors .zshrc)
-" Searches: Downloads, Documents, Desktop, chezmoi + Home (max depth 3)
+" Space: Scoped search in key directories using fd (cross-platform)
+" Searches: codespace, Downloads, Documents, Desktop, chezmoi + Home (max depth 3)
 " vim interprets <C-@> as Ctrl+Space
-nnoremap <Space> :call fzf#run(fzf#wrap({'source': 'find ~/codespace ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi -maxdepth 10 2>/dev/null; find ~ -maxdepth 3 2>/dev/null', 'sink': 'e'}))<CR>
+{{- if eq .chezmoi.os "windows" }}
+nnoremap <Space> :call fzf#run(fzf#wrap({'source': 'fd --type f . %USERPROFILE%\codespace %USERPROFILE%\Downloads %USERPROFILE%\Documents %USERPROFILE%\Desktop --max-depth 10', 'sink': 'e'}))<CR>
+{{- else }}
+nnoremap <Space> :call fzf#run(fzf#wrap({'source': 'fd --type f --max-depth 10 . ~/codespace ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi 2>/dev/null; fd --type f --max-depth 3 . ~ 2>/dev/null', 'sink': 'e'}))<CR>
+{{- end }}
 
 " Relative line numbers (plus absolute cursor line)
 set number
@@ -34,6 +44,7 @@ set timeoutlen=300   " mapping timeout; keep reasonable for sequences
 
 " Cursor shape (Terminal Vim) aligned with Zsh vi-mode
 " Normal mode: Block, Insert mode: Beam, Replace: Underline
+{{- if ne .chezmoi.os "windows" }}
 let &t_EI = "\e[2 q"
 let &t_SI = "\e[6 q"
 let &t_SR = "\e[4 q"
@@ -44,6 +55,7 @@ augroup CursorShape
 	autocmd InsertEnter          * silent! let &t_SI = "\e[6 q"
 	autocmd ModeChanged *:[vVsS] silent! if mode() !~# '^[iR]' | let &t_EI = "\e[2 q" | endif
 augroup END
+{{- end }}
 
 " wilder.nvim - Popup cmdline (centered like Raycast)
 call wilder#setup({'modes': [':', '/', '?']})

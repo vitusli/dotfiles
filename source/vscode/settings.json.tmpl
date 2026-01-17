@@ -27,28 +27,19 @@
         "scminput": false
     },
 
-    // Multi Command
-    "multiCommand.commands": [
-        {
-            "command": "runSlash",
-            "sequence": [
-                "workbench.action.terminal.focus",
-                {
-                    "command": "workbench.action.terminal.sendSequence",
-                    "args": { "text": "/\u000D" }
-                }
-            ]
-        }
-    ],
-
     // Neovim
+{{- if eq .chezmoi.os "darwin" }}
     "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
-    "vscode-neovim.neovimInitVimPaths.darwin": "{{ .chezmoi.homeDir }}/.local/share/chezmoi/dot_config/nvim/init.vim",
+    "vscode-neovim.neovimInitVimPaths.darwin": "{{ .chezmoi.homeDir }}/.config/nvim/init.vim",
+{{- else if eq .chezmoi.os "linux" }}
+    "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+    "vscode-neovim.neovimInitVimPaths.linux": "{{ .chezmoi.homeDir }}/.config/nvim/init.vim",
+{{- else if eq .chezmoi.os "windows" }}
+    "vscode-neovim.neovimExecutablePaths.win32": "C:\\Program Files\\Neovim\\bin\\nvim.exe",
+    "vscode-neovim.neovimInitVimPaths.win32": "{{ .chezmoi.homeDir }}/AppData/Local/nvim/init.vim",
+{{- end }}
     "vscode-neovim.useCtrlKeysForNormalMode": false,
-    "vscode-neovim.useCtrlKeysForInsertMode": false,
-
-    // Python
-    "python.defaultInterpreterPath": "/usr/bin/python3",
+    "vscode-neovim.useCtrlKeysForInsertMode": true,
 
     // Security
     "security.workspace.trust.untrustedFiles": "open",
@@ -63,7 +54,13 @@
 
     // VS Code Custom CSS
     "vscode_custom_css.imports": [
+{{- if eq .chezmoi.os "darwin" }}
         "file://{{ .chezmoi.homeDir }}/Library/Application Support/Code/User/custom-vscode.css"
+{{- else if eq .chezmoi.os "linux" }}
+        "file://{{ .chezmoi.homeDir }}/.config/Code/User/custom-vscode.css"
+{{- else if eq .chezmoi.os "windows" }}
+        "file:///{{ .chezmoi.homeDir }}/AppData/Roaming/Code/User/custom-vscode.css"
+{{- end }}
     ],
     "vscode_custom_css.policy": true,
 
@@ -74,7 +71,6 @@
     // Workbench
     "chat.commandCenter.enabled": false,
     "workbench.colorTheme": "cursor midnight theme",
-    "workbench.iconTheme": "sf-symbol-icons",
     "workbench.layoutControl.enabled": false,
     "workbench.startupEditor": "none",
     "workbench.tips.enabled": false
