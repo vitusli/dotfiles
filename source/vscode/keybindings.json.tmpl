@@ -1,17 +1,21 @@
+{{- $mod := "ctrl" }}
+{{- if eq .chezmoi.os "darwin" }}
+{{- $mod = "cmd" }}
+{{- end }}
 [
     // Chat
     {
-        "key": "cmd+i",
+        "key": "{{ $mod }}+i",
         "command": "workbench.action.chat.openagent",
         "when": "!chatSetupDisabled && !chatSetupHidden"
     },
     {
-        "key": "cmd+l",
+        "key": "{{ $mod }}+l",
         "command": "workbench.action.chat.attachSelection",
         "when": "chatIsEnabled && editorTextFocus"
     },
     {
-        "key": "cmd+l",
+        "key": "{{ $mod }}+l",
         "command": "workbench.action.terminal.chat.addTerminalSelection",
         "when": "chatIsEnabled && terminalFocus && (terminalHasBeenCreated || terminalProcessSupported)"
     },
@@ -21,31 +25,25 @@
         "when": "chatIsEnabled && !chatSessionRequestInProgress"
     },
 
-    // Tasks
-    {
-        "key": "ctrl+space",
-        "command": "workbench.action.tasks.runTask",
-        "args": "Slash Search Code"
-    },
-
     // Terminal
+{{- if ne .chezmoi.os "darwin" }}
     {
-        "key": "cmd+shift+j",
+        "key": "{{ $mod }}+j",
+        "command": "workbench.action.terminal.toggleTerminal"
+    },
+{{- end }}
+    {
+        "key": "{{ $mod }}+shift+j",
         "command": "workbench.action.terminal.focus",
         "when": "!terminalFocus"
     },
     {
-        "key": "cmd+n",
+        "key": "{{ $mod }}+n",
         "command": "workbench.action.terminal.new",
         "when": "terminalFocus"
     },
     {
-        "key": "cmd+w",
-        "command": "workbench.action.terminal.kill",
-        "when": "terminalFocus"
-    },
-    {
-        "key": "cmd+shift+space",
+        "key": "{{ $mod }}+shift+space",
         "command": "runCommands",
         "args": {
             "commands": [
@@ -53,41 +51,63 @@
                 "workbench.action.toggleAuxiliaryBar",
                 "workbench.action.toggleSidebarVisibility"
             ]
-        },
-        // "when": "terminalFocus"
+        }
     },
 
     // Workbench
     {
-        "key": "cmd+e",
+        "key": "{{ $mod }}+e",
         "command": "workbench.action.toggleMaximizedAuxiliaryBar"
     },
+{{- if ne .chezmoi.os "darwin" }}
+    {
+        "key": "{{ $mod }}+w",
+        "command": "workbench.action.closeActiveEditor",
+        "when": "editorIsOpen"
+    },
+    {
+        "key": "{{ $mod }}+w",
+        "command": "workbench.action.closeWindow",
+        "when": "!editorIsOpen"
+    },
+{{- end }}
 
     // Tab Navigation (Browser-style)
     {
-        "key": "cmd+1",
+        "key": "{{ $mod }}+1",
         "command": "workbench.action.openEditorAtIndex1"
     },
     {
-        "key": "cmd+2",
+        "key": "{{ $mod }}+2",
         "command": "workbench.action.openEditorAtIndex2"
     },
     {
-        "key": "cmd+3",
+        "key": "{{ $mod }}+3",
         "command": "workbench.action.openEditorAtIndex3"
     },
     {
-        "key": "cmd+4",
+        "key": "{{ $mod }}+4",
         "command": "workbench.action.openEditorAtIndex4"
     },
 
     // Editor Group Navigation
     {
-        "key": "cmd+shift+h",
+        "key": "{{ $mod }}+shift+h",
         "command": "workbench.action.focusPreviousGroup"
     },
     {
-        "key": "cmd+shift+l",
+        "key": "{{ $mod }}+shift+l",
         "command": "workbench.action.focusNextGroup"
+    },
+
+    // Terminal Kill
+    {
+        "key": "{{ $mod }}+w",
+        "command": "workbench.action.terminal.kill",
+{{- if eq .chezmoi.os "darwin" }}
+        "when": "terminalFocus"
+{{- else }}
+        "when": "terminalFocus && (terminalHasBeenCreated || terminalIsOpen || terminalProcessSupported)"
+{{- end }}
     }
 ]

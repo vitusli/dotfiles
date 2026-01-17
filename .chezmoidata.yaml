@@ -1,0 +1,48 @@
+# =============================================================================
+# Abbreviations
+# =============================================================================
+# Central source for shell abbreviations across all systems
+# Used by templates to generate zsh-abbr, PowerShell, etc.
+
+abbreviations:
+  # ---------------------------------------------------------------------------
+  # Universal - all systems
+  # ---------------------------------------------------------------------------
+  universal:
+    c: "chezmoi"
+    gc: "git checkout"
+    l: "lazygit"
+    p: "uv run python"
+    "..": "cd .."
+    "...": "cd ../.."
+
+  # ---------------------------------------------------------------------------
+  # macOS only
+  # ---------------------------------------------------------------------------
+  darwin:
+    backup: "restic -r /Volumes/TOSHIBA\\ EXT/restic-for-t7 --verbose backup /Volumes/T7\\ Shield"
+    bi: "brew install"
+    bs: "brew search"
+    bu: "brew uninstall"
+    up: "brew upgrade"
+    copyid: "nova config view 2>&1 | tee >(awk '/^virtualid:/ {print $2}' | pbcopy)"
+    copyip: "nova config view 2>&1 | tee >(awk '/^host:/ {print $2}' | pbcopy)"
+    f: "fzf | pbcopy"
+    rl: "source ~/.zshrc"
+    v: "source .venv/bin/activate"
+
+  # ---------------------------------------------------------------------------
+  # Windows only
+  # ---------------------------------------------------------------------------
+  windows:
+    f: "fzf | clip.exe"
+    rl: ". $PROFILE"
+    v: ".venv\\Scripts\\Activate.ps1"
+
+  # ---------------------------------------------------------------------------
+  # Linux only
+  # ---------------------------------------------------------------------------
+  linux:
+    f: "fzf | xclip -selection clipboard"
+    rl: "source ~/.zshrc"
+    v: "source .venv/bin/activate"

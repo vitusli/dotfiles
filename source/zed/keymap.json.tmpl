@@ -1,0 +1,18 @@
+{{- $mod := "ctrl" }}
+{{- if eq .chezmoi.os "darwin" }}
+{{- $mod = "cmd" }}
+{{- end }}
+[
+  {
+    "context": "vim_mode == visual",
+    "bindings": {
+      "shift-s": "vim::PushAddSurrounds"
+    }
+  },
+  {
+    "bindings": {
+      "{{ $mod }}-i": "agent::ToggleFocus",
+      "{{ $mod }}-shift-j": "terminal_panel::ToggleFocus"
+    }
+  }
+]

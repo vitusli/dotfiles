@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Deploy application configurations to OS-specific paths
+# This script runs after chezmoi apply
+
+SOURCE_DIR="{{ .chezmoi.sourceDir }}/source"
+
+# ==========================
+# VSCode
+# ==========================
+VSCODE_SOURCE="$SOURCE_DIR/vscode"
+
+{{- if eq .chezmoi.os "darwin" }}
+VSCODE_TARGET="$HOME/Library/Application Support/Code/User"
+{{- end }}
+
+{{- if eq .chezmoi.os "windows" }}
+VSCODE_TARGET="$APPDATA/Code/User"
+{{- end }}
+
+{{- if eq .chezmoi.os "linux" }}
+VSCODE_TARGET="$HOME/.config/Code/User"
+{{- end }}
+
+mkdir -p "$VSCODE_TARGET"
+
+chezmoi execute-template < "$VSCODE_SOURCE/settings.json.tmpl" > "$VSCODE_TARGET/settings.json"
+chezmoi execute-template < "$VSCODE_SOURCE/keybindings.json.tmpl" > "$VSCODE_TARGET/keybindings.json"
+
+cp "$VSCODE_SOURCE/custom-vscode.css" "$VSCODE_TARGET/custom-vscode.css"
+
+echo "VSCode config deployed to $VSCODE_TARGET"
+
+# ==========================
+# Zed
+# ==========================
+ZED_SOURCE="$SOURCE_DIR/zed"
+
+{{- if eq .chezmoi.os "darwin" }}
+ZED_TARGET="$HOME/.config/zed"
+{{- end }}
+
+{{- if eq .chezmoi.os "windows" }}
+ZED_TARGET="$APPDATA/Zed"
+{{- end }}
+
+{{- if eq .chezmoi.os "linux" }}
+ZED_TARGET="$HOME/.config/zed"
+{{- end }}
+
+mkdir -p "$ZED_TARGET"
+
+chezmoi execute-template < "$ZED_SOURCE/keymap.json.tmpl" > "$ZED_TARGET/keymap.json"
+cp "$ZED_SOURCE/private_settings.json" "$ZED_TARGET/settings.json"
+
+echo "Zed config deployed to $ZED_TARGET"

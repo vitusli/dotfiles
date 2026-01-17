@@ -1,0 +1,17 @@
+{{- /* Universal abbreviations */ -}}
+{{- range $key, $value := .abbreviations.universal }}
+abbr {{ $key | quote }}={{ $value | quote }}
+{{- end }}
+
+{{- /* OS-specific abbreviations */ -}}
+{{- if eq .chezmoi.os "darwin" }}
+{{- range $key, $value := .abbreviations.darwin }}
+abbr {{ $key | quote }}={{ $value | quote }}
+{{- end }}
+{{- end }}
+
+{{- if eq .chezmoi.os "linux" }}
+{{- range $key, $value := .abbreviations.linux }}
+abbr {{ $key | quote }}={{ $value | quote }}
+{{- end }}
+{{- end }}
