@@ -22,7 +22,7 @@ olets/tap/zsh-abbr #macos
 pandoc #macos
 pandoc-crossref #macos
 restic #macos
-serie #macos #linux
+serie
 uv
 zoxide
 zsh #linux
