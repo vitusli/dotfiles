@@ -1,0 +1,17 @@
+# Default Apps (bundle_id|extension|role)
+
+dev.zed.Zed|.bash|all
+dev.zed.Zed|.js|all
+dev.zed.Zed|.json|all
+dev.zed.Zed|.md|all
+dev.zed.Zed|.py|all
+dev.zed.Zed|.sh|all
+dev.zed.Zed|.ts|all
+dev.zed.Zed|.yaml|all
+dev.zed.Zed|.yml|all
+dev.zed.Zed|.zsh|all
+dev.zed.Zed|public.plain-text|all
+app.zen-browser.zen|http|all
+app.zen-browser.zen|https|all
+dev.zed.Zed|.txt|all
+org.yanex.marta|public.folder|all

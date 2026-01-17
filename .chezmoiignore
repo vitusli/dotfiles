@@ -1,3 +1,7 @@
+# Bootstrap files (not managed dotfiles)
+bootstrap
+README.md
+
 {{- if ne .chezmoi.os "darwin" }} # macOS-only
 dot_aerospace.toml
 dot_config/karabiner

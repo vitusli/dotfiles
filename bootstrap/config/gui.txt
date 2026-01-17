@@ -1,0 +1,45 @@
+# GUI Apps
+
+ableton-live-suite #macos
+adobe-acrobat-reader #macos
+aerospace #macos
+affinity #macos
+arc #macos
+alt-tab #macos
+basictex #macos
+blender
+bridge #macos
+darktable #macos
+figma #macos
+google-drive #macos
+homerow #macos
+karabiner-elements #macos
+keeweb #macos
+keepassxc
+linearmouse #macos
+macvim-app #macos
+marta #macos
+microsoft-outlook #macos
+microsoft-teams #macos
+obsidian
+onedrive #macos
+openvpn-connect #macos
+parsec #macos #windows
+powershell
+qlmarkdown #macos
+raycast #macos #windows
+rhino-app #macos
+slack #macos #windows
+sf-symbols #macos
+superwhisper #macos
+visual-studio-code #macos
+visual-studio-code-bin #linux
+vlc #macos
+vscode #windows
+wezterm
+windows-app #macos
+zed
+zen #macos
+zen-browser-bin #linux
+zen-browser #windows
+zotero #macos

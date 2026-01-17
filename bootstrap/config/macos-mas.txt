@@ -1,0 +1,6 @@
+# Mac App Store Apps (macOS only)
+# Format: id|name
+
+1291898086|Toggl Track
+1423210932|Flow
+1609342064|Octane X

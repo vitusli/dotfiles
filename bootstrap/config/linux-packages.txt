@@ -1,0 +1,76 @@
+# Linux/Arch-Specific Packages (pacman/AUR)
+# These are installed in addition to shared cli.txt and gui.txt
+
+# ══════════════════════════════════════════════════════════════
+# BUILD ESSENTIALS
+# ══════════════════════════════════════════════════════════════
+
+base-devel
+curl
+wget
+
+# ══════════════════════════════════════════════════════════════
+# SWAY & WAYLAND
+# ══════════════════════════════════════════════════════════════
+
+sway
+swaylock
+waybar
+wofi
+mako
+xdg-desktop-portal-wlr
+
+# ══════════════════════════════════════════════════════════════
+# AUDIO (Pipewire)
+# ══════════════════════════════════════════════════════════════
+
+pipewire
+wireplumber
+pipewire-pulse
+pipewire-alsa
+
+# ══════════════════════════════════════════════════════════════
+# WAYLAND UTILITIES
+# ══════════════════════════════════════════════════════════════
+
+grim
+slurp
+wl-clipboard
+
+# ══════════════════════════════════════════════════════════════
+# SYSTEM UTILITIES
+# ══════════════════════════════════════════════════════════════
+
+polkit
+brightnessctl
+playerctl
+
+# ══════════════════════════════════════════════════════════════
+# FONTS
+# ══════════════════════════════════════════════════════════════
+
+ttf-dejavu
+ttf-liberation
+noto-fonts
+noto-fonts-emoji
+
+
+
+# ══════════════════════════════════════════════════════════════
+# NVIDIA (only installed if GPU detected)
+# ══════════════════════════════════════════════════════════════
+
+#nvidia
+nvidia
+nvidia-utils
+nvidia-settings
+libva-nvidia-driver
+
+# ══════════════════════════════════════════════════════════════
+# AUR ONLY
+# ══════════════════════════════════════════════════════════════
+
+#aur
+ulauncher
+espanso-wayland
+ttf-nerd-fonts-symbols
