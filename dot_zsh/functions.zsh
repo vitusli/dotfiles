@@ -8,14 +8,11 @@
   local search_dirs=(~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace)
   local home_depth=3
 
-  # Build find command
-  local find_cmd="find ${search_dirs[@]} 2>/dev/null"
-  if [[ $home_depth -gt 0 ]]; then
-    find_cmd="$find_cmd; find ~ -maxdepth $home_depth 2>/dev/null"
-  fi
-
-  # Pick target file/dir
-  local target=$(eval "{ $find_cmd; }" | fzf --prompt=": " \
+  # Pick target file/dir using fd
+  local target=$({
+    fd --type f --type d . ${search_dirs[@]} 2>/dev/null
+    fd --type f --type d --max-depth $home_depth . ~ 2>/dev/null
+  } | fzf --prompt=": " \
         --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' \
         --preview-window=right:60%:wrap)
 
@@ -32,7 +29,7 @@
 
 # /app - Fuzzy-find and run macOS applications
 /app() {
-  local app_path=$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | fzf --prompt="Select app: ") || return 130
+  local app_path=$(fd -e app --max-depth 2 . /Applications ~/Applications 2>/dev/null | fzf --prompt="Select app: ") || return 130
 
   if [[ -z $app_path ]]; then
     return 1
@@ -42,7 +39,7 @@
   local macos_dir="$app_path/Contents/MacOS"
   if [[ -d $macos_dir ]]; then
     # Find the first executable file in MacOS directory
-    local executable=$(find "$macos_dir" -type f -perm +111 -maxdepth 1 | head -n 1)
+    local executable=$(fd --type x --max-depth 1 . "$macos_dir" | head -n 1)
 
     if [[ -n $executable ]]; then
       echo "Running: $executable"
