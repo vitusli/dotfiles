@@ -10,11 +10,10 @@ export KEYTIMEOUT=1
 
 # Cursor shape for vi mode (block in normal, line in insert)
 function zle-keymap-select() {
-    if [[ $KEYMAP == "vicmd" ]] || [[ $1 = 'block' ]]; then
-        print -n "\e[2 q"  # Block cursor for normal mode
-    elif [[ $KEYMAP == "main" ]] || [[ $KEYMAP == "viins" ]] || [[ $KEYMAP = '' ]] || [[ $1 = 'beam' ]]; then
-        print -n "\e[6 q"  # Line cursor for insert mode
-    fi
+    case $KEYMAP in
+        vicmd)       print -n "\e[2 q" ;;  # Block cursor for normal mode
+        main|viins|*) print -n "\e[6 q" ;;  # Line cursor for insert mode
+    esac
 }
 
 function zle-line-init() {
