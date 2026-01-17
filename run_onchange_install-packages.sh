@@ -25,10 +25,12 @@ FORMULAE=(
     zsh-abbr
     zoxide
     fzf
+    fd
     lf
     neovim
     lazygit
     bat
+    uv
     # Preview dependencies (for lf)
     poppler      # pdftotext
     p7zip        # 7z

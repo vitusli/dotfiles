@@ -99,6 +99,11 @@ mkdir -p "$NVIM_TARGET"
 
 chezmoi execute-template < "$VIM_SOURCE/nvim-init.vim.tmpl" > "$NVIM_TARGET/init.vim"
 
+# Install pynvim for wilder.nvim support
+if command -v uv &> /dev/null; then
+    uv pip install --system --break-system-packages pynvim 2>/dev/null || true
+fi
+
 echo "Neovim config deployed to $NVIM_TARGET"
 
 # ==========================

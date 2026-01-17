@@ -1,12 +1,9 @@
-" Neovim Configuration
+" Neovim Configuration (primarily for VSCode-Neovim)
 
-" ============================================================================
-" Shared settings (both VSCode and standalone Neovim)
-" ============================================================================
-
-" Disable intro screen and start directly in insert mode
+" Disable intro screen
 set shortmess+=I
-autocmd VimEnter * startinsert
+
+" Start in normal mode (not insert mode like vim)
 
 " Use Vim's plugin directory so both Vim and Neovim share the same plugins
 {{- if eq .chezmoi.os "windows" }}
@@ -15,6 +12,25 @@ set packpath^=~/vimfiles
 {{- else }}
 set runtimepath^=~/.vim
 set packpath^=~/.vim
+{{- end }}
+
+" fzf.vim configuration (OS-specific paths)
+{{- if eq .chezmoi.os "darwin" }}
+set rtp+=/opt/homebrew/bin/fzf
+{{- else if eq .chezmoi.os "linux" }}
+set rtp+=/usr/bin/fzf
+{{- else if eq .chezmoi.os "windows" }}
+set rtp+=~/scoop/apps/fzf/current
+{{- end }}
+
+" FZF centered popup window
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6, 'border': 'rounded' } }
+
+" Space: Scoped search in key directories using fd
+{{- if eq .chezmoi.os "windows" }}
+nnoremap <Space> :call fzf#run(fzf#wrap({'source': 'fd --type f . %USERPROFILE%\codespace %USERPROFILE%\Downloads %USERPROFILE%\Documents %USERPROFILE%\Desktop --max-depth 10', 'sink': 'e'}))<CR>
+{{- else }}
+nnoremap <Space> :call fzf#run(fzf#wrap({'source': 'fd --type f --max-depth 10 . ~/codespace ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi 2>/dev/null; fd --type f --max-depth 3 . ~ 2>/dev/null', 'sink': 'e'}))<CR>
 {{- end }}
 
 " Clipboard integration
@@ -32,46 +48,32 @@ set smartcase
 set incsearch
 set hlsearch
 
-" ============================================================================
-" VSCode Neovim specific settings
-" ============================================================================
-if exists('g:vscode')
-    " VSCode handles these, so we don't need to configure them here
-    " Plugins like vim-surround will still work!
+" H/L for line start/end (like 0/$)
+nnoremap H ^
+nnoremap L $
+vnoremap H ^
+vnoremap L $
+onoremap H ^
+onoremap L $
 
-" ============================================================================
-" Standalone Neovim specific settings
-" ============================================================================
-else
-    " Transparent background - no ugly background color
-    augroup TransparentBackground
-        autocmd!
-        autocmd ColorScheme * highlight Normal guibg=NONE ctermbg=NONE
-        autocmd ColorScheme * highlight NonText guibg=NONE ctermbg=NONE
-        autocmd ColorScheme * highlight EndOfBuffer guibg=NONE ctermbg=NONE
-    augroup END
+" Transparent background
+augroup TransparentBackground
+    autocmd!
+    autocmd ColorScheme * highlight Normal guibg=NONE ctermbg=NONE
+    autocmd ColorScheme * highlight NonText guibg=NONE ctermbg=NONE
+    autocmd ColorScheme * highlight EndOfBuffer guibg=NONE ctermbg=NONE
+augroup END
 
-    " Apply immediately if no colorscheme is set later
-    highlight Normal guibg=NONE ctermbg=NONE
-    highlight NonText guibg=NONE ctermbg=NONE
-    highlight EndOfBuffer guibg=NONE ctermbg=NONE
+highlight Normal guibg=NONE ctermbg=NONE
+highlight NonText guibg=NONE ctermbg=NONE
+highlight EndOfBuffer guibg=NONE ctermbg=NONE
 
-    " Line numbers
-    set number
-    set relativenumber
-
-    " Better editing experience
-    set expandtab
-    set tabstop=4
-    set shiftwidth=4
-    set autoindent
-    set smartindent
-
-    " Visual improvements
-    set cursorline
-    set scrolloff=8
-    set signcolumn=yes
-
-    " Faster update time
-    set updatetime=300
-endif
+" wilder.nvim - Popup cmdline
+call wilder#setup({'modes': [':', '/', '?']})
+call wilder#set_option('renderer', wilder#popupmenu_renderer(wilder#popupmenu_palette_theme({
+      \ 'border': 'rounded',
+      \ 'max_height': '75%',
+      \ 'min_height': 0,
+      \ 'prompt_position': 'top',
+      \ 'reverse': 0,
+      \ })))
