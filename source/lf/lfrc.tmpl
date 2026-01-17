@@ -135,8 +135,8 @@ map X :toggle-executable
 
 {{- if eq .chezmoi.os "windows" }}
 # Open file with application (using fzf) - Windows
-cmd open-with ${{
-    $apps = @("VS Code", "Explorer (reveal)", "Notepad")
+cmd open-with ${{ "{{" }}
+    $apps = {{ "@" }}("VS Code", "Explorer (reveal)", "Notepad")
     $app = $apps | fzf --prompt="Open with: "
     if (-not $app) { exit }
 
@@ -145,11 +145,11 @@ cmd open-with ${{
         "Explorer (reveal)" { explorer /select,"$env:f" }
         "Notepad" { notepad $env:f }
     }
-}}
+{{ "}}" }}
 
 # Open current directory with application (using fzf) - Windows
-cmd open-with-dir ${{
-    $apps = @("VS Code", "Explorer", "Terminal")
+cmd open-with-dir ${{ "{{" }}
+    $apps = {{ "@" }}("VS Code", "Explorer", "Terminal")
     $app = $apps | fzf --prompt="Open directory with: "
     if (-not $app) { exit }
 
@@ -158,31 +158,31 @@ cmd open-with-dir ${{
         "Explorer" { explorer $env:PWD }
         "Terminal" { wt -d $env:PWD }
     }
-}}
+{{ "}}" }}
 
 # Create file - Windows
-cmd touch ${{
+cmd touch ${{ "{{" }}
     $name = Read-Host "File name"
     if ($name) { New-Item -ItemType File -Name $name }
-}}
+{{ "}}" }}
 
 # Create directory - Windows
-cmd mkdir ${{
+cmd mkdir ${{ "{{" }}
     $name = Read-Host "Directory name"
     if ($name) { New-Item -ItemType Directory -Name $name }
-}}
+{{ "}}" }}
 
 # Fuzzy search with fzf (recursive) - Windows
-cmd fzf ${{
+cmd fzf ${{ "{{" }}
     $result = Get-ChildItem -Recurse -File | ForEach-Object { $_.FullName } | fzf --prompt="Search: "
     if ($result) {
         lf -remote "send $env:id select '$result'"
     }
-}}
+{{ "}}" }}
 
 # Extended search across multiple directories - Windows
-cmd fzf-extended ${{
-    $paths = @(
+cmd fzf-extended ${{ "{{" }}
+    $paths = {{ "@" }}(
         "$HOME\Downloads",
         "$HOME\Documents",
         "$HOME\Desktop",
@@ -201,23 +201,23 @@ cmd fzf-extended ${{
             lf -remote "send $env:id cd '$result'"
         }
     }
-}}
+{{ "}}" }}
 
 # Yank path to clipboard - Windows
-cmd yank-path ${{
+cmd yank-path ${{ "{{" }}
     Set-Clipboard -Value $env:f
     lf -remote "send $env:id echo Copied: $env:f"
-}}
+{{ "}}" }}
 
 # Yank directory path to clipboard - Windows
-cmd yank-dirname ${{
+cmd yank-dirname ${{ "{{" }}
     Set-Clipboard -Value $env:PWD
     lf -remote "send $env:id echo Copied: $env:PWD"
-}}
+{{ "}}" }}
 
 {{- else if eq .chezmoi.os "darwin" }}
 # Open file with application (using fzf) - macOS
-cmd open-with ${{
+cmd open-with ${{ "{{" }}
     app=$(printf "VISUAL Editor\nFinder (reveal)\nMacVim\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open with: ")
     [ -z "$app" ] && exit
 
@@ -226,10 +226,10 @@ cmd open-with ${{
         "Finder (reveal)") open -R "$f" ;;
         *) open -a "$app" "$f" ;;
     esac
-}}
+{{ "}}" }}
 
 # Open current directory with application (using fzf) - macOS
-cmd open-with-dir ${{
+cmd open-with-dir ${{ "{{" }}
     app=$(printf "VISUAL Editor\nFinder\nMarta\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open directory with: ")
     [ -z "$app" ] && exit
 
@@ -239,30 +239,30 @@ cmd open-with-dir ${{
         "Marta") open -a "Marta" "$PWD" ;;
         *) open -a "$app" "$PWD" ;;
     esac
-}}
+{{ "}}" }}
 
 # Create file - Unix
-cmd touch ${{
+cmd touch ${{ "{{" }}
     read -p "File name: " name
     touch "$name"
-}}
+{{ "}}" }}
 
 # Create directory - Unix
-cmd mkdir ${{
+cmd mkdir ${{ "{{" }}
     read -p "Directory name: " name
     mkdir -p "$name"
-}}
+{{ "}}" }}
 
 # Fuzzy search with fzf (recursive) - Unix
-cmd fzf ${{
+cmd fzf ${{ "{{" }}
     result=$(find . -type f 2>/dev/null | fzf --prompt="Search (recursive): " --preview="bat --color=always --style=numbers {}")
     if [ -n "$result" ]; then
         lf -remote "send $id select \"$result\""
     fi
-}}
+{{ "}}" }}
 
 # Extended search across multiple directories - Unix
-cmd fzf-extended ${{
+cmd fzf-extended ${{ "{{" }}
     result=$({
         fd --type f --type d . ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace 2>/dev/null
         fd --type f --type d --max-depth 3 . ~ 2>/dev/null
@@ -276,22 +276,22 @@ cmd fzf-extended ${{
             lf -remote "send $id cd \"$result\""
         fi
     fi
-}}
+{{ "}}" }}
 
 # Yank path to clipboard - macOS
-cmd yank-path ${{
+cmd yank-path ${{ "{{" }}
     printf "%s" "$f" | pbcopy
     lf -remote "send $id echo Copied: $f"
-}}
+{{ "}}" }}
 
 # Yank directory path to clipboard - macOS
-cmd yank-dirname ${{
+cmd yank-dirname ${{ "{{" }}
     printf "%s" "$PWD" | pbcopy
     lf -remote "send $id echo Copied: $PWD"
-}}
+{{ "}}" }}
 
 # Toggle executable permission - Unix
-cmd toggle-executable ${{
+cmd toggle-executable ${{ "{{" }}
     if [ -x "$f" ]; then
         chmod -x "$f"
         lf -remote "send $id echo Removed executable: $f"
@@ -300,11 +300,11 @@ cmd toggle-executable ${{
         lf -remote "send $id echo Made executable: $f"
     fi
     lf -remote "send $id reload"
-}}
+{{ "}}" }}
 
 {{- else }}
 # Open file with application (using fzf) - Linux
-cmd open-with ${{
+cmd open-with ${{ "{{" }}
     app=$(printf "VISUAL Editor\nFile Manager\n" | fzf --prompt="Open with: ")
     [ -z "$app" ] && exit
 
@@ -313,10 +313,10 @@ cmd open-with ${{
         "File Manager") xdg-open "$(dirname "$f")" ;;
         *) xdg-open "$f" ;;
     esac
-}}
+{{ "}}" }}
 
 # Open current directory with application (using fzf) - Linux
-cmd open-with-dir ${{
+cmd open-with-dir ${{ "{{" }}
     app=$(printf "VISUAL Editor\nFile Manager\nTerminal\n" | fzf --prompt="Open directory with: ")
     [ -z "$app" ] && exit
 
@@ -325,30 +325,30 @@ cmd open-with-dir ${{
         "File Manager") xdg-open "$PWD" ;;
         "Terminal") $TERMINAL &>/dev/null & disown ;;
     esac
-}}
+{{ "}}" }}
 
 # Create file - Unix
-cmd touch ${{
+cmd touch ${{ "{{" }}
     read -p "File name: " name
     touch "$name"
-}}
+{{ "}}" }}
 
 # Create directory - Unix
-cmd mkdir ${{
+cmd mkdir ${{ "{{" }}
     read -p "Directory name: " name
     mkdir -p "$name"
-}}
+{{ "}}" }}
 
 # Fuzzy search with fzf (recursive) - Unix
-cmd fzf ${{
+cmd fzf ${{ "{{" }}
     result=$(find . -type f 2>/dev/null | fzf --prompt="Search (recursive): " --preview="bat --color=always --style=numbers {}")
     if [ -n "$result" ]; then
         lf -remote "send $id select \"$result\""
     fi
-}}
+{{ "}}" }}
 
 # Extended search across multiple directories - Linux
-cmd fzf-extended ${{
+cmd fzf-extended ${{ "{{" }}
     result=$({
         fd --type f --type d . ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace 2>/dev/null
         fd --type f --type d --max-depth 3 . ~ 2>/dev/null
@@ -362,22 +362,22 @@ cmd fzf-extended ${{
             lf -remote "send $id cd \"$result\""
         fi
     fi
-}}
+{{ "}}" }}
 
 # Yank path to clipboard - Linux
-cmd yank-path ${{
+cmd yank-path ${{ "{{" }}
     printf "%s" "$f" | xclip -selection clipboard
     lf -remote "send $id echo Copied: $f"
-}}
+{{ "}}" }}
 
 # Yank directory path to clipboard - Linux
-cmd yank-dirname ${{
+cmd yank-dirname ${{ "{{" }}
     printf "%s" "$PWD" | xclip -selection clipboard
     lf -remote "send $id echo Copied: $PWD"
-}}
+{{ "}}" }}
 
 # Toggle executable permission - Unix
-cmd toggle-executable ${{
+cmd toggle-executable ${{ "{{" }}
     if [ -x "$f" ]; then
         chmod -x "$f"
         lf -remote "send $id echo Removed executable: $f"
@@ -386,5 +386,5 @@ cmd toggle-executable ${{
         lf -remote "send $id echo Made executable: $f"
     fi
     lf -remote "send $id reload"
-}}
+{{ "}}" }}
 {{- end }}
