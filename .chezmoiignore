@@ -12,4 +12,6 @@ run_once_setup-git-plist-filter.sh
 {{- end }}
 
 {{- if ne .chezmoi.os "windows" }} # Windows-only
+AppData
+Documents
 {{- end }}

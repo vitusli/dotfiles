@@ -1,0 +1,390 @@
+# ============================================================================
+# LF FILE MANAGER CONFIG
+# Cross-platform config (macOS, Linux, Windows)
+# ============================================================================
+
+# Basic Settings
+set hidden false
+set ignorecase true
+set icons true
+set incfilter
+
+# Show only path in title (no user@host)
+set promptfmt "%d"
+
+# Two column view: current dir + preview (no parent dir)
+set ratios 1:1
+
+# Preview settings (OS-specific)
+{{- if eq .chezmoi.os "windows" }}
+set previewer ~\AppData\Roaming\lf\preview.cmd
+set shell powershell
+set shellopts '-NoProfile'
+{{- else }}
+set previewer ~/.config/lf/preview.sh
+set cleaner ~/.config/lf/cleaner.sh
+{{- end }}
+
+# ============================================================================
+# KEY BINDINGS (Marta-inspired)
+# ============================================================================
+
+# Navigation (hjkl vim-style)
+map k up
+map j down
+map h updir
+map l :setfilter; open
+map <enter> :setfilter; open
+
+# Selection (shift + k/j) - toggle current, then move
+map K :toggle; up
+map J :toggle; down
+
+# Clear selection, buffer, and filter (single Esc mapping)
+map <esc> :unselect; clear; setfilter
+
+# Go to top/bottom
+map g top
+map G bottom
+
+# File operations
+map r rename
+map f :touch
+map n :mkdir
+map <c-x> delete
+
+# Copy/Move (x = cut, c = copy, v = paste)
+map x cut
+map c copy
+map p paste
+
+# Path operations
+map y :yank-path
+map Y :yank-dirname
+
+# Toggle hidden files
+map H set hidden!
+
+# Open with (fzf)
+map o :open-with
+map O :open-with-dir
+
+# Reveal in file manager
+{{- if eq .chezmoi.os "windows" }}
+map <c-r> $explorer /select,"$env:f"
+{{- else if eq .chezmoi.os "darwin" }}
+map <c-r> $open -R "$f"
+{{- else }}
+map <c-r> $xdg-open "$(dirname "$f")"
+{{- end }}
+
+# Git
+map L $lazygit
+
+# Go to home
+map ~ cd ~
+
+# Jump to Downloads and start filter
+{{- if eq .chezmoi.os "windows" }}
+map D cd ~/Downloads; filter
+{{- else }}
+map D cd "{{ .chezmoi.homeDir }}/Downloads"; filter
+{{- end }}
+
+# Jump to codespace and start filter
+{{- if eq .chezmoi.os "windows" }}
+map C cd ~/codespace; filter
+{{- else }}
+map C cd "{{ .chezmoi.homeDir }}/codespace"; filter
+{{- end }}
+
+# Jump to dotfiles
+map S cd ~/.local/share/chezmoi; filter
+
+# Open current directory in VISUAL editor
+{{- if eq .chezmoi.os "windows" }}
+map V $code $env:PWD
+{{- else }}
+map V & $VISUAL "$PWD"
+{{- end }}
+
+# Disable default 'd' (cut) as requested
+map d :echo "Cut is disabled"
+
+# Filter (classic lf filter)
+map / filter
+
+# Extended search (multiple directories)
+map <space> :fzf-extended
+
+# Open dotfiles in editor
+{{- if eq .chezmoi.os "windows" }}
+map <c-s> $code ~/.local/share/chezmoi ~/AppData/Roaming/lf/lfrc
+{{- else }}
+map <c-s> & $VISUAL ~/.local/share/chezmoi ~/.config/lf/lfrc
+{{- end }}
+
+{{- if ne .chezmoi.os "windows" }}
+# Toggle executable permission (Shift+X) - Unix only
+map X :toggle-executable
+{{- end }}
+
+# ============================================================================
+# COMMANDS
+# ============================================================================
+
+{{- if eq .chezmoi.os "windows" }}
+# Open file with application (using fzf) - Windows
+cmd open-with ${{
+    $apps = @("VS Code", "Explorer (reveal)", "Notepad")
+    $app = $apps | fzf --prompt="Open with: "
+    if (-not $app) { exit }
+
+    switch ($app) {
+        "VS Code" { code $env:f }
+        "Explorer (reveal)" { explorer /select,"$env:f" }
+        "Notepad" { notepad $env:f }
+    }
+}}
+
+# Open current directory with application (using fzf) - Windows
+cmd open-with-dir ${{
+    $apps = @("VS Code", "Explorer", "Terminal")
+    $app = $apps | fzf --prompt="Open directory with: "
+    if (-not $app) { exit }
+
+    switch ($app) {
+        "VS Code" { code $env:PWD }
+        "Explorer" { explorer $env:PWD }
+        "Terminal" { wt -d $env:PWD }
+    }
+}}
+
+# Create file - Windows
+cmd touch ${{
+    $name = Read-Host "File name"
+    if ($name) { New-Item -ItemType File -Name $name }
+}}
+
+# Create directory - Windows
+cmd mkdir ${{
+    $name = Read-Host "Directory name"
+    if ($name) { New-Item -ItemType Directory -Name $name }
+}}
+
+# Fuzzy search with fzf (recursive) - Windows
+cmd fzf ${{
+    $result = Get-ChildItem -Recurse -File | ForEach-Object { $_.FullName } | fzf --prompt="Search: "
+    if ($result) {
+        lf -remote "send $env:id select '$result'"
+    }
+}}
+
+# Extended search across multiple directories - Windows
+cmd fzf-extended ${{
+    $paths = @(
+        "$HOME\Downloads",
+        "$HOME\Documents",
+        "$HOME\Desktop",
+        "$HOME\.local\share\chezmoi",
+        "$HOME\codespace"
+    )
+    $result = $paths | Where-Object { Test-Path $_ } | ForEach-Object {
+        Get-ChildItem -Path $_ -Recurse -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+    } | fzf --prompt=": "
+
+    if ($result) {
+        Set-Clipboard -Value $result
+        if (Test-Path -PathType Leaf $result) {
+            lf -remote "send $env:id select '$result'"
+        } else {
+            lf -remote "send $env:id cd '$result'"
+        }
+    }
+}}
+
+# Yank path to clipboard - Windows
+cmd yank-path ${{
+    Set-Clipboard -Value $env:f
+    lf -remote "send $env:id echo Copied: $env:f"
+}}
+
+# Yank directory path to clipboard - Windows
+cmd yank-dirname ${{
+    Set-Clipboard -Value $env:PWD
+    lf -remote "send $env:id echo Copied: $env:PWD"
+}}
+
+{{- else if eq .chezmoi.os "darwin" }}
+# Open file with application (using fzf) - macOS
+cmd open-with ${{
+    app=$(printf "VISUAL Editor\nFinder (reveal)\nMacVim\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open with: ")
+    [ -z "$app" ] && exit
+
+    case "$app" in
+        "VISUAL Editor") $VISUAL "$f" ;;
+        "Finder (reveal)") open -R "$f" ;;
+        *) open -a "$app" "$f" ;;
+    esac
+}}
+
+# Open current directory with application (using fzf) - macOS
+cmd open-with-dir ${{
+    app=$(printf "VISUAL Editor\nFinder\nMarta\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open directory with: ")
+    [ -z "$app" ] && exit
+
+    case "$app" in
+        "VISUAL Editor") $VISUAL "$PWD" ;;
+        "Finder") open "$PWD" ;;
+        "Marta") open -a "Marta" "$PWD" ;;
+        *) open -a "$app" "$PWD" ;;
+    esac
+}}
+
+# Create file - Unix
+cmd touch ${{
+    read -p "File name: " name
+    touch "$name"
+}}
+
+# Create directory - Unix
+cmd mkdir ${{
+    read -p "Directory name: " name
+    mkdir -p "$name"
+}}
+
+# Fuzzy search with fzf (recursive) - Unix
+cmd fzf ${{
+    result=$(find . -type f 2>/dev/null | fzf --prompt="Search (recursive): " --preview="bat --color=always --style=numbers {}")
+    if [ -n "$result" ]; then
+        lf -remote "send $id select \"$result\""
+    fi
+}}
+
+# Extended search across multiple directories - Unix
+cmd fzf-extended ${{
+    result=$({
+        fd --type f --type d . ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace 2>/dev/null
+        fd --type f --type d --max-depth 3 . ~ 2>/dev/null
+    } | fzf --prompt=": " --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' --preview-window=right:60%:wrap)
+
+    if [ -n "$result" ]; then
+        printf "%s" "$result" | pbcopy
+        if [ -f "$result" ]; then
+            lf -remote "send $id select \"$result\""
+        elif [ -d "$result" ]; then
+            lf -remote "send $id cd \"$result\""
+        fi
+    fi
+}}
+
+# Yank path to clipboard - macOS
+cmd yank-path ${{
+    printf "%s" "$f" | pbcopy
+    lf -remote "send $id echo Copied: $f"
+}}
+
+# Yank directory path to clipboard - macOS
+cmd yank-dirname ${{
+    printf "%s" "$PWD" | pbcopy
+    lf -remote "send $id echo Copied: $PWD"
+}}
+
+# Toggle executable permission - Unix
+cmd toggle-executable ${{
+    if [ -x "$f" ]; then
+        chmod -x "$f"
+        lf -remote "send $id echo Removed executable: $f"
+    else
+        chmod +x "$f"
+        lf -remote "send $id echo Made executable: $f"
+    fi
+    lf -remote "send $id reload"
+}}
+
+{{- else }}
+# Open file with application (using fzf) - Linux
+cmd open-with ${{
+    app=$(printf "VISUAL Editor\nFile Manager\n" | fzf --prompt="Open with: ")
+    [ -z "$app" ] && exit
+
+    case "$app" in
+        "VISUAL Editor") $VISUAL "$f" ;;
+        "File Manager") xdg-open "$(dirname "$f")" ;;
+        *) xdg-open "$f" ;;
+    esac
+}}
+
+# Open current directory with application (using fzf) - Linux
+cmd open-with-dir ${{
+    app=$(printf "VISUAL Editor\nFile Manager\nTerminal\n" | fzf --prompt="Open directory with: ")
+    [ -z "$app" ] && exit
+
+    case "$app" in
+        "VISUAL Editor") $VISUAL "$PWD" ;;
+        "File Manager") xdg-open "$PWD" ;;
+        "Terminal") $TERMINAL &>/dev/null & disown ;;
+    esac
+}}
+
+# Create file - Unix
+cmd touch ${{
+    read -p "File name: " name
+    touch "$name"
+}}
+
+# Create directory - Unix
+cmd mkdir ${{
+    read -p "Directory name: " name
+    mkdir -p "$name"
+}}
+
+# Fuzzy search with fzf (recursive) - Unix
+cmd fzf ${{
+    result=$(find . -type f 2>/dev/null | fzf --prompt="Search (recursive): " --preview="bat --color=always --style=numbers {}")
+    if [ -n "$result" ]; then
+        lf -remote "send $id select \"$result\""
+    fi
+}}
+
+# Extended search across multiple directories - Linux
+cmd fzf-extended ${{
+    result=$({
+        fd --type f --type d . ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace 2>/dev/null
+        fd --type f --type d --max-depth 3 . ~ 2>/dev/null
+    } | fzf --prompt=": " --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' --preview-window=right:60%:wrap)
+
+    if [ -n "$result" ]; then
+        printf "%s" "$result" | xclip -selection clipboard
+        if [ -f "$result" ]; then
+            lf -remote "send $id select \"$result\""
+        elif [ -d "$result" ]; then
+            lf -remote "send $id cd \"$result\""
+        fi
+    fi
+}}
+
+# Yank path to clipboard - Linux
+cmd yank-path ${{
+    printf "%s" "$f" | xclip -selection clipboard
+    lf -remote "send $id echo Copied: $f"
+}}
+
+# Yank directory path to clipboard - Linux
+cmd yank-dirname ${{
+    printf "%s" "$PWD" | xclip -selection clipboard
+    lf -remote "send $id echo Copied: $PWD"
+}}
+
+# Toggle executable permission - Unix
+cmd toggle-executable ${{
+    if [ -x "$f" ]; then
+        chmod -x "$f"
+        lf -remote "send $id echo Removed executable: $f"
+    else
+        chmod +x "$f"
+        lf -remote "send $id echo Made executable: $f"
+    fi
+    lf -remote "send $id reload"
+}}
+{{- end }}

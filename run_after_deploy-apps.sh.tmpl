@@ -100,3 +100,30 @@ mkdir -p "$NVIM_TARGET"
 chezmoi execute-template < "$VIM_SOURCE/nvim-init.vim.tmpl" > "$NVIM_TARGET/init.vim"
 
 echo "Neovim config deployed to $NVIM_TARGET"
+
+# ==========================
+# lf File Manager
+# ==========================
+LF_SOURCE="$SOURCE_DIR/lf"
+
+{{- if eq .chezmoi.os "darwin" }}
+LF_TARGET="$HOME/.config/lf"
+{{- else if eq .chezmoi.os "linux" }}
+LF_TARGET="$HOME/.config/lf"
+{{- else if eq .chezmoi.os "windows" }}
+LF_TARGET="$APPDATA/lf"
+{{- end }}
+
+mkdir -p "$LF_TARGET"
+
+chezmoi execute-template < "$LF_SOURCE/lfrc.tmpl" > "$LF_TARGET/lfrc"
+
+{{- if eq .chezmoi.os "windows" }}
+cp "$LF_SOURCE/preview.cmd" "$LF_TARGET/preview.cmd"
+{{- else }}
+cp "$LF_SOURCE/preview.sh" "$LF_TARGET/preview.sh"
+cp "$LF_SOURCE/cleaner.sh" "$LF_TARGET/cleaner.sh"
+chmod +x "$LF_TARGET/preview.sh" "$LF_TARGET/cleaner.sh"
+{{- end }}
+
+echo "lf config deployed to $LF_TARGET"

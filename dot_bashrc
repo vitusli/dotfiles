@@ -1,0 +1,2 @@
+# Minimal prompt
+PS1='\W \$ '

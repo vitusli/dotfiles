@@ -50,6 +50,21 @@
     "settingsSync.ignoredSettings": [],
 
     // Terminal
+{{- if eq .chezmoi.os "windows" }}
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "path": "pwsh.exe",
+            "icon": "terminal-powershell",
+            "args": []
+        }
+    },
+    "terminal.integrated.commandsToSkipShell": [
+        "workbench.action.terminal.kill",
+        "workbench.action.terminal.killActiveTab",
+        "workbench.action.chat.openagent"
+    ],
+{{- end }}
     "terminal.integrated.suggest.enabled": false,
 
     // VS Code Custom CSS
