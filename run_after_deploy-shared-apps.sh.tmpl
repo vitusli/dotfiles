@@ -1,126 +1,90 @@
 #!/bin/bash
 
-# Deploy application configurations to OS-specific paths
+# =============================================================================
+# Deploy shared application configs to OS-specific paths
 # This script runs after chezmoi apply
+#
+# Configuration is driven by .chezmoidata.yaml - edit paths there, not here!
+# =============================================================================
 
-SHARED_DIR="{{ .chezmoi.sourceDir }}/shared"
+set -e
 
-# ==========================
-# VSCode
-# ==========================
-VSCODE_SOURCE="$SHARED_DIR/vscode"
+SHARED_DIR="{{ .chezmoi.sourceDir }}"
+OS="{{ .chezmoi.os }}"
 
-{{- if eq .chezmoi.os "darwin" }}
-VSCODE_TARGET="$HOME/Library/Application Support/Code/User"
-{{- end }}
+echo "Deploying shared app configs for $OS..."
 
-{{- if eq .chezmoi.os "windows" }}
-VSCODE_TARGET="$APPDATA/Code/User"
-{{- end }}
+# =============================================================================
+# Generic app deployment from .chezmoidata.yaml
+# =============================================================================
 
-{{- if eq .chezmoi.os "linux" }}
-VSCODE_TARGET="$HOME/.config/Code/User"
-{{- end }}
-
-mkdir -p "$VSCODE_TARGET"
-
-chezmoi execute-template < "$VSCODE_SOURCE/settings.json.tmpl" > "$VSCODE_TARGET/settings.json"
-chezmoi execute-template < "$VSCODE_SOURCE/keybindings.json.tmpl" > "$VSCODE_TARGET/keybindings.json"
-
-cp "$VSCODE_SOURCE/custom-vscode.css" "$VSCODE_TARGET/custom-vscode.css"
-
-echo "VSCode config deployed to $VSCODE_TARGET"
+{{- range $app, $config := .shared_apps }}
+{{- $target := index $config.target $.chezmoi.os }}
+{{- if $target }}
 
 # ==========================
-# Zed
+# {{ $app }}
 # ==========================
-ZED_SOURCE="$SHARED_DIR/zed"
+TARGET="$HOME/{{ $target }}"
+SOURCE="$SHARED_DIR/{{ $config.source }}"
 
-{{- if eq .chezmoi.os "darwin" }}
-ZED_TARGET="$HOME/.config/zed"
-{{- end }}
+mkdir -p "$TARGET"
 
-{{- if eq .chezmoi.os "windows" }}
-ZED_TARGET="$APPDATA/Zed"
-{{- end }}
-
-{{- if eq .chezmoi.os "linux" }}
-ZED_TARGET="$HOME/.config/zed"
-{{- end }}
-
-mkdir -p "$ZED_TARGET"
-
-chezmoi execute-template < "$ZED_SOURCE/keymap.json.tmpl" > "$ZED_TARGET/keymap.json"
-cp "$ZED_SOURCE/private_settings.json" "$ZED_TARGET/settings.json"
-
-echo "Zed config deployed to $ZED_TARGET"
-
-# ==========================
-# Neovim
-# ==========================
-NVIM_SOURCE="$SHARED_DIR/nvim"
-
-{{- if eq .chezmoi.os "darwin" }}
-NVIM_TARGET="$HOME/.config/nvim"
-{{- else if eq .chezmoi.os "linux" }}
-NVIM_TARGET="$HOME/.config/nvim"
-{{- else if eq .chezmoi.os "windows" }}
-NVIM_TARGET="$LOCALAPPDATA/nvim"
-{{- end }}
-
-mkdir -p "$NVIM_TARGET"
-
-chezmoi execute-template < "$NVIM_SOURCE/init.vim.tmpl" > "$NVIM_TARGET/init.vim"
-
-echo "Neovim config deployed to $NVIM_TARGET"
-
-# ==========================
-# lf File Manager
-# ==========================
-LF_SOURCE="$SHARED_DIR/lf"
-
-{{- if eq .chezmoi.os "darwin" }}
-LF_TARGET="$HOME/.config/lf"
-{{- else if eq .chezmoi.os "linux" }}
-LF_TARGET="$HOME/.config/lf"
-{{- else if eq .chezmoi.os "windows" }}
-LF_TARGET="$APPDATA/lf"
-{{- end }}
-
-mkdir -p "$LF_TARGET"
-
-chezmoi execute-template < "$LF_SOURCE/lfrc.tmpl" > "$LF_TARGET/lfrc"
-
-{{- if eq .chezmoi.os "windows" }}
-cp "$LF_SOURCE/preview.cmd" "$LF_TARGET/preview.cmd"
+# Common files (all platforms)
+{{- range $config.files }}
+{{- if .template }}
+chezmoi execute-template < "$SOURCE/{{ .src }}" > "$TARGET/{{ .dst }}"
 {{- else }}
-cp "$LF_SOURCE/preview.sh" "$LF_TARGET/preview.sh"
-cp "$LF_SOURCE/cleaner.sh" "$LF_TARGET/cleaner.sh"
-chmod +x "$LF_TARGET/preview.sh" "$LF_TARGET/cleaner.sh"
+cp "$SOURCE/{{ .src }}" "$TARGET/{{ .dst }}"
+{{- end }}
 {{- end }}
 
-echo "lf config deployed to $LF_TARGET"
+# OS-specific files
+{{- if eq $.chezmoi.os "darwin" }}
+{{- range (index $config "files_darwin") }}
+cp "$SOURCE/{{ .src }}" "$TARGET/{{ .dst }}"
+{{- if .executable }}
+chmod +x "$TARGET/{{ .dst }}"
+{{- end }}
+{{- end }}
+{{- else if eq $.chezmoi.os "linux" }}
+{{- range (index $config "files_linux") }}
+cp "$SOURCE/{{ .src }}" "$TARGET/{{ .dst }}"
+{{- if .executable }}
+chmod +x "$TARGET/{{ .dst }}"
+{{- end }}
+{{- end }}
+{{- end }}
 
-# ==========================
-# Zen Browser (macOS only)
-# ==========================
+echo "  ✓ {{ $app }} → $TARGET"
+
+{{- end }}
+{{- end }}
+
+# =============================================================================
+# Special apps (non-standard deployment paths)
+# =============================================================================
+
 {{- if eq .chezmoi.os "darwin" }}
-ZEN_POLICIES_SOURCE="$SHARED_DIR/zen/policies.json"
-ZEN_POLICIES_TARGET="/Applications/Zen Browser.app/Contents/Resources/distribution"
+# Zen Browser (macOS) - deploys to application bundle
+ZEN_POLICIES_SOURCE="$SHARED_DIR/{{ .special_apps.zen.source }}/policies.json"
+ZEN_POLICIES_TARGET="{{ .special_apps.zen.target.darwin }}"
 
 if [ -f "$ZEN_POLICIES_SOURCE" ] && [ -d "/Applications/Zen Browser.app" ]; then
-    mkdir -p "$ZEN_POLICIES_TARGET"
-    cp "$ZEN_POLICIES_SOURCE" "$ZEN_POLICIES_TARGET/policies.json"
-    echo "Zen Browser policies deployed to $ZEN_POLICIES_TARGET"
+    sudo mkdir -p "$ZEN_POLICIES_TARGET"
+    sudo cp "$ZEN_POLICIES_SOURCE" "$ZEN_POLICIES_TARGET/policies.json"
+    echo "  ✓ zen → $ZEN_POLICIES_TARGET"
 
     # Restart Zen Browser if running to apply policies
     if pgrep -f "Zen Browser" > /dev/null; then
         pkill -9 -f "Zen Browser"
         sleep 1
         open -a "Zen Browser"
-        echo "Zen Browser restarted to apply policies"
+        echo "    (Zen Browser restarted)"
     fi
 else
-    echo "Zen Browser or policies not found, skipping..."
+    echo "  ⊘ zen (not installed, skipping)"
 fi
 {{- end }}
+
+echo "Shared app deployment complete!"

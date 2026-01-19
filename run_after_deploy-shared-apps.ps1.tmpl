@@ -1,74 +1,66 @@
 {{- if eq .chezmoi.os "windows" }}
-# Deploy application configurations to OS-specific paths
+# =============================================================================
+# Deploy shared application configs to OS-specific paths
 # This script runs after chezmoi apply (Windows version)
+#
+# Configuration is driven by .chezmoidata.yaml - edit paths there, not here!
+# =============================================================================
 
-$SHARED_DIR = "{{ .chezmoi.sourceDir }}/shared"
+$ErrorActionPreference = "Stop"
 
-# ==========================
-# VSCode
-# ==========================
-$VSCODE_SOURCE = "$SHARED_DIR/vscode"
-$VSCODE_TARGET = "$env:APPDATA/Code/User"
+$SHARED_DIR = "{{ .chezmoi.sourceDir }}"
+$OS = "windows"
 
-New-Item -ItemType Directory -Force -Path $VSCODE_TARGET | Out-Null
+Write-Host "Deploying shared app configs for $OS..."
 
-Get-Content "$VSCODE_SOURCE/settings.json.tmpl" -Raw | chezmoi execute-template | Out-File -FilePath "$VSCODE_TARGET/settings.json" -Encoding utf8
-Get-Content "$VSCODE_SOURCE/keybindings.json.tmpl" -Raw | chezmoi execute-template | Out-File -FilePath "$VSCODE_TARGET/keybindings.json" -Encoding utf8
+# =============================================================================
+# Generic app deployment from .chezmoidata.yaml
+# =============================================================================
 
-Copy-Item "$VSCODE_SOURCE/custom-vscode.css" -Destination "$VSCODE_TARGET/custom-vscode.css" -Force
-
-Write-Host "VSCode config deployed to $VSCODE_TARGET"
-
-# ==========================
-# Zed
-# ==========================
-$ZED_SOURCE = "$SHARED_DIR/zed"
-$ZED_TARGET = "$env:APPDATA/Zed"
-
-New-Item -ItemType Directory -Force -Path $ZED_TARGET | Out-Null
-
-Get-Content "$ZED_SOURCE/keymap.json.tmpl" -Raw | chezmoi execute-template | Out-File -FilePath "$ZED_TARGET/keymap.json" -Encoding utf8
-Copy-Item "$ZED_SOURCE/private_settings.json" -Destination "$ZED_TARGET/settings.json" -Force
-
-Write-Host "Zed config deployed to $ZED_TARGET"
+{{- range $app, $config := .shared_apps }}
+{{- $target := index $config.target "windows" }}
+{{- if $target }}
 
 # ==========================
-# Neovim
+# {{ $app }}
 # ==========================
-$NVIM_SOURCE = "$SHARED_DIR/nvim"
-$NVIM_TARGET = "$env:LOCALAPPDATA/nvim"
+$TARGET = "$env:USERPROFILE\{{ $target | replace "/" "\\" }}"
+$SOURCE = "$SHARED_DIR\{{ $config.source | replace "/" "\\" }}"
 
-New-Item -ItemType Directory -Force -Path $NVIM_TARGET | Out-Null
+New-Item -ItemType Directory -Force -Path $TARGET | Out-Null
 
-Get-Content "$NVIM_SOURCE/init.vim.tmpl" -Raw | chezmoi execute-template | Out-File -FilePath "$NVIM_TARGET/init.vim" -Encoding utf8
+# Common files (all platforms)
+{{- range $config.files }}
+{{- if .template }}
+Get-Content "$SOURCE\{{ .src }}" -Raw | chezmoi execute-template | Out-File -FilePath "$TARGET\{{ .dst }}" -Encoding utf8
+{{- else }}
+Copy-Item "$SOURCE\{{ .src }}" -Destination "$TARGET\{{ .dst }}" -Force
+{{- end }}
+{{- end }}
 
-Write-Host "Neovim config deployed to $NVIM_TARGET"
+# OS-specific files (Windows)
+{{- range (index $config "files_windows") }}
+Copy-Item "$SOURCE\{{ .src }}" -Destination "$TARGET\{{ .dst }}" -Force
+{{- end }}
 
-# ==========================
-# lf File Manager
-# ==========================
-$LF_SOURCE = "$SHARED_DIR/lf"
-$LF_TARGET = "$env:APPDATA/lf"
+Write-Host "  ✓ {{ $app }} → $TARGET"
 
-New-Item -ItemType Directory -Force -Path $LF_TARGET | Out-Null
+{{- end }}
+{{- end }}
 
-Get-Content "$LF_SOURCE/lfrc.tmpl" -Raw | chezmoi execute-template | Out-File -FilePath "$LF_TARGET/lfrc" -Encoding utf8
+# =============================================================================
+# Special apps (non-standard deployment paths)
+# =============================================================================
 
-Copy-Item "$LF_SOURCE/preview.cmd" -Destination "$LF_TARGET/preview.cmd" -Force
-
-Write-Host "lf config deployed to $LF_TARGET"
-
-# ==========================
-# Zen Browser (Windows)
-# ==========================
-$ZEN_POLICIES_SOURCE = "$SHARED_DIR/zen/policies.json"
+# Zen Browser (Windows) - deploys to application directory
+$ZEN_POLICIES_SOURCE = "$SHARED_DIR\{{ .special_apps.zen.source | replace "/" "\\" }}\policies.json"
 $ZEN_APP_PATH = "$env:LOCALAPPDATA\Programs\Zen Browser"
 $ZEN_POLICIES_TARGET = "$ZEN_APP_PATH\distribution"
 
 if ((Test-Path $ZEN_POLICIES_SOURCE) -and (Test-Path $ZEN_APP_PATH)) {
     New-Item -ItemType Directory -Force -Path $ZEN_POLICIES_TARGET | Out-Null
     Copy-Item $ZEN_POLICIES_SOURCE -Destination "$ZEN_POLICIES_TARGET\policies.json" -Force
-    Write-Host "Zen Browser policies deployed to $ZEN_POLICIES_TARGET"
+    Write-Host "  ✓ zen → $ZEN_POLICIES_TARGET"
 
     # Restart Zen Browser if running to apply policies
     $zenProcess = Get-Process -Name "zen" -ErrorAction SilentlyContinue
@@ -76,9 +68,11 @@ if ((Test-Path $ZEN_POLICIES_SOURCE) -and (Test-Path $ZEN_APP_PATH)) {
         Stop-Process -Name "zen" -Force
         Start-Sleep -Seconds 1
         Start-Process "$ZEN_APP_PATH\zen.exe"
-        Write-Host "Zen Browser restarted to apply policies"
+        Write-Host "    (Zen Browser restarted)"
     }
 } else {
-    Write-Host "Zen Browser or policies not found, skipping..."
+    Write-Host "  ⊘ zen (not installed, skipping)"
 }
+
+Write-Host "Shared app deployment complete!"
 {{- end }}

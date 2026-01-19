@@ -50,3 +50,79 @@ abbreviations:
     f: "fzf | wl-copy"
     rl: "source ~/.zshrc"
     v: "source .venv/bin/activate"
+
+# =============================================================================
+# Shared App Paths
+# =============================================================================
+# Defines where shared configs should be deployed per OS
+# Paths are relative to $HOME (or %USERPROFILE% on Windows)
+
+shared_apps:
+  vscode:
+    source: "shared/vscode"
+    target:
+      darwin: "Library/Application Support/Code/User"
+      linux: ".config/Code/User"
+      windows: "AppData/Roaming/Code/User"
+    files:
+      - { src: "settings.json.tmpl", dst: "settings.json", template: true }
+      - {
+          src: "keybindings.json.tmpl",
+          dst: "keybindings.json",
+          template: true,
+        }
+      - { src: "custom-vscode.css", dst: "custom-vscode.css", template: false }
+
+  zed:
+    source: "shared/zed"
+    target:
+      darwin: ".config/zed"
+      linux: ".config/zed"
+      windows: "AppData/Roaming/Zed"
+    files:
+      - { src: "keymap.json.tmpl", dst: "keymap.json", template: true }
+      - { src: "private_settings.json", dst: "settings.json", template: false }
+
+  nvim:
+    source: "shared/nvim"
+    target:
+      darwin: ".config/nvim"
+      linux: ".config/nvim"
+      windows: "AppData/Local/nvim"
+    files:
+      - { src: "init.vim.tmpl", dst: "init.vim", template: true }
+
+  lf:
+    source: "shared/lf"
+    target:
+      darwin: ".config/lf"
+      linux: ".config/lf"
+      windows: "AppData/Roaming/lf"
+    files:
+      - { src: "lfrc.tmpl", dst: "lfrc", template: true }
+    # OS-specific files handled separately in scripts (preview.sh vs preview.cmd)
+    files_darwin:
+      - { src: "preview.sh", dst: "preview.sh", executable: true }
+      - { src: "cleaner.sh", dst: "cleaner.sh", executable: true }
+    files_linux:
+      - { src: "preview.sh", dst: "preview.sh", executable: true }
+      - { src: "cleaner.sh", dst: "cleaner.sh", executable: true }
+    files_windows:
+      - { src: "preview.cmd", dst: "preview.cmd" }
+
+# =============================================================================
+# Special Apps (non-standard deployment)
+# =============================================================================
+# These require special handling and are not part of the generic loop
+
+special_apps:
+  zen:
+    source: "shared/zen"
+    # Zen deploys to application directory, not home
+    # These are absolute paths (handled specially in deploy scripts)
+    target:
+      darwin: "/Applications/Zen Browser.app/Contents/Resources/distribution"
+      windows: "%LOCALAPPDATA%/Programs/Zen Browser/distribution"
+    files:
+      - { src: "policies.json", dst: "policies.json" }
+    restart_after: true
