@@ -14,6 +14,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 CONFIG_DIR="$SCRIPT_DIR/bootstrap/config"
+CHEZMOI_DIR="$SCRIPT_DIR"
 
 # =============================================================================
 # Detect platform
@@ -63,6 +64,43 @@ parse_packages() {
 }
 
 # =============================================================================
+# Check if a package has a matching file/directory in the chezmoi directory
+# Matches package name against file/directory names (partial match)
+# e.g. "karabiner-elements" matches "karabiner", "aerospace" matches "dot_aerospace.toml"
+# Usage: has_config_match "package-name"
+# Returns 0 if match found, 1 otherwise
+# =============================================================================
+has_config_match() {
+    local pkg="$1"
+
+    [[ ! -d "$CHEZMOI_DIR" ]] && return 1
+
+    # Search all files and directories recursively
+    while IFS= read -r path; do
+        local name=$(basename "$path")
+        # Check if package name contains the name or vice versa
+        if [[ "$pkg" == *"$name"* ]] || [[ "$name" == *"$pkg"* ]]; then
+            return 0
+        fi
+    done < <(find "$CHEZMOI_DIR" -mindepth 1 \( -name "bootstrap" -prune \) -o \( -type f -o -type d \) -print 2>/dev/null)
+    return 1
+}
+
+# =============================================================================
+# Filter packages - only return packages that have matching config directories
+# Usage: filter_packages_with_config "cli.txt"
+# =============================================================================
+filter_packages_with_config() {
+    local file="$1"
+    while IFS= read -r pkg; do
+        [[ -z "$pkg" ]] && continue
+        if has_config_match "$pkg"; then
+            echo "$pkg"
+        fi
+    done <<< "$(parse_packages "$file")"
+}
+
+# =============================================================================
 # macOS: Homebrew installation
 # =============================================================================
 install_macos() {
@@ -75,29 +113,39 @@ install_macos() {
 
     echo "Installing Homebrew packages..."
 
-    # Install CLI tools (formulae)
-    echo "=== Installing CLI tools (formulae) ==="
-    while IFS= read -r formula; do
-        [[ -z "$formula" ]] && continue
-        if ! brew list --formula "$formula" &>/dev/null 2>&1; then
-            echo "  Installing $formula..."
-            brew install "$formula" || echo "  Failed to install $formula"
-        else
-            echo "  ✓ $formula"
-        fi
-    done <<< "$(parse_packages cli.txt)"
+    # Install CLI tools (formulae) - only those with matching configs
+    echo "=== Installing CLI tools with matching configs (formulae) ==="
+    local cli_with_config=$(filter_packages_with_config cli.txt)
+    if [[ -n "$cli_with_config" ]]; then
+        while IFS= read -r formula; do
+            [[ -z "$formula" ]] && continue
+            if ! brew list --formula "$formula" &>/dev/null 2>&1; then
+                echo "  Installing $formula..."
+                brew install "$formula" || echo "  Failed to install $formula"
+            else
+                echo "  ✓ $formula"
+            fi
+        done <<< "$cli_with_config"
+    else
+        echo "  No CLI packages with matching configs found."
+    fi
 
-    # Install GUI apps (casks)
-    echo "=== Installing GUI apps (casks) ==="
-    while IFS= read -r cask; do
-        [[ -z "$cask" ]] && continue
-        if ! brew list --cask "$cask" &>/dev/null 2>&1; then
-            echo "  Installing $cask..."
-            brew install --cask "$cask" || echo "  Failed to install $cask"
-        else
-            echo "  ✓ $cask"
-        fi
-    done <<< "$(parse_packages gui.txt)"
+    # Install GUI apps (casks) - only those with matching configs
+    echo "=== Installing GUI apps with matching configs (casks) ==="
+    local gui_with_config=$(filter_packages_with_config gui.txt)
+    if [[ -n "$gui_with_config" ]]; then
+        while IFS= read -r cask; do
+            [[ -z "$cask" ]] && continue
+            if ! brew list --cask "$cask" &>/dev/null 2>&1; then
+                echo "  Installing $cask..."
+                brew install --cask "$cask" || echo "  Failed to install $cask"
+            else
+                echo "  ✓ $cask"
+            fi
+        done <<< "$gui_with_config"
+    else
+        echo "  No GUI packages with matching configs found."
+    fi
 
     echo "Homebrew package installation complete!"
 }
