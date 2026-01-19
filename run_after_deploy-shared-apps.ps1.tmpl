@@ -1,0 +1,58 @@
+# Deploy application configurations to OS-specific paths
+# This script runs after chezmoi apply (Windows version)
+
+$SHARED_DIR = "{{ .chezmoi.sourceDir }}/shared"
+
+# ==========================
+# VSCode
+# ==========================
+$VSCODE_SOURCE = "$SHARED_DIR/vscode"
+$VSCODE_TARGET = "$env:APPDATA/Code/User"
+
+New-Item -ItemType Directory -Force -Path $VSCODE_TARGET | Out-Null
+
+Get-Content "$VSCODE_SOURCE/settings.json.tmpl" -Raw | chezmoi execute-template | Out-File -FilePath "$VSCODE_TARGET/settings.json" -Encoding utf8
+Get-Content "$VSCODE_SOURCE/keybindings.json.tmpl" -Raw | chezmoi execute-template | Out-File -FilePath "$VSCODE_TARGET/keybindings.json" -Encoding utf8
+
+Copy-Item "$VSCODE_SOURCE/custom-vscode.css" -Destination "$VSCODE_TARGET/custom-vscode.css" -Force
+
+Write-Host "VSCode config deployed to $VSCODE_TARGET"
+
+# ==========================
+# Zed
+# ==========================
+$ZED_SOURCE = "$SHARED_DIR/zed"
+$ZED_TARGET = "$env:APPDATA/Zed"
+
+New-Item -ItemType Directory -Force -Path $ZED_TARGET | Out-Null
+
+Get-Content "$ZED_SOURCE/keymap.json.tmpl" -Raw | chezmoi execute-template | Out-File -FilePath "$ZED_TARGET/keymap.json" -Encoding utf8
+Copy-Item "$ZED_SOURCE/private_settings.json" -Destination "$ZED_TARGET/settings.json" -Force
+
+Write-Host "Zed config deployed to $ZED_TARGET"
+
+# ==========================
+# Neovim
+# ==========================
+$NVIM_SOURCE = "$SHARED_DIR/nvim"
+$NVIM_TARGET = "$env:LOCALAPPDATA/nvim"
+
+New-Item -ItemType Directory -Force -Path $NVIM_TARGET | Out-Null
+
+Get-Content "$NVIM_SOURCE/init.vim.tmpl" -Raw | chezmoi execute-template | Out-File -FilePath "$NVIM_TARGET/init.vim" -Encoding utf8
+
+Write-Host "Neovim config deployed to $NVIM_TARGET"
+
+# ==========================
+# lf File Manager
+# ==========================
+$LF_SOURCE = "$SHARED_DIR/lf"
+$LF_TARGET = "$env:APPDATA/lf"
+
+New-Item -ItemType Directory -Force -Path $LF_TARGET | Out-Null
+
+Get-Content "$LF_SOURCE/lfrc.tmpl" -Raw | chezmoi execute-template | Out-File -FilePath "$LF_TARGET/lfrc" -Encoding utf8
+
+Copy-Item "$LF_SOURCE/preview.cmd" -Destination "$LF_TARGET/preview.cmd" -Force
+
+Write-Host "lf config deployed to $LF_TARGET"

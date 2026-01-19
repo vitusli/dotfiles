@@ -15,6 +15,7 @@ lazygit
 lf
 p7zip #macos
 poppler #macos
+pwsh
 unar #macos
 neovim
 wandelbotsgmbh/wandelbots/nova #macos
@@ -26,8 +27,8 @@ serie
 uv
 zoxide
 zsh #linux
-zsh-abbr #macos
-zsh-autocomplete #macos
+zsh-abbr #macos #linux
+zsh-autocomplete #macos #linux
 zsh-autosuggestions #macos #linux
 zsh-syntax-highlighting #macos #linux
 

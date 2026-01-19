@@ -47,6 +47,6 @@ abbreviations:
   # Linux only
   # ---------------------------------------------------------------------------
   linux:
-    f: "fzf | xclip -selection clipboard"
+    f: "fzf | wl-copy"
     rl: "source ~/.zshrc"
     v: "source .venv/bin/activate"

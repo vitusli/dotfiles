@@ -71,6 +71,6 @@ libva-nvidia-driver
 # ══════════════════════════════════════════════════════════════
 
 #aur
-ulauncher
+vicinae
 espanso-wayland
 ttf-nerd-fonts-symbols

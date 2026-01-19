@@ -13,11 +13,13 @@ dot_hushlogin
 
 run_once_install-packages.sh
 run_once_setup-git-plist-filter.sh
+run_after_deploy-shared-apps.sh
 {{- end }}
 
 {{- if ne .chezmoi.os "windows" }} # Windows-only
 AppData
 Documents
+run_after_deploy-shared-apps.ps1
 {{- end }}
 
 {{- if ne .chezmoi.os "linux" }} # Linux-only
