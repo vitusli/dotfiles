@@ -1,9 +1,11 @@
 {{- if eq .chezmoi.os "windows" }}
 # =============================================================================
 # Deploy shared application configs to OS-specific paths
-# This script runs after chezmoi apply (Windows version)
+# This script runs when .chezmoidata.yaml changes
 #
 # Configuration is driven by .chezmoidata.yaml - edit paths there, not here!
+#
+# .chezmoidata.yaml hash: {{ include ".chezmoidata.yaml" | sha256sum }}
 # =============================================================================
 
 $ErrorActionPreference = "Stop"
@@ -57,20 +59,23 @@ $ZEN_POLICIES_SOURCE = "$SHARED_DIR\{{ .special_apps.zen.source | replace "/" "\
 $ZEN_APP_PATH = "$env:LOCALAPPDATA\Programs\Zen Browser"
 $ZEN_POLICIES_TARGET = "$ZEN_APP_PATH\distribution"
 
-if ((Test-Path $ZEN_POLICIES_SOURCE) -and (Test-Path $ZEN_APP_PATH)) {
+if ((Test-Path $ZEN_POLICIES_SOURCE) -and (Test-Path $ZEN_APP_PATH))
+{
     New-Item -ItemType Directory -Force -Path $ZEN_POLICIES_TARGET | Out-Null
     Copy-Item $ZEN_POLICIES_SOURCE -Destination "$ZEN_POLICIES_TARGET\policies.json" -Force
     Write-Host "  ✓ zen → $ZEN_POLICIES_TARGET"
 
     # Restart Zen Browser if running to apply policies
     $zenProcess = Get-Process -Name "zen" -ErrorAction SilentlyContinue
-    if ($zenProcess) {
+    if ($zenProcess)
+    {
         Stop-Process -Name "zen" -Force
         Start-Sleep -Seconds 1
         Start-Process "$ZEN_APP_PATH\zen.exe"
         Write-Host "    (Zen Browser restarted)"
     }
-} else {
+} else
+{
     Write-Host "  ⊘ zen (not installed, skipping)"
 }
 
