@@ -100,3 +100,27 @@ chmod +x "$LF_TARGET/preview.sh" "$LF_TARGET/cleaner.sh"
 {{- end }}
 
 echo "lf config deployed to $LF_TARGET"
+
+# ==========================
+# Zen Browser (macOS only)
+# ==========================
+{{- if eq .chezmoi.os "darwin" }}
+ZEN_POLICIES_SOURCE="$SHARED_DIR/zen/policies.json"
+ZEN_POLICIES_TARGET="/Applications/Zen Browser.app/Contents/Resources/distribution"
+
+if [ -f "$ZEN_POLICIES_SOURCE" ] && [ -d "/Applications/Zen Browser.app" ]; then
+    mkdir -p "$ZEN_POLICIES_TARGET"
+    cp "$ZEN_POLICIES_SOURCE" "$ZEN_POLICIES_TARGET/policies.json"
+    echo "Zen Browser policies deployed to $ZEN_POLICIES_TARGET"
+
+    # Restart Zen Browser if running to apply policies
+    if pgrep -f "Zen Browser" > /dev/null; then
+        pkill -9 -f "Zen Browser"
+        sleep 1
+        open -a "Zen Browser"
+        echo "Zen Browser restarted to apply policies"
+    fi
+else
+    echo "Zen Browser or policies not found, skipping..."
+fi
+{{- end }}

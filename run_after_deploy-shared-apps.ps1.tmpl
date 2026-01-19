@@ -1,3 +1,4 @@
+{{- if eq .chezmoi.os "windows" }}
 # Deploy application configurations to OS-specific paths
 # This script runs after chezmoi apply (Windows version)
 
@@ -56,3 +57,28 @@ Get-Content "$LF_SOURCE/lfrc.tmpl" -Raw | chezmoi execute-template | Out-File -F
 Copy-Item "$LF_SOURCE/preview.cmd" -Destination "$LF_TARGET/preview.cmd" -Force
 
 Write-Host "lf config deployed to $LF_TARGET"
+
+# ==========================
+# Zen Browser (Windows)
+# ==========================
+$ZEN_POLICIES_SOURCE = "$SHARED_DIR/zen/policies.json"
+$ZEN_APP_PATH = "$env:LOCALAPPDATA\Programs\Zen Browser"
+$ZEN_POLICIES_TARGET = "$ZEN_APP_PATH\distribution"
+
+if ((Test-Path $ZEN_POLICIES_SOURCE) -and (Test-Path $ZEN_APP_PATH)) {
+    New-Item -ItemType Directory -Force -Path $ZEN_POLICIES_TARGET | Out-Null
+    Copy-Item $ZEN_POLICIES_SOURCE -Destination "$ZEN_POLICIES_TARGET\policies.json" -Force
+    Write-Host "Zen Browser policies deployed to $ZEN_POLICIES_TARGET"
+
+    # Restart Zen Browser if running to apply policies
+    $zenProcess = Get-Process -Name "zen" -ErrorAction SilentlyContinue
+    if ($zenProcess) {
+        Stop-Process -Name "zen" -Force
+        Start-Sleep -Seconds 1
+        Start-Process "$ZEN_APP_PATH\zen.exe"
+        Write-Host "Zen Browser restarted to apply policies"
+    }
+} else {
+    Write-Host "Zen Browser or policies not found, skipping..."
+}
+{{- end }}
