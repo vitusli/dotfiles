@@ -63,8 +63,6 @@ require("lazy").setup({
     dependencies = { "nvim-lua/plenary.nvim" },
     keys = {
       { "<Space>", "<cmd>Telescope find_files search_dirs={'~'} find_command={'fd','--type','f','--max-depth','3'}<cr>", desc = "Find files" },
-      { "<leader>g", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
-      { "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
     },
     opts = {
       defaults = {
