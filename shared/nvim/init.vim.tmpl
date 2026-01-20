@@ -137,7 +137,45 @@ require("lazy").setup({
     "nvim-telescope/telescope.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     keys = {
-      { "<Space>", "<cmd>Telescope find_files search_dirs={'~'} find_command={'fd','--type','f','--max-depth','3'}<cr>", desc = "Find files" },
+      {
+        "<Space>",
+        function()
+          local builtin = require("telescope.builtin")
+          -- Find project root (look for common markers)
+          local root_markers = { ".git", "pyproject.toml", "Cargo.toml", "package.json", "Makefile" }
+          local cwd = vim.fn.getcwd()
+          local root = nil
+
+          for _, marker in ipairs(root_markers) do
+            local found = vim.fn.finddir(marker, cwd .. ";")
+            if found == "" then
+              found = vim.fn.findfile(marker, cwd .. ";")
+            end
+            if found ~= "" then
+              root = vim.fn.fnamemodify(found, ":p:h")
+              if marker == ".git" then
+                root = vim.fn.fnamemodify(root, ":h")
+              end
+              break
+            end
+          end
+
+          if root then
+            -- In project: search everything (exclude venv)
+            builtin.find_files({
+              cwd = root,
+              find_command = { "fd", "--type", "f", "--exclude", ".venv", "--exclude", "venv" },
+            })
+          else
+            -- No project: search home with max-depth 2
+            builtin.find_files({
+              cwd = vim.env.HOME,
+              find_command = { "fd", "--type", "f", "--max-depth", "2" },
+            })
+          end
+        end,
+        desc = "Find files (project or home)",
+      },
     },
     opts = {
       defaults = {
@@ -187,8 +225,16 @@ require("lazy").setup({
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
     config = function()
-      -- Pyright for Python (auto-detects .venv)
+      -- Pyright for Python with automatic .venv detection
       vim.lsp.config.pyright = {
+        before_init = function(_, config)
+          -- Auto-detect .venv in project root
+          local venv = config.root_dir .. "/.venv"
+          if vim.fn.isdirectory(venv) == 1 then
+            config.settings.python = config.settings.python or {}
+            config.settings.python.pythonPath = venv .. "/bin/python"
+          end
+        end,
         settings = {
           python = {
             analysis = {
@@ -249,7 +295,6 @@ require("lazy").setup({
         },
       })
       -- Cmdline / completion
-      cmp.setup.cmdline("/", {
         mapping = cmp.mapping.preset.cmdline(),
         sources = {
           { name = "buffer" },
