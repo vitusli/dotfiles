@@ -1,7 +1,6 @@
 # GitHub Repos to clone
 # Format: repo|destination
 
-vitusli/dotfiles|$HOME
 vitusli/codespace|$HOME
 vitusli/vtools_dev|$HOME
 vitusli/obsidian|$DOCUMENTS

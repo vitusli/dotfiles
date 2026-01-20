@@ -20,7 +20,8 @@ $DOCUMENTS = "$HOME\Documents"
 # CONFIG LOADING FUNCTIONS
 # ============================================================================
 
-function Load-Packages {
+function Load-Packages
+{
     param(
         [string]$File,
         [string]$Platform = "windows"
@@ -28,15 +29,20 @@ function Load-Packages {
 
     $url = "$CONFIG_URL/$File"
 
-    try {
+    try
+    {
         $content = (Invoke-WebRequest -Uri $url -UseBasicParsing).Content
         $lines = $content -split "`n" | ForEach-Object { $_.Trim() } | Where-Object {
             $_ -and -not $_.StartsWith('#')
         } | Where-Object {
             # Include if: no tag at all
-            if ($_ -notmatch '#') { return $true }
+            if ($_ -notmatch '#')
+            { return $true
+            }
             # Include if: has our platform tag
-            if ($_ -match "#$Platform") { return $true }
+            if ($_ -match "#$Platform")
+            { return $true
+            }
             # Exclude if: has other platform tags but NOT ours
             return $false
         } | ForEach-Object {
@@ -44,18 +50,21 @@ function Load-Packages {
             $_ -replace '\s*#.*$', ''
         }
         return $lines
-    } catch {
+    } catch
+    {
         Log-Warning "Failed to load $File from config: $_"
         return @()
     }
 }
 
-function Load-AllPackages {
+function Load-AllPackages
+{
     param([string]$File)
 
     $url = "$CONFIG_URL/$File"
 
-    try {
+    try
+    {
         $content = (Invoke-WebRequest -Uri $url -UseBasicParsing).Content
         $lines = $content -split "`n" | ForEach-Object { $_.Trim() } | Where-Object {
             $_ -and -not $_.StartsWith('#')
@@ -63,24 +72,28 @@ function Load-AllPackages {
             $_ -replace '\s*#.*$', ''
         }
         return $lines
-    } catch {
+    } catch
+    {
         Log-Warning "Failed to load $File from config: $_"
         return @()
     }
 }
 
-function Load-Config {
+function Load-Config
+{
     param([string]$File)
 
     $url = "$CONFIG_URL/$File"
 
-    try {
+    try
+    {
         $content = (Invoke-WebRequest -Uri $url -UseBasicParsing).Content
         $lines = $content -split "`n" | ForEach-Object { $_.Trim() } | Where-Object {
             $_ -and -not $_.StartsWith('#')
         }
         return $lines
-    } catch {
+    } catch
+    {
         Log-Warning "Failed to load $File from config: $_"
         return @()
     }
@@ -126,7 +139,8 @@ $FEATURES_TO_DISABLE = @(
 # UTILITY FUNCTIONS
 # ============================================================================
 
-function Initialize-Logging {
+function Initialize-Logging
+{
     New-Item -ItemType Directory -Path $LOG_DIR -Force | Out-Null
 
     $header = @"
@@ -146,7 +160,8 @@ Windows Version: $([System.Environment]::OSVersion.VersionString)
     Write-Output $header
 }
 
-function Log-Header {
+function Log-Header
+{
     param([string]$Message)
 
     $output = @"
@@ -160,7 +175,8 @@ function Log-Header {
     Add-Content -Path $LOG_FILE -Value $output
 }
 
-function Log-Success {
+function Log-Success
+{
     param([string]$Message)
 
     $output = "✓ $Message"
@@ -168,7 +184,8 @@ function Log-Success {
     Add-Content -Path $LOG_FILE -Value $output
 }
 
-function Log-Info {
+function Log-Info
+{
     param([string]$Message)
 
     $output = "ℹ $Message"
@@ -176,7 +193,8 @@ function Log-Info {
     Add-Content -Path $LOG_FILE -Value $output
 }
 
-function Log-Warning {
+function Log-Warning
+{
     param([string]$Message)
 
     $output = "⚠ $Message"
@@ -184,7 +202,8 @@ function Log-Warning {
     Add-Content -Path $LOG_FILE -Value $output
 }
 
-function Log-Error {
+function Log-Error
+{
     param([string]$Message)
 
     $output = "✗ $Message"
@@ -192,7 +211,8 @@ function Log-Error {
     Add-Content -Path $LOG_FILE -Value $output
 }
 
-function Test-Administrator {
+function Test-Administrator
+{
     $admin = [Security.Principal.WindowsIdentity]::GetCurrent() |
         Select-Object -ExpandProperty Groups |
         Select-Object -ExpandProperty Value |
@@ -201,7 +221,8 @@ function Test-Administrator {
     return $null -ne $admin
 }
 
-function Command-Exists {
+function Command-Exists
+{
     param([string]$Command)
 
     $null = Get-Command $Command -ErrorAction SilentlyContinue
@@ -212,10 +233,12 @@ function Command-Exists {
 # SCOOP SETUP
 # ============================================================================
 
-function Setup-Scoop {
+function Setup-Scoop
+{
     Log-Header "Setting up Scoop"
 
-    if (Command-Exists scoop) {
+    if (Command-Exists scoop)
+    {
         Log-Success "Scoop already installed"
         return
     }
@@ -232,9 +255,11 @@ iwr -useb get.scoop.sh | iex
 
     Invoke-Expression $scoopInstall
 
-    if (Command-Exists scoop) {
+    if (Command-Exists scoop)
+    {
         Log-Success "Scoop installed"
-    } else {
+    } else
+    {
         Log-Error "Failed to install Scoop"
         return $false
     }
@@ -242,15 +267,19 @@ iwr -useb get.scoop.sh | iex
     return $true
 }
 
-function Add-ScoopBuckets {
+function Add-ScoopBuckets
+{
     Log-Header "Adding Scoop Buckets"
 
-    foreach ($bucket in $SCOOP_BUCKETS) {
+    foreach ($bucket in $SCOOP_BUCKETS)
+    {
         $existing = scoop bucket list | Select-String $bucket
 
-        if ($existing) {
+        if ($existing)
+        {
             Log-Success "Bucket '$bucket' already added"
-        } else {
+        } else
+        {
             Log-Info "Adding bucket: $bucket"
             scoop bucket add $bucket
             Log-Success "Bucket '$bucket' added"
@@ -258,7 +287,8 @@ function Add-ScoopBuckets {
     }
 }
 
-function Install-ScoopPackages {
+function Install-ScoopPackages
+{
     Log-Header "Installing Scoop Packages"
 
     Log-Info "Loading packages from config..."
@@ -269,26 +299,32 @@ function Install-ScoopPackages {
 
     $toInstall = @()
 
-    foreach ($package in $allPackages) {
+    foreach ($package in $allPackages)
+    {
         $result = @(scoop list $package 2>$null | Where-Object { $_.Name -eq $package })
 
-        if ($result.Count -gt 0) {
+        if ($result.Count -gt 0)
+        {
             Log-Success "$package"
-        } else {
+        } else
+        {
             Log-Warning "$package (will be installed)"
             $toInstall += $package
         }
     }
 
-    if ($toInstall.Count -gt 0) {
+    if ($toInstall.Count -gt 0)
+    {
         Log-Info "Installing $($toInstall.Count) packages..."
 
-        foreach ($package in $toInstall) {
+        foreach ($package in $toInstall)
+        {
             Log-Info "Installing: $package"
             scoop install $package
             Log-Success "Installed: $package"
         }
-    } else {
+    } else
+    {
         Log-Info "All packages already installed"
     }
 }
@@ -297,17 +333,20 @@ function Install-ScoopPackages {
 # GITHUB SETUP
 # ============================================================================
 
-function Setup-GitHubAuth {
+function Setup-GitHubAuth
+{
     Log-Header "Setting up GitHub Authentication"
 
-    if (-not (Command-Exists gh)) {
+    if (-not (Command-Exists gh))
+    {
         Log-Error "GitHub CLI (gh) not found"
         return $false
     }
 
     $authStatus = & gh auth status 2>&1
 
-    if ($?) {
+    if ($?)
+    {
         Log-Success "GitHub CLI already authenticated"
         return $true
     }
@@ -319,12 +358,14 @@ function Setup-GitHubAuth {
     return $true
 }
 
-function Setup-SSHKey {
+function Setup-SSHKey
+{
     Log-Header "Setting up SSH Key"
 
     $sshKey = "$HOME\.ssh\id_ed25519"
 
-    if (Test-Path $sshKey) {
+    if (Test-Path $sshKey)
+    {
         Log-Success "SSH key already exists"
         return $true
     }
@@ -335,7 +376,8 @@ function Setup-SSHKey {
 
     ssh-keygen -t ed25519 -C "vituspach@gmail.com" -f $sshKey -N "" | Out-Null
 
-    if (Command-Exists gh) {
+    if (Command-Exists gh)
+    {
         Log-Info "Adding SSH key to GitHub..."
         & gh ssh-key add "$sshKey.pub" --title "Windows $(Get-Date -Format 'yyyy-MM-dd')"
     }
@@ -348,13 +390,15 @@ function Setup-SSHKey {
 # REPOSITORIES
 # ============================================================================
 
-function Clone-Repositories {
+function Clone-Repositories
+{
     Log-Header "Cloning GitHub Repositories"
 
     Log-Info "Loading repositories from config..."
     $repos = Load-Config "repos.txt"
 
-    foreach ($repoLine in $repos) {
+    foreach ($repoLine in $repos)
+    {
         $parts = $repoLine -split '\|'
         $repo = $parts[0]
         $pathTemplate = $parts[1]
@@ -365,9 +409,11 @@ function Clone-Repositories {
         $repoName = $repo.Split('/')[-1]
         $fullPath = Join-Path $path $repoName
 
-        if (Test-Path $fullPath) {
+        if (Test-Path $fullPath)
+        {
             Log-Success "$repoName (already cloned)"
-        } else {
+        } else
+        {
             Log-Info "Cloning $repoName to $path..."
             New-Item -ItemType Directory -Path $path -Force | Out-Null
 
@@ -382,10 +428,12 @@ function Clone-Repositories {
 # DOTFILES
 # ============================================================================
 
-function Apply-Dotfiles {
+function Apply-Dotfiles
+{
     Log-Header "Applying Dotfiles with chezmoi"
 
-    if (-not (Command-Exists chezmoi)) {
+    if (-not (Command-Exists chezmoi))
+    {
         Log-Error "chezmoi not found"
         return $false
     }
@@ -393,19 +441,23 @@ function Apply-Dotfiles {
     $chezmoiSource = "$HOME\.local\share\chezmoi"
 
     # Check if already initialized with correct branch
-    if (Test-Path "$chezmoiSource\.git") {
+    if (Test-Path "$chezmoiSource\.git")
+    {
         Push-Location $chezmoiSource
         $currentBranch = git rev-parse --abbrev-ref HEAD 2>$null
         Pop-Location
 
-        if ($currentBranch -eq "windows") {
+        if ($currentBranch -eq "windows")
+        {
             Log-Info "chezmoi already initialized on windows branch, updating..."
             & chezmoi update --apply
-            if ($LASTEXITCODE -eq 0) {
+            if ($LASTEXITCODE -eq 0)
+            {
                 Log-Success "Dotfiles updated successfully"
                 return $true
             }
-        } else {
+        } else
+        {
             Log-Info "Switching chezmoi to windows branch..."
             Push-Location $chezmoiSource
             git fetch origin windows 2>$null
@@ -417,9 +469,11 @@ function Apply-Dotfiles {
     # Fresh init or apply after branch switch
     Log-Info "Initializing and applying dotfiles..."
     & chezmoi init --branch windows --apply vitusli/dotfiles
-    if ($LASTEXITCODE -eq 0) {
+    if ($LASTEXITCODE -eq 0)
+    {
         Log-Success "Dotfiles applied successfully"
-    } else {
+    } else
+    {
         Log-Error "Failed to initialize chezmoi"
         return $false
     }
@@ -431,50 +485,63 @@ function Apply-Dotfiles {
 # REGISTRY TWEAKS
 # ============================================================================
 
-function Apply-RegistryTweaks {
+function Apply-RegistryTweaks
+{
     Log-Header "Applying Registry Tweaks (from config)"
 
     Log-Info "Loading registry tweaks from config..."
     $registryConfig = Load-Config "windows-registry.txt"
 
-    foreach ($line in $registryConfig) {
-        if (-not $line -or $line.StartsWith('#')) { continue }
+    foreach ($line in $registryConfig)
+    {
+        if (-not $line -or $line.StartsWith('#'))
+        { continue
+        }
 
         $parts = $line -split '\|'
-        if ($parts.Count -lt 4) { continue }
+        if ($parts.Count -lt 4)
+        { continue
+        }
 
         $path = $parts[0]
         $name = $parts[1]
         $type = $parts[2]
         $valueStr = $parts[3]
 
-        try {
+        try
+        {
             # Create path if it doesn't exist
-            if (-not (Test-Path $path)) {
+            if (-not (Test-Path $path))
+            {
                 New-Item -Path $path -Force | Out-Null
             }
 
             # Parse value based on type
-            switch ($type) {
-                "DWORD" {
+            switch ($type)
+            {
+                "DWORD"
+                {
                     $value = [int]$valueStr
                     Set-ItemProperty -Path $path -Name $name -Value $value -Type DWord -Force | Out-Null
                 }
-                "String" {
+                "String"
+                {
                     Set-ItemProperty -Path $path -Name $name -Value $valueStr -Type String -Force | Out-Null
                 }
-                "Binary" {
+                "Binary"
+                {
                     # Parse comma-separated hex bytes
                     $bytes = $valueStr -split ',' | ForEach-Object { [byte]"0x$_" }
                     Set-ItemProperty -Path $path -Name $name -Value ([byte[]]$bytes) -Force | Out-Null
                 }
-                default {
+                default
+                {
                     Log-Warning "Unknown type: $type for $name"
                 }
             }
             Log-Info "$name configured"
-        }
-        catch {
+        } catch
+        {
             Log-Warning "Failed to set $name`: $_"
         }
     }
@@ -486,36 +553,44 @@ function Apply-RegistryTweaks {
 # SERVICES
 # ============================================================================
 
-function Disable-Services {
+function Disable-Services
+{
     Log-Header "Disabling Unnecessary Services"
 
     Log-Info "Loading services from config..."
     $servicesConfig = Load-Config "windows-services.txt"
 
-    foreach ($line in $servicesConfig) {
-        if (-not $line -or $line.StartsWith('#')) { continue }
+    foreach ($line in $servicesConfig)
+    {
+        if (-not $line -or $line.StartsWith('#'))
+        { continue
+        }
 
         $parts = $line -split '\|'
         $service = $parts[0]
 
-        try {
+        try
+        {
             $serviceObj = Get-Service -Name $service -ErrorAction SilentlyContinue
 
-            if (-not $serviceObj) {
+            if (-not $serviceObj)
+            {
                 continue  # Service doesn't exist, skip silently
             }
 
-            if ($serviceObj.Status -eq "Running") {
+            if ($serviceObj.Status -eq "Running")
+            {
                 Stop-Service -Name $service -Force -ErrorAction SilentlyContinue | Out-Null
-                if ($?) {
+                if ($?)
+                {
                     Log-Info "Stopped $service"
                 }
             }
 
             Set-Service -Name $service -StartupType Disabled -ErrorAction Stop | Out-Null
             Log-Success "Disabled $service"
-        }
-        catch {
+        } catch
+        {
             Log-Warning "Failed to disable $service`: $_"
         }
     }
@@ -525,22 +600,27 @@ function Disable-Services {
 # WINDOWS FEATURES
 # ============================================================================
 
-function Disable-WindowsFeatures {
+function Disable-WindowsFeatures
+{
     Log-Header "Disabling Windows Features"
 
-    foreach ($feature in $FEATURES_TO_DISABLE) {
-        try {
+    foreach ($feature in $FEATURES_TO_DISABLE)
+    {
+        try
+        {
             $featureObj = Get-WindowsOptionalFeature -FeatureName $feature -Online -ErrorAction SilentlyContinue
 
-            if ($featureObj -and $featureObj.State -eq "Enabled") {
+            if ($featureObj -and $featureObj.State -eq "Enabled")
+            {
                 Log-Info "Disabling $feature..."
                 Disable-WindowsOptionalFeature -FeatureName $feature -Online -NoRestart | Out-Null
                 Log-Success "Disabled $feature"
-            } else {
+            } else
+            {
                 Log-Success "$feature already disabled"
             }
-        }
-        catch {
+        } catch
+        {
             Log-Warning "Failed to disable $feature`: $_"
         }
     }
@@ -550,19 +630,25 @@ function Disable-WindowsFeatures {
 # UNINSTALL BLOATWARE
 # ============================================================================
 
-function Remove-Bloatware {
+function Remove-Bloatware
+{
     Log-Header "Removing Windows Bloatware"
 
     Log-Info "Loading bloatware list from config..."
     $bloatwareApps = Load-Config "windows-bloatware.txt"
 
-    foreach ($app in $bloatwareApps) {
-        if (-not $app -or $app.StartsWith('#')) { continue }
+    foreach ($app in $bloatwareApps)
+    {
+        if (-not $app -or $app.StartsWith('#'))
+        { continue
+        }
 
-        try {
+        try
+        {
             # Remove for all users
             $packages = @(Get-AppxPackage -Name $app -AllUsers -ErrorAction SilentlyContinue)
-            if ($packages.Count -gt 0) {
+            if ($packages.Count -gt 0)
+            {
                 Log-Info "Removing $app..."
                 Get-AppxPackage -Name $app -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
                 Log-Success "Removed $app"
@@ -570,12 +656,13 @@ function Remove-Bloatware {
 
             # Remove provisioned package (prevents reinstall)
             $provisioned = Get-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -eq $app }
-            if ($provisioned) {
+            if ($provisioned)
+            {
                 $provisioned | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null
                 Log-Info "Removed provisioned package: $app"
             }
-        }
-        catch {
+        } catch
+        {
             Log-Warning "Could not remove $app`: $_"
         }
     }
@@ -585,7 +672,8 @@ function Remove-Bloatware {
 # WGET DOWNLOADS
 # ============================================================================
 
-function Install-WgetPackages {
+function Install-WgetPackages
+{
     Log-Header "Downloading and Installing wget packages"
 
     Log-Info "Loading wget URLs from config..."
@@ -593,26 +681,34 @@ function Install-WgetPackages {
 
     $downloadPath = "$HOME\Downloads"
 
-    foreach ($line in $wgetUrls) {
-        if (-not $line -or $line.StartsWith('#')) { continue }
+    foreach ($line in $wgetUrls)
+    {
+        if (-not $line -or $line.StartsWith('#'))
+        { continue
+        }
 
         $parts = $line -split '\|'
         $url = $parts[0]
 
         # Extract filename from URL or use custom name
-        if ($parts.Count -ge 2 -and $parts[1]) {
+        if ($parts.Count -ge 2 -and $parts[1])
+        {
             $filename = $parts[1]
-        } else {
+        } else
+        {
             $filename = [System.IO.Path]::GetFileName($url)
         }
 
         $filePath = Join-Path $downloadPath $filename
 
-        try {
+        try
+        {
             # Check if file already exists
-            if (Test-Path $filePath) {
+            if (Test-Path $filePath)
+            {
                 Log-Success "$filename already downloaded"
-            } else {
+            } else
+            {
                 Log-Info "Downloading $filename..."
                 Invoke-WebRequest -Uri $url -OutFile $filePath -UseBasicParsing
                 Log-Success "Downloaded $filename"
@@ -621,17 +717,19 @@ function Install-WgetPackages {
             # Install if it's an MSI or EXE
             $extension = [System.IO.Path]::GetExtension($filename).ToLower()
 
-            if ($extension -eq ".msi") {
+            if ($extension -eq ".msi")
+            {
                 Log-Info "Installing $filename..."
                 Start-Process msiexec.exe -ArgumentList "/i `"$filePath`" /quiet /norestart" -Wait -NoNewWindow
                 Log-Success "Installed $filename"
-            } elseif ($extension -eq ".exe") {
+            } elseif ($extension -eq ".exe")
+            {
                 Log-Info "Installing $filename..."
                 Start-Process -FilePath $filePath -ArgumentList "/S" -Wait -NoNewWindow
                 Log-Success "Installed $filename"
             }
-        }
-        catch {
+        } catch
+        {
             Log-Warning "Failed to download/install $filename`: $_"
         }
     }
@@ -641,10 +739,12 @@ function Install-WgetPackages {
 # VS CODE EXTENSIONS
 # ============================================================================
 
-function Install-VSCodeExtensions {
+function Install-VSCodeExtensions
+{
     Log-Header "Installing VS Code Extensions"
 
-    if (-not (Command-Exists code)) {
+    if (-not (Command-Exists code))
+    {
         Log-Warning "VS Code not installed, skipping extensions"
         return
     }
@@ -655,22 +755,28 @@ function Install-VSCodeExtensions {
     $installed = & code --list-extensions 2>$null
     $toInstall = @()
 
-    foreach ($extension in $extensions) {
-        if ($installed -match [regex]::Escape($extension)) {
+    foreach ($extension in $extensions)
+    {
+        if ($installed -match [regex]::Escape($extension))
+        {
             Log-Info "Already installed: $extension"
-        } else {
+        } else
+        {
             Log-Info "Queued: $extension"
             $toInstall += $extension
         }
     }
 
-    if ($toInstall.Count -gt 0) {
-        foreach ($extension in $toInstall) {
+    if ($toInstall.Count -gt 0)
+    {
+        foreach ($extension in $toInstall)
+        {
             Log-Info "Installing: $extension"
             & code --install-extension $extension | Out-Null
             Log-Success "Installed: $extension"
         }
-    } else {
+    } else
+    {
         Log-Info "All VS Code extensions already installed"
     }
 }
@@ -679,10 +785,12 @@ function Install-VSCodeExtensions {
 # SYSTEM DEFAULTS
 # ============================================================================
 
-function Apply-SystemDefaults {
+function Apply-SystemDefaults
+{
     Log-Header "Configuring System Defaults"
 
-    try {
+    try
+    {
         # File Explorer settings
         # Show file extensions
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0 -Type DWORD -Force | Out-Null
@@ -703,8 +811,8 @@ function Apply-SystemDefaults {
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value 0 -Type DWORD -Force | Out-Null
 
         Log-Success "System defaults applied"
-    }
-    catch {
+    } catch
+    {
         Log-Warning "Failed to apply some system defaults: $_"
     }
 }
@@ -713,7 +821,8 @@ function Apply-SystemDefaults {
 # MAIN EXECUTION
 # ============================================================================
 
-function Main {
+function Main
+{
     Log-Header "Windows Setup & Configuration Script (Idempotent)"
 
     Write-Output "Starting setup... This may take a while."
@@ -722,7 +831,8 @@ function Main {
     Log-Info "Log file: $LOG_FILE"
 
     # Check admin privileges
-    if (-not (Test-Administrator)) {
+    if (-not (Test-Administrator))
+    {
         Log-Error "This script must be run as Administrator"
         exit 1
     }
@@ -771,10 +881,12 @@ function Main {
 }
 
 # Run main function
-try {
+try
+{
     Initialize-Logging
     Main
-} catch {
+} catch
+{
     Log-Error "Fatal error: $_"
     exit 1
 }

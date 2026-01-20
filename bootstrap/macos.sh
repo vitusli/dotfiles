@@ -799,14 +799,12 @@ setup_default_apps() {
     done < <(load_config "macos-duti.txt")
 
     for config in "${duti_configs[@]}"; do
-        # Parse config: bundle_id|uti|role
+        # Parse config: bundle_id|uti
         local bundle_id="${config%%|*}"
-        local rest="${config#*|}"
-        local uti="${rest%|*}"
-        local role="${rest##*|}"
+        local uti="${config#*|}"
 
-        log_info "Setting $uti -> $bundle_id ($role)"
-        echo -e "${bundle_id}\t${uti}\t${role}" | duti >> "$LOG_FILE" 2>&1
+        log_info "Setting $uti -> $bundle_id"
+        echo -e "${bundle_id}\t${uti}\tall" | duti >> "$LOG_FILE" 2>&1
     done
 
     # Set default browser (triggers macOS confirmation dialog on first run)

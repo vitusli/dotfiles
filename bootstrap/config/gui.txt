@@ -16,8 +16,6 @@ homerow #macos
 karabiner-elements #macos
 keeweb #macos
 keepassxc
-linearmouse #macos
-macvim-app #macos
 marta #macos
 microsoft-outlook #macos
 microsoft-teams #macos
@@ -34,8 +32,8 @@ sf-symbols #macos
 superwhisper #macos
 visual-studio-code #macos
 visual-studio-code-bin #linux
-vlc #macos
 vscode #windows
+vlc #macos
 wezterm
 windows-app #macos
 zed
