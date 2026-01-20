@@ -2,6 +2,8 @@ fzf
 bat
 neovim
 lf
+tree-sitter
+mingw #windows
 7zip #windows
 scoop-completion #windows
 gsudo #windows

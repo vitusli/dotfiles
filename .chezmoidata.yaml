@@ -1,7 +1,7 @@
 # =============================================================================
 # Abbreviations
 # =============================================================================
-# Hash Trigger:  
+# Hash Trigger: 
 # Central source for shell abbreviations across all systems
 # Used by templates to generate zsh-abbr, PowerShell, etc.
 
