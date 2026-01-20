@@ -2,11 +2,15 @@
 # ZSH PLUGINS & COMPLETION
 # ============================================================================
 
-# Load completion system
-if type brew &>/dev/null; then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-  autoload -Uz compinit
-  compinit -C  # -C flag skips security check for faster startup
+# Add Homebrew completions to FPATH
+FPATH="/opt/homebrew/share/zsh/site-functions:${FPATH}"
+
+# Load completion system with smart cache invalidation
+autoload -Uz compinit
+if [[ /opt/homebrew/share/zsh/site-functions -nt ~/.zcompdump ]]; then
+  compinit
+else
+  compinit -C
 fi
 
 # Load nova completion
