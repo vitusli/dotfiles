@@ -3,6 +3,7 @@ bat
 neovim
 lf
 tree-sitter
+pyright
 mingw #windows
 7zip #windows
 scoop-completion #windows

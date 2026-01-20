@@ -16,6 +16,7 @@ lf
 p7zip #macos
 poppler #macos
 pwsh
+pyright
 unar #macos
 neovim
 wandelbotsgmbh/wandelbots/nova #macos
