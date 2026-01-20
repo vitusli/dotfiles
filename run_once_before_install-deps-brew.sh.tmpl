@@ -1,0 +1,12 @@
+#!/bin/bash
+{{- if eq .chezmoi.os "darwin" }}
+
+command -v brew &>/dev/null || exit 0
+
+deps="{{ .chezmoi.sourceDir }}/deps.txt"
+grep -v '#windows' "$deps" | grep -v '^$' | while read -r pkg; do
+    pkg=$(echo "$pkg" | sed 's/ *#.*//')
+    brew install "$pkg" 2>/dev/null
+done
+
+{{- end }}

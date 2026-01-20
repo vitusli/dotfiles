@@ -7,7 +7,7 @@ Cross-platform dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 | Branch | Platform |
 |--------|----------|
 | `main` | Shared dotfiles for MacOS and Windows |
-| `linux` | Arch dotfiles |
+| `linux` | Arch dotfiles, one day also in main branch |
 
 ## Bootstrap
 
@@ -38,9 +38,7 @@ irm https://raw.githubusercontent.com/vitusli/dotfiles/main/bootstrap/windows.ps
 curl -fsSL https://raw.githubusercontent.com/vitusli/dotfiles/main/bootstrap/linux.sh | bash
 ```
 
-## Manual Setup
-
-Requires SSH key or `gh auth login`:
+## Dotfiles Setup
 
 ```bash
 chezmoi init --branch <branch> vitusli --apply

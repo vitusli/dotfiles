@@ -1,0 +1,22 @@
+{{- if eq .chezmoi.os "windows" }}
+
+$ErrorActionPreference = "Stop"
+
+# Check if Python is already available
+if (Get-Command python -ErrorAction SilentlyContinue) {
+    $version = python --version 2>&1
+    Write-Host "✓ Python already installed: $version"
+    exit 0
+}
+
+if (Get-Command python3 -ErrorAction SilentlyContinue) {
+    $version = python3 --version 2>&1
+    Write-Host "✓ Python already installed: $version"
+    exit 0
+}
+
+Write-Host "Python not found. Installing via Scoop..."
+scoop install python
+
+Write-Host "✓ Python installed successfully"
+{{- end }}

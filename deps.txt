@@ -1,0 +1,8 @@
+fzf
+bat
+neovim
+lf
+7zip #windows
+scoop-completion #windows
+gsudo #windows
+olets/tap/zsh-abbr #macos

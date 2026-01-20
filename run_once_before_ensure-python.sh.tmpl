@@ -1,0 +1,35 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/bin/bash
+
+set -e
+
+# Check if Python is already available
+if command -v python3 &>/dev/null; then
+    echo "✓ Python already installed: $(python3 --version)"
+    exit 0
+fi
+
+if command -v python &>/dev/null; then
+    echo "✓ Python already installed: $(python --version)"
+    exit 0
+fi
+
+echo "Python not found. Installing..."
+
+# macOS: use Homebrew
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    echo "Installing Python via Homebrew..."
+    brew install python
+    exit 0
+fi
+
+# Linux: use pacman (Arch)
+if command -v pacman &>/dev/null; then
+    echo "Installing Python via pacman..."
+    sudo pacman -S --noconfirm python
+    exit 0
+fi
+
+echo "✗ Could not install Python. Please install manually."
+exit 1
+{{- end }}

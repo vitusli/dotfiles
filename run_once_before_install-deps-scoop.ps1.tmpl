@@ -1,0 +1,13 @@
+{{- if eq .chezmoi.os "windows" }}
+if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) { exit 0 }
+
+scoop bucket add extras 2>$null
+
+$deps = "{{ .chezmoi.sourceDir }}/deps.txt"
+Get-Content $deps | Where-Object { $_ -match '\S' -and $_ -notmatch '#macos' } | ForEach-Object {
+    $pkg = $_ -replace '\s*#.*', ''
+    if (-not (scoop list $pkg 2>$null | Select-String $pkg)) {
+        scoop install $pkg
+    }
+}
+{{- end }}

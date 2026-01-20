@@ -1,0 +1,226 @@
+#!/usr/bin/env python3
+"""
+This script runs when .chezmoidata.yaml changes.
+.chezmoidata.yaml hash: {{ include ".chezmoidata.yaml" | sha256sum }}
+"""
+
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+# =============================================================================
+# Configuration (generated from .chezmoidata.yaml via chezmoi template)
+# =============================================================================
+
+CHEZMOI_OS = "{{ .chezmoi.os }}"
+SOURCE_DIR = Path(r"{{ .chezmoi.sourceDir }}")
+HOME = Path.home()
+
+SHARED_APPS = {
+{{- range $app, $config := .shared_apps }}
+{{- $target := index $config.target $.chezmoi.os }}
+{{- if $target }}
+    "{{ $app }}": {
+        "source": "{{ $config.source }}",
+        "target": "{{ $target }}",
+        "files": [
+{{- range $config.files }}
+            {"src": "{{ .src }}", "dst": "{{ .dst }}", "template": {{ if .template }}True{{ else }}False{{ end }}},
+{{- end }}
+        ],
+{{- if eq $.chezmoi.os "darwin" }}
+{{- if index $config "files_darwin" }}
+        "files_os": [
+{{- range (index $config "files_darwin") }}
+            {"src": "{{ .src }}", "dst": "{{ .dst }}", "executable": {{ if .executable }}True{{ else }}False{{ end }}},
+{{- end }}
+        ],
+{{- end }}
+{{- else if eq $.chezmoi.os "linux" }}
+{{- if index $config "files_linux" }}
+        "files_os": [
+{{- range (index $config "files_linux") }}
+            {"src": "{{ .src }}", "dst": "{{ .dst }}", "executable": {{ if .executable }}True{{ else }}False{{ end }}},
+{{- end }}
+        ],
+{{- end }}
+{{- else if eq $.chezmoi.os "windows" }}
+{{- if index $config "files_windows" }}
+        "files_os": [
+{{- range (index $config "files_windows") }}
+            {"src": "{{ .src }}", "dst": "{{ .dst }}"},
+{{- end }}
+        ],
+{{- end }}
+{{- end }}
+    },
+{{- end }}
+{{- end }}
+}
+
+SPECIAL_APPS = {
+{{- if .special_apps.zen }}
+    "zen": {
+        "source": "{{ .special_apps.zen.source }}",
+{{- if eq .chezmoi.os "darwin" }}
+        "target": Path("/Applications/Zen Browser.app/Contents/Resources/distribution"),
+{{- else if eq .chezmoi.os "windows" }}
+        "target": Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Zen Browser" / "distribution",
+        "app_path": Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Zen Browser",
+{{- else }}
+        "target": None,
+{{- end }}
+        "files": [
+{{- range .special_apps.zen.files }}
+            {"src": "{{ .src }}", "dst": "{{ .dst }}"},
+{{- end }}
+        ],
+    },
+{{- end }}
+}
+
+
+# =============================================================================
+# Helper Functions
+# =============================================================================
+
+def run_chezmoi_template(source_path: Path, dest_path: Path) -> None:
+    """Process a file through chezmoi's template engine."""
+    try:
+        result = subprocess.run(
+            ["chezmoi", "execute-template"],
+            input=source_path.read_text(encoding="utf-8"),
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        dest_path.write_text(result.stdout, encoding="utf-8")
+    except subprocess.CalledProcessError as e:
+        print(f"    ✗ Template error: {e.stderr}", file=sys.stderr)
+        raise
+
+
+def copy_file(source: Path, dest: Path, executable: bool = False) -> None:
+    """Copy a file, optionally making it executable."""
+    shutil.copy2(source, dest)
+    if executable and CHEZMOI_OS != "windows":
+        dest.chmod(dest.stat().st_mode | 0o755)
+
+
+def deploy_app(name: str, config: dict) -> None:
+    """Deploy a single app's configuration files."""
+    target_dir = HOME / config["target"]
+    source_dir = SOURCE_DIR / config["source"]
+
+    # Create target directory
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    # Deploy common files (all platforms)
+    for file_info in config.get("files", []):
+        src = source_dir / file_info["src"]
+        dst = target_dir / file_info["dst"]
+
+        if not src.exists():
+            print(f"    ⚠ Source not found: {src}")
+            continue
+
+        if file_info.get("template", False):
+            run_chezmoi_template(src, dst)
+        else:
+            copy_file(src, dst)
+
+    # Deploy OS-specific files
+    for file_info in config.get("files_os", []):
+        src = source_dir / file_info["src"]
+        dst = target_dir / file_info["dst"]
+
+        if not src.exists():
+            print(f"    ⚠ Source not found: {src}")
+            continue
+
+        copy_file(src, dst, executable=file_info.get("executable", False))
+
+    print(f"  ✓ {name} → {target_dir}")
+
+
+def deploy_zen() -> None:
+    """Deploy Zen Browser policies (requires special handling)."""
+    zen_config = SPECIAL_APPS.get("zen")
+    if not zen_config or not zen_config.get("target"):
+        return
+
+    source_dir = SOURCE_DIR / zen_config["source"]
+    target_dir = zen_config["target"]
+
+    # Check if Zen Browser is installed
+{{- if eq .chezmoi.os "windows" }}
+    app_path = zen_config.get("app_path")
+    if not app_path or not app_path.exists():
+        print("  ⊘ zen (not installed, skipping)")
+        return
+{{- else if eq .chezmoi.os "darwin" }}
+    if not Path("/Applications/Zen Browser.app").exists():
+        print("  ⊘ zen (not installed, skipping)")
+        return
+{{- else }}
+    print("  ⊘ zen (not supported on this OS)")
+    return
+{{- end }}
+
+    # Deploy policy files
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    for file_info in zen_config.get("files", []):
+        src = source_dir / file_info["src"]
+        dst = target_dir / file_info["dst"]
+
+        if src.exists():
+            copy_file(src, dst)
+
+    print(f"  ✓ zen → {target_dir}")
+
+{{- if eq .chezmoi.os "windows" }}
+    # Restart Zen Browser if running (Windows only)
+    try:
+        result = subprocess.run(
+            ["tasklist", "/FI", "IMAGENAME eq zen.exe"],
+            capture_output=True,
+            text=True,
+        )
+        if "zen.exe" in result.stdout:
+            subprocess.run(["taskkill", "/F", "/IM", "zen.exe"], check=False)
+            import time
+            time.sleep(1)
+            app_exe = zen_config["app_path"] / "zen.exe"
+            if app_exe.exists():
+                subprocess.Popen([str(app_exe)])
+                print("    (Zen Browser restarted)")
+    except Exception:
+        pass  # Ignore errors during restart
+{{- end }}
+
+
+# =============================================================================
+# Main
+# =============================================================================
+
+def main() -> None:
+    print(f"Deploying shared app configs for {CHEZMOI_OS}...")
+
+    # Deploy regular shared apps
+    for app_name, app_config in SHARED_APPS.items():
+        try:
+            deploy_app(app_name, app_config)
+        except Exception as e:
+            print(f"  ✗ {app_name}: {e}", file=sys.stderr)
+
+    # Deploy special apps
+    deploy_zen()
+
+    print("Shared app deployment complete!")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,33 @@
+#!/bin/bash
+{{- if eq .chezmoi.os "darwin" }}
+
+# Check if Alt-Tab is installed
+if [[ ! -d "/Applications/AltTab.app" ]] && [[ ! -d "$HOME/Applications/AltTab.app" ]]; then
+    echo "⊘ Alt-Tab not installed, skipping configuration"
+    exit 0
+fi
+
+echo "Configuring Alt-Tab..."
+
+# Appearance
+defaults write com.lwouis.alt-tab-macos appearanceStyle -string "1"
+defaults write com.lwouis.alt-tab-macos menubarIconShown -string "false"
+
+# Shortcuts
+defaults write com.lwouis.alt-tab-macos holdShortcut -string "⌘"
+defaults write com.lwouis.alt-tab-macos holdShortcut2 -string "⌘"
+
+# Window visibility
+defaults write com.lwouis.alt-tab-macos showFullscreenWindows -string "1"
+defaults write com.lwouis.alt-tab-macos showHiddenWindows -string "1"
+defaults write com.lwouis.alt-tab-macos showMinimizedWindows -string "1"
+defaults write com.lwouis.alt-tab-macos showWindowlessApps -string "1"
+
+# Disable analytics
+defaults write com.lwouis.alt-tab-macos MSAppCenterNetworkRequestsAllowed -bool false
+
+echo "✓ Alt-Tab configured"
+{{- else }}
+# Not macOS, nothing to do
+exit 0
+{{- end }}
