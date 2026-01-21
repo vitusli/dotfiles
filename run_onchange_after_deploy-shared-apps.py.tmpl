@@ -1,7 +1,29 @@
 #!/usr/bin/env python3
 """
-This script runs when .chezmoidata.yaml changes.
-.chezmoidata.yaml hash: {{ include ".chezmoidata.yaml" | sha256sum }}
+This script runs when .chezmoidata.yaml or any shared config changes.
+
+Config hash: {{ include ".chezmoidata.yaml" | sha256sum }}
+
+shared/vscode:
+  {{ include "shared/vscode/settings.json.tmpl" | sha256sum }}
+  {{ include "shared/vscode/keybindings.json.tmpl" | sha256sum }}
+  {{ include "shared/vscode/custom-vscode.css" | sha256sum }}
+
+shared/zed:
+  {{ include "shared/zed/keymap.json.tmpl" | sha256sum }}
+  {{ include "shared/zed/private_settings.json" | sha256sum }}
+
+shared/nvim:
+  {{ include "shared/nvim/init.vim.tmpl" | sha256sum }}
+
+shared/lf:
+  {{ include "shared/lf/lfrc.tmpl" | sha256sum }}
+  {{ include "shared/lf/preview.sh" | sha256sum }}
+  {{ include "shared/lf/preview.cmd" | sha256sum }}
+  {{ include "shared/lf/cleaner.sh" | sha256sum }}
+
+shared/zen:
+  {{ include "shared/zen/policies.json" | sha256sum }}
 """
 
 import os
