@@ -77,12 +77,14 @@ browserbasiertes
 finalisieren
 finalisiert
 gerenderten
+granulare
 hervorfährt
 iterativen
 kollaborativem
 kollaborativen
 kollaborativer
 kontextabhängig
+neuronalen
 nicht-parallelisierbaren
 parametrisch
 partikelbasierte
@@ -102,4 +104,4 @@ vibrations-isolierten
 vibrationsisoliertem
 vibrationsisolierten
 vibrationsisolierter
-checksum_v1 = a38bd1a7a94ace382a3de8ce5b30caab
+checksum_v1 = 67bb006ce8437988465571215d8faa2f
