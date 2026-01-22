@@ -34,7 +34,7 @@ map k up
 map j down
 map h updir
 map l :setfilter; open
-map <enter> :setfilter; open
+map <enter> :setfilter; open-nvim
 
 # Selection (shift + k/j) - toggle current, then move
 map K :toggle; up
@@ -132,6 +132,25 @@ map X :toggle-executable
 # ============================================================================
 # COMMANDS
 # ============================================================================
+
+# Open files in nvim, directories normally
+{{- if eq .chezmoi.os "windows" }}
+cmd open-nvim ${{"{{"}}
+    if (Test-Path -PathType Leaf $env:f) {
+        nvim $env:f
+    } else {
+        lf -remote "send $env:id cd '$env:f'"
+    }
+{{"}}"}}
+{{- else }}
+cmd open-nvim ${{"{{"}}
+    if [ -f "$f" ]; then
+        nvim "$f"
+    elif [ -d "$f" ]; then
+        lf -remote "send $id cd \"$f\""
+    fi
+{{"}}"}}
+{{- end }}
 
 {{- if eq .chezmoi.os "windows" }}
 # Open file with application (using fzf) - Windows
