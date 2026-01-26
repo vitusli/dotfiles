@@ -22,6 +22,7 @@ abbreviations:
   # macOS only
   # ---------------------------------------------------------------------------
   darwin:
+    da: "~/Documents/obsidian/Diplomarbeit/scripts/build.sh"
     backup: "restic -r /Volumes/TOSHIBA\\ EXT/restic-for-t7 --verbose backup /Volumes/T7\\ Shield"
     bi: "brew install"
     bs: "brew search"
