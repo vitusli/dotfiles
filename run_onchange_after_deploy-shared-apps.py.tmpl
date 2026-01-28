@@ -89,8 +89,8 @@ SPECIAL_APPS = {
 {{- if eq .chezmoi.os "darwin" }}
         "target": Path("/Applications/Zen Browser.app/Contents/Resources/distribution"),
 {{- else if eq .chezmoi.os "windows" }}
-        "target": Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Zen Browser" / "distribution",
-        "app_path": Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Zen Browser",
+        "target": None,
+        "app_path": None,
 {{- else }}
         "target": None,
 {{- end }}
@@ -170,18 +170,29 @@ def deploy_app(name: str, config: dict) -> None:
 def deploy_zen() -> None:
     """Deploy Zen Browser policies (requires special handling)."""
     zen_config = SPECIAL_APPS.get("zen")
-    if not zen_config or not zen_config.get("target"):
+    if not zen_config:
         return
 
     source_dir = SOURCE_DIR / zen_config["source"]
-    target_dir = zen_config["target"]
+    target_dir = zen_config.get("target")
+
+    if CHEZMOI_OS != "windows" and not target_dir:
+        return
 
     # Check if Zen Browser is installed
 {{- if eq .chezmoi.os "windows" }}
-    app_path = zen_config.get("app_path")
-    if not app_path or not app_path.exists():
+    app_path_candidates = [
+        Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Zen Browser",
+        Path(os.environ.get("SCOOP", "")) / "apps" / "zen" / "current",
+        Path(os.environ.get("USERPROFILE", "")) / "scoop" / "apps" / "zen" / "current",
+        Path(os.environ.get("SCOOP", "")) / "apps" / "zen-browser" / "current",
+        Path(os.environ.get("USERPROFILE", "")) / "scoop" / "apps" / "zen-browser" / "current",
+    ]
+    app_path = next((p for p in app_path_candidates if p.exists()), None)
+    if not app_path:
         print("  ⊘ zen (not installed, skipping)")
         return
+    target_dir = app_path / "distribution"
 {{- else if eq .chezmoi.os "darwin" }}
     if not Path("/Applications/Zen.app").exists():
         print("  ⊘ zen (not installed, skipping)")
@@ -215,7 +226,7 @@ def deploy_zen() -> None:
             subprocess.run(["taskkill", "/F", "/IM", "zen.exe"], check=False)
             import time
             time.sleep(1)
-            app_exe = zen_config["app_path"] / "zen.exe"
+            app_exe = app_path / "zen.exe"
             if app_exe.exists():
                 subprocess.Popen([str(app_exe)])
                 print("    (Zen Browser restarted)")

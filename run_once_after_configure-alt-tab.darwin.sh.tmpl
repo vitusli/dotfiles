@@ -1,5 +1,6 @@
-#!/bin/bash
-{{- if eq .chezmoi.os "darwin" }}
+#!/usr/bin/env bash
+
+# macOS-only Alt-Tab configuration
 
 # Check if Alt-Tab is installed
 if [[ ! -d "/Applications/AltTab.app" ]] && [[ ! -d "$HOME/Applications/AltTab.app" ]]; then
@@ -27,7 +28,3 @@ defaults write com.lwouis.alt-tab-macos showWindowlessApps -string "1"
 defaults write com.lwouis.alt-tab-macos MSAppCenterNetworkRequestsAllowed -bool false
 
 echo "✓ Alt-Tab configured"
-{{- else }}
-# Not macOS, nothing to do
-exit 0
-{{- end }}

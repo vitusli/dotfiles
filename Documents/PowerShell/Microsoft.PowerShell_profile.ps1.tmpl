@@ -21,7 +21,10 @@ try {
 }
 
 # Add scoop to PATH
-$env:Path = "{{ .chezmoi.homeDir }}\scoop\shims;$env:Path"
+$machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+$env:Path = "$machinePath;$userPath"
+$env:Path = "{{ .chezmoi.homeDir }}\scoop\apps\mingw\current\bin;{{ .chezmoi.homeDir }}\scoop\shims;$env:Path"
 
 # fzf: Copy result to clipboard on Enter (in addition to normal output)
 $env:FZF_DEFAULT_OPTS = "--bind 'enter:execute-silent(powershell -nop -c Set-Clipboard {})+accept'"
@@ -29,6 +32,8 @@ $env:FZF_DEFAULT_OPTS = "--bind 'enter:execute-silent(powershell -nop -c Set-Cli
 # Default editor (like VISUAL/EDITOR in zsh)
 $env:EDITOR = "nvim"
 $env:VISUAL = "code"
+$env:ISAAC_PY = "A:\isaac-sim\python.bat"
+
 
 # ============================================================================
 # Module Management
