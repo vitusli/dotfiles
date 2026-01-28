@@ -1,33 +1,33 @@
-chezmoi/bootstrap
-chezmoi/README.md
-chezmoi/deps.txt
+bootstrap
+README.md
+deps.txt
 
 {{- if ne .chezmoi.os "darwin" }}
-chezmoi/dot_aerospace.toml
-chezmoi/dot_config/karabiner
-chezmoi/Library
-chezmoi/dot_zshrc
-chezmoi/dot_zprofile
-chezmoi/dot_zsh
-chezmoi/dot_hushlogin
-chezmoi/run_once_install-packages.sh
-chezmoi/run_once_setup-git-plist-filter.sh
-chezmoi/run_after_deploy-shared-apps.sh
-chezmoi/run_once_after_configure-alt-tab.sh.tmpl
-chezmoi/run_once_before_install-deps-brew.sh.tmpl
+dot_aerospace.toml
+dot_config/karabiner
+Library
+dot_zshrc
+dot_zprofile
+dot_zsh
+dot_hushlogin
+run_once_install-packages.sh
+run_once_setup-git-plist-filter.sh
+run_after_deploy-shared-apps.sh
+run_once_after_configure-alt-tab.sh.tmpl
+run_once_before_install-deps-brew.sh.tmpl
 {{- end }}
 
 {{- if ne .chezmoi.os "windows" }}
-chezmoi/AppData
-chezmoi/Documents
-chezmoi/run_after_deploy-shared-apps.ps1
-chezmoi/run_once_before_ensure-python.ps1.tmpl
-chezmoi/run_once_before_install-deps-scoop.ps1.tmpl
+AppData
+Documents
+run_after_deploy-shared-apps.ps1
+run_once_before_ensure-python.ps1.tmpl
+run_once_before_install-deps-scoop.ps1.tmpl
 {{- end }}
 
 {{- if ne .chezmoi.os "linux" }}
 {{- end }}
 
 {{- if eq .chezmoi.os "windows" }}
-chezmoi/run_once_before_ensure-python.sh.tmpl
+run_once_before_ensure-python.sh.tmpl
 {{- end }}
