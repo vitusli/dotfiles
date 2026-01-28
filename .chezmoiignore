@@ -22,8 +22,9 @@ dot_hushlogin
 run_once_install-packages.sh
 run_once_setup-git-plist-filter.sh
 run_after_deploy-shared-apps.sh
-run_once_after_configure-alt-tab.sh.tmpl
-run_once_after_configure-alt-tab.sh
+run_once_after_configure-alt-tab.darwin.sh.tmpl
+run_once_after_configure-alt-tab.darwin.sh
+configure-alt-tab.darwin.sh
 run_once_before_install-deps-brew.sh
 run_once_before_install-deps-brew.sh.tmpl
 {{- end }}
