@@ -1,6 +1,7 @@
 bootstrap
 README.md
 deps.txt
+shared
 
 {{- if ne .chezmoi.os "darwin" }}
 dot_aerospace.toml
