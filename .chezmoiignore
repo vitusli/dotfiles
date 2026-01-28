@@ -4,16 +4,26 @@ deps.txt
 
 {{- if ne .chezmoi.os "darwin" }}
 dot_aerospace.toml
+.aerospace.toml
 dot_config/karabiner
 Library
+Library/**
 dot_zshrc
+.zshrc
 dot_zprofile
+.zprofile
 dot_zsh
+dot_zsh/**
+.zsh
+.zsh/**
 dot_hushlogin
+.hushlogin
 run_once_install-packages.sh
 run_once_setup-git-plist-filter.sh
 run_after_deploy-shared-apps.sh
 run_once_after_configure-alt-tab.sh.tmpl
+run_once_after_configure-alt-tab.sh
+run_once_before_install-deps-brew.sh
 run_once_before_install-deps-brew.sh.tmpl
 {{- end }}
 
