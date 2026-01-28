@@ -183,7 +183,7 @@ def deploy_zen() -> None:
         print("  ⊘ zen (not installed, skipping)")
         return
 {{- else if eq .chezmoi.os "darwin" }}
-    if not Path("/Applications/Zen Browser.app").exists():
+    if not Path("/Applications/Zen.app").exists():
         print("  ⊘ zen (not installed, skipping)")
         return
 {{- else }}
