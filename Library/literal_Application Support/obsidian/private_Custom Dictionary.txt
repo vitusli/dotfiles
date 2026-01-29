@@ -11,6 +11,7 @@ Bedienkonzepten
 Carousell
 Cobot
 Cobots
+Detektion
 Disbalance
 Durchsetzfügen
 Einstiegshürde
@@ -50,6 +51,7 @@ Pipettier-Roboters
 Pipettier-Systemen
 Probengefäß
 Probenuntersuchung
+Punktewolke
 Referenzierung
 Reichweiten-Berechnung
 Rezyklieren
@@ -72,6 +74,7 @@ Virtualisierung
 Wandelbots
 Wandelscript
 Wandelscripts
+Wartbarkeit
 augmentiert
 browserbasierte
 browserbasiertes
@@ -87,6 +90,8 @@ kollaborativer
 kontextabhängig
 neuronalen
 nicht-parallelisierbaren
+node-basierte
+node-basierter
 parametrisch
 parametrischen
 partikelbasierte
@@ -106,4 +111,5 @@ vibrations-isolierten
 vibrationsisoliertem
 vibrationsisolierten
 vibrationsisolierter
-checksum_v1 = b3e05a960d445b971288fcda023e46c8
+wartbar
+checksum_v1 = eef8866c844112cde452d0e01fa7895a
