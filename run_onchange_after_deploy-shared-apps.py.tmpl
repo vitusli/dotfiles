@@ -194,7 +194,7 @@ def deploy_zen() -> None:
         return
     target_dir = app_path / "distribution"
 {{- else if eq .chezmoi.os "darwin" }}
-    if not Path("/Applications/Zen Browser.app").exists():
+    if not Path("/Applications/Zen.app").exists():
         print("  ⊘ zen (not installed, skipping)")
         return
 {{- else }}
