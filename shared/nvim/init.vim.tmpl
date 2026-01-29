@@ -1,6 +1,11 @@
 " Neovim Configuration - Bootstrap to Lua
 
 lua << EOF
+-- Ensure MinGW bin is on PATH for Tree-sitter builds (Windows)
+vim.env.PATH = vim.fn.expand("~") .. "\\scoop\\apps\\mingw\\current\\bin;" .. vim.env.PATH
+vim.env.CC = "gcc"
+vim.env.CXX = "g++"
+
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -112,6 +117,10 @@ require("lazy").setup({
       end
     end,
     config = function()
+      -- Prefer MinGW GCC on Windows
+      vim.g.tree_sitter_compiler = "gcc"
+      require("nvim-treesitter.install").compilers = { "gcc" }
+
       local ts = require("nvim-treesitter")
       local parsers = { "python", "lua", "vim", "vimdoc" }
 
