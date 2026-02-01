@@ -111,19 +111,23 @@ shared_apps:
     files_windows:
       - { src: "preview.cmd", dst: "preview.cmd" }
 
+  zen:
+    source: "shared/zen"
+    target:
+      darwin: "Library/Application Support/zen/policies"
+    files:
+      - { src: "policies.json", dst: "policies.json", template: false }
+
 # =============================================================================
 # Special Apps (non-standard deployment)
 # =============================================================================
 # These require special handling and are not part of the generic loop
 
 special_apps:
+  # Zen on Windows needs special handling (app path varies: LOCALAPPDATA, Scoop, etc.)
+  # On macOS/Linux, zen is handled as a regular shared_app above
   zen:
     source: "shared/zen"
-    # Zen deploys to application directory, not home
-    # These are absolute paths (handled specially in deploy scripts)
-    target:
-      darwin: "/Applications/Zen Browser.app/Contents/Resources/distribution"
-      windows: "%LOCALAPPDATA%/Programs/Zen Browser/distribution"
     files:
       - { src: "policies.json", dst: "policies.json" }
     restart_after: true

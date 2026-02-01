@@ -82,18 +82,11 @@ SHARED_APPS = {
 {{- end }}
 }
 
+{{- if eq .chezmoi.os "windows" }}
 SPECIAL_APPS = {
 {{- if .special_apps.zen }}
     "zen": {
         "source": "{{ .special_apps.zen.source }}",
-{{- if eq .chezmoi.os "darwin" }}
-        "target": Path("/Applications/Zen Browser.app/Contents/Resources/distribution"),
-{{- else if eq .chezmoi.os "windows" }}
-        "target": None,
-        "app_path": None,
-{{- else }}
-        "target": None,
-{{- end }}
         "files": [
 {{- range .special_apps.zen.files }}
             {"src": "{{ .src }}", "dst": "{{ .dst }}"},
@@ -102,6 +95,9 @@ SPECIAL_APPS = {
     },
 {{- end }}
 }
+{{- else }}
+SPECIAL_APPS = {}
+{{- end }}
 
 
 # =============================================================================
@@ -167,20 +163,16 @@ def deploy_app(name: str, config: dict) -> None:
     print(f"  ✓ {name} → {target_dir}")
 
 
+{{- if eq .chezmoi.os "windows" }}
 def deploy_zen() -> None:
-    """Deploy Zen Browser policies (requires special handling)."""
+    """Deploy Zen Browser policies (Windows only - requires special handling for Scoop paths)."""
     zen_config = SPECIAL_APPS.get("zen")
     if not zen_config:
         return
 
     source_dir = SOURCE_DIR / zen_config["source"]
-    target_dir = zen_config.get("target")
 
-    if CHEZMOI_OS != "windows" and not target_dir:
-        return
-
-    # Check if Zen Browser is installed
-{{- if eq .chezmoi.os "windows" }}
+    # Find Zen Browser installation
     app_path_candidates = [
         Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Zen Browser",
         Path(os.environ.get("SCOOP", "")) / "apps" / "zen" / "current",
@@ -193,14 +185,6 @@ def deploy_zen() -> None:
         print("  ⊘ zen (not installed, skipping)")
         return
     target_dir = app_path / "distribution"
-{{- else if eq .chezmoi.os "darwin" }}
-    if not Path("/Applications/Zen.app").exists():
-        print("  ⊘ zen (not installed, skipping)")
-        return
-{{- else }}
-    print("  ⊘ zen (not supported on this OS)")
-    return
-{{- end }}
 
     # Deploy policy files
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -214,8 +198,7 @@ def deploy_zen() -> None:
 
     print(f"  ✓ zen → {target_dir}")
 
-{{- if eq .chezmoi.os "windows" }}
-    # Restart Zen Browser if running (Windows only)
+    # Restart Zen Browser if running
     try:
         result = subprocess.run(
             ["tasklist", "/FI", "IMAGENAME eq zen.exe"],
@@ -249,8 +232,10 @@ def main() -> None:
         except Exception as e:
             print(f"  ✗ {app_name}: {e}", file=sys.stderr)
 
-    # Deploy special apps
+{{- if eq .chezmoi.os "windows" }}
+    # Deploy special apps (Windows only)
     deploy_zen()
+{{- end }}
 
     print("Shared app deployment complete!")
 
