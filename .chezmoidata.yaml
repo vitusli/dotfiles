@@ -111,21 +111,15 @@ shared_apps:
     files_windows:
       - { src: "preview.cmd", dst: "preview.cmd" }
 
-  zen:
-    source: "shared/zen"
-    target:
-      darwin: "Library/Application Support/zen/policies"
-    files:
-      - { src: "policies.json", dst: "policies.json", template: false }
-
 # =============================================================================
 # Special Apps (non-standard deployment)
 # =============================================================================
 # These require special handling and are not part of the generic loop
 
 special_apps:
-  # Zen on Windows needs special handling (app path varies: LOCALAPPDATA, Scoop, etc.)
-  # On macOS/Linux, zen is handled as a regular shared_app above
+  # Zen needs special handling on both macOS and Windows:
+  # - macOS: deploys into app bundle + re-signing
+  # - Windows: app path varies (LOCALAPPDATA, Scoop, etc.)
   zen:
     source: "shared/zen"
     files:

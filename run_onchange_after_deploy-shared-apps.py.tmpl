@@ -82,7 +82,6 @@ SHARED_APPS = {
 {{- end }}
 }
 
-{{- if eq .chezmoi.os "windows" }}
 SPECIAL_APPS = {
 {{- if .special_apps.zen }}
     "zen": {
@@ -95,9 +94,6 @@ SPECIAL_APPS = {
     },
 {{- end }}
 }
-{{- else }}
-SPECIAL_APPS = {}
-{{- end }}
 
 
 # =============================================================================
@@ -163,16 +159,16 @@ def deploy_app(name: str, config: dict) -> None:
     print(f"  ✓ {name} → {target_dir}")
 
 
-{{- if eq .chezmoi.os "windows" }}
 def deploy_zen() -> None:
-    """Deploy Zen Browser policies (Windows only - requires special handling for Scoop paths)."""
+    """Deploy Zen Browser policies (requires special handling)."""
     zen_config = SPECIAL_APPS.get("zen")
     if not zen_config:
         return
 
     source_dir = SOURCE_DIR / zen_config["source"]
 
-    # Find Zen Browser installation
+{{- if eq .chezmoi.os "windows" }}
+    # Find Zen Browser installation (Windows - path varies)
     app_path_candidates = [
         Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Zen Browser",
         Path(os.environ.get("SCOOP", "")) / "apps" / "zen" / "current",
@@ -185,6 +181,17 @@ def deploy_zen() -> None:
         print("  ⊘ zen (not installed, skipping)")
         return
     target_dir = app_path / "distribution"
+{{- else if eq .chezmoi.os "darwin" }}
+    # macOS - deploy into app bundle
+    app_path = Path("/Applications/Zen.app")
+    if not app_path.exists():
+        print("  ⊘ zen (not installed, skipping)")
+        return
+    target_dir = app_path / "Contents" / "Resources" / "distribution"
+{{- else }}
+    print("  ⊘ zen (not supported on this OS)")
+    return
+{{- end }}
 
     # Deploy policy files
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -198,6 +205,17 @@ def deploy_zen() -> None:
 
     print(f"  ✓ zen → {target_dir}")
 
+{{- if eq .chezmoi.os "darwin" }}
+    # Re-sign the app after modifying it
+    try:
+        subprocess.run(["xattr", "-cr", str(app_path)], check=True, capture_output=True)
+        subprocess.run(["codesign", "-f", "-s", "-", "--deep", str(app_path)], check=True, capture_output=True)
+        print(f"    (re-signed {app_path.name})")
+    except subprocess.CalledProcessError as e:
+        print(f"    ⚠ failed to re-sign {app_path.name}: {e}")
+{{- end }}
+
+{{- if eq .chezmoi.os "windows" }}
     # Restart Zen Browser if running
     try:
         result = subprocess.run(
@@ -232,10 +250,8 @@ def main() -> None:
         except Exception as e:
             print(f"  ✗ {app_name}: {e}", file=sys.stderr)
 
-{{- if eq .chezmoi.os "windows" }}
-    # Deploy special apps (Windows only)
+    # Deploy special apps
     deploy_zen()
-{{- end }}
 
     print("Shared app deployment complete!")
 
