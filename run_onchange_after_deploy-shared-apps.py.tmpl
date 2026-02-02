@@ -205,15 +205,7 @@ def deploy_zen() -> None:
 
     print(f"  ✓ zen → {target_dir}")
 
-{{- if eq .chezmoi.os "darwin" }}
-    # Re-sign the app after modifying it
-    try:
-        subprocess.run(["xattr", "-cr", str(app_path)], check=True, capture_output=True)
-        subprocess.run(["codesign", "-f", "-s", "-", "--deep", str(app_path)], check=True, capture_output=True)
-        print(f"    (re-signed {app_path.name})")
-    except subprocess.CalledProcessError as e:
-        print(f"    ⚠ failed to re-sign {app_path.name}: {e}")
-{{- end }}
+
 
 {{- if eq .chezmoi.os "windows" }}
     # Restart Zen Browser if running
