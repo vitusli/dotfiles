@@ -1,8 +1,8 @@
 # GitHub Repos to clone
-# Format: repo|destination
+# Format: repo|destination_parent
 
-vitusli/codespace|$HOME
-vitusli/vtools_dev|$HOME
-vitusli/obsidian|$DOCUMENTS
-vitusli/extensions|$HOME/blender
-vitusli/zmk-config|$DOCUMENTS
+vitusli/codespace|~
+vitusli/vtools_dev|~
+vitusli/obsidian|~/Documents
+vitusli/extensions|~/blender
+vitusli/zmk-config|~/Documents

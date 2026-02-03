@@ -1,0 +1,1 @@
+ln -s /Applications/Marta.app/Contents/Resources/launcher /usr/local/bin/marta

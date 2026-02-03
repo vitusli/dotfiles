@@ -1,114 +1,81 @@
-# Windows Registry Tweaks
-# Format: path|name|type|value
-# Types: DWORD, String, Binary
-# Binary values: comma-separated hex bytes (e.g. 90,12,03,80)
-
-# ══════════════════════════════════════════════════════════════
-# DEVELOPER MODE
-# ══════════════════════════════════════════════════════════════
-
 # Enable Developer Mode (allows symlinks without admin)
-HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock|AllowDevelopmentWithoutDevLicense|DWORD|1
-
-# ══════════════════════════════════════════════════════════════
-# TELEMETRY & PRIVACY
-# ══════════════════════════════════════════════════════════════
+if (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock")) { New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Force | Out-Null }; Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowDevelopmentWithoutDevLicense" -Type DWORD -Value 1 -Force
 
 # Disable Telemetry
-HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection|AllowTelemetry|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack|ShowDiagTrackedNotifications|DWORD|0
+if (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Force | Out-Null }; Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWORD -Value 0 -Force
+if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack" -Name "ShowDiagTrackedNotifications" -Type DWORD -Value 0 -Force
 
 # Disable Advertising ID
-HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo|Enabled|DWORD|0
-HKLM:\Software\Policies\Microsoft\Windows\AdvertisingInfo|DisabledForUser|DWORD|1
+if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Name "Enabled" -Type DWORD -Value 0 -Force
+if (!(Test-Path "HKLM:\Software\Policies\Microsoft\Windows\AdvertisingInfo")) { New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\AdvertisingInfo" -Force | Out-Null }; Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\AdvertisingInfo" -Name "DisabledForUser" -Type DWORD -Value 1 -Force
 
 # Disable Tailored Experiences
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Privacy|TailoredExperiencesWithDiagnosticDataEnabled|DWORD|0
-
-# ══════════════════════════════════════════════════════════════
-# CONTENT DELIVERY & SPONSORED APPS
-# ══════════════════════════════════════════════════════════════
+if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Privacy")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Privacy" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Privacy" -Name "TailoredExperiencesWithDiagnosticDataEnabled" -Type DWORD -Value 0 -Force
 
 # Disable Content Delivery (prevents auto-install of sponsored apps)
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|ContentDeliveryAllowed|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|OemPreInstalledAppsEnabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|PreInstalledAppsEnabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|PreInstalledAppsEverEnabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SilentInstalledAppsEnabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SoftLandingEnabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SubscribedContentEnabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SubscribedContent-338388Enabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SubscribedContent-338389Enabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SubscribedContent-353694Enabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SubscribedContent-353696Enabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|SystemPaneSuggestionsEnabled|DWORD|0
+if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OemPreInstalledAppsEnabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SoftLandingEnabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWORD -Value 0 -Force
 
 # Disable News and Interests
-HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager|NewsAndInterestsEnabled|DWORD|0
-
-# ══════════════════════════════════════════════════════════════
-# XBOX & GAMING
-# ══════════════════════════════════════════════════════════════
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "NewsAndInterestsEnabled" -Type DWORD -Value 0 -Force
 
 # Disable Xbox Game Bar
-HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR|AppCaptureEnabled|DWORD|0
-HKCU:\System\GameConfigStore|GameDVR_Enabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR|GameDVR_DXGIHotKeyEnabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Xbox.App|Enabled|DWORD|0
-
-# ══════════════════════════════════════════════════════════════
-# CORTANA & SEARCH
-# ══════════════════════════════════════════════════════════════
+if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Type DWORD -Value 0 -Force
+if (!(Test-Path "HKCU:\System\GameConfigStore")) { New-Item -Path "HKCU:\System\GameConfigStore" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "GameDVR_DXGIHotKeyEnabled" -Type DWORD -Value 0 -Force
+if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Xbox.App")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Xbox.App" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Xbox.App" -Name "Enabled" -Type DWORD -Value 0 -Force
 
 # Disable Cortana
-HKCU:\Software\Microsoft\Personalization\Settings|AcceptedPrivacyPolicy|DWORD|0
-HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search|AllowCortana|DWORD|0
+if (!(Test-Path "HKCU:\Software\Microsoft\Personalization\Settings")) { New-Item -Path "HKCU:\Software\Microsoft\Personalization\Settings" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Type DWORD -Value 0 -Force
+if (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null }; Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWORD -Value 0 -Force
 
 # Disable Bing Search in Start Menu
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Search|BingSearchEnabled|DWORD|0
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Search|AllowSearchToUseLocation|DWORD|0
-HKCU:\Software\Policies\Microsoft\Windows\Explorer|DisableSearchBoxSuggestions|DWORD|1
-
-# ══════════════════════════════════════════════════════════════
-# UI & EXPLORER
-# ══════════════════════════════════════════════════════════════
+if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "AllowSearchToUseLocation" -Type DWORD -Value 0 -Force
+if (!(Test-Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer")) { New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableSearchBoxSuggestions" -Type DWORD -Value 1 -Force
 
 # Disable Windows Tips
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|ShowSyncProviderNotifications|DWORD|0
+if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWORD -Value 0 -Force
 
 # Remove Shortcut Arrow Overlay
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons|29|String|
+if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" -Name "29" -Type String -Value "" -Force
 
 # Open Explorer to This PC (not Quick Access)
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|LaunchTo|DWORD|1
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Type DWORD -Value 1 -Force
 
 # Disable Gallery in Explorer
-HKLM:\Software\Policies\Microsoft\Windows\Explorer|DisableGallery|DWORD|1
+if (!(Test-Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer")) { New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer" -Force | Out-Null }; Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableGallery" -Type DWORD -Value 1 -Force
 
 # Show file extensions
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|HideFileExt|DWORD|0
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWORD -Value 0 -Force
 
 # Show hidden files
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|Hidden|DWORD|1
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Type DWORD -Value 1 -Force
 
 # Show super hidden files
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|ShowSuperHidden|DWORD|1
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSuperHidden" -Type DWORD -Value 1 -Force
 
 # Dark theme for apps
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize|AppsUseLightTheme|DWORD|0
-
-# ══════════════════════════════════════════════════════════════
-# ANIMATIONS (DISABLE ALL)
-# ══════════════════════════════════════════════════════════════
+if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Type DWORD -Value 0 -Force
 
 # User preferences mask (disables most animations)
-HKCU:\Control Panel\Desktop|UserPreferencesMask|Binary|90,12,03,80,10,00,00,00
+if (!(Test-Path "HKCU:\Control Panel\Desktop")) { New-Item -Path "HKCU:\Control Panel\Desktop" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Type Binary -Value ([byte[]](0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00)) -Force
 
 # Disable minimize animations
-HKCU:\Control Panel\Desktop\WindowMetrics|MinAnimate|String|0
+if (!(Test-Path "HKCU:\Control Panel\Desktop\WindowMetrics")) { New-Item -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Type String -Value "0" -Force
 
 # Disable taskbar animations
-HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced|TaskbarAnimations|DWORD|0
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Type DWORD -Value 0 -Force
 
 # Disable Aero Peek
-HKCU:\Software\Microsoft\Windows\DWM|EnableAeroPeek|DWORD|0
+if (!(Test-Path "HKCU:\Software\Microsoft\Windows\DWM")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\DWM" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Type DWORD -Value 0 -Force
