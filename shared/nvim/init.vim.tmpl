@@ -30,6 +30,7 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.shortmess:append("I")
 vim.opt.termguicolors = true
+vim.opt.spell = false
 
 -- Transparent background
 vim.api.nvim_create_autocmd("ColorScheme", {
@@ -266,21 +267,29 @@ require("lazy").setup({
     end,
   },
 
-  -- LSP config (pyright for Python)
+  -- LSP config (pyright for Python, markdown-oxide for PKM)
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
     config = function()
+      -- Markdown-Oxide for PKM (Obsidian-compatible)
+      vim.lsp.config.markdown_oxide = {
+        cmd = { "markdown-oxide" },
+        filetypes = { "markdown" },
+        root_markers = { ".moxide.toml", ".obsidian", ".git" },
+        capabilities = {
+          workspace = {
+            didChangeWatchedFiles = { dynamicRegistration = true },
+          },
+        },
+      }
+      vim.lsp.enable("markdown_oxide")
+
       -- Pyright for Python with automatic .venv detection
       vim.lsp.config.pyright = {
-        before_init = function(_, config)
-          -- Auto-detect .venv in project root
-          local venv = config.root_dir .. "/.venv"
-          if vim.fn.isdirectory(venv) == 1 then
-            config.settings.python = config.settings.python or {}
-            config.settings.python.pythonPath = venv .. "/bin/python"
-          end
-        end,
+        cmd = { "pyright-langserver", "--stdio" },
+        filetypes = { "python" },
+        root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git" },
         settings = {
           python = {
             analysis = {
@@ -292,6 +301,12 @@ require("lazy").setup({
         },
       }
       vim.lsp.enable("pyright")
+
+      -- Daily note commands
+      vim.api.nvim_create_user_command("Today", function() vim.lsp.buf.execute_command({ command = "jump", arguments = { "today" } }) end, {})
+      vim.api.nvim_create_user_command("Tomorrow", function() vim.lsp.buf.execute_command({ command = "jump", arguments = { "tomorrow" } }) end, {})
+      vim.api.nvim_create_user_command("Yesterday", function() vim.lsp.buf.execute_command({ command = "jump", arguments = { "yesterday" } }) end, {})
+      vim.api.nvim_create_user_command("Daily", function(args) vim.lsp.buf.execute_command({ command = "jump", arguments = { args.args } }) end, { nargs = "*" })
 
       -- LSP keymaps (applied to all LSP-attached buffers)
       vim.api.nvim_create_autocmd("LspAttach", {

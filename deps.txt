@@ -3,7 +3,7 @@ bat
 neovim
 lf
 tree-sitter-cli
-pyright
+markdown-oxide
 mingw #windows
 7zip #windows
 scoop-completion #windows
