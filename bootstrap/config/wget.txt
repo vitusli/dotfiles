@@ -5,3 +5,7 @@
 
 https://github.com/nkallen/plasticity/releases/download/v25.1.9/Plasticity.msi #windows
 https://files.mcneel.com/dujour/exe/20251223/rhino_en-us_8.27.25357.11371.exe #windows
+https://github.com/CalyPdf/Caly/releases/download/0.1.6.0/Caly.x64.0.1.6.0.exe #windows
+
+# TODO curl refactoring
+# curl -L -o $HOME/Downloads/Caly.x64.0.1.6.0.exe https://github.com/CalyPdf/Caly/releases/download/0.1.6.0/Caly.x64.0.1.6.0.exe && & $HOME/Downloads/Caly.x64.0.1.6.0.exe
