@@ -11,6 +11,7 @@ abbreviations:
   universal:
     c: "chezmoi"
     ca: "chezmoi apply -v"
+    da: "cd $HOME/Documents/obsidian/Diplomarbeit/scripts && just build"
     gc: "git checkout"
     l: "lazygit"
     p: "uv run python"
@@ -22,7 +23,6 @@ abbreviations:
   # macOS only
   # ---------------------------------------------------------------------------
   darwin:
-    da: "cd ~/Documents/obsidian/Diplomarbeit && scripts/build.sh && open output/Diplomarbeit_Pacholleck_Vitus_4800847_Arbeitsstand.pdf"
     backup: "restic -r /Volumes/TOSHIBA\\ EXT/restic-for-t7 --verbose backup /Volumes/T7\\ Shield"
     bi: "brew install"
     bs: "brew search"
