@@ -48,6 +48,9 @@ vim.cmd("highlight EndOfBuffer guibg=NONE ctermbg=NONE")
 vim.keymap.set({"n", "v", "o"}, "H", "^", { noremap = true })
 vim.keymap.set({"n", "v", "o"}, "L", "$", { noremap = true })
 
+-- Esc in normal mode clears search highlighting
+vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { noremap = true, desc = "Clear search highlighting" })
+
 -- Ctrl+h/l for split navigation
 vim.keymap.set("n", "<C-h>", "<C-w>h", { noremap = true, desc = "Move to left split" })
 vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true, desc = "Move to right split" })
