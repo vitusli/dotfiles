@@ -48,6 +48,10 @@ vim.cmd("highlight EndOfBuffer guibg=NONE ctermbg=NONE")
 vim.keymap.set({"n", "v", "o"}, "H", "^", { noremap = true })
 vim.keymap.set({"n", "v", "o"}, "L", "$", { noremap = true })
 
+-- Ctrl+h/l for split navigation
+vim.keymap.set("n", "<C-h>", "<C-w>h", { noremap = true, desc = "Move to left split" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true, desc = "Move to right split" })
+
 -- Plugins
 require("lazy").setup({
   -- Colorscheme (One Dark)
@@ -142,6 +146,23 @@ require("lazy").setup({
     end,
   },
 
+  -- Markdown Preview (Browser-based live preview)
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = function()
+      vim.system({ "npx", "--yes", "yarn", "install" }, { cwd = vim.fn.stdpath("data") .. "/lazy/markdown-preview.nvim/app" })
+    end,
+    init = function()
+      vim.g.mkdp_filetypes = { "markdown" }
+      vim.g.mkdp_browser = ""  -- Use system default browser
+    end,
+    keys = {
+      { "<leader>v", "<cmd>MarkdownPreview<cr>", ft = "markdown", desc = "Markdown Preview" },
+    },
+  },
+
   -- Telescope (fuzzy finder)
   {
     "nvim-telescope/telescope.nvim",
@@ -160,14 +181,15 @@ require("lazy").setup({
         function()
           local builtin = require("telescope.builtin")
           -- Find project root (look for common markers)
-          local root_markers = { ".git", "pyproject.toml", "Cargo.toml", "package.json", "Makefile" }
-          local cwd = vim.fn.getcwd()
+          -- .moxide.toml first for Obsidian vaults
+          local root_markers = { ".moxide.toml", ".git", "pyproject.toml", "Cargo.toml", "package.json", "Makefile" }
+          local cwd = vim.fn.expand("%:p:h")  -- Start from current file's directory
           local root = nil
 
           for _, marker in ipairs(root_markers) do
-            local found = vim.fn.finddir(marker, cwd .. ";")
+            local found = vim.fn.findfile(marker, cwd .. ";")
             if found == "" then
-              found = vim.fn.findfile(marker, cwd .. ";")
+              found = vim.fn.finddir(marker, cwd .. ";")
             end
             if found ~= "" then
               root = vim.fn.fnamemodify(found, ":p:h")
@@ -182,7 +204,7 @@ require("lazy").setup({
             -- In project: search everything (exclude venv)
             builtin.find_files({
               cwd = root,
-              find_command = { "fd", "--type", "f", "--exclude", ".venv", "--exclude", "venv" },
+              find_command = { "fd", "--type", "f", "--exclude", ".venv", "--exclude", "venv", "--exclude", ".obsidian" },
             })
           else
             -- No project: search home with max-depth 2
