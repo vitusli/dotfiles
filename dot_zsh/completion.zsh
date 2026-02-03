@@ -2,6 +2,11 @@
 # ZSH PLUGINS & COMPLETION
 # ============================================================================
 
+# Case-insensitive globbing and completion (like PowerShell)
+unsetopt CASE_GLOB
+unsetopt CASE_MATCH
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
 # Add Homebrew completions to FPATH
 FPATH="/opt/homebrew/share/zsh/site-functions:${FPATH}"
 
