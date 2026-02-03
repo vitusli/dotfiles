@@ -157,6 +157,8 @@ require("lazy").setup({
     init = function()
       vim.g.mkdp_filetypes = { "markdown" }
       vim.g.mkdp_browser = ""  -- Use system default browser
+      vim.g.mkdp_auto_close = 0  -- Don't close preview when switching buffers
+      vim.g.mkdp_combine_preview = 1  -- Reuse same browser window for all files
     end,
     keys = {
       { "<leader>v", "<cmd>MarkdownPreview<cr>", ft = "markdown", desc = "Markdown Preview" },
