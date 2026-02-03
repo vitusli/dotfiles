@@ -10,4 +10,9 @@ Get-Content $deps | Where-Object { $_ -match '\S' -and $_ -notmatch '#macos' } |
         scoop install $pkg
     }
 }
+
+# Python tools via uv
+if (Get-Command uv -ErrorAction SilentlyContinue) {
+    uv tool install pyright
+}
 {{- end }}

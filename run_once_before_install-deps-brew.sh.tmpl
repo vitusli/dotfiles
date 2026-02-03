@@ -8,4 +8,9 @@ grep -v '#windows' "$deps" | grep -v '^$' | while read -r pkg; do
     pkg=$(echo "$pkg" | sed 's/ *#.*//')
     brew install "$pkg" 2>/dev/null
 done
+
+# Python tools via uv
+if command -v uv &>/dev/null; then
+    uv tool install pyright
+fi
 {{ end -}}
