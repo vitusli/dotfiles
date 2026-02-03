@@ -32,6 +32,17 @@ vim.opt.shortmess:append("I")
 vim.opt.termguicolors = true
 vim.opt.spell = false
 
+-- Autosave (like VSCode/Zed)
+vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged", "FocusLost", "BufLeave" }, {
+  pattern = "*",
+  callback = function()
+    if vim.bo.modified and vim.bo.buftype == "" and vim.fn.expand("%") ~= "" then
+      vim.cmd("silent! write")
+    end
+  end,
+  desc = "Autosave on change",
+})
+
 -- Transparent background
 vim.api.nvim_create_autocmd("ColorScheme", {
   callback = function()
