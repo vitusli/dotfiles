@@ -38,7 +38,7 @@ abbreviations:
   # Windows only
   # ---------------------------------------------------------------------------
   windows:
-    ahk: 'Get-Process | Where-Object {$_.Name -like "*AutoHotkey*"} | Stop-Process -Force; Start-Process "c:\Users\Vitus\wotfiles\ahkv1\macish.ahk"'
+    ahk: 'Get-Process | Where-Object {$_.Name -like "*AutoHotkey*"} | Stop-Process -Force; Start-Process "C:\Users\Vitus\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\macish.ahk"'
     f: "fzf | clip.exe"
     ov: "A:\\isaac-sim\\isaac-sim.bat"
     rl: ". $PROFILE"
