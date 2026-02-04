@@ -1,5 +1,10 @@
 #Requires AutoHotkey v2.0
+#SingleInstance Force
 SendMode("Input")
+
+FancyWM(action) {
+    RunWait(format("fancywm.exe --action {}", action), , "Hide")
+}
 
 ;; Disable Language Switching
 #Space::Return
@@ -91,3 +96,46 @@ ResetAltS() {
     global AltS_Pressed := false
 }
 
+;; ======= FancyWM Window Management =======
+; Block Live Captions shortcut (Win+Ctrl+L)
+#^l::Return
+
+; Move focus (Win+Alt+Ctrl+H/J/K/L)
+#!^h::FancyWM("MoveFocusLeft")
+#!^j::FancyWM("MoveFocusDown")
+#!^k::FancyWM("MoveFocusUp")
+#!^l::FancyWM("MoveFocusRight")
+
+; Move window (Ctrl+Shift+H/J/K/L)
+^+h::FancyWM("MoveLeft")
+^+j::FancyWM("MoveDown")
+^+k::FancyWM("MoveUp")
+^+l::FancyWM("MoveRight")
+
+; Swap window (Win+Alt+Ctrl+Shift+H/J/K/L)
+#!^+h::FancyWM("SwapLeft")
+#!^+j::FancyWM("SwapDown")
+#!^+k::FancyWM("SwapUp")
+#!^+l::FancyWM("SwapRight")
+
+; Panel management
+#!^Space::FancyWM("CreateStackPanel")
+#!^+Space::FancyWM("PullWindowUp")
+#!^w::FancyWM("ToggleFloatingMode")
+#!^v::FancyWM("CreateVerticalPanel")
+#!^b::FancyWM("CreateHorizontalPanel")
+
+; Resize (Win+Alt+Ctrl+Plus/Minus)
+#!^=::FancyWM("IncreaseWidth")
+#!^-::FancyWM("DecreaseWidth")
+#!^+=::FancyWM("IncreaseHeight")
+#!^+-::FancyWM("DecreaseHeight")
+
+; Desktop switching (Win+Alt+Ctrl+I/O)
+#!^i::FancyWM("SwitchToLeftDesktop")
+#!^o::FancyWM("SwitchToRightDesktop")
+#!^d::FancyWM("SwitchToPreviousDesktop")
+
+; Move window to desktop
+#!^1::FancyWM("MoveToDesktop1")
+#!^2::FancyWM("MoveToDesktop2")
