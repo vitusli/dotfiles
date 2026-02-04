@@ -79,3 +79,6 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer
 
 # Disable Aero Peek
 if (!(Test-Path "HKCU:\Software\Microsoft\Windows\DWM")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\DWM" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Type DWORD -Value 0 -Force
+
+# Disable Live Captions Shortcut (Win+Ctrl+Alt+L)
+if (!(Test-Path "HKCU:\Software\Microsoft\Accessibility")) { New-Item -Path "HKCU:\Software\Microsoft\Accessibility" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Accessibility" -Name "LiveCaptionsShortcutEnabled" -Type DWORD -Value 0 -Force
