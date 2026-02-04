@@ -82,3 +82,6 @@ if (!(Test-Path "HKCU:\Software\Microsoft\Windows\DWM")) { New-Item -Path "HKCU:
 
 # Disable Live Captions Shortcut (Win+Ctrl+Alt+L)
 if (!(Test-Path "HKCU:\Software\Microsoft\Accessibility")) { New-Item -Path "HKCU:\Software\Microsoft\Accessibility" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Accessibility" -Name "LiveCaptionsShortcutEnabled" -Type DWORD -Value 0 -Force
+
+# Disable Office Key (Win+Ctrl+Alt+Shift opens Microsoft 365)
+if (!(Test-Path "HKCU:\Software\Classes\ms-officeapp\Shell\Open\Command")) { New-Item -Path "HKCU:\Software\Classes\ms-officeapp\Shell\Open\Command" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Classes\ms-officeapp\Shell\Open\Command" -Name "(Default)" -Type String -Value "rundll32" -Force
