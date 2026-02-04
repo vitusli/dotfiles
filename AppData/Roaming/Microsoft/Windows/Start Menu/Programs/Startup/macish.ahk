@@ -139,5 +139,11 @@ ResetAltS() {
 #!^d::FancyWM("SwitchToPreviousDesktop")
 
 ; Move window to desktop
-#!^1::FancyWM("MoveToDesktop1")
-#!^2::FancyWM("MoveToDesktop2")
+#!^1::{
+    FancyWM("MoveToDesktop1")
+    FancyWM("SwitchToDesktop1")
+}
+#!^2::{
+    FancyWM("MoveToDesktop2")
+    FancyWM("SwitchToDesktop2")
+}
