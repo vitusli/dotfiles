@@ -9,6 +9,8 @@ FancyWM(action) {
 ;; Disable Language Switching
 #Space::Return
 
+
+
 ;;LWin::LCtrl
 ;;LCtrl::LWin
 ;;RWin::RCtrl

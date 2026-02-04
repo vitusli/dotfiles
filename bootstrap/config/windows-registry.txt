@@ -68,8 +68,9 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer
 # Dark theme for apps
 if (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Type DWORD -Value 0 -Force
 
-# User preferences mask (disables most animations)
-if (!(Test-Path "HKCU:\Control Panel\Desktop")) { New-Item -Path "HKCU:\Control Panel\Desktop" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Type Binary -Value ([byte[]](0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00)) -Force
+# User preferences mask (disables most animations + enables focus-follows-mouse)
+if (!(Test-Path "HKCU:\Control Panel\Desktop")) { New-Item -Path "HKCU:\Control Panel\Desktop" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Type Binary -Value ([byte[]](0x91,0x12,0x03,0x80,0x10,0x00,0x00,0x00)) -Force
+Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "ActiveWndTrkTimeout" -Type DWORD -Value 0 -Force
 
 # Disable minimize animations
 if (!(Test-Path "HKCU:\Control Panel\Desktop\WindowMetrics")) { New-Item -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Type String -Value "0" -Force
@@ -80,8 +81,14 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer
 # Disable Aero Peek
 if (!(Test-Path "HKCU:\Software\Microsoft\Windows\DWM")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\DWM" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Type DWORD -Value 0 -Force
 
-# Disable Live Captions Shortcut (Win+Ctrl+Alt+L)
+# Disable Live Captions completely
 if (!(Test-Path "HKCU:\Software\Microsoft\Accessibility")) { New-Item -Path "HKCU:\Software\Microsoft\Accessibility" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Accessibility" -Name "LiveCaptionsShortcutEnabled" -Type DWORD -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Accessibility" -Name "LiveCaptionsEnabled" -Type DWORD -Value 0 -Force
+if (!(Test-Path "HKCU:\Software\Microsoft\LiveCaptions")) { New-Item -Path "HKCU:\Software\Microsoft\LiveCaptions" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Microsoft\LiveCaptions" -Name "LaunchOnHotkey" -Type DWORD -Value 0 -Force
+# Remove livecaptions from Accessibility autostart configuration
+$accPath = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Accessibility"; if (Test-Path $accPath) { $config = (Get-ItemProperty -Path $accPath -Name "Configuration" -ErrorAction SilentlyContinue).Configuration; if ($config -and $config -match "livecaptions") { $newConfig = ($config -replace "livecaptions", "").Trim(); Set-ItemProperty -Path $accPath -Name "Configuration" -Value $newConfig -Force } }
+
+
 
 # Disable Office Key (Win+Ctrl+Alt+Shift opens Microsoft 365)
 if (!(Test-Path "HKCU:\Software\Classes\ms-officeapp\Shell\Open\Command")) { New-Item -Path "HKCU:\Software\Classes\ms-officeapp\Shell\Open\Command" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Classes\ms-officeapp\Shell\Open\Command" -Name "(Default)" -Type String -Value "rundll32" -Force

@@ -27,6 +27,7 @@ Microsoft.XboxIdentityProvider
 Microsoft.XboxSpeechToTextOverlay
 Microsoft.XboxGameOverlay
 Microsoft.Xbox.TCUI
+# MicrosoftWindows.Client.LiveCaptions  # Handled by windows_hardening.ps1
 # MicrosoftTeams
 # Microsoft.Windows.Photos
 # Microsoft.WindowsCamera
