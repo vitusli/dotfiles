@@ -43,5 +43,6 @@ fd #windows
 FiraCode-NF #windows
 gsudo #windows
 JetBrainsMono-NF #windows
+just
 scoop-completion #windows
 vlc #windows
