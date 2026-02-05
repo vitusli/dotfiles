@@ -9,8 +9,19 @@
       "shift-s": "vim::PushAddSurrounds"
     }
   },
+{{- if eq .chezmoi.os "windows" }}
+  {
+    "context": "vim_mode == normal || vim_mode == insert || vim_mode == visual",
+    "bindings": {
+      "ctrl-1": "editor::ToggleFocus"
+    }
+  },
+{{- end }}
   {
     "bindings": {
+{{- if eq .chezmoi.os "windows" }}
+      "ctrl-1": "editor::ToggleFocus",
+{{- end }}
       "{{ $mod }}-i": "agent::ToggleFocus",
       "{{ $mod }}-shift-j": "terminal_panel::ToggleFocus"
     }
