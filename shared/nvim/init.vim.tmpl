@@ -165,9 +165,7 @@ require("lazy").setup({
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
-    build = function()
-      vim.system({ "npx", "--yes", "yarn", "install" }, { cwd = vim.fn.stdpath("data") .. "/lazy/markdown-preview.nvim/app" })
-    end,
+    build = "cd app && npx --yes yarn install",
     init = function()
       vim.g.mkdp_filetypes = { "markdown" }
       vim.g.mkdp_browser = ""  -- Use system default browser
