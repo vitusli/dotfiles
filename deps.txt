@@ -9,3 +9,4 @@ mingw #windows
 scoop-completion #windows
 gsudo #windows
 olets/tap/zsh-abbr #macos
+node
