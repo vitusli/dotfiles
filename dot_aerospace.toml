@@ -90,6 +90,12 @@ ctrl-alt-cmd-l = ['move right', 'mode main']
 #return to main mode
 esc = ['mode main']
 
+# Window detection rules
+[[on-window-detected]]
+if.app-name-regex-substring = 'Blender'
+if.window-title-regex-substring = 'Preferences'
+run = 'layout floating'
+
 #this are no commands, they are rules (main or secondary)
 [workspace-to-monitor-force-assignment]
 1 = 'main'
