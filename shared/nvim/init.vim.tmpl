@@ -1,6 +1,33 @@
 " Neovim Configuration - Bootstrap to Lua
 
 lua << EOF
+-- Basic settings (shared between VSCode and standalone)
+vim.opt.clipboard = "unnamedplus"
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+
+-- H/L for line start/end
+vim.keymap.set({"n", "v", "o"}, "H", "^", { noremap = true })
+vim.keymap.set({"n", "v", "o"}, "L", "$", { noremap = true })
+
+-- Esc in normal mode clears search highlighting
+vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { noremap = true, desc = "Clear search highlighting" })
+
+-- Ctrl+h/l for split navigation
+vim.keymap.set("n", "<C-h>", "<C-w>h", { noremap = true, desc = "Move to left split" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true, desc = "Move to right split" })
+
+----------------------------------------------------------------------
+-- VSCode: Stop here, don't load plugins
+----------------------------------------------------------------------
+if vim.g.vscode then
+  return
+end
+
+----------------------------------------------------------------------
+-- Standalone Neovim: Full config below
+----------------------------------------------------------------------
+
 -- Ensure MinGW bin is on PATH for Tree-sitter builds (Windows)
 vim.env.PATH = vim.fn.expand("~") .. "\\scoop\\apps\\mingw\\current\\bin;" .. vim.env.PATH
 vim.env.CC = "gcc"
@@ -20,10 +47,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Basic settings
-vim.opt.clipboard = "unnamedplus"
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
+-- Additional settings for standalone
 vim.opt.incsearch = true
 vim.opt.hlsearch = true
 vim.opt.number = true
@@ -54,17 +78,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 vim.cmd("highlight Normal guibg=NONE ctermbg=NONE")
 vim.cmd("highlight NonText guibg=NONE ctermbg=NONE")
 vim.cmd("highlight EndOfBuffer guibg=NONE ctermbg=NONE")
-
--- H/L for line start/end
-vim.keymap.set({"n", "v", "o"}, "H", "^", { noremap = true })
-vim.keymap.set({"n", "v", "o"}, "L", "$", { noremap = true })
-
--- Esc in normal mode clears search highlighting
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { noremap = true, desc = "Clear search highlighting" })
-
--- Ctrl+h/l for split navigation
-vim.keymap.set("n", "<C-h>", "<C-w>h", { noremap = true, desc = "Move to left split" })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true, desc = "Move to right split" })
 
 -- Plugins
 require("lazy").setup({
