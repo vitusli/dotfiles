@@ -38,7 +38,7 @@ $env:VISUAL = "code"
 # Module Management
 # ============================================================================
 # Automatically install and import required modules
-$requiredModules = @('PSReadLine', 'ZLocation', 'PSFzf')
+$requiredModules = @('PSReadLine', 'PSFzf')
 foreach ($module in $requiredModules) {
     if (-not (Get-Module -ListAvailable -Name $module)) {
         Write-Host "Installing $module..."
@@ -49,6 +49,9 @@ foreach ($module in $requiredModules) {
 
 # PSFzf configuration (Ctrl+T for file search, Ctrl+R for history)
 Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
+
+# Initialize zoxide (smart cd replacement)
+Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
 # ============================================================================
 # Vi Mode
