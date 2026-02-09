@@ -10,8 +10,8 @@
   "AnimateWindowMovement": true,
   "ModifierMoveWindow": true,
   "ModifierMoveWindowAutoFocus": false,
-  "WindowPadding": 18,
-  "PanelHeight": 32,
+  "WindowPadding": 8,
+  "PanelHeight": 20,
   "PanelFontSize": 10,
   "ShowFocus": false,
   "ShowFocusDuringAction": true,
@@ -88,8 +88,14 @@
     "MoveToDisplay8": null,
     "MoveToDisplay9": null
   },
-  "ProcessIgnoreList": ["Taskmgr"],
-  "ClassIgnoreList": ["OperationStatusWindow", "RAIL_WINDOW"],
+  "ActivationHotkey": "Shift_Win",
+  "ProcessIgnoreList": [
+    "Taskmgr"
+  ],
+  "ClassIgnoreList": [
+    "OperationStatusWindow",
+    "RAIL_WINDOW"
+  ],
   "RemindToRateReview": true,
   "ShowContextHints": true,
   "MultiMonitorSupport": true,
