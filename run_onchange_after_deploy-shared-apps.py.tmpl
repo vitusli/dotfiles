@@ -206,28 +206,6 @@ def deploy_zen() -> None:
     print(f"  ✓ zen → {target_dir}")
 
 
-
-{{- if eq .chezmoi.os "windows" }}
-    # Restart Zen Browser if running
-    try:
-        result = subprocess.run(
-            ["tasklist", "/FI", "IMAGENAME eq zen.exe"],
-            capture_output=True,
-            text=True,
-        )
-        if "zen.exe" in result.stdout:
-            subprocess.run(["taskkill", "/F", "/IM", "zen.exe"], check=False)
-            import time
-            time.sleep(1)
-            app_exe = app_path / "zen.exe"
-            if app_exe.exists():
-                subprocess.Popen([str(app_exe)])
-                print("    (Zen Browser restarted)")
-    except Exception:
-        pass  # Ignore errors during restart
-{{- end }}
-
-
 # =============================================================================
 # Main
 # =============================================================================
