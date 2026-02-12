@@ -15,7 +15,7 @@ google-drive #macos
 homerow #macos
 karabiner-elements #macos
 keeweb #macos #windows
-keepassxc
+keepassxc #winget #macos #linux
 marta #macos
 microsoft-outlook #macos
 microsoft-teams #macos
@@ -30,6 +30,8 @@ rhino-app #macos
 slack #macos #windows
 sf-symbols #macos
 superwhisper #macos
+scoop-search #windows
+Toggl.TogglTrack #winget
 visual-studio-code #macos
 visual-studio-code-bin #linux
 vscode #windows
