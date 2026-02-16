@@ -27,4 +27,9 @@ defaults write com.lwouis.alt-tab-macos showWindowlessApps -string "1"
 # Disable analytics
 defaults write com.lwouis.alt-tab-macos MSAppCenterNetworkRequestsAllowed -bool false
 
+# Restart AltTab to apply changes
+pkill -x "AltTab" 2>/dev/null && sleep 1 && open -a "AltTab"
+
 echo "✓ Alt-Tab configured"
+
+echo "[OK] Alt-Tab configured"
