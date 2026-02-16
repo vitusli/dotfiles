@@ -35,7 +35,7 @@
     "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
     "vscode-neovim.neovimInitVimPaths.linux": "{{ .chezmoi.homeDir }}/.config/nvim/init.vim",
 {{- else if eq .chezmoi.os "windows" }}
-    "vscode-neovim.neovimExecutablePaths.win32": "C:\\Program Files\\Neovim\\bin\\nvim.exe",
+    "vscode-neovim.neovimExecutablePaths.win32": "{{ .chezmoi.homeDir }}\\scoop\\shims\\nvim.exe",
     "vscode-neovim.neovimInitVimPaths.win32": "{{ .chezmoi.homeDir }}/AppData/Local/nvim/init.vim",
 {{- end }}
     "vscode-neovim.useCtrlKeysForNormalMode": true,
