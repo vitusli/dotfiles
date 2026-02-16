@@ -1,45 +1,84 @@
 # GUI Apps
 
-ableton-live-suite #macos
-adobe-acrobat-reader #macos
-aerospace #macos
-affinity #macos
-arc #macos
-alt-tab #macos
-basictex #macos
-blender
-bridge #macos
-darktable #macos
-figma #macos
-google-drive #macos
-homerow #macos
-karabiner-elements #macos
-keeweb #macos #windows
-keepassxc #winget #macos #linux
-marta #macos
-microsoft-outlook #macos
-microsoft-teams #macos
-obsidian
-onedrive #macos
-openvpn-connect #macos
-parsec #macos #windows
-powershell
-qlmarkdown #macos
-raycast #macos #windows
-rhino-app #macos
-slack #macos #windows
-sf-symbols #macos
-superwhisper #macos
-scoop-search #windows
+ableton-live-suite #brew
+
+adobe-acrobat-reader #brew
+
+aerospace #brew
+
+affinity #brew
+
+alt-tab #brew
+
+arc #brew
+
+autohotkey #scoop
+
+blender #scoop #brew
+
+bridge #brew
+
+darktable #brew
+
+figma #brew
+
+google-drive #brew
+
+homerow #brew
+
+karabiner-elements #brew
+
+keepassxc #brew #pacman
+KeePassXCTeam.KeePassXC #winget
+
+keeweb #brew
+KeeWeb.KeeWeb #winget
+
+marta #brew
+
+microsoft-outlook #brew
+
+microsoft-teams #brew
+
+obsidian #scoop #brew
+
+onedrive #brew
+
+openvpn-connect #brew
+
+parsec #brew
+Parsec.Parsec #winget
+
+qlmarkdown #brew
+
+raycast #brew
+Raycast.Raycast #winget
+
+rhino-app #brew
+
+sf-symbols #brew
+
+slack #brew
+SlackTechnologies.Slack #winget
+
+superwhisper #brew
+
 Toggl.TogglTrack #winget
-visual-studio-code #macos
-visual-studio-code-bin #linux
-vscode #windows
-vlc #macos
-wezterm
-windows-app #macos
-zed
-zen #macos
-zen-browser-bin #linux
-zen-browser #windows
-zotero #macos
+
+visual-studio-code #brew
+visual-studio-code-bin #pacman
+Microsoft.VisualStudioCode #winget
+
+vlc #brew
+
+wezterm #scoop #brew
+
+windows-app #brew
+
+zed #scoop #brew
+
+zen #brew
+zen-browser-bin #pacman
+Zen-Team.Zen-Browser #winget
+
+zotero #brew

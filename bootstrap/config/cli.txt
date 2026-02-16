@@ -1,48 +1,46 @@
 # CLI Packages
 
-bat
-chezmoi
-defaultbrowser #macos
-ffmpeg
-fzf
-fd
-gh #macos #windows
-git
-git-lfs
-github-cli #linux
-glab #macos
-lazygit
-lf
-p7zip #macos
-poppler #macos
-pwsh
-pyright
-unar #macos
-neovim
-wandelbotsgmbh/wandelbots/nova #macos
-olets/tap/zsh-abbr #macos
-pandoc #macos
-pandoc-crossref #macos
-restic #macos
-serie
-uv
-zoxide
-zsh #linux
-zsh-abbr #macos #linux
-zsh-autocomplete #macos #linux
-zsh-autosuggestions #macos #linux
-zsh-syntax-highlighting #macos #linux
-
-# p7zip poppler unar are lf preview programms
-
-# Windows-specific (Scoop)
-
-7zip #windows
-aria2 #windows
-fd #windows
-FiraCode-NF #windows
-gsudo #windows
-JetBrainsMono-NF #windows
-just
-scoop-completion #windows
-vlc #windows
+7zip #scoop
+aria2 #scoop
+bat #scoop #brew
+chezmoi #scoop #brew
+defaultbrowser #brew
+fd #scoop #brew
+ffmpeg #scoop #brew
+FiraCode-NF #scoop
+fzf #scoop #brew
+gh #scoop #brew
+git #scoop #brew
+git-lfs #scoop #brew
+github-cli #pacman
+glab #scoop #brew
+gsudo #scoop
+JetBrainsMono-NF #scoop
+jq #scoop #brew
+just #scoop #brew
+lazygit #scoop #brew
+lf #scoop #brew
+neovim #scoop #brew
+nodejs #scoop
+olets/tap/zsh-abbr #brew
+p7zip #brew
+pandoc #scoop #brew
+pandoc-crossref #scoop #brew
+poppler #brew
+pwsh #scoop #brew
+pyright #scoop #brew
+restic #brew
+ripgrep #scoop #brew
+scoop-completion #scoop
+scoop-search #scoop
+serie #scoop #brew
+unar #brew
+uv #scoop #brew
+vlc #scoop
+wandelbotsgmbh/wandelbots/nova #brew
+zoxide #scoop #brew
+zsh #pacman
+zsh-abbr #brew #pacman
+zsh-autocomplete #brew #pacman
+zsh-autosuggestions #brew #pacman
+zsh-syntax-highlighting #brew #pacman
