@@ -10,12 +10,6 @@
         "newRemapKeys": "17;9"
       },
       {
-        "originalKeys": "91;162;164;78",
-        "exactMatch": false,
-        "operationType": 0,
-        "newRemapKeys": "91;9"
-      },
-      {
         "originalKeys": "91;162;164;160",
         "exactMatch": false,
         "operationType": 0,
