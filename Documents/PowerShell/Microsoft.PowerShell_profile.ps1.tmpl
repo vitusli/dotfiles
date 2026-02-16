@@ -26,6 +26,9 @@ $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
 $env:Path = "$machinePath;$userPath"
 $env:Path = "{{ .chezmoi.homeDir }}\scoop\apps\mingw\current\bin;{{ .chezmoi.homeDir }}\scoop\shims;$env:Path"
 
+# Add NovaCLI to PATH
+$env:Path = "{{ .chezmoi.homeDir }}\NovaCLI;$env:Path"
+
 # fzf: Copy result to clipboard on Enter (in addition to normal output)
 $env:FZF_DEFAULT_OPTS = "--bind 'enter:execute-silent(powershell -nop -c Set-Clipboard {})+accept'"
 
