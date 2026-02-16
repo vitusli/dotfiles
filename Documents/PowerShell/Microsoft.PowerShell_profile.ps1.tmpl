@@ -90,14 +90,13 @@ $function:prompt = {
 # ============================================================================
 # Abbreviations (generated from .chezmoidata.yaml)
 # ============================================================================
-$Abbreviations = @{
+$Abbreviations = [System.Collections.Hashtable]::new([System.StringComparer]::Ordinal)
 {{- range $abbr, $cmd := .abbreviations.universal }}
-    '{{ $abbr }}' = '{{ $cmd }}'
+$Abbreviations['{{ $abbr }}'] = '{{ $cmd }}'
 {{- end }}
 {{- range $abbr, $cmd := .abbreviations.windows }}
-    '{{ $abbr }}' = '{{ $cmd }}'
+$Abbreviations['{{ $abbr }}'] = '{{ $cmd }}'
 {{- end }}
-}
 
 Set-PSReadLineKeyHandler -Key ' ' -ScriptBlock {
     $line = $null
