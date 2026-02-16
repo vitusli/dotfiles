@@ -32,7 +32,8 @@ abbreviations:
     bi: "brew install"
     bs: "brew search"
     bu: "brew uninstall"
-    up: "brew upgrade"
+    bup: "brew upgrade"
+    bl: "brew list"
     copyid: "nova config view 2>&1 | tee >(awk '/^virtualid:/ {print $2}' | pbcopy)"
     copyip: "nova config view 2>&1 | tee >(awk '/^host:/ {print $2}' | pbcopy)"
     f: "fzf | pbcopy"
@@ -40,7 +41,7 @@ abbreviations:
     v: "source .venv/bin/activate"
 
   # ---------------------------------------------------------------------------
-  # Windows only
+  # Windows}} only
   # ---------------------------------------------------------------------------
   windows:
     ahk: 'Get-Process | Where-Object {$_.Name -like "*AutoHotkey*"} | Stop-Process -Force; Start-Process "C:\Users\Vitus\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\macish.ahk"'
@@ -48,10 +49,16 @@ abbreviations:
     ov: "A:\\isaac-sim\\isaac-sim.bat"
     rl: ". $PROFILE"
     v: ".venv\\Scripts\\Activate.ps1"
+    ws: "winget search"
+    wi: "winget install"
+    wu: "winget uninstall"
+    wup: "winget update"
+    wl: "winget list"
     ss: "scoop-search"
     si: "scoop install"
     su: "scoop uninstall"
-    up: "scoop update"
+    sup: "scoop update"
+    sl: "scoop list"
 
   # ---------------------------------------------------------------------------
   # Linux only
