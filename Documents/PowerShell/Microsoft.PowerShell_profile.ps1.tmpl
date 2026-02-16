@@ -20,6 +20,15 @@ try {
     Write-Verbose "Chezmoi completion registration failed: $($_.Exception.Message)"
 }
 
+# Enable tab completion for nova
+try {
+    if (Get-Command nova -ErrorAction SilentlyContinue) {
+        nova completion powershell | Out-String | Invoke-Expression
+    }
+} catch {
+    Write-Verbose "Nova completion registration failed: $($_.Exception.Message)"
+}
+
 # Add scoop to PATH
 $machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
 $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
