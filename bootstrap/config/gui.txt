@@ -75,7 +75,8 @@ wezterm #scoop #brew
 
 windows-app #brew
 
-zed #scoop #brew
+zed #brew
+ZedIndustries.Zed #winget
 
 zen #brew
 zen-browser-bin #pacman
