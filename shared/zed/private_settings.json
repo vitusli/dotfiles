@@ -8,11 +8,13 @@
     "show_user_picture": false
   },
   "agent": {
-    "always_allow_tool_actions": true,
+    "tool_permissions": {
+      "default": "allow"
+    },
     "notify_when_agent_waiting": "never",
     "default_model": {
       "provider": "copilot_chat",
-      "model": "claude-opus-4.5"
+      "model": "claude-opus-4.6"
     },
     "model_parameters": []
   },
