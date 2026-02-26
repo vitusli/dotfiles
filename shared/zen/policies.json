@@ -52,8 +52,15 @@
       "browser.translations.automaticallyPopup": {
         "Value": false,
         "Status": "locked"
+      },
+      "browser.startup.page": {
+        "Value": 3,
+        "Status": "locked"
+      },
+      "browser.sessionstore.resume_session_once": {
+        "Value": true,
+        "Status": "locked"
       }
     }
   }
 }
-

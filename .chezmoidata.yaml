@@ -10,7 +10,7 @@ abbreviations:
   # ---------------------------------------------------------------------------
   universal:
     c: "chezmoi"
-    ca: "chezmoi apply -v"
+    ca: "chezmoi apply"
     da: "cd $HOME/Documents/obsidian/Diplomarbeit && just build"
     go: "git checkout"
     p: "git pull"
