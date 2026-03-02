@@ -6,7 +6,7 @@ extr0py.vscode-relative-line-numbers
 github.copilot
 github.copilot-chat
 james-yu.latex-workshop
-manitejapratha.cursor-midnight-theme
+mohdzaid.vscode-cursor-theme
 mhutchie.git-graph
 michelemelluso.gitignore
 ms-python.debugpy
