@@ -14,7 +14,7 @@
     "notify_when_agent_waiting": "never",
     "default_model": {
       "provider": "copilot_chat",
-      "model": "claude-opus-4.6"
+      "model": "gpt-5-3-codex"
     },
     "model_parameters": []
   },
