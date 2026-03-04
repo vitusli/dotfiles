@@ -63,7 +63,7 @@ ctrl-alt-cmd-d = ['workspace-back-and-forth']
 ctrl-alt-cmd-1 = 'move-node-to-workspace 1 --focus-follows-window'
 ctrl-alt-cmd-2 = 'move-node-to-workspace 2 --focus-follows-window'
 
-# Try basic move first, then workspace switch 
+# Try basic move first, then workspace switch
 ctrl-alt-cmd-shift-h = ['exec-and-forget aerospace move left --boundaries all-monitors-outer-frame --boundaries-action fail || aerospace move-node-to-workspace --no-stdin prev --focus-follows-window']
 ctrl-alt-cmd-shift-j = ['exec-and-forget aerospace move down --boundaries all-monitors-outer-frame --boundaries-action fail || aerospace move-node-to-workspace 2 --focus-follows-window']
 ctrl-alt-cmd-shift-k = ['exec-and-forget aerospace move up --boundaries all-monitors-outer-frame --boundaries-action fail || aerospace move-node-to-workspace 1 --focus-follows-window']

@@ -10,7 +10,7 @@ abbreviations:
   # ---------------------------------------------------------------------------
   universal:
     c: "chezmoi"
-    ca: "chezmoi apply -v"
+    ca: "chezmoi apply"
     da: "cd $HOME/Documents/obsidian/Diplomarbeit && just build"
     go: "git checkout"
     p: "git pull"
@@ -23,6 +23,7 @@ abbreviations:
     s: "serie"
     "..": "cd .."
     "...": "cd ../.."
+    "ll": "ls -la"
 
   # ---------------------------------------------------------------------------
   # macOS only
@@ -39,6 +40,7 @@ abbreviations:
     f: "fzf | pbcopy"
     rl: "source ~/.zshrc"
     v: "source .venv/bin/activate"
+    usdview: "PYTHONPATH=/opt/local/USD/lib/python PATH=/opt/local/USD/bin:$PATH python3.11 /opt/local/USD/bin/usdview"
 
   # ---------------------------------------------------------------------------
   # Windows}} only
