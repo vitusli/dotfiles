@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+!/usr/bin/env pwsh
 # ============================================================================
 # Nova-CLI Scoop Bucket Manager
 # Manages nova-cli via a local Scoop bucket (like Homebrew!)

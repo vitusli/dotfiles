@@ -135,7 +135,6 @@
                 }
             ],
             "name": "􀂮",
-            "selected": true,
             "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
         },
         {
@@ -444,6 +443,8 @@
                         "vendor_id": 1133
                     },
                     "ignore": false,
+                    "mouse_flip_horizontal_wheel": true,
+                    "mouse_flip_vertical_wheel": true,
                     "simple_modifications": [
                         {
                             "from": { "pointing_button": "button5" },
@@ -489,6 +490,7 @@
                 }
             ],
             "name": "􀂿",
+            "selected": true,
             "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
         }
     ]
