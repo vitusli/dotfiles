@@ -168,19 +168,44 @@ def deploy_zen() -> None:
     source_dir = SOURCE_DIR / zen_config["source"]
 
 {{- if eq .chezmoi.os "windows" }}
-    # Find Zen Browser installation (Windows - path varies)
+    # Find Zen Browser installation (Windows - winget or scoop)
     app_path_candidates = [
-        Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Zen Browser",
-        Path(os.environ.get("SCOOP", "")) / "apps" / "zen" / "current",
-        Path(os.environ.get("USERPROFILE", "")) / "scoop" / "apps" / "zen" / "current",
-        Path(os.environ.get("SCOOP", "")) / "apps" / "zen-browser" / "current",
-        Path(os.environ.get("USERPROFILE", "")) / "scoop" / "apps" / "zen-browser" / "current",
+        Path("C:/Program Files/Zen Browser"),  # winget
+        Path(os.environ.get("SCOOP", Path.home() / "scoop")) / "apps" / "zen-browser" / "current",  # scoop
     ]
     app_path = next((p for p in app_path_candidates if p.exists()), None)
     if not app_path:
         print("  ⊘ zen (not installed, skipping)")
         return
     target_dir = app_path / "distribution"
+
+    # Deploy policy files using gsudo (Windows requires admin for Program Files)
+    for file_info in zen_config.get("files", []):
+        src = source_dir / file_info["src"]
+        dst = target_dir / file_info["dst"]
+
+        if not src.exists():
+            print(f"    ⚠ Source not found: {src}")
+            continue
+
+        try:
+            # Use gsudo to copy with elevated privileges
+            result = subprocess.run(
+                ["gsudo", "powershell", "-NoProfile", "-Command",
+                 f"New-Item -Path '{target_dir}' -ItemType Directory -Force | Out-Null; "
+                 f"Copy-Item -Path '{src}' -Destination '{dst}' -Force"],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            print(f"  ✓ zen → {target_dir}")
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+            if isinstance(e, FileNotFoundError):
+                print(f"  ⚠ zen: gsudo not found. Install with: scoop install gsudo")
+                print(f"      Manual: gsudo Copy-Item '{src}' '{dst}' -Force")
+            else:
+                print(f"  ✗ zen: {e.stderr if hasattr(e, 'stderr') else e}")
+
 {{- else if eq .chezmoi.os "darwin" }}
     # macOS - deploy into app bundle
     app_path = Path("/Applications/Zen.app")
@@ -188,22 +213,25 @@ def deploy_zen() -> None:
         print("  ⊘ zen (not installed, skipping)")
         return
     target_dir = app_path / "Contents" / "Resources" / "distribution"
+
+    # Deploy policy files
+    try:
+        target_dir.mkdir(parents=True, exist_ok=True)
+
+        for file_info in zen_config.get("files", []):
+            src = source_dir / file_info["src"]
+            dst = target_dir / file_info["dst"]
+
+            if src.exists():
+                copy_file(src, dst)
+
+        print(f"  ✓ zen → {target_dir}")
+    except PermissionError:
+        print(f"  ⚠ zen: Permission denied. Run with sudo to deploy to {target_dir}")
 {{- else }}
     print("  ⊘ zen (not supported on this OS)")
     return
 {{- end }}
-
-    # Deploy policy files
-    target_dir.mkdir(parents=True, exist_ok=True)
-
-    for file_info in zen_config.get("files", []):
-        src = source_dir / file_info["src"]
-        dst = target_dir / file_info["dst"]
-
-        if src.exists():
-            copy_file(src, dst)
-
-    print(f"  ✓ zen → {target_dir}")
 
 
 # =============================================================================
