@@ -4,9 +4,17 @@ neovim
 lf
 tree-sitter-cli
 markdown-oxide
+olets/tap/zsh-abbr #macos
+node
+zoxide
+zsh-autosuggestions
+zsh-syntax-highlighting
+fd
+lazygit
+serie
+rustup
+uv
 mingw #windows
 7zip #windows
 scoop-completion #windows
 gsudo #windows
-olets/tap/zsh-abbr #macos
-node
