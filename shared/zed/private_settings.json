@@ -1,6 +1,6 @@
 {
   "tab_bar": {
-    "show": false
+    "show": true
   },
   "title_bar": {
     "show_onboarding_banner": false,
