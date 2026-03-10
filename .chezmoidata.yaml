@@ -23,7 +23,6 @@ abbreviations:
     s: "serie"
     "..": "cd .."
     "...": "cd ../.."
-    ll: "ls -la"
 
   # ---------------------------------------------------------------------------
   # macOS only
@@ -38,6 +37,7 @@ abbreviations:
     copyid: "nova config view 2>&1 | tee >(awk '/^virtualid:/ {print $2}' | pbcopy)"
     copyip: "nova config view 2>&1 | tee >(awk '/^host:/ {print $2}' | pbcopy)"
     f: "fzf | pbcopy"
+    ll: "ls -la"
     rl: "source ~/.zshrc"
     v: "source .venv/bin/activate"
     usdview: "PYTHONPATH=/opt/local/USD/lib/python PATH=/opt/local/USD/bin:$PATH python3.11 /opt/local/USD/bin/usdview"
