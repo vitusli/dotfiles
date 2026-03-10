@@ -34,15 +34,15 @@
     "mode": "system",
     "light": "One Light",
     "dark": "One Dark"
-  }
-  "search.exclude": [
-  "**/.venv/**",
-  "**/__pycache__/**",
-  "**/.pytest_cache/**",
-  "**/.mypy_cache/**",
-  "**/.ruff_cache/**",
-  "**/.tox/**",
-  "**/.nox/**",
-  "**/_reference/**"
+  },
+  "file_scan_exclusions": [
+    "**/.venv",
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "**/.mypy_cache",
+    "**/.ruff_cache",
+    "**/.tox",
+    "**/.nox",
+    "**/_reference"
   ]
 }
