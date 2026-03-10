@@ -13,7 +13,16 @@
   {
     "context": "vim_mode == normal || vim_mode == insert || vim_mode == visual",
     "bindings": {
-      "ctrl-1": "editor::ToggleFocus"
+      "ctrl-1": "editor::ToggleFocus",
+      "ctrl-b": "workspace::ToggleLeftDock",
+      "ctrl-alt-o": "projects::OpenRecent",
+      "ctrl-j": "terminal_panel::ToggleFocus"
+    }
+  },
+  {
+    "context": "vim_mode == normal",
+    "bindings": {
+      "ctrl-p": "command_palette::Toggle"
     }
   },
 {{- end }}
