@@ -4,12 +4,6 @@
   "remapShortcuts": {
     "global": [
       {
-        "originalKeys": "260;9",
-        "exactMatch": false,
-        "operationType": 0,
-        "newRemapKeys": "17;9"
-      },
-      {
         "originalKeys": "91;162;164;160",
         "exactMatch": false,
         "operationType": 0,
