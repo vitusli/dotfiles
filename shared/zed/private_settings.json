@@ -14,7 +14,7 @@
     "notify_when_agent_waiting": "never",
     "default_model": {
       "provider": "copilot_chat",
-      "model": "gpt-5-3-codex"
+      "model": "claude-sonnet-4-6"
     },
     "model_parameters": []
   },
@@ -35,4 +35,14 @@
     "light": "One Light",
     "dark": "One Dark"
   }
+  "search.exclude": [
+  "**/.venv/**",
+  "**/__pycache__/**",
+  "**/.pytest_cache/**",
+  "**/.mypy_cache/**",
+  "**/.ruff_cache/**",
+  "**/.tox/**",
+  "**/.nox/**",
+  "**/_reference/**"
+  ]
 }
