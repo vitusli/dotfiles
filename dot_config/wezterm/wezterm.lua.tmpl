@@ -4,6 +4,14 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
+-- Detect system appearance (Dark/Light)
+local function get_appearance()
+  if wezterm.gui then
+    return wezterm.gui.get_appearance()
+  end
+  return 'Dark'
+end
+
 {{- if eq .chezmoi.os "darwin" }}
 -- macOS: Force wezterm launch in foreground
 wezterm.on("gui-startup", function(cmd)
@@ -42,80 +50,76 @@ config.window_padding = {
 config.window_close_confirmation = 'NeverPrompt'
 
 -- ==========================
--- Command Palette (CursorDarkMidnight theme)
+-- Colors & Themes
 -- ==========================
-config.command_palette_font_size = 14.0
-config.command_palette_bg_color = '#191c22'
-config.command_palette_fg_color = '#d8dee9'
-config.command_palette_rows = 12
 
--- ==========================
--- Colors (CursorDarkMidnight theme)
--- ==========================
-config.colors = {
-  -- Background and foreground
+-- Cursor Dark Midnight (Your custom theme)
+local cursor_dark_midnight = {
   background = '#191c22',
   foreground = '#7b88a1',
-
-  -- Cursor
   cursor_bg = '#8fbcbb',
   cursor_fg = '#191c22',
   cursor_border = '#8fbcbb',
-
-  -- Selection
   selection_bg = '#21242b',
   selection_fg = '#7b88a1',
-
-  -- Normal colors
   ansi = {
-    '#3b4252', -- black
-    '#bf616a', -- red
-    '#a3be8c', -- green
-    '#ebcb8b', -- yellow
-    '#81a1c1', -- blue
-    '#b48ead', -- magenta
-    '#88c0d0', -- cyan
-    '#e5e9f0', -- white
+    '#3b4252', '#bf616a', '#a3be8c', '#ebcb8b',
+    '#81a1c1', '#b48ead', '#88c0d0', '#e5e9f0',
   },
-
-  -- Bright colors
   brights = {
-    '#4c566a', -- bright black
-    '#bf616a', -- bright red
-    '#a3be8c', -- bright green
-    '#ebcb8b', -- bright yellow
-    '#81a1c1', -- bright blue
-    '#b48ead', -- bright magenta
-    '#8fbcbb', -- bright cyan
-    '#eceff4', -- bright white
+    '#4c566a', '#bf616a', '#a3be8c', '#ebcb8b',
+    '#81a1c1', '#b48ead', '#8fbcbb', '#eceff4',
   },
-
-  -- Tab bar colors
   tab_bar = {
     background = '#191c22',
-    active_tab = {
-      bg_color = '#21242b',
-      fg_color = '#e5e9f0',
-      intensity = 'Bold',
-    },
-    inactive_tab = {
-      bg_color = '#191c22',
-      fg_color = '#4c566a',
-    },
-    inactive_tab_hover = {
-      bg_color = '#21242b',
-      fg_color = '#7b88a1',
-    },
-    new_tab = {
-      bg_color = '#191c22',
-      fg_color = '#4c566a',
-    },
-    new_tab_hover = {
-      bg_color = '#21242b',
-      fg_color = '#7b88a1',
-    },
+    active_tab = { bg_color = '#21242b', fg_color = '#e5e9f0', intensity = 'Bold' },
+    inactive_tab = { bg_color = '#191c22', fg_color = '#4c566a' },
+    inactive_tab_hover = { bg_color = '#21242b', fg_color = '#7b88a1' },
+    new_tab = { bg_color = '#191c22', fg_color = '#4c566a' },
+    new_tab_hover = { bg_color = '#21242b', fg_color = '#7b88a1' },
   },
 }
+
+-- Cursor Light (approximate from VSCode theme)
+local cursor_light = {
+  background = '#ffffff',
+  foreground = '#383a42',
+  cursor_bg = '#526fff',
+  cursor_fg = '#ffffff',
+  cursor_border = '#526fff',
+  selection_bg = '#e5ebff',
+  selection_fg = '#383a42',
+  ansi = {
+    '#383a42', '#e45649', '#50a14f', '#c18401',
+    '#4078f2', '#a626a4', '#0184bc', '#a0a1a7',
+  },
+  brights = {
+    '#383a42', '#e45649', '#50a14f', '#c18401',
+    '#4078f2', '#a626a4', '#0184bc', '#a0a1a7',
+  },
+  tab_bar = {
+    background = '#f3f3f3',
+    active_tab = { bg_color = '#ffffff', fg_color = '#383a42', intensity = 'Bold' },
+    inactive_tab = { bg_color = '#f3f3f3', fg_color = '#6a6a6a' },
+    inactive_tab_hover = { bg_color = '#e5ebff', fg_color = '#383a42' },
+    new_tab = { bg_color = '#f3f3f3', fg_color = '#6a6a6a' },
+    new_tab_hover = { bg_color = '#e5ebff', fg_color = '#383a42' },
+  },
+}
+
+-- Apply theme based on appearance
+if get_appearance():find 'Dark' then
+  config.colors = cursor_dark_midnight
+  config.command_palette_bg_color = '#191c22'
+  config.command_palette_fg_color = '#d8dee9'
+else
+  config.colors = cursor_light
+  config.command_palette_bg_color = '#ffffff'
+  config.command_palette_fg_color = '#383a42'
+end
+
+config.command_palette_font_size = 14.0
+config.command_palette_rows = 12
 
 -- ==========================
 -- Tab Bar
