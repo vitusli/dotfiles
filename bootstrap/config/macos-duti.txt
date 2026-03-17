@@ -15,3 +15,7 @@ app.zen-browser.zen|http
 app.zen-browser.zen|https
 dev.zed.Zed|.txt
 org.yanex.marta|public.folder
+com.apple.Preview|com.pixar.universal-scene-description
+com.apple.Preview|com.pixar.universal-scene-description-mobile
+com.apple.Preview|com.pixar.universal-scene-description-package
+dev.zed.Zed|com.pixar.universal-scene-description-ascii
