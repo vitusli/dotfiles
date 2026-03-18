@@ -6,40 +6,40 @@ scan_timeout = 30        # ms - how long starship scans the directory (default: 
 command_timeout = 500    # ms - how long any single command (incl. git) may take
 
 # Only show the modules we actually want - everything else is disabled by not listing it
-format = "$directory$git_branch$git_status$package$python$nodejs$rust$character"
+format = "$directory$git_branch$git_status$package$python$nodejs$rust$line_break$character"
 
 
 
 [character]
-success_symbol = "[❯](bold cyan)"
-error_symbol = "[❯](bold red)"
+success_symbol = "[❯](#8fbcbb bold)"
+error_symbol = "[❯](#bf616a bold)"
 
 [directory]
 truncation_length = 2
 truncation_symbol = "…/"
-repo_root_style = "bold cyan"
+repo_root_style = "bold #88c0d0"
 repo_root_format = "[$repo_root]($repo_root_style)[$path]($style) "
-style = "cyan"
+style = "#88c0d0"
 read_only = " 󰌾"
 
 [git_branch]
-format = "[$branch]($style) "
-style = "italic cyan"
+format = "[ $branch]($style) "
+style = "italic #81a1c1"
 truncation_length = 30
 truncation_symbol = "…"
 
 [git_status]
 # Only show what's actionable - no noise for clean repos
 format = '([$all_status$ahead_behind]($style) )'
-style = "cyan"
+style = "#ebcb8b"
 ahead = "⇡${count}"
 behind = "⇣${count}"
 diverged = "⇕⇡${ahead_count}⇣${behind_count}"
-conflicted = "!${count}"
-untracked = "?${count}"
-modified = "~${count}"
-staged = "+${count}"
-deleted = "-${count}"
+conflicted = "[!${count}](#bf616a)"
+untracked = "[?${count}](#8fbcbb)"
+modified = "[!${count}](#ebcb8b)"
+staged = "[+${count}](#a3be8c)"
+deleted = "[-${count}](#bf616a)"
 stashed = ""
 # Don't scan inside .git dirs, node_modules, etc.
 # This is the main performance lever for large repos
@@ -51,24 +51,28 @@ style = "cyan"
 
 [package]
 format = "[$version]($style) "
-style = "cyan"
+style = "#b48ead"
 version_format = "v${raw}"
 symbol = ""
+display_private = false
 
 [python]
-format = "[py $version( $virtualenv)]($style) "
-style = "cyan"
+format = "[py $version( \\($virtualenv\\))]($style) "
+style = "#b48ead"
 version_format = "v${major}.${minor}"
 symbol = ""
 
 [nodejs]
 format = "[node $version]($style) "
-style = "cyan"
-version_format = "v${major}"
+style = "#a3be8c"
+version_format = "v${major}.${minor}"
 symbol = ""
 
 [rust]
 format = "[rs $version]($style) "
-style = "cyan"
+style = "#ebcb8b"
 version_format = "v${major}.${minor}"
 symbol = ""
+
+[git_metrics]
+disabled = true

@@ -2,6 +2,10 @@
 # PowerShell Profile (Windows)
 # ============================================================================
 
+# Point Starship to our deployed config explicitly
+# Without this, Starship ignores %APPDATA%\starship\starship.toml on Windows
+$env:STARSHIP_CONFIG = "$env:APPDATA\starship\starship.toml"
+
 # Enable tab completion for Winget
 try {
     Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
