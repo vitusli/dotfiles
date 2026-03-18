@@ -6,7 +6,7 @@ scan_timeout = 30        # ms - how long starship scans the directory (default: 
 command_timeout = 500    # ms - how long any single command (incl. git) may take
 
 # Only show the modules we actually want - everything else is disabled by not listing it
-format = "$directory$git_branch$git_status$character"
+format = "$directory$git_branch$git_status$package$python$nodejs$rust$character"
 
 
 
@@ -48,3 +48,23 @@ ignore_submodules = false
 [git_state]
 format = '\([$state( $progress_current/$progress_total)]($style)\) '
 style = "cyan"
+
+[package]
+format = "[$version]($style) "
+style = "cyan"
+version_format = "v${raw}"
+
+[python]
+format = "[py $version( $virtualenv)]($style) "
+style = "cyan"
+version_format = "v${major}.${minor}"
+
+[nodejs]
+format = "[node $version]($style) "
+style = "cyan"
+version_format = "v${major}"
+
+[rust]
+format = "[rs $version]($style) "
+style = "cyan"
+version_format = "v${major}.${minor}"
