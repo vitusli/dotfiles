@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
+
+gui:
+  nerdFontsVersion: "3"
+  showFileIcons: true
+  expandFocusedSidePanel: true
+  showNumstatInFilesView: true
+  showDivergenceFromBaseBranch: arrowAndNumber
+  filterMode: fuzzy
+  border: rounded
+
+  theme:
+    selectedLineBgColor:
+      - reverse
+    activeBorderColor:
+      - cyan
+      - bold
+
+  branchColorPatterns:
+    '^feature/': '#88c0d0'
+    '^fix/': '#bf616a'
+    '^hotfix/': '#ebcb8b'
+    '^docs/': '#a3be8c'
+    '^chore/': '#b48ead'
+
+git:
+  log:
+    order: topo-order
+    showGraph: always
+    showWholeGraph: false
+
+  pagers:
+    - colorArg: never
+      pager: delta --dark --paging=never --line-numbers
+
+os:
+  editPreset: 'zed'
+  shellFunctionsFile: ~/.zsh/functions.zsh

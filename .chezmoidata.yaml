@@ -111,6 +111,24 @@ shared_apps:
     files:
       - { src: "init.vim.tmpl", dst: "init.vim", template: true }
 
+  starship:
+    source: "shared/starship"
+    target:
+      darwin: ".config"
+      linux: ".config"
+      windows: "AppData/Roaming/starship"
+    files:
+      - { src: "starship.toml", dst: "starship.toml", template: false }
+
+  lazygit:
+    source: "shared/lazygit"
+    target:
+      darwin: "Library/Application Support/lazygit"
+      linux: ".config/lazygit"
+      windows: "AppData/Roaming/lazygit"
+    files:
+      - { src: "config.yml", dst: "config.yml", template: false }
+
   lf:
     source: "shared/lf"
     target:

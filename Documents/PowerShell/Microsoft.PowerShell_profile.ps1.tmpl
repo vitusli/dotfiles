@@ -90,13 +90,18 @@ Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 # Set the initial cursor to a line for Insert Mode
 Write-Host -NoNewLine "`e[6 q"
 
-# Reset cursor to line after every command (like zsh zle-line-init)
-$PSDefaultParameterValues['Out-Default:OutVariable'] = '__lastOutput'
-Set-PSReadLineOption -ExtraPromptLineCount 0
+# Starship prompt
+Invoke-Expression (&starship init powershell)
+
+# Wrap Starship's prompt function to reset cursor to beam (insert mode) on every prompt.
+# This fixes TUIs (lazygit, lf, nvim, serie...) that leave a block cursor behind —
+# after the TUI exits, the next prompt render calls this wrapper and resets the cursor.
+$_starshipPrompt = $function:prompt
 $function:prompt = {
-    # Reset cursor to line for Insert Mode after every command
+    # Reset to beam cursor (insert mode) before every prompt
+    # regardless of what the previous process left behind
     Write-Host -NoNewLine "`e[6 q"
-    "PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "
+    & $_starshipPrompt
 }
 
 # ============================================================================

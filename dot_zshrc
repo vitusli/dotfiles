@@ -1,9 +1,6 @@
 # ============================================================================
-# PROMPT & ENVIRONMENT
+# ENVIRONMENT
 # ============================================================================
-
-# Minimal prompt without username/hostname
-PROMPT='%1~ %% '
 
 # Default editors
 export EDITOR="vim"
@@ -22,9 +19,7 @@ source <(fzf --zsh)
 export FZF_DEFAULT_OPTS="--bind 'enter:execute-silent(echo {} | pbcopy)+accept'"
 
 # zsh-abbr - add to FPATH before compinit
-if type brew &>/dev/null; then
-  FPATH="$(brew --prefix)/share/zsh-abbr:${FPATH}"
-fi
+FPATH="/opt/homebrew/share/zsh-abbr:${FPATH}"
 
 # ============================================================================
 # LOAD MODULAR CONFIG
@@ -37,3 +32,14 @@ done
 
 # zsh-abbr - load after compinit (which is in completion.zsh)
 source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
+
+# ============================================================================
+# PROMPT
+# ============================================================================
+
+# Starship init last — so our zle hooks (vim-mode.zsh) are registered first
+# and Starship's internal zle hooks don't overwrite our cursor shape logic.
+# zle-keymap-select and zle-line-init in vim-mode.zsh win because zle -N
+# called after starship would re-register them, but we call starship last
+# so it cannot overwrite ours.
+eval "$(starship init zsh)"

@@ -16,6 +16,12 @@ shared/zed:
 shared/nvim:
   {{ include "shared/nvim/init.vim.tmpl" | sha256sum }}
 
+shared/starship:
+  {{ include "shared/starship/starship.toml" | sha256sum }}
+
+shared/lazygit:
+  {{ include "shared/lazygit/config.yml" | sha256sum }}
+
 shared/lf:
   {{ include "shared/lf/lfrc.tmpl" | sha256sum }}
   {{ include "shared/lf/preview.sh" | sha256sum }}
