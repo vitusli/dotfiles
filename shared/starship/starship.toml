@@ -53,18 +53,22 @@ style = "cyan"
 format = "[$version]($style) "
 style = "cyan"
 version_format = "v${raw}"
+symbol = ""
 
 [python]
 format = "[py $version( $virtualenv)]($style) "
 style = "cyan"
 version_format = "v${major}.${minor}"
+symbol = ""
 
 [nodejs]
 format = "[node $version]($style) "
 style = "cyan"
 version_format = "v${major}"
+symbol = ""
 
 [rust]
 format = "[rs $version]($style) "
 style = "cyan"
 version_format = "v${major}.${minor}"
+symbol = ""
