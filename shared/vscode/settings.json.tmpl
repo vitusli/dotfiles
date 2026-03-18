@@ -52,6 +52,7 @@
 
     // Terminal
 {{- if eq .chezmoi.os "windows" }}
+    "terminal.integrated.shellIntegration.enabled": false,
     "terminal.integrated.defaultProfile.windows": "PowerShell",
     "terminal.integrated.profiles.windows": {
         "PowerShell": {
