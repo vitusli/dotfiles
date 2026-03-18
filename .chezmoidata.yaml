@@ -127,7 +127,7 @@ shared_apps:
       linux: ".config/lazygit"
       windows: "AppData/Roaming/lazygit"
     files:
-      - { src: "config.yml", dst: "config.yml", template: false }
+      - { src: "config.yml", dst: "config.yml", template: true }
 
   lf:
     source: "shared/lf"
