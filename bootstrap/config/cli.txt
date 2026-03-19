@@ -5,6 +5,7 @@ aria2 #scoop
 bat #scoop #brew
 chezmoi #scoop #brew
 defaultbrowser #brew
+delta
 fd #scoop #brew
 ffmpeg #scoop #brew
 FiraCode-NF #scoop

@@ -17,11 +17,11 @@ gui:
       - bold
 
   branchColorPatterns:
-    '^feature/': '#88c0d0'
-    '^fix/': '#bf616a'
-    '^hotfix/': '#ebcb8b'
-    '^docs/': '#a3be8c'
-    '^chore/': '#b48ead'
+    "^feature/": "#88c0d0"
+    "^fix/": "#bf616a"
+    "^hotfix/": "#ebcb8b"
+    "^docs/": "#a3be8c"
+    "^chore/": "#b48ead"
 
 git:
   log:
@@ -31,8 +31,8 @@ git:
 
   pagers:
     - colorArg: never
-      pager: delta --dark --paging=never --line-numbers
+      pager: delta --paging=never --line-numbers --syntax-theme=Nord --minus-style=#2d1515 --minus-emph-style=#4a2020 --plus-style=#152d15 --plus-emph-style=#1e3d1e --zero-style=syntax --line-numbers-minus-style=#bf616a --line-numbers-plus-style=#a3be8c --line-numbers-zero-style=#4c566a
 
 os:
-  editPreset: 'zed'
+  editPreset: "zed"
   shellFunctionsFile: ~/.zsh/functions.zsh

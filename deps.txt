@@ -1,6 +1,7 @@
 starship
 fzf
 bat
+delta
 neovim
 lf
 tree-sitter-cli
