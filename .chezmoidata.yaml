@@ -18,6 +18,7 @@ abbreviations:
     ga: "git add -A"
     gc: "git commit -m"
     g: "git"
+    j: "just"
     l: "lazygit"
     py: "uv run python"
     s: "serie"
@@ -127,7 +128,7 @@ shared_apps:
       linux: ".config/lazygit"
       windows: "AppData/Roaming/lazygit"
     files:
-      - { src: "config.yml", dst: "config.yml", template: false }
+      - { src: "config.yml", dst: "config.yml", template: true }
 
   lf:
     source: "shared/lf"

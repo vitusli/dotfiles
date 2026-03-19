@@ -124,8 +124,8 @@ ResetAltS() {
 #!^Space::FancyWM("CreateStackPanel")
 #!^+Space::FancyWM("PullWindowUp")
 #!^w::FancyWM("ToggleFloatingMode")
-#!^v::FancyWM("CreateVerticalPanel")
-#!^b::FancyWM("CreateHorizontalPanel")
+; #!^v::FancyWM("CreateVerticalPanel")
+; #!^b::FancyWM("CreateHorizontalPanel")
 
 ; Resize (Win+Alt+Ctrl+Plus/Minus)
 #!^=::FancyWM("IncreaseWidth")
