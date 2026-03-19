@@ -89,7 +89,7 @@ git:
 
   pagers:
     - colorArg: always
-      pager: delta {{ if $isDark }}--dark{{ else }}--light{{ end }} --paging=never --line-numbers --no-gitconfig --minus-style=#9b2020 --minus-emph-style=#cc2020 --plus-style=#209620 --plus-emph-style=#20cc20 --zero-style=normal --line-numbers-minus-style=#f28779 --line-numbers-plus-style=#d5ff80 --line-numbers-zero-style=#4c566a
+      pager: delta {{ if $isDark }}--dark{{ else }}--light{{ end }} --paging=never --line-numbers --no-gitconfig --minus-style=#9b2020 --minus-emph-style=#cc2020 --plus-style=#209620 --plus-emph-style=#20cc20 --zero-style=#808080 --line-numbers-minus-style=#f28779 --line-numbers-plus-style=#d5ff80 --line-numbers-zero-style=#4c566a
 
 os:
   editPreset: "zed"
