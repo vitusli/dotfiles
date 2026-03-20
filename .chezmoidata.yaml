@@ -148,6 +148,15 @@ shared_apps:
     files_windows:
       - { src: "preview.cmd", dst: "preview.cmd" }
 
+  moxide:
+    source: "shared/config/moxide"
+    target:
+      darwin: ".config/moxide"
+      linux: ".config/moxide"
+      windows: "AppData/Roaming/moxide"
+    files:
+      - { src: "settings.toml", dst: "settings.toml", template: false }
+
 # =============================================================================
 # Special Apps (non-standard deployment)
 # =============================================================================

@@ -30,6 +30,9 @@ shared/lf:
 
 shared/zen:
   {{ include "shared/zen/policies.json" | sha256sum }}
+
+shared/config/moxide:
+  {{ include "shared/config/moxide/settings.toml" | sha256sum }}
 """
 
 import os

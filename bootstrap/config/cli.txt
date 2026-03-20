@@ -21,6 +21,7 @@ jq #scoop #brew
 just #scoop #brew
 lazygit #scoop #brew
 lf #scoop #brew
+markdwon-oxide #brew
 neovim #scoop #brew
 nodejs #scoop
 olets/tap/zsh-abbr #brew
