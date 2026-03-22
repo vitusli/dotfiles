@@ -29,7 +29,8 @@ p7zip #brew
 pandoc #scoop #brew
 pandoc-crossref #scoop #brew
 poppler #brew
-pwsh #scoop #brew
+pwsh #brew
+Microsoft.PowerShel #winget
 pyright #scoop #brew
 restic #brew
 ripgrep #scoop #brew
