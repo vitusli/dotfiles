@@ -30,7 +30,7 @@ pandoc #scoop #brew
 pandoc-crossref #scoop #brew
 poppler #brew
 pwsh #brew
-Microsoft.PowerShel #winget
+Microsoft.PowerShell #winget
 pyright #scoop #brew
 restic #brew
 ripgrep #scoop #brew
