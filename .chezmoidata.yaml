@@ -9,6 +9,7 @@ abbreviations:
   # Universal - all systems
   # ---------------------------------------------------------------------------
   universal:
+    co: "copilot"
     c: "chezmoi"
     ca: "chezmoi apply"
     da: "cd $HOME/Documents/obsidian/Diplomarbeit && just build"
