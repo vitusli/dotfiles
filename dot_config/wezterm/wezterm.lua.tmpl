@@ -72,11 +72,11 @@ local cursor_dark_midnight = {
   },
   tab_bar = {
     background = '#191c22',
-    active_tab = { bg_color = '#21242b', fg_color = '#e5e9f0', intensity = 'Bold' },
-    inactive_tab = { bg_color = '#191c22', fg_color = '#4c566a' },
-    inactive_tab_hover = { bg_color = '#21242b', fg_color = '#7b88a1' },
-    new_tab = { bg_color = '#191c22', fg_color = '#4c566a' },
-    new_tab_hover = { bg_color = '#21242b', fg_color = '#7b88a1' },
+    active_tab = { bg_color = '#191c22', fg_color = '#e5e9f0', intensity = 'Bold' },
+    inactive_tab = { bg_color = '#191c22', fg_color = '#e5e9f0' },
+    inactive_tab_hover = { bg_color = '#191c22', fg_color = '#e5e9f0' },
+    new_tab = { bg_color = '#191c22', fg_color = '#e5e9f0' },
+    new_tab_hover = { bg_color = '#191c22', fg_color = '#e5e9f0' },
   },
 }
 
@@ -99,11 +99,11 @@ local cursor_light = {
   },
   tab_bar = {
     background = '#f3f3f3',
-    active_tab = { bg_color = '#ffffff', fg_color = '#383a42', intensity = 'Bold' },
-    inactive_tab = { bg_color = '#f3f3f3', fg_color = '#6a6a6a' },
-    inactive_tab_hover = { bg_color = '#e5ebff', fg_color = '#383a42' },
-    new_tab = { bg_color = '#f3f3f3', fg_color = '#6a6a6a' },
-    new_tab_hover = { bg_color = '#e5ebff', fg_color = '#383a42' },
+    active_tab = { bg_color = '#f3f3f3', fg_color = '#383a42', intensity = 'Bold' },
+    inactive_tab = { bg_color = '#f3f3f3', fg_color = '#383a42' },
+    inactive_tab_hover = { bg_color = '#f3f3f3', fg_color = '#383a42' },
+    new_tab = { bg_color = '#f3f3f3', fg_color = '#383a42' },
+    new_tab_hover = { bg_color = '#f3f3f3', fg_color = '#383a42' },
   },
 }
 
@@ -127,18 +127,65 @@ config.command_palette_rows = 12
 config.enable_tab_bar = true
 config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = false  -- Retro tab bar looks cleaner
-config.tab_max_width = 32
+config.tab_max_width = 999
 config.show_tab_index_in_tab_bar = false
 config.show_new_tab_button_in_tab_bar = false
 
--- Custom tab title
-wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
-  local title = tab.active_pane.title
-  if title and #title > max_width - 4 then
-    title = wezterm.truncate_right(title, max_width - 4) .. '…'
+local tab_bar_cols = 0
+
+local function update_tab_bar_cols(window)
+  local success, tab = pcall(function()
+    return window:active_tab()
+  end)
+
+  if success and tab then
+    local size = tab:get_size()
+    if size and size.cols then
+      tab_bar_cols = size.cols
+    end
   end
+end
+
+wezterm.on('window-config-reloaded', function(window)
+  update_tab_bar_cols(window)
+end)
+
+wezterm.on('window-resized', function(window, _)
+  update_tab_bar_cols(window)
+end)
+
+local function tab_title(tab_info)
+  local title = tab_info.tab_title
+  if title and #title > 0 then
+    return title
+  end
+  return tab_info.active_pane.title or 'shell'
+end
+
+-- Best-effort equal-width tabs for the retro tab bar.
+wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
+  local title = tab_title(tab)
+  local tab_count = math.max(#tabs, 1)
+  local target_width = max_width
+
+  if tab_bar_cols > 0 then
+    local base_width = math.floor(tab_bar_cols / tab_count)
+    local remainder = tab_bar_cols % tab_count
+    target_width = base_width + (tab.tab_index < remainder and 1 or 0)
+  end
+
+  target_width = math.max(math.min(target_width, max_width), 1)
+
+  if #title > target_width then
+    title = wezterm.truncate_right(title, target_width - 1) .. '…'
+  end
+
+  local padding = math.max(target_width - #title, 0)
+  local left_padding = math.floor(padding / 2)
+  local right_padding = padding - left_padding
+
   return {
-    { Text = ' ' .. title .. ' ' },
+    { Text = string.rep(' ', left_padding) .. title .. string.rep(' ', right_padding) },
   }
 end)
 
