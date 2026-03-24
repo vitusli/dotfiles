@@ -4,6 +4,8 @@
 aria2 #scoop
 bat #scoop #brew
 chezmoi #scoop #brew
+copilot #scoop #brew
+codex #scoop #brew
 defaultbrowser #brew
 delta
 fd #scoop #brew
