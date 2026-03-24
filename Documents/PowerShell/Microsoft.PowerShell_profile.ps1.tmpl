@@ -97,15 +97,22 @@ Write-Host -NoNewLine "`e[6 q"
 # Starship prompt
 Invoke-Expression (&starship init powershell)
 
-# Wrap Starship's prompt function to reset cursor to beam (insert mode) on every prompt.
-# This fixes TUIs (lazygit, lf, nvim, serie...) that leave a block cursor behind —
-# after the TUI exits, the next prompt render calls this wrapper and resets the cursor.
+# Cache prompt between mode-only redraws to reduce visible flicker.
+# Starship is only re-invoked when PWD or history ID changes (i.e. after a real
+# command or cd). Vi mode switches (Esc/i) return the cached string instantly.
+# Also resets cursor to beam on every render so TUIs don't leave a block cursor.
 $_starshipPrompt = $function:prompt
+$script:_promptCacheKey = $null
+$script:_promptCacheValue = $null
 $function:prompt = {
-    # Reset to beam cursor (insert mode) before every prompt
-    # regardless of what the previous process left behind
-    Write-Host -NoNewLine "`e[6 q"
-    & $_starshipPrompt
+    Write-Host -NoNewLine "`e[6 q"  # always reset to beam (insert mode)
+    $last = Get-History -Count 1 -ErrorAction SilentlyContinue
+    $cacheKey = "$($PWD.Path)|$(if ($last) { $last.Id } else { 0 })"
+    if ($script:_promptCacheKey -ne $cacheKey) {
+        $script:_promptCacheKey = $cacheKey
+        $script:_promptCacheValue = & $_starshipPrompt
+    }
+    return $script:_promptCacheValue
 }
 
 # ============================================================================
@@ -168,46 +175,3 @@ try {
 # gsudo module (enables `gsudo !!` to elevate last command)
 Import-Module gsudoModule -ErrorAction SilentlyContinue
 
-# ============================================================================
-# / - Fuzzy find files/directories and open in VS Code
-# ============================================================================
-function / {
-    # Search directories
-    $searchDirs = @(
-        "$HOME\Downloads",
-        "$HOME\Documents",
-        "$HOME\Desktop",
-        "$HOME\.local\share\chezmoi",
-        "$HOME\codespace"
-    )
-    $homeDepth = 3
-
-    # Use fd for fast file finding, fallback to Get-ChildItem if fd not available
-    if (Get-Command fd -ErrorAction SilentlyContinue) {
-        $target = & {
-            foreach ($dir in $searchDirs) {
-                if (Test-Path $dir) {
-                    fd . $dir --type f --type d 2>$null
-                }
-            }
-            fd . $HOME --max-depth $homeDepth --type f --type d 2>$null
-        } | fzf --prompt=": " --preview="if (Test-Path -PathType Leaf '{}') { bat --color=always --style=numbers '{}' } else { Get-ChildItem '{}' }" --preview-window="right:60%:wrap"
-    } else {
-        $target = & {
-            foreach ($dir in $searchDirs) {
-                if (Test-Path $dir) {
-                    Get-ChildItem -Path $dir -Recurse -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
-                }
-            }
-            Get-ChildItem -Path $HOME -Depth $homeDepth -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
-        } | fzf --prompt=": "
-    }
-
-    if ([string]::IsNullOrEmpty($target)) {
-        return
-    }
-
-    Set-Clipboard -Value $target
-    & $env:VISUAL $target
-    Write-Host "Opened in $($env:VISUAL): $target"
-}
