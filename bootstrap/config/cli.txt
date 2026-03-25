@@ -27,6 +27,7 @@ markdwon-oxide #brew
 neovim #scoop #brew
 nodejs #scoop
 olets/tap/zsh-abbr #brew
+opencode #brew #scoop
 p7zip #brew
 pandoc #scoop #brew
 pandoc-crossref #scoop #brew
