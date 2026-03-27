@@ -1,4 +1,12 @@
 {
+  "languages": {
+    "Typst": {
+      "soft_wrap": "editor_width"
+    },
+    "Markdown": {
+      "soft_wrap": "editor_width"
+    }
+  },
   "disable_ai": true,
   "tab_bar": {
     "show": true
@@ -45,5 +53,16 @@
     "**/.tox",
     "**/.nox",
     "**/_reference"
-  ]
+  ],
+  "lsp": {
+    "tinymist": {
+      "initialization_options": {
+        "preview": {
+          "background": {
+            "enabled": true
+          }
+        }
+      }
+    }
+  }
 }
