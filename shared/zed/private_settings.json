@@ -29,7 +29,7 @@
   },
   "autosave": {
     "after_delay": {
-      "milliseconds": 0
+      "milliseconds": 10000
     }
   },
   "session": {
