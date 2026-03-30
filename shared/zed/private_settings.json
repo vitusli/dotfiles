@@ -29,7 +29,7 @@
   },
   "autosave": {
     "after_delay": {
-      "milliseconds": 10000
+      "milliseconds": 0
     }
   },
   "session": {
@@ -53,16 +53,5 @@
     "**/.tox",
     "**/.nox",
     "**/_reference"
-  ],
-  "lsp": {
-    "tinymist": {
-      "initialization_options": {
-        "preview": {
-          "background": {
-            "enabled": true
-          }
-        }
-      }
-    }
-  }
+  ]
 }
