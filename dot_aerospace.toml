@@ -28,14 +28,13 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 on-focus-changed = ['move-mouse window-lazy-center']
 
 
-# In this example, 24 is a default value when there is no match.
 [gaps]
-inner.horizontal = 14
-inner.vertical =   14
-outer.left =       14
-outer.bottom =     15
-outer.top =        [{ monitor.main = 14 }, { monitor.secondary = 14 }, { monitor."BenQ GW2765"= 52 }, 24]
-outer.right =      15
+inner.horizontal = 5
+inner.vertical =   5
+outer.left =       5
+outer.right =      5
+outer.bottom =     5
+outer.top =        [{ monitor.main = 5 }, { monitor.secondary = 14 }, 5]
 
 
 [mode.main.binding] # 'main' binding mode must be always presented
@@ -63,11 +62,10 @@ ctrl-alt-cmd-d = ['workspace-back-and-forth']
 ctrl-alt-cmd-1 = 'move-node-to-workspace 1 --focus-follows-window'
 ctrl-alt-cmd-2 = 'move-node-to-workspace 2 --focus-follows-window'
 
-# Try basic move first, then workspace switch
-ctrl-alt-cmd-shift-h = ['exec-and-forget aerospace move left --boundaries all-monitors-outer-frame --boundaries-action fail || aerospace move-node-to-workspace --no-stdin prev --focus-follows-window']
-ctrl-alt-cmd-shift-j = ['exec-and-forget aerospace move down --boundaries all-monitors-outer-frame --boundaries-action fail || aerospace move-node-to-workspace 2 --focus-follows-window']
-ctrl-alt-cmd-shift-k = ['exec-and-forget aerospace move up --boundaries all-monitors-outer-frame --boundaries-action fail || aerospace move-node-to-workspace 1 --focus-follows-window']
-ctrl-alt-cmd-shift-l = ['exec-and-forget aerospace move right --boundaries all-monitors-outer-frame --boundaries-action fail || aerospace move-node-to-workspace --no-stdin next --focus-follows-window']
+ctrl-alt-cmd-shift-h = ['move left', 'mode main']
+ctrl-alt-cmd-shift-j = ['move down', 'mode main']
+ctrl-alt-cmd-shift-k = ['move up', 'mode main']
+ctrl-alt-cmd-shift-l = ['move right', 'mode main']
 
 ctrl-alt-cmd-space = 'layout tiles accordion'
 ctrl-alt-cmd-shift-space = 'layout horizontal vertical'
@@ -82,10 +80,11 @@ f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling
 
 backspace = ['close-all-windows-but-current', 'mode main']
 
-ctrl-alt-cmd-h = ['move left', 'mode main']
-ctrl-alt-cmd-j = ['move down', 'mode main']
-ctrl-alt-cmd-k = ['move up', 'mode main']
-ctrl-alt-cmd-l = ['move right', 'mode main']
+# Try basic move first, then workspace switch
+ctrl-alt-cmd-h = ['exec-and-forget aerospace move left --boundaries all-monitors-outer-frame --boundaries-action fail || aerospace move-node-to-workspace --no-stdin prev --focus-follows-window']
+ctrl-alt-cmd-j = ['exec-and-forget aerospace move down --boundaries all-monitors-outer-frame --boundaries-action fail || aerospace move-node-to-workspace 2 --focus-follows-window']
+ctrl-alt-cmd-k = ['exec-and-forget aerospace move up --boundaries all-monitors-outer-frame --boundaries-action fail || aerospace move-node-to-workspace 1 --focus-follows-window']
+ctrl-alt-cmd-l = ['exec-and-forget aerospace move right --boundaries all-monitors-outer-frame --boundaries-action fail || aerospace move-node-to-workspace --no-stdin next --focus-follows-window']
 
 #return to main mode
 esc = ['mode main']
