@@ -5,6 +5,11 @@
 [
     // Chat
     {
+        "key": "{{ $mod }}+shift+0",
+        "command": "github.copilot.chat.completions.toggle",
+        "when": "github.copilot.activated && github.copilot.extensionUnification.activated"
+    },
+    {
         "key": "{{ $mod }}+i",
         "command": "workbench.action.chat.openagent",
         "when": "!chatSetupDisabled && !chatSetupHidden"
