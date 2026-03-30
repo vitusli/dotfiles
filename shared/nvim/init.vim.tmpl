@@ -231,13 +231,13 @@ require("lazy").setup({
             -- In project: search everything (exclude venv)
             builtin.find_files({
               cwd = root,
-              find_command = { "fd", "--type", "f", "--hidden", "--exclude", ".venv", "--exclude", "venv", "--exclude", ".obsidian", "--exclude", ".git" },
+              find_command = { "fd", "--type", "f", "--exclude", ".venv", "--exclude", "venv", "--exclude", ".obsidian" },
             })
           else
-            -- No project: search home with max-depth 2
+            -- No project: search home with max-depth 4
             builtin.find_files({
               cwd = vim.env.HOME,
-              find_command = { "fd", "--type", "f", "--max-depth", "2" },
+              find_command = { "fd", "--type", "f", "--max-depth", "4" },
             })
           end
         end,
@@ -249,6 +249,12 @@ require("lazy").setup({
         layout_strategy = "center",
         layout_config = {
           center = { width = 0.9, height = 0.6 },
+        },
+        file_ignore_patterns = { "%.git/" },
+      },
+      pickers = {
+        find_files = {
+          hidden = true,
         },
       },
       extensions = {
