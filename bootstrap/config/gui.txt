@@ -8,8 +8,6 @@ aerospace #brew
 
 affinity #brew
 
-alt-tab #brew
-
 arc #brew
 
 autohotkey #scoop
