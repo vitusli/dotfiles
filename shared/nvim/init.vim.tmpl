@@ -231,7 +231,7 @@ require("lazy").setup({
             -- In project: search everything (exclude venv)
             builtin.find_files({
               cwd = root,
-              find_command = { "fd", "--type", "f", "--exclude", ".venv", "--exclude", "venv", "--exclude", ".obsidian" },
+              find_command = { "fd", "--type", "f", "--hidden", "--exclude", ".venv", "--exclude", "venv", "--exclude", ".obsidian", "--exclude", ".git" },
             })
           else
             -- No project: search home with max-depth 2
