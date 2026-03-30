@@ -1,0 +1,97 @@
+{{- if ne .chezmoi.os "windows" -}}
+
+#!/bin/bash
+
+# This script runs when .chezmoidata.yaml or any shared config changes.
+
+set -euo pipefail
+
+SOURCE_DIR="{{ .chezmoi.sourceDir }}"
+
+echo "Deploying shared app configs for {{ .chezmoi.os }}..."
+
+# =============================================================================
+# Shared Apps
+# =============================================================================
+
+{{ range $app, $config := .shared_apps -}}
+{{ $target := index $config.target $.chezmoi.os -}}
+{{ if $target -}}
+# --- {{ $app }} ---
+TARGET_DIR="$HOME/{{ $target }}"
+mkdir -p "$TARGET_DIR"
+
+{{ range $config.files -}}
+{{ if .template -}}
+if [ -f "$SOURCE_DIR/{{ $config.source }}/{{ .src }}" ]; then
+    chezmoi execute-template < "$SOURCE_DIR/{{ $config.source }}/{{ .src }}" > "$TARGET_DIR/{{ .dst }}"
+else
+    echo "  ⚠ Source not found: {{ $config.source }}/{{ .src }}"
+fi
+{{ else -}}
+if [ -f "$SOURCE_DIR/{{ $config.source }}/{{ .src }}" ]; then
+    cp "$SOURCE_DIR/{{ $config.source }}/{{ .src }}" "$TARGET_DIR/{{ .dst }}"
+else
+    echo "  ⚠ Source not found: {{ $config.source }}/{{ .src }}"
+fi
+{{ end -}}
+{{ end -}}
+
+{{- if eq $.chezmoi.os "darwin" -}}
+{{- if index $config "files_darwin" }}
+{{ range (index $config "files_darwin") -}}
+if [ -f "$SOURCE_DIR/{{ $config.source }}/{{ .src }}" ]; then
+    cp "$SOURCE_DIR/{{ $config.source }}/{{ .src }}" "$TARGET_DIR/{{ .dst }}"
+    {{ if .executable -}}chmod +x "$TARGET_DIR/{{ .dst }}"{{ end }}
+else
+    echo "  ⚠ Source not found: {{ $config.source }}/{{ .src }}"
+fi
+{{ end -}}
+{{- end -}}
+{{- else if eq $.chezmoi.os "linux" -}}
+{{- if index $config "files_linux" }}
+{{ range (index $config "files_linux") -}}
+if [ -f "$SOURCE_DIR/{{ $config.source }}/{{ .src }}" ]; then
+    cp "$SOURCE_DIR/{{ $config.source }}/{{ .src }}" "$TARGET_DIR/{{ .dst }}"
+    {{ if .executable -}}chmod +x "$TARGET_DIR/{{ .dst }}"{{ end }}
+else
+    echo "  ⚠ Source not found: {{ $config.source }}/{{ .src }}"
+fi
+{{ end -}}
+{{- end -}}
+{{- end }}
+
+echo "  ✓ {{ $app }} → $TARGET_DIR"
+
+{{ end -}}
+{{ end -}}
+
+# =============================================================================
+# Special Apps
+# =============================================================================
+
+{{ if .special_apps.zen -}}
+# --- zen ---
+{{ if eq .chezmoi.os "darwin" -}}
+ZEN_APP="/Applications/Zen.app"
+if [ -d "$ZEN_APP" ]; then
+    ZEN_TARGET="$ZEN_APP/Contents/Resources/distribution"
+    mkdir -p "$ZEN_TARGET"
+
+{{- range .special_apps.zen.files }}
+    if [ -f "$SOURCE_DIR/{{ $.special_apps.zen.source }}/{{ .src }}" ]; then
+        cp "$SOURCE_DIR/{{ $.special_apps.zen.source }}/{{ .src }}" "$ZEN_TARGET/{{ .dst }}" 2>/dev/null || \
+            echo "  ⚠ zen: Permission denied. Run with sudo to deploy to $ZEN_TARGET"
+    fi
+{{- end }}
+    echo "  ✓ zen → $ZEN_TARGET"
+else
+    echo "  ⊘ zen (not installed, skipping)"
+fi
+{{ else -}}
+echo "  ⊘ zen (not supported on this OS)"
+{{ end -}}
+{{ end -}}
+
+echo "Shared app deployment complete!"
+{{ end -}}

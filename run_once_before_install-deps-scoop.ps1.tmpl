@@ -1,5 +1,12 @@
 {{- if eq .chezmoi.os "windows" }}
-if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) { exit 0 }
+if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
+    Write-Host "Scoop not found. Installing..."
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+    Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+
+    # Add scoop to PATH for the rest of this script
+    $env:PATH = "$env:USERPROFILE\scoop\shims;$env:PATH"
+}
 
 scoop bucket add extras 2>$null
 
@@ -9,10 +16,5 @@ Get-Content $deps | Where-Object { $_ -match '\S' -and $_ -notmatch '#macos' } |
     if (-not (scoop list $pkg 2>$null | Select-String $pkg)) {
         scoop install $pkg
     }
-}
-
-# Python tools via uv
-if (Get-Command uv -ErrorAction SilentlyContinue) {
-    uv tool install pyright
 }
 {{- end }}
