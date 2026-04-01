@@ -105,15 +105,6 @@ shared_apps:
       - { src: "keymap.json.tmpl", dst: "keymap.json", template: true }
       - { src: "private_settings.json", dst: "settings.json", template: false }
 
-  nvim:
-    source: "shared/nvim"
-    target:
-      darwin: ".config/nvim"
-      linux: ".config/nvim"
-      windows: "AppData/Local/nvim"
-    files:
-      - { src: "init.vim.tmpl", dst: "init.vim", template: true }
-
   starship:
     source: "shared/starship"
     target:

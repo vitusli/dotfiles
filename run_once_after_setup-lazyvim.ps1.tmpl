@@ -1,0 +1,17 @@
+{{- if eq .chezmoi.os "windows" -}}
+
+# Install LazyVim starter config
+$ErrorActionPreference = "Stop"
+
+$NvimConfig = Join-Path $env:LOCALAPPDATA "nvim"
+
+if (Test-Path $NvimConfig) {
+    Write-Host "  ⊘ LazyVim: $NvimConfig already exists, skipping"
+} else {
+    Write-Host "  → Cloning LazyVim starter..."
+    git clone https://github.com/LazyVim/starter $NvimConfig
+    Remove-Item -Recurse -Force (Join-Path $NvimConfig ".git")
+    Write-Host "  ✓ LazyVim installed → $NvimConfig"
+}
+
+{{ end -}}
