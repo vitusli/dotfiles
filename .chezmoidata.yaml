@@ -13,6 +13,7 @@ abbreviations:
     c: "chezmoi"
     ca: "chezmoi apply"
     da: "cd $HOME/Documents/obsidian/Diplomarbeit && just build"
+    e: "exit"
     go: "git checkout"
     p: "git pull"
     P: "git push"
