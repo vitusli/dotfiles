@@ -30,13 +30,13 @@
     // Neovim
 {{- if eq .chezmoi.os "darwin" }}
     "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
-    "vscode-neovim.neovimInitVimPaths.darwin": "{{ .chezmoi.homeDir }}/.config/nvim/init.vim",
+    "vscode-neovim.neovimInitVimPaths.darwin": "{{ .chezmoi.homeDir }}/.config/nvim/init.lua",
 {{- else if eq .chezmoi.os "linux" }}
     "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
-    "vscode-neovim.neovimInitVimPaths.linux": "{{ .chezmoi.homeDir }}/.config/nvim/init.vim",
+    "vscode-neovim.neovimInitVimPaths.linux": "{{ .chezmoi.homeDir }}/.config/nvim/init.lua",
 {{- else if eq .chezmoi.os "windows" }}
     "vscode-neovim.neovimExecutablePaths.win32": "{{ .chezmoi.homeDir }}\\scoop\\shims\\nvim.exe",
-    "vscode-neovim.neovimInitVimPaths.win32": "{{ .chezmoi.homeDir }}/AppData/Local/nvim/init.vim",
+    "vscode-neovim.neovimInitVimPaths.win32": "{{ .chezmoi.homeDir }}/AppData/Local/nvim/init.lua",
 {{- end }}
     "vscode-neovim.useCtrlKeysForNormalMode": true,
     "vscode-neovim.useCtrlKeysForInsertMode": true,
