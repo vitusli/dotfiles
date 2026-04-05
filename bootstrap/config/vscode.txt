@@ -12,3 +12,4 @@ ms-python.vscode-pylance
 ms-python.vscode-python-envs
 felixzeller.markdown-oxide
 myriad-dreamin.tinymist
+ valentjn.vscode-ltex
