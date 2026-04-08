@@ -20,6 +20,8 @@ darktable #brew
 
 figma #brew
 
+9P1741LKHQS9 #winget #fancyWM
+
 google-drive #brew
 
 homerow #brew
