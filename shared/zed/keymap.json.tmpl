@@ -4,9 +4,10 @@
 {{- end }}
 [
   {
-    "context": "vim_mode == visual",
     "bindings": {
-      "shift-s": "vim::PushAddSurrounds"
+      "g s a": "vim::PushAddSurrounds",
+      "g s d": "vim::PushDeleteSurrounds",
+      "g s c": "vim::PushChangeSurrounds"
     }
   },
 {{- if eq .chezmoi.os "windows" }}

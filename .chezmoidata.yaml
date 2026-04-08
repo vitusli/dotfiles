@@ -93,7 +93,6 @@ shared_apps:
           dst: "keybindings.json",
           template: true,
         }
-      - { src: "custom-vscode.css", dst: "custom-vscode.css", template: false }
 
   zed:
     source: "shared/zed"
