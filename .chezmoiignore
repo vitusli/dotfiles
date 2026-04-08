@@ -1,38 +1,28 @@
 bootstrap
 README.md
-deps.txt
 shared
-nul
-
-{{- if ne .chezmoi.os "darwin" }}
-dot_aerospace.toml
-.aerospace.toml
-dot_config/karabiner
-Library
-Library/**
-dot_zshrc
-.zshrc
-dot_zprofile
-.zprofile
-dot_zsh
-dot_zsh/**
-.zsh
-.zsh/**
-dot_hushlogin
-.hushlogin
-run_once_install-packages.sh
-run_once_setup-git-plist-filter.sh
-run_after_deploy-shared-apps.sh
-run_once_before_install-deps-brew.sh
-run_once_before_install-deps-brew.sh.tmpl
-{{- end }}
-
-{{- if ne .chezmoi.os "windows" }}
-AppData
-Documents
-run_after_deploy-shared-apps.ps1
-run_once_before_install-deps-scoop.ps1.tmpl
-{{- end }}
 
 {{- if eq .chezmoi.os "windows" }}
+dot_aerospace.toml
+dot_config/karabiner
+dot_config/lf
+dot_config/nvim
+dot_config/starship.toml
+dot_config/zsh-abbr
+dot_hushlogin
+dot_zprofile
+dot_zsh
+dot_zsh/**
+dot_zshrc
+Library
+Library/**
+run_once_before_install-deps-brew.sh.tmpl
+run_once_after_setup-lazyvim.sh.tmpl
+run_onchange_after_deploy-shared-apps.sh.tmpl
+{{- end }}
+
+{{- if eq .chezmoi.os "darwin" }}
+AppData
+Documents
+run_onchange_after_deploy-shared-apps.ps1.tmpl
 {{- end }}
