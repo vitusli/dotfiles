@@ -6,24 +6,6 @@
 # Without this, Starship ignores %APPDATA%\starship\starship.toml on Windows
 $env:STARSHIP_CONFIG = "$env:APPDATA\starship\starship.toml"
 
-# Enable tab completion for Winget
-try {
-    Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
-        param($wordToComplete, $commandAst, $compPoint)
-        winget complete --word $wordToComplete --commandline $commandAst.ToString() --position $compPoint |
-            ForEach-Object { [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_) }
-    }
-} catch {
-    Write-Verbose "Winget completion registration failed: $($_.Exception.Message)"
-}
-
-# Enable tab completion for chezmoi
-try {
-    chezmoi completion powershell | Out-String | Invoke-Expression
-} catch {
-    Write-Verbose "Chezmoi completion registration failed: $($_.Exception.Message)"
-}
-
 # Enable tab completion for nova
 try {
     if (Get-Command nova -ErrorAction SilentlyContinue) {
@@ -63,57 +45,8 @@ foreach ($module in $requiredModules) {
     Import-Module $module
 }
 
-# PSFzf configuration (Ctrl+T for file search, Ctrl+R for history)
-Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
-
 # Initialize zoxide (smart cd replacement)
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
-
-# ============================================================================
-# Vi Mode
-# ============================================================================
-# Define ViModeChange handler FIRST
-$OnViModeChange = [scriptblock]{
-   if ($args[0] -eq 'Command') {
-       # Set the cursor to a blinking block.
-       Write-Host -NoNewLine "`e[2 q"
-   }
-   else {
-       # Set the cursor to a line.
-       Write-Host -NoNewLine "`e[6 q"
-   }
-}
-
-# THEN enable Vim with the handler
-Set-PsReadLineOption -EditMode Vi
-Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler $OnViModeChange
-
-# MenuComplete AFTER Vi mode (Vi mode overrides Tab binding)
-Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
-
-# Set the initial cursor to a line for Insert Mode
-Write-Host -NoNewLine "`e[6 q"
-
-# Starship prompt
-Invoke-Expression (&starship init powershell)
-
-# Cache prompt between mode-only redraws to reduce visible flicker.
-# Starship is only re-invoked when PWD or history ID changes (i.e. after a real
-# command or cd). Vi mode switches (Esc/i) return the cached string instantly.
-# Also resets cursor to beam on every render so TUIs don't leave a block cursor.
-$_starshipPrompt = $function:prompt
-$script:_promptCacheKey = $null
-$script:_promptCacheValue = $null
-$function:prompt = {
-    Write-Host -NoNewLine "`e[6 q"  # always reset to beam (insert mode)
-    $last = Get-History -Count 1 -ErrorAction SilentlyContinue
-    $cacheKey = "$($PWD.Path)|$(if ($last) { $last.Id } else { 0 })"
-    if ($script:_promptCacheKey -ne $cacheKey) {
-        $script:_promptCacheKey = $cacheKey
-        $script:_promptCacheValue = & $_starshipPrompt
-    }
-    return $script:_promptCacheValue
-}
 
 # ============================================================================
 # Abbreviations (generated from .chezmoidata.yaml)

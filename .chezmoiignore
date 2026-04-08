@@ -33,10 +33,7 @@ run_once_before_install-deps-brew.sh.tmpl
 {{- if ne .chezmoi.os "windows" }}
 AppData
 Documents
-dot_config/nvim/lazyvim.json
-dot_config/nvim/lua/config/autocmds.lua
 run_after_deploy-shared-apps.ps1
-run_once_before_ensure-python.ps1.tmpl
 run_once_before_install-deps-scoop.ps1.tmpl
 {{- end }}
 
@@ -44,5 +41,4 @@ run_once_before_install-deps-scoop.ps1.tmpl
 {{- end }}
 
 {{- if eq .chezmoi.os "windows" }}
-run_once_before_ensure-python.sh.tmpl
 {{- end }}
