@@ -1,14 +1,7 @@
 # CLI Packages
 
-7zip #scoop
-aria2 #scoop
-bat #scoop 
-chezmoi #scoop #brew #apt
-copilot #scoop #brew
-codex #scoop #brew
-defaultbrowser #brew
-fd #scoop #brew
-ffmpeg #scoop #brew
+chezmoi #scoop #brew 
+ffmpeg #brew
 fzf #scoop #brew
 gh #scoop #brew
 git #scoop #brew
@@ -19,20 +12,19 @@ JetBrainsMono-NF #scoop
 just #scoop #brew
 lazygit #scoop #brew
 lf #brew
-markdwon-oxide #brew
-neovim #scoop #brew #apt
-opencode #brew #scoop #apt
+neovim #brew 
+opencode #brew #scoop 
 Microsoft.PowerShell #winget
-pyright #scoop #brew
+pyright #brew
 restic #brew
 scoop-completion #scoop
 scoop-search #scoop
 serie #scoop #brew
+tree-sitter-cli #brew
 uv #scoop #brew
 wandelbotsgmbh/wandelbots/nova #brew
-zoxide #scoop #brew #apt
-zsh #apt
-olets/tap/zsh-abbr #brew #apt
-zsh-autocomplete #brew #apt
-zsh-autosuggestions #brew #apt
-zsh-syntax-highlighting #brew #apt
+zoxide #scoop #brew 
+zsh 
+olets/tap/zsh-abbr #brew 
+zsh-autosuggestions #brew 
+zsh-syntax-highlighting #brew 

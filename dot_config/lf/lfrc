@@ -1,6 +1,5 @@
 # ============================================================================
 # LF FILE MANAGER CONFIG
-# Cross-platform config (macOS, Linux, Windows)
 # ============================================================================
 
 # Basic Settings
@@ -14,10 +13,6 @@ set promptfmt "%d"
 
 # Two column view: current dir + preview (no parent dir)
 set ratios 1:1
-
-# Preview settings (OS-specific)
-set previewer ~/.config/lf/preview.sh
-set cleaner ~/.config/lf/cleaner.sh
 
 # ============================================================================
 # KEY BINDINGS (Marta-inspired)
@@ -75,12 +70,6 @@ map ~ cd ~
 # Jump to Downloads and start filter
 map D cd "/Users/vituspacholleck/Downloads"; filter
 
-# Jump to codespace and start filter
-map C cd "/Users/vituspacholleck/codespace"; filter
-
-# Jump to dotfiles
-map S cd ~/.local/share/chezmoi; filter
-
 # Open current directory in VISUAL editor
 map V & $VISUAL "$PWD"
 
@@ -90,87 +79,12 @@ map d :echo "Cut is disabled"
 # Filter (classic lf filter)
 map / filter
 
-# Extended search (multiple directories)
-map <space> :fzf-extended
-
-# Open dotfiles in editor
-map <c-s> & $VISUAL ~/.local/share/chezmoi ~/.config/lf/lfrc
-# Toggle executable permission (Shift+X) - Unix only
+# Toggle executable permission (Shift+X)
 map X :toggle-executable
 
 # ============================================================================
 # COMMANDS
 # ============================================================================
-
-# Open files in nvim, directories normally
-cmd open-nvim ${{
-    if [ -f "$f" ]; then
-        nvim "$f"
-    elif [ -d "$f" ]; then
-        lf -remote "send $id cd \"$f\""
-    fi
-}}
-# Open file with application (using fzf) - macOS
-cmd open-with ${{
-    app=$(printf "VISUAL Editor\nFinder (reveal)\nMacVim\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open with: ")
-    [ -z "$app" ] && exit
-
-    case "$app" in
-        "VISUAL Editor") $VISUAL "$f" ;;
-        "Finder (reveal)") open -R "$f" ;;
-        *) open -a "$app" "$f" ;;
-    esac
-}}
-
-# Open current directory with application (using fzf) - macOS
-cmd open-with-dir ${{
-    app=$(printf "VISUAL Editor\nFinder\nMarta\n$(find /Applications ~/Applications -name "*.app" -maxdepth 2 2>/dev/null | sed 's|.*/||;s|.app$||')" | fzf --prompt="Open directory with: ")
-    [ -z "$app" ] && exit
-
-    case "$app" in
-        "VISUAL Editor") $VISUAL "$PWD" ;;
-        "Finder") open "$PWD" ;;
-        "Marta") open -a "Marta" "$PWD" ;;
-        *) open -a "$app" "$PWD" ;;
-    esac
-}}
-
-# Create file - Unix
-cmd touch ${{
-    read -p "File name: " name
-    touch "$name"
-}}
-
-# Create directory - Unix
-cmd mkdir ${{
-    read -p "Directory name: " name
-    mkdir -p "$name"
-}}
-
-# Fuzzy search with fzf (recursive) - Unix
-cmd fzf ${{
-    result=$(find . -type f 2>/dev/null | fzf --prompt="Search (recursive): " --preview="bat --color=always --style=numbers {}")
-    if [ -n "$result" ]; then
-        lf -remote "send $id select \"$result\""
-    fi
-}}
-
-# Extended search across multiple directories - Unix
-cmd fzf-extended ${{
-    result=$({
-        fd --type f --type d . ~/Downloads ~/Documents ~/Desktop ~/.local/share/chezmoi ~/codespace 2>/dev/null
-        fd --type f --type d --max-depth 3 . ~ 2>/dev/null
-    } | fzf --prompt=": " --preview='[[ -f {} ]] && bat --color=always --style=numbers {} || ls -la {}' --preview-window=right:60%:wrap)
-
-    if [ -n "$result" ]; then
-        printf "%s" "$result" | pbcopy
-        if [ -f "$result" ]; then
-            lf -remote "send $id select \"$result\""
-        elif [ -d "$result" ]; then
-            lf -remote "send $id cd \"$result\""
-        fi
-    fi
-}}
 
 # Yank path to clipboard - macOS
 cmd yank-path ${{
@@ -184,7 +98,7 @@ cmd yank-dirname ${{
     lf -remote "send $id echo Copied: $PWD"
 }}
 
-# Toggle executable permission - Unix
+# Toggle executable permission
 cmd toggle-executable ${{
     if [ -x "$f" ]; then
         chmod -x "$f"
