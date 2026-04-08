@@ -24,7 +24,6 @@ abbreviations:
     l: "lazygit"
     n: "nvim ."
     py: "uv run python"
-    z: "zed ."
     "..": "cd .."
     "...": "cd ../.."
 
