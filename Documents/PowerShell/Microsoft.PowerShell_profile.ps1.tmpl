@@ -1,10 +1,6 @@
 # ============================================================================
-# PowerShell Profile (Windows)
+# PowerShell Profile
 # ============================================================================
-
-# Point Starship to our deployed config explicitly
-# Without this, Starship ignores %APPDATA%\starship\starship.toml on Windows
-$env:STARSHIP_CONFIG = "$env:APPDATA\starship\starship.toml"
 
 # Enable tab completion for nova
 try {
@@ -27,8 +23,8 @@ $env:Path = "{{ .chezmoi.homeDir }}\NovaCLI;$env:Path"
 # fzf: Copy result to clipboard on Enter (in addition to normal output)
 $env:FZF_DEFAULT_OPTS = "--bind 'enter:execute-silent(powershell -nop -c Set-Clipboard {})+accept'"
 
-# Default editor (like VISUAL/EDITOR in zsh)
-$env:EDITOR = "nvim"
+# Default editor 
+$env:EDITOR = "neovim"
 $env:VISUAL = "code"
 
 
@@ -45,7 +41,7 @@ foreach ($module in $requiredModules) {
     Import-Module $module
 }
 
-# Initialize zoxide (smart cd replacement)
+# Initialize zoxide
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
 # ============================================================================
@@ -85,24 +81,6 @@ Set-PSReadLineKeyHandler -Key 'Enter' -ScriptBlock {
         [Microsoft.PowerShell.PSConsoleReadLine]::Replace(0, $firstToken.Length, $Abbreviations[$firstToken])
     }
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-}
-
-# ============================================================================
-# Completions
-# ============================================================================
-# Scoop completion (installed via scoop, per Moeologist README)
-try {
-    if (Get-Command scoop -ErrorAction SilentlyContinue) {
-        $scoopRoot = (Get-Item (Get-Command scoop.ps1).Path).Directory.Parent.FullName
-        $modulePath = Join-Path $scoopRoot 'modules\scoop-completion'
-        if (Test-Path $modulePath) {
-            Import-Module $modulePath -ErrorAction Stop
-        } else {
-            Write-Verbose "scoop-completion module path not found: $modulePath"
-        }
-    }
-} catch {
-    Write-Verbose "Scoop completion load failed: $($_.Exception.Message)"
 }
 
 # gsudo module (enables `gsudo !!` to elevate last command)

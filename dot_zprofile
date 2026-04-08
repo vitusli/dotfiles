@@ -17,12 +17,4 @@ case ":$PATH:" in
 	*) PATH="$HOME/.local/bin:$PATH" ;;
 esac
 
-## 4. TeX / BasicTeX
-if [ -d /Library/TeX/texbin ]; then
-	case ":$PATH:" in
-		*":/Library/TeX/texbin:"*) ;;
-		*) PATH="/Library/TeX/texbin:$PATH" ;;
-	esac
-fi
-
 export PATH

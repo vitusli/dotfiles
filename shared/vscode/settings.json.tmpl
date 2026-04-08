@@ -70,18 +70,6 @@
 {{- end }}
     "terminal.integrated.suggest.enabled": false,
 
-    // VS Code Custom CSS
-    "vscode_custom_css.imports": [
-{{- if eq .chezmoi.os "darwin" }}
-        "file://{{ .chezmoi.homeDir }}/Library/Application Support/Code/User/custom-vscode.css"
-{{- else if eq .chezmoi.os "linux" }}
-        "file://{{ .chezmoi.homeDir }}/.config/Code/User/custom-vscode.css"
-{{- else if eq .chezmoi.os "windows" }}
-        "file:///{{ .chezmoi.homeDir }}/AppData/Roaming/Code/User/custom-vscode.css"
-{{- end }}
-    ],
-    "vscode_custom_css.policy": true,
-
     // Window
     "window.commandCenter": false,
     "window.customTitleBarVisibility": "never",

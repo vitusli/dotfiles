@@ -10,10 +10,10 @@ opencode #brew #scoop
 serie #scoop #brew
 uv #scoop #brew
 zoxide #scoop #brew 
+neovim #brew #scoop
 
 ffmpeg #brew
 lf #brew
-neovim #brew 
 pyright #brew
 restic #brew
 tree-sitter-cli #brew
