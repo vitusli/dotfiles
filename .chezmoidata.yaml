@@ -24,7 +24,7 @@ abbreviations:
     l: "lazygit"
     n: "nvim ."
     py: "uv run python"
-    s: "serie"
+    z: "zed ."
     "..": "cd .."
     "...": "cd ../.."
 
@@ -105,51 +105,6 @@ shared_apps:
     files:
       - { src: "keymap.json.tmpl", dst: "keymap.json", template: true }
       - { src: "private_settings.json", dst: "settings.json", template: false }
-
-  starship:
-    source: "shared/starship"
-    target:
-      darwin: ".config"
-      linux: ".config"
-      windows: "AppData/Roaming/starship"
-    files:
-      - { src: "starship.toml", dst: "starship.toml", template: false }
-
-  lazygit:
-    source: "shared/lazygit"
-    target:
-      darwin: "Library/Application Support/lazygit"
-      linux: ".config/lazygit"
-      windows: "AppData/Roaming/lazygit"
-    files:
-      - { src: "config.yml", dst: "config.yml", template: true }
-
-  lf:
-    source: "shared/lf"
-    target:
-      darwin: ".config/lf"
-      linux: ".config/lf"
-      windows: "AppData/Roaming/lf"
-    files:
-      - { src: "lfrc.tmpl", dst: "lfrc", template: true }
-    # OS-specific files handled separately in scripts (preview.sh vs preview.cmd)
-    files_darwin:
-      - { src: "preview.sh", dst: "preview.sh", executable: true }
-      - { src: "cleaner.sh", dst: "cleaner.sh", executable: true }
-    files_linux:
-      - { src: "preview.sh", dst: "preview.sh", executable: true }
-      - { src: "cleaner.sh", dst: "cleaner.sh", executable: true }
-    files_windows:
-      - { src: "preview.cmd", dst: "preview.cmd" }
-
-  moxide:
-    source: "shared/config/moxide"
-    target:
-      darwin: ".config/moxide"
-      linux: ".config/moxide"
-      windows: "AppData/Roaming/moxide"
-    files:
-      - { src: "settings.toml", dst: "settings.toml", template: false }
 
 # =============================================================================
 # Special Apps (non-standard deployment)
