@@ -68,6 +68,10 @@
         "key": "{{ $mod }}+k a",
         "command": "workbench.action.alignQuickInputCenter"
     },
+    {
+        "key": "{{ $mod }}+k g",
+        "command": "git-graph.view"
+    },
 {{- if ne .chezmoi.os "darwin" }}
     {
         "key": "{{ $mod }}+w",
