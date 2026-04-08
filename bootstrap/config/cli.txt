@@ -2,51 +2,37 @@
 
 7zip #scoop
 aria2 #scoop
-bat #scoop #brew
-chezmoi #scoop #brew
+bat #scoop 
+chezmoi #scoop #brew #apt
 copilot #scoop #brew
 codex #scoop #brew
 defaultbrowser #brew
-delta
 fd #scoop #brew
 ffmpeg #scoop #brew
-FiraCode-NF #scoop
 fzf #scoop #brew
 gh #scoop #brew
 git #scoop #brew
-git-lfs #scoop #brew
 github-cli #pacman
-glab #scoop #brew
 gsudo #scoop
+FiraCode-NF #scoop
 JetBrainsMono-NF #scoop
-jq #scoop #brew
 just #scoop #brew
 lazygit #scoop #brew
-lf #scoop #brew
+lf #brew
 markdwon-oxide #brew
-neovim #scoop #brew
-nodejs #scoop
-olets/tap/zsh-abbr #brew
-opencode #brew #scoop
-p7zip #brew
-pandoc #scoop #brew
-pandoc-crossref #scoop #brew
-poppler #brew
-pwsh #brew
+neovim #scoop #brew #apt
+opencode #brew #scoop #apt
 Microsoft.PowerShell #winget
 pyright #scoop #brew
 restic #brew
-ripgrep #scoop #brew
 scoop-completion #scoop
 scoop-search #scoop
 serie #scoop #brew
-unar #brew
 uv #scoop #brew
-vlc #scoop
 wandelbotsgmbh/wandelbots/nova #brew
-zoxide #scoop #brew
-zsh #pacman
-zsh-abbr #brew #pacman
-zsh-autocomplete #brew #pacman
-zsh-autosuggestions #brew #pacman
-zsh-syntax-highlighting #brew #pacman
+zoxide #scoop #brew #apt
+zsh #apt
+olets/tap/zsh-abbr #brew #apt
+zsh-autocomplete #brew #apt
+zsh-autosuggestions #brew #apt
+zsh-syntax-highlighting #brew #apt
