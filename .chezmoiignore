@@ -11,8 +11,8 @@ shared
 .config/zsh-abbr
 .hushlogin
 .zprofile
-.zsh
 .zsh/**
+.zsh
 .zshrc
 Library
 Library/**
