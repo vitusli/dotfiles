@@ -1,30 +1,29 @@
 # CLI Packages
 
 chezmoi #scoop #brew 
-ffmpeg #brew
 fzf #scoop #brew
 gh #scoop #brew
 git #scoop #brew
-github-cli #pacman
-gsudo #scoop
-FiraCode-NF #scoop
-JetBrainsMono-NF #scoop
 just #scoop #brew
 lazygit #scoop #brew
+opencode #brew #scoop 
+serie #scoop #brew
+uv #scoop #brew
+zoxide #scoop #brew 
+
+ffmpeg #brew
 lf #brew
 neovim #brew 
-opencode #brew #scoop 
-Microsoft.PowerShell #winget
 pyright #brew
 restic #brew
-scoop-completion #scoop
-scoop-search #scoop
-serie #scoop #brew
 tree-sitter-cli #brew
-uv #scoop #brew
 wandelbotsgmbh/wandelbots/nova #brew
-zoxide #scoop #brew 
-zsh 
 olets/tap/zsh-abbr #brew 
 zsh-autosuggestions #brew 
 zsh-syntax-highlighting #brew 
+
+Microsoft.PowerShell #winget
+gsudo #scoop
+JetBrainsMono-NF #scoop
+scoop-completion #scoop
+scoop-search #scoop

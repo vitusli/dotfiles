@@ -8,8 +8,6 @@ aerospace #brew
 
 affinity #brew
 
-arc #brew
-
 autohotkey #scoop
 
 blender #scoop #brew
@@ -24,11 +22,9 @@ figma #brew
 
 google-drive #brew
 
-homerow #brew
-
 karabiner-elements #brew
 
-keepassxc #brew #pacman
+keepassxc #brew
 KeePassXCTeam.KeePassXC #winget
 
 keeweb #brew
@@ -66,7 +62,6 @@ superwhisper #brew
 Toggl.TogglTrack #winget
 
 visual-studio-code #brew
-visual-studio-code-bin #pacman
 Microsoft.VisualStudioCode #winget
 
 vlc #brew
@@ -79,7 +74,6 @@ zed #brew
 ZedIndustries.Zed #winget
 
 zen #brew
-zen-browser-bin #pacman
 Zen-Team.Zen-Browser #winget
 
 zotero #brew
