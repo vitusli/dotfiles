@@ -76,6 +76,10 @@
         "key": "{{ $mod }}+k g",
         "command": "git-graph.view"
     },
+    {
+        "key": "{{ $mod }}+k n",
+        "command": "vscode-neovim.restart"
+    },
 {{- if ne .chezmoi.os "darwin" }}
     {
         "key": "{{ $mod }}+w",
