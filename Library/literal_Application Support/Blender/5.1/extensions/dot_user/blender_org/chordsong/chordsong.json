@@ -111,7 +111,7 @@
         "separator_b": "::",
         "max_label_length": 0,
         "sort_mode": "PRESET_GDO",
-        "sort_string": "G d c",
+        "sort_string": "g d c",
         "offset_x": 65,
         "offset_y": -15,
         "ungrouped_expanded": true,
@@ -216,7 +216,7 @@
             ]
         },
         {
-            "order_index": 0,
+            "order_index": 1,
             "enabled": true,
             "chord": "m s",
             "label": "Subdivide",
@@ -233,7 +233,7 @@
             ]
         },
         {
-            "order_index": 0,
+            "order_index": 2,
             "enabled": true,
             "chord": "s b",
             "label": "Select Boundary Loop",
@@ -250,7 +250,7 @@
             ]
         },
         {
-            "order_index": 0,
+            "order_index": 3,
             "enabled": true,
             "chord": "u c",
             "label": "Clear Seam",
@@ -269,7 +269,7 @@
             ]
         },
         {
-            "order_index": 0,
+            "order_index": 4,
             "enabled": true,
             "chord": "u m",
             "label": "Mark Seam",
@@ -288,10 +288,10 @@
             ]
         },
         {
-            "order_index": 0,
+            "order_index": 5,
             "enabled": true,
             "chord": "a u",
-            "label": "Primitive Uv Sphere Add",
+            "label": "UV Sphere",
             "icon": "",
             "group": "Mesh",
             "context": "VIEW_3D",
@@ -305,7 +305,7 @@
             ]
         },
         {
-            "order_index": 1,
+            "order_index": 6,
             "enabled": true,
             "chord": "v z",
             "label": "View Selected",
@@ -322,7 +322,7 @@
             ]
         },
         {
-            "order_index": 2,
+            "order_index": 7,
             "enabled": true,
             "chord": "t t",
             "label": "Transparent",
@@ -334,7 +334,7 @@
             "context_path": "scene.render.film_transparent"
         },
         {
-            "order_index": 3,
+            "order_index": 8,
             "enabled": true,
             "chord": "t s",
             "label": "Show Statistics",
@@ -352,7 +352,7 @@
             ]
         },
         {
-            "order_index": 4,
+            "order_index": 9,
             "enabled": true,
             "chord": "v v",
             "label": "View Camera",
@@ -369,7 +369,7 @@
             ]
         },
         {
-            "order_index": 5,
+            "order_index": 10,
             "enabled": true,
             "chord": "t g",
             "label": "Display Grid Floor",
@@ -381,7 +381,7 @@
             "context_path": "space_data.overlay.show_floor"
         },
         {
-            "order_index": 6,
+            "order_index": 11,
             "enabled": true,
             "chord": "a e",
             "label": "Empty",
@@ -400,7 +400,7 @@
             ]
         },
         {
-            "order_index": 7,
+            "order_index": 12,
             "enabled": true,
             "chord": "t o",
             "label": "Show Overlays",
@@ -412,7 +412,7 @@
             "context_path": "space_data.overlay.show_overlays"
         },
         {
-            "order_index": 8,
+            "order_index": 13,
             "enabled": true,
             "chord": "p s",
             "label": "Shadow Catcher",
@@ -424,7 +424,7 @@
             "context_path": "object.is_shadow_catcher"
         },
         {
-            "order_index": 9,
+            "order_index": 14,
             "enabled": true,
             "chord": "a l",
             "label": "Light",
@@ -443,7 +443,7 @@
             ]
         },
         {
-            "order_index": 10,
+            "order_index": 15,
             "enabled": true,
             "chord": "t x",
             "label": "Toggle Xray",
@@ -460,7 +460,7 @@
             ]
         },
         {
-            "order_index": 11,
+            "order_index": 16,
             "enabled": true,
             "chord": "t o",
             "label": "Show Overlays",
@@ -472,7 +472,7 @@
             "context_path": "space_data.overlay.show_overlays"
         },
         {
-            "order_index": 12,
+            "order_index": 17,
             "enabled": true,
             "chord": "t x",
             "label": "Toggle Xray",
@@ -489,7 +489,7 @@
             ]
         },
         {
-            "order_index": 13,
+            "order_index": 18,
             "enabled": true,
             "chord": "a v",
             "label": "Camera",
@@ -501,7 +501,7 @@
             "kwargs": {}
         },
         {
-            "order_index": 14,
+            "order_index": 19,
             "enabled": true,
             "chord": "a p",
             "label": "Plane",
@@ -518,7 +518,7 @@
             ]
         },
         {
-            "order_index": 15,
+            "order_index": 20,
             "enabled": true,
             "chord": "b 1",
             "label": "Bevel 4",
@@ -538,7 +538,7 @@
             ]
         },
         {
-            "order_index": 16,
+            "order_index": 21,
             "enabled": true,
             "chord": "b 2",
             "label": "Bevel 6",
@@ -558,7 +558,7 @@
             ]
         },
         {
-            "order_index": 17,
+            "order_index": 22,
             "enabled": true,
             "chord": "b 3",
             "label": "Bevel 8",
@@ -578,7 +578,7 @@
             ]
         },
         {
-            "order_index": 18,
+            "order_index": 23,
             "enabled": true,
             "chord": "b 4",
             "label": "Bevel 16",
@@ -598,7 +598,7 @@
             ]
         },
         {
-            "order_index": 19,
+            "order_index": 24,
             "enabled": true,
             "chord": "m a",
             "label": "Add",
@@ -613,7 +613,7 @@
             }
         },
         {
-            "order_index": 20,
+            "order_index": 25,
             "enabled": true,
             "chord": "m m",
             "label": "Multiply",
@@ -628,7 +628,7 @@
             }
         },
         {
-            "order_index": 21,
+            "order_index": 26,
             "enabled": true,
             "chord": "m d",
             "label": "Divide",
@@ -643,7 +643,7 @@
             }
         },
         {
-            "order_index": 22,
+            "order_index": 27,
             "enabled": true,
             "chord": "v a",
             "label": "Vector Add",
@@ -658,7 +658,7 @@
             }
         },
         {
-            "order_index": 23,
+            "order_index": 28,
             "enabled": true,
             "chord": "v m",
             "label": "Vector Mulitply",
@@ -673,7 +673,7 @@
             }
         },
         {
-            "order_index": 24,
+            "order_index": 29,
             "enabled": true,
             "chord": "v s",
             "label": "Vector Subtract",
@@ -688,7 +688,7 @@
             }
         },
         {
-            "order_index": 25,
+            "order_index": 30,
             "enabled": true,
             "chord": "v d",
             "label": "Vector Divide",
@@ -703,7 +703,7 @@
             }
         },
         {
-            "order_index": 26,
+            "order_index": 31,
             "enabled": true,
             "chord": "b",
             "label": "Bevel",
