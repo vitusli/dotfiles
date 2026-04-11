@@ -1,0 +1,726 @@
+{
+    "version": 1,
+    "scripts_folder": "/Users/vituspacholleck/dev/vtools_dev/vtools/scripts/",
+    "allow_custom_user_scripts": true,
+    "overlay": {
+        "enabled": true,
+        "fading_enabled": true,
+        "hide_panels": true,
+        "toggle_multi_modifier": "CTRL",
+        "show_header": true,
+        "show_footer": true,
+        "max_items": 100,
+        "column_rows": 15,
+        "font_size_header": 12,
+        "font_size_chord": 18,
+        "font_size_body": 15,
+        "font_size_footer": 12,
+        "font_size_fading": 24,
+        "font_size_toggle": 23,
+        "font_size_separator": 15,
+        "toggle_offset_y": -6,
+        "color_chord": [
+            0.3914475440979004,
+            0.6429893374443054,
+            0.8464089632034302,
+            1.0
+        ],
+        "color_label": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "color_header": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "color_icon": [
+            0.3914475440979004,
+            0.6429893374443054,
+            0.8464089632034302,
+            1.0
+        ],
+        "color_group": [
+            0.8999999761581421,
+            0.8999999761581421,
+            0.5,
+            1.0
+        ],
+        "color_counter": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+        ],
+        "color_toggle_on": [
+            0.1739487498998642,
+            1.0,
+            0.76335209608078,
+            1.0
+        ],
+        "color_toggle_off": [
+            0.9646492004394531,
+            0.6671714782714844,
+            0.30953386425971985,
+            0.5
+        ],
+        "color_recents_hotkey": [
+            0.6499999761581421,
+            0.800000011920929,
+            1.0,
+            1.0
+        ],
+        "color_separator": [
+            1.0,
+            1.0,
+            1.0,
+            0.20000000298023224
+        ],
+        "color_list_background": [
+            0.042096495628356934,
+            0.04517610743641853,
+            0.05087645351886749,
+            0.5
+        ],
+        "color_header_background": [
+            0.08225114643573761,
+            0.08862298727035522,
+            0.10047036409378052,
+            1.0
+        ],
+        "color_footer_background": [
+            0.08225297182798386,
+            0.08862846344709396,
+            0.10047505795955658,
+            1.0
+        ],
+        "gap": 10,
+        "column_gap": 30,
+        "line_height": 1.5,
+        "footer_gap": 50,
+        "footer_token_gap": 4,
+        "footer_label_gap": 8,
+        "position": "BOTTOM_LEFT",
+        "style": "DEFAULT",
+        "format_folder": "C n s G L",
+        "format_item": "C I S L T",
+        "separator_a": "→",
+        "separator_b": "::",
+        "max_label_length": 0,
+        "sort_mode": "PRESET_GDO",
+        "sort_string": "G d c",
+        "offset_x": 65,
+        "offset_y": -15,
+        "ungrouped_expanded": true,
+        "scripts_overlay": {
+            "max_items": 50,
+            "column_rows": 10,
+            "gap": 5.0,
+            "column_gap": 25.0,
+            "max_label_length": 0
+        }
+    },
+    "groups": [
+        {
+            "name": "Add Object",
+            "icon": "",
+            "display_order": 0,
+            "expanded": false
+        },
+        {
+            "name": "Toggle",
+            "icon": "",
+            "display_order": 1,
+            "expanded": false
+        },
+        {
+            "name": "Vector Math",
+            "icon": "",
+            "display_order": 3,
+            "expanded": false
+        },
+        {
+            "name": "Chord Song",
+            "icon": "",
+            "display_order": 0,
+            "expanded": true
+        },
+        {
+            "name": "Node",
+            "icon": "",
+            "display_order": 4,
+            "expanded": false
+        },
+        {
+            "name": "Math",
+            "icon": "",
+            "display_order": 5,
+            "expanded": false
+        },
+        {
+            "name": "bpy.ops.screen.animation_play()",
+            "icon": "",
+            "display_order": 0,
+            "expanded": true
+        },
+        {
+            "name": "Screen",
+            "icon": "",
+            "display_order": 0,
+            "expanded": true
+        },
+        {
+            "name": "View3D",
+            "icon": "",
+            "display_order": 0,
+            "expanded": false
+        },
+        {
+            "name": "Properties",
+            "icon": "",
+            "display_order": 0,
+            "expanded": true
+        },
+        {
+            "name": "Mesh",
+            "icon": "",
+            "display_order": 0,
+            "expanded": true
+        },
+        {
+            "name": "Property",
+            "icon": "",
+            "display_order": 0,
+            "expanded": false
+        }
+    ],
+    "mappings": [
+        {
+            "order_index": 0,
+            "enabled": true,
+            "chord": "s m",
+            "label": "Select More",
+            "icon": "",
+            "group": "Mesh",
+            "context": "VIEW_3D_EDIT",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "mesh.select_more",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {}
+                }
+            ]
+        },
+        {
+            "order_index": 0,
+            "enabled": true,
+            "chord": "m s",
+            "label": "Subdivide",
+            "icon": "",
+            "group": "Mesh",
+            "context": "VIEW_3D_EDIT",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "mesh.subdivide",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {}
+                }
+            ]
+        },
+        {
+            "order_index": 0,
+            "enabled": true,
+            "chord": "s b",
+            "label": "Select Boundary Loop",
+            "icon": "",
+            "group": "Mesh",
+            "context": "VIEW_3D_EDIT",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "mesh.region_to_loop",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {}
+                }
+            ]
+        },
+        {
+            "order_index": 0,
+            "enabled": true,
+            "chord": "u c",
+            "label": "Clear Seam",
+            "icon": "",
+            "group": "Mesh",
+            "context": "VIEW_3D_EDIT",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "mesh.mark_seam",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {
+                        "clear": true
+                    }
+                }
+            ]
+        },
+        {
+            "order_index": 0,
+            "enabled": true,
+            "chord": "u m",
+            "label": "Mark Seam",
+            "icon": "",
+            "group": "Mesh",
+            "context": "VIEW_3D_EDIT",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "mesh.mark_seam",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {
+                        "clear": false
+                    }
+                }
+            ]
+        },
+        {
+            "order_index": 0,
+            "enabled": true,
+            "chord": "a u",
+            "label": "Primitive Uv Sphere Add",
+            "icon": "",
+            "group": "Mesh",
+            "context": "VIEW_3D",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "mesh.primitive_uv_sphere_add",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {}
+                }
+            ]
+        },
+        {
+            "order_index": 1,
+            "enabled": true,
+            "chord": "v z",
+            "label": "View Selected",
+            "icon": "",
+            "group": "Add Object",
+            "context": "VIEW_3D",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "view3d.view_selected",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {}
+                }
+            ]
+        },
+        {
+            "order_index": 2,
+            "enabled": true,
+            "chord": "t t",
+            "label": "Transparent",
+            "icon": "",
+            "group": "Toggle",
+            "context": "VIEW_3D",
+            "mapping_type": "CONTEXT_TOGGLE",
+            "sync_toggles": false,
+            "context_path": "scene.render.film_transparent"
+        },
+        {
+            "order_index": 3,
+            "enabled": true,
+            "chord": "t s",
+            "label": "Show Statistics",
+            "icon": "",
+            "group": "Toggle",
+            "context": "VIEW_3D",
+            "mapping_type": "CONTEXT_TOGGLE",
+            "sync_toggles": true,
+            "context_path": "space_data.overlay.show_stats",
+            "sub_items": [
+                {
+                    "path": "space_data.overlay.show_text",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "order_index": 4,
+            "enabled": true,
+            "chord": "v v",
+            "label": "View Camera",
+            "icon": "",
+            "group": "View3D",
+            "context": "VIEW_3D",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "view3d.view_camera",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {}
+                }
+            ]
+        },
+        {
+            "order_index": 5,
+            "enabled": true,
+            "chord": "t g",
+            "label": "Display Grid Floor",
+            "icon": "",
+            "group": "Toggle",
+            "context": "VIEW_3D",
+            "mapping_type": "CONTEXT_TOGGLE",
+            "sync_toggles": false,
+            "context_path": "space_data.overlay.show_floor"
+        },
+        {
+            "order_index": 6,
+            "enabled": true,
+            "chord": "a e",
+            "label": "Empty",
+            "icon": "",
+            "group": "Add Object",
+            "context": "VIEW_3D",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "object.empty_add",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {
+                        "type": "PLAIN_AXES"
+                    }
+                }
+            ]
+        },
+        {
+            "order_index": 7,
+            "enabled": true,
+            "chord": "t o",
+            "label": "Show Overlays",
+            "icon": "",
+            "group": "Toggle",
+            "context": "VIEW_3D_EDIT",
+            "mapping_type": "CONTEXT_TOGGLE",
+            "sync_toggles": false,
+            "context_path": "space_data.overlay.show_overlays"
+        },
+        {
+            "order_index": 8,
+            "enabled": true,
+            "chord": "p s",
+            "label": "Shadow Catcher",
+            "icon": "",
+            "group": "Property",
+            "context": "VIEW_3D",
+            "mapping_type": "CONTEXT_TOGGLE",
+            "sync_toggles": false,
+            "context_path": "object.is_shadow_catcher"
+        },
+        {
+            "order_index": 9,
+            "enabled": true,
+            "chord": "a l",
+            "label": "Light",
+            "icon": "",
+            "group": "Add Object",
+            "context": "VIEW_3D",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "object.light_add",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {
+                        "type": "AREA"
+                    }
+                }
+            ]
+        },
+        {
+            "order_index": 10,
+            "enabled": true,
+            "chord": "t x",
+            "label": "Toggle Xray",
+            "icon": "",
+            "group": "Toggle",
+            "context": "VIEW_3D",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "view3d.toggle_xray",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {}
+                }
+            ]
+        },
+        {
+            "order_index": 11,
+            "enabled": true,
+            "chord": "t o",
+            "label": "Show Overlays",
+            "icon": "",
+            "group": "Toggle",
+            "context": "VIEW_3D",
+            "mapping_type": "CONTEXT_TOGGLE",
+            "sync_toggles": false,
+            "context_path": "space_data.overlay.show_overlays"
+        },
+        {
+            "order_index": 12,
+            "enabled": true,
+            "chord": "t x",
+            "label": "Toggle Xray",
+            "icon": "",
+            "group": "Toggle",
+            "context": "VIEW_3D_EDIT",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "view3d.toggle_xray",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {}
+                }
+            ]
+        },
+        {
+            "order_index": 13,
+            "enabled": true,
+            "chord": "a v",
+            "label": "Camera",
+            "icon": "",
+            "group": "Add Object",
+            "context": "VIEW_3D",
+            "mapping_type": "PYTHON_FILE",
+            "python_file": "/Users/vituspacholleck/dev/vtools_dev/vtools/scripts/camera_new.py",
+            "kwargs": {}
+        },
+        {
+            "order_index": 14,
+            "enabled": true,
+            "chord": "a p",
+            "label": "Plane",
+            "icon": "",
+            "group": "Add Object",
+            "context": "VIEW_3D",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "mesh.primitive_plane_add",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {}
+                }
+            ]
+        },
+        {
+            "order_index": 15,
+            "enabled": true,
+            "chord": "b 1",
+            "label": "Bevel 4",
+            "icon": "",
+            "group": "Add Object",
+            "context": "VIEW_3D_EDIT",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "mesh.bevel",
+                    "call_context": "EXEC_DEFAULT",
+                    "kwargs": {
+                        "segments": 4,
+                        "offset": 0.1
+                    }
+                }
+            ]
+        },
+        {
+            "order_index": 16,
+            "enabled": true,
+            "chord": "b 2",
+            "label": "Bevel 6",
+            "icon": "",
+            "group": "Add Object",
+            "context": "VIEW_3D_EDIT",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "mesh.bevel",
+                    "call_context": "EXEC_DEFAULT",
+                    "kwargs": {
+                        "segments": 6,
+                        "offset": 0.2
+                    }
+                }
+            ]
+        },
+        {
+            "order_index": 17,
+            "enabled": true,
+            "chord": "b 3",
+            "label": "Bevel 8",
+            "icon": "",
+            "group": "Add Object",
+            "context": "VIEW_3D_EDIT",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "mesh.bevel",
+                    "call_context": "EXEC_DEFAULT",
+                    "kwargs": {
+                        "segments": 8,
+                        "offset": 0.4
+                    }
+                }
+            ]
+        },
+        {
+            "order_index": 18,
+            "enabled": true,
+            "chord": "b 4",
+            "label": "Bevel 16",
+            "icon": "",
+            "group": "Add Object",
+            "context": "VIEW_3D_EDIT",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "mesh.bevel",
+                    "call_context": "EXEC_DEFAULT",
+                    "kwargs": {
+                        "segments": 16,
+                        "offset": 1
+                    }
+                }
+            ]
+        },
+        {
+            "order_index": 19,
+            "enabled": true,
+            "chord": "m a",
+            "label": "Add",
+            "icon": "",
+            "group": "Math",
+            "context": "SHADER_EDITOR",
+            "mapping_type": "PYTHON_FILE",
+            "python_file": "sample_scripts/NODE_Add.py",
+            "kwargs": {
+                "id": "ShaderNodeMath",
+                "operation": "ADD"
+            }
+        },
+        {
+            "order_index": 20,
+            "enabled": true,
+            "chord": "m m",
+            "label": "Multiply",
+            "icon": "",
+            "group": "Math",
+            "context": "SHADER_EDITOR",
+            "mapping_type": "PYTHON_FILE",
+            "python_file": "sample_scripts/NODE_Add.py",
+            "kwargs": {
+                "id": "ShaderNodeMath",
+                "operation": "MULTIPLY"
+            }
+        },
+        {
+            "order_index": 21,
+            "enabled": true,
+            "chord": "m d",
+            "label": "Divide",
+            "icon": "",
+            "group": "Math",
+            "context": "SHADER_EDITOR",
+            "mapping_type": "PYTHON_FILE",
+            "python_file": "sample_scripts/NODE_Add.py",
+            "kwargs": {
+                "id": "ShaderNodeMath",
+                "operation": "DIVIDE"
+            }
+        },
+        {
+            "order_index": 22,
+            "enabled": true,
+            "chord": "v a",
+            "label": "Vector Add",
+            "icon": "",
+            "group": "Vector Math",
+            "context": "SHADER_EDITOR",
+            "mapping_type": "PYTHON_FILE",
+            "python_file": "sample_scripts/NODE_Add.py",
+            "kwargs": {
+                "id": "ShaderNodeVectorMath",
+                "operation": "ADD"
+            }
+        },
+        {
+            "order_index": 23,
+            "enabled": true,
+            "chord": "v m",
+            "label": "Vector Mulitply",
+            "icon": "",
+            "group": "Vector Math",
+            "context": "SHADER_EDITOR",
+            "mapping_type": "PYTHON_FILE",
+            "python_file": "sample_scripts/NODE_Add.py",
+            "kwargs": {
+                "id": "ShaderNodeVectorMath",
+                "operation": "MULTIPLY"
+            }
+        },
+        {
+            "order_index": 24,
+            "enabled": true,
+            "chord": "v s",
+            "label": "Vector Subtract",
+            "icon": "",
+            "group": "Vector Math",
+            "context": "SHADER_EDITOR",
+            "mapping_type": "PYTHON_FILE",
+            "python_file": "sample_scripts/NODE_Add.py",
+            "kwargs": {
+                "id": "ShaderNodeVectorMath",
+                "operation": "SUBTRACT"
+            }
+        },
+        {
+            "order_index": 25,
+            "enabled": true,
+            "chord": "v d",
+            "label": "Vector Divide",
+            "icon": "",
+            "group": "Vector Math",
+            "context": "SHADER_EDITOR",
+            "mapping_type": "PYTHON_FILE",
+            "python_file": "sample_scripts/NODE_Add.py",
+            "kwargs": {
+                "id": "ShaderNodeVectorMath",
+                "operation": "DIVIDE"
+            }
+        },
+        {
+            "order_index": 26,
+            "enabled": true,
+            "chord": "b",
+            "label": "Bevel",
+            "icon": "",
+            "group": "Node",
+            "context": "SHADER_EDITOR",
+            "mapping_type": "OPERATOR",
+            "operators": [
+                {
+                    "operator": "node.add_node",
+                    "call_context": "INVOKE_DEFAULT",
+                    "kwargs": {
+                        "type": "ShaderNodeBevel",
+                        "use_transform": false
+                    }
+                }
+            ]
+        }
+    ]
+}
