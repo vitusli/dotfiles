@@ -5,7 +5,7 @@ end
 local function disable_vscode_rendering(args)
   local get_clients = vim.lsp.get_clients or vim.lsp.get_active_clients
 
-  vim.bo[args.buf].spell = false
+  vim.api.nvim_set_option_value("spell", false, { win = 0 })
   vim.bo[args.buf].syntax = ""
   pcall(vim.treesitter.stop, args.buf)
 
