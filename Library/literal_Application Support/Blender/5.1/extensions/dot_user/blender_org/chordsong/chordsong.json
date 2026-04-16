@@ -111,7 +111,7 @@
         "separator_b": "::",
         "max_label_length": 0,
         "sort_mode": "PRESET_GDO",
-        "sort_string": "g d c",
+        "sort_string": "G d c",
         "offset_x": 65,
         "offset_y": -15,
         "ungrouped_expanded": true,
@@ -134,7 +134,7 @@
             "name": "Toggle",
             "icon": "",
             "display_order": 1,
-            "expanded": false
+            "expanded": true
         },
         {
             "name": "Vector Math",
@@ -176,7 +176,7 @@
             "name": "View3D",
             "icon": "",
             "display_order": 0,
-            "expanded": false
+            "expanded": true
         },
         {
             "name": "Properties",
@@ -352,23 +352,6 @@
             ]
         },
         {
-            "order_index": 9,
-            "enabled": true,
-            "chord": "v v",
-            "label": "View Camera",
-            "icon": "",
-            "group": "View3D",
-            "context": "VIEW_3D",
-            "mapping_type": "OPERATOR",
-            "operators": [
-                {
-                    "operator": "view3d.view_camera",
-                    "call_context": "INVOKE_DEFAULT",
-                    "kwargs": {}
-                }
-            ]
-        },
-        {
             "order_index": 10,
             "enabled": true,
             "chord": "t g",
@@ -441,35 +424,6 @@
                     }
                 }
             ]
-        },
-        {
-            "order_index": 15,
-            "enabled": true,
-            "chord": "t x",
-            "label": "Toggle Xray",
-            "icon": "",
-            "group": "Toggle",
-            "context": "VIEW_3D",
-            "mapping_type": "OPERATOR",
-            "operators": [
-                {
-                    "operator": "view3d.toggle_xray",
-                    "call_context": "INVOKE_DEFAULT",
-                    "kwargs": {}
-                }
-            ]
-        },
-        {
-            "order_index": 16,
-            "enabled": true,
-            "chord": "t o",
-            "label": "Show Overlays",
-            "icon": "",
-            "group": "Toggle",
-            "context": "VIEW_3D",
-            "mapping_type": "CONTEXT_TOGGLE",
-            "sync_toggles": false,
-            "context_path": "space_data.overlay.show_overlays"
         },
         {
             "order_index": 17,
