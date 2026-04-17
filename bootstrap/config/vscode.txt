@@ -1,6 +1,6 @@
 # VS Code Extensions
 
-asvetliakov.vscode-neovim
+vscodevim.vim
 github.copilot-chat
 mhutchie.git-graph
 ms-python.python
