@@ -1,7 +1,7 @@
 {{- if eq .chezmoi.os "windows" -}}
 
-# This script runs when .chezmoidata.yaml or any shared config changes.
-# Trigger re-run when shared configs change:
+# This script runs after every chezmoi apply.
+# Keep the shared config hashes here to make content changes visible in diffs/logs:
 # shared/vscode/keybindings.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/vscode/keybindings.json.tmpl") | sha256sum }}
 # shared/vscode/settings.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/vscode/settings.json.tmpl") | sha256sum }}
 # shared/zed/keymap.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/zed/keymap.json.tmpl") | sha256sum }}
@@ -11,6 +11,7 @@
 $ErrorActionPreference = "Stop"
 
 $SourceDir = "{{ .chezmoi.sourceDir }}"
+$Utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 
 Write-Host "Deploying shared app configs for windows..."
 
@@ -30,8 +31,8 @@ New-Item -Path $TargetDir -ItemType Directory -Force | Out-Null
 $src = Join-Path $SourceDir "{{ $config.source }}/{{ .src }}"
 if (Test-Path $src) {
     $content = Get-Content -Path $src -Raw -Encoding UTF8
-    $rendered = $content | chezmoi execute-template
-    Set-Content -Path (Join-Path $TargetDir "{{ .dst }}") -Value $rendered -Encoding UTF8 -NoNewline
+    $rendered = [string]::Join("`r`n", ($content | chezmoi execute-template))
+    [System.IO.File]::WriteAllText((Join-Path $TargetDir "{{ .dst }}"), $rendered, $Utf8NoBom)
 } else {
     Write-Host "  ⚠ Source not found: {{ $config.source }}/{{ .src }}"
 }
@@ -80,7 +81,7 @@ if ($ZenApp) {
     $src = Join-Path $SourceDir "{{ $.special_apps.zen.source }}/{{ .src }}"
     if (Test-Path $src) {
         try {
-            gsudo powershell -NoProfile -Command "New-Item -Path '$ZenTarget' -ItemType Directory -Force | Out-Null; Copy-Item -Path '$src' -Destination (Join-Path '$ZenTarget' '{{ .dst }}') -Force"
+            gsudo powershell -NoProfile -Command "& { New-Item -LiteralPath \"$ZenTarget\" -ItemType Directory -Force | Out-Null; Copy-Item -LiteralPath \"$src\" -Destination (Join-Path \"$ZenTarget\" \"{{ .dst }}\") -Force }"
             Write-Host "  ✓ zen → $ZenTarget"
         } catch {
             if (Get-Command gsudo -ErrorAction SilentlyContinue) {

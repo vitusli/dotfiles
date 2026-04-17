@@ -2,8 +2,8 @@
 
 #!/bin/bash
 
-# This script runs when .chezmoidata.yaml or any shared config changes.
-# Trigger re-run when shared configs change:
+# This script runs after every chezmoi apply.
+# Keep the shared config hashes here to make content changes visible in diffs/logs:
 # shared/vscode/keybindings.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/vscode/keybindings.json.tmpl") | sha256sum }}
 # shared/vscode/settings.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/vscode/settings.json.tmpl") | sha256sum }}
 # shared/zed/keymap.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/zed/keymap.json.tmpl") | sha256sum }}
