@@ -2,6 +2,7 @@
     // Editor
     "editor.accessibilitySupport": "off",
     "editor.allowVariableFontsInAccessibilityMode": true,
+    "editor.minimap.enabled": false,
 
     // Explorer
     "explorer.confirmDelete": true,
@@ -9,7 +10,7 @@
 
     // Extensions
     "extensions.experimental.affinity": {
-        "asvetliakov.vscode-neovim": 1
+        "vscodevim.vim": 1
     },
     "extensions.ignoreRecommendations": true,
 
@@ -28,20 +29,31 @@
         "scminput": false
     },
 
-    // Neovim
-{{- if eq .chezmoi.os "darwin" }}
-    "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
-    "vscode-neovim.neovimInitVimPaths.darwin": "{{ .chezmoi.homeDir }}/.config/nvim/init.lua",
-{{- else if eq .chezmoi.os "linux" }}
-    "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
-    "vscode-neovim.neovimInitVimPaths.linux": "{{ .chezmoi.homeDir }}/.config/nvim/init.lua",
-{{- else if eq .chezmoi.os "windows" }}
-    "vscode-neovim.neovimExecutablePaths.win32": "{{ .chezmoi.homeDir }}\\scoop\\shims\\nvim.exe",
-    "vscode-neovim.neovimInitVimPaths.win32": "{{ .chezmoi.homeDir }}/AppData/Local/nvim/init.lua",
-{{- end }}
-    "vscode-neovim.useCtrlKeysForNormalMode": true,
-    "vscode-neovim.useCtrlKeysForInsertMode": true,
-    "vscode-neovim.useCtrlKeysForVisualMode": true,
+    // Vim
+    "vim.leader": "<space>",
+    "vim.surround": true,
+    "vim.useSystemClipboard": true,
+    "vim.useCtrlKeys": true,
+    "vim.normalModeKeyBindings": [
+        {
+            "before": ["g", "s", "a"],
+            "after": ["y", "s"]
+        },
+        {
+            "before": ["g", "s", "r"],
+            "after": ["c", "s"]
+        },
+        {
+            "before": ["g", "s", "d"],
+            "after": ["d", "s"]
+        }
+    ],
+    "vim.visualModeKeyBindingsNonRecursive": [
+        {
+            "before": ["g", "s", "a"],
+            "after": ["S"]
+        }
+    ],
 
     // Security
     "security.workspace.trust.untrustedFiles": "open",

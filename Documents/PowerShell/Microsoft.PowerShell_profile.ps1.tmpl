@@ -31,7 +31,6 @@ $env:FZF_DEFAULT_OPTS = "--bind 'enter:execute-silent(powershell -nop -c Set-Cli
 $env:EDITOR = "neovim"
 $env:VISUAL = "code"
 
-
 # ============================================================================
 # Module Management
 # ============================================================================
@@ -44,6 +43,9 @@ foreach ($module in $requiredModules) {
     }
     Import-Module $module
 }
+
+# Cursor shape: use a line/beam cursor instead of block (must be after PSReadLine import)
+Set-PSReadLineOption -CursorStyle SteadyLine
 
 # Initialize zoxide
 Invoke-Expression (& { (zoxide init powershell | Out-String) })

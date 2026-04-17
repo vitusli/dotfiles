@@ -38,11 +38,6 @@
     },
 {{- end }}
     {
-        "key": "{{ $mod }}+shift+j",
-        "command": "workbench.action.terminal.focus",
-        "when": "!terminalFocus"
-    },
-    {
         "key": "{{ $mod }}+n",
         "command": "workbench.action.terminal.new",
         "when": "terminalFocus"
@@ -63,6 +58,10 @@
         "key": "shift+escape",
         "when": "auxiliaryBarFocus",
         "command": "workbench.action.toggleMaximizedAuxiliaryBar"
+    },
+    {
+        "key": "{{ $mod }}+k =",
+        "command": "cSpell.addWordToWorkspaceDictionary"
     },
     {
         "key": "{{ $mod }}+k a",

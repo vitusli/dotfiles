@@ -57,8 +57,6 @@ sf-symbols #brew
 slack #brew
 SlackTechnologies.Slack #winget
 
-superwhisper #brew
-
 Toggl.TogglTrack #winget
 
 visual-studio-code #brew
