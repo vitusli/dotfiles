@@ -1,0 +1,5 @@
+# APT Packages (WSL/Linux)
+
+zsh
+build-essential
+pkg-config
