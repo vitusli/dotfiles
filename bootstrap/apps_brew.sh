@@ -1,6 +1,18 @@
 #!/bin/bash
 set -euo pipefail
 command -v brew >/dev/null
-{ awk '/^#/||!NF{next}/#brew/{print "brew \""$1"\""}' "$(dirname "$0")/config/cli.txt" | { [[ "$(uname -s)" == "Linux" ]] && grep -Ev '^brew "git"$' || cat; }; [[ "$(uname -s)" == "Darwin" ]] && awk '/^#/||!NF{next}/#brew/{print "cask \""$1"\""}' "$(dirname "$0")/config/gui.txt"; } | brew bundle --file=-
 
-# git blacklisted on linux
+CONFIG_DIR="$(dirname "$0")/config"
+
+# cli packages (git blacklisted on linux)
+PKGS=$(awk '/^#/||!NF{next}/#brew/{print $1}' "$CONFIG_DIR/cli.txt" \
+  | { [[ "$(uname -s)" == "Linux" ]] && grep -v '^git$' || cat; })
+
+# gui casks (macOS only)
+CASKS=""
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  CASKS=$(awk '/^#/||!NF{next}/#brew/{print $1}' "$CONFIG_DIR/gui.txt")
+fi
+
+[[ -n "$PKGS" ]] && brew install $PKGS
+[[ -n "$CASKS" ]] && brew install --cask $CASKS
