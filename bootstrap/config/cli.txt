@@ -17,6 +17,7 @@ lf #brew
 pyright #brew
 restic #brew
 starship #brew
+tinymist #brew #scoop
 tree-sitter-cli #brew
 zsh-autosuggestions #brew
 zsh-syntax-highlighting #brew
