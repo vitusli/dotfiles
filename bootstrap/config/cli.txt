@@ -2,15 +2,15 @@
 
 chezmoi #scoop #brew 
 fzf #scoop #brew
-gh #scoop #brew
-git #scoop #brew
-just #scoop #brew
-lazygit #scoop #brew
-opencode #brew #scoop 
-serie #scoop #brew
-uv #scoop #brew
+gh #brew #scoop
+git #brew #scoop
+just #brew
+lazygit #brew
+opencode #brew 
+serie #brew
+uv #brew
 zoxide #scoop #brew 
-neovim #brew #scoop
+neovim #brew 
 
 ffmpeg #brew
 lf #brew
@@ -18,12 +18,9 @@ pyright #brew
 restic #brew
 tree-sitter-cli #brew
 wandelbotsgmbh/wandelbots/nova #brew
-olets/tap/zsh-abbr #brew 
-zsh-autosuggestions #brew 
-zsh-syntax-highlighting #brew 
+olets/tap/zsh-abbr #brew
 
 Microsoft.PowerShell #winget
 gsudo #scoop
-JetBrainsMono-NF #scoop
 scoop-completion #scoop
 scoop-search #scoop

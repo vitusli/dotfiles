@@ -1,0 +1,17 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+
+SOURCE_DIR="$(chezmoi source-path)"
+
+"$SOURCE_DIR/bootstrap/install_brew.sh"
+"$SOURCE_DIR/bootstrap/apps_brew.sh"
+"$SOURCE_DIR/bootstrap/install_oh_my_zsh.sh"
+"$SOURCE_DIR/bootstrap/setup_lazyvim.sh"
+"$SOURCE_DIR/bootstrap/macos_defaults.sh"
+"$SOURCE_DIR/bootstrap/macos_duti.sh"
+"$SOURCE_DIR/bootstrap/macos_marta.sh"
+"$SOURCE_DIR/bootstrap/macos_mas.sh"
+"$SOURCE_DIR/bootstrap/repos.sh"
+"$SOURCE_DIR/bootstrap/vscode_extensions.sh"
+{{- end -}}

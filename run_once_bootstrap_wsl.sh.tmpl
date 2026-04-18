@@ -1,0 +1,19 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -euo pipefail
+
+if [[ -z "${WSL_DISTRO_NAME:-}" ]]; then
+  echo "Skipping WSL bootstrap: linux detected but not WSL."
+  exit 0
+fi
+
+SOURCE_DIR="$(chezmoi source-path)"
+
+"$SOURCE_DIR/bootstrap/install_wsl_toolchain.sh"
+"$SOURCE_DIR/bootstrap/install_brew.sh"
+"$SOURCE_DIR/bootstrap/apps_brew.sh"
+"$SOURCE_DIR/bootstrap/install_oh_my_zsh.sh"
+"$SOURCE_DIR/bootstrap/set_default_shell_wsl.sh"
+"$SOURCE_DIR/bootstrap/setup_lazyvim.sh"
+"$SOURCE_DIR/bootstrap/repos.sh"
+{{- end -}}

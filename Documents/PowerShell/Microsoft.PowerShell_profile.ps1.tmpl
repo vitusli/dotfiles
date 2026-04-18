@@ -1,31 +1,8 @@
-# ============================================================================
-# PowerShell Profile
-# ============================================================================
-
-# Enable tab completion for nova
-try {
-    if (Get-Command nova -ErrorAction SilentlyContinue) {
-        nova completion powershell | Out-String | Invoke-Expression
-    }
-} catch {
-    Write-Verbose "Nova completion registration failed: $($_.Exception.Message)"
-}
-
 # Add scoop to PATH
 $machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
 $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
 $env:Path = "$machinePath;$userPath"
 $env:Path = "{{ .chezmoi.homeDir }}\scoop\apps\mingw\current\bin;{{ .chezmoi.homeDir }}\scoop\shims;$env:Path"
-
-# Add NovaCLI to PATH
-$env:Path = "{{ .chezmoi.homeDir }}\NovaCLI;$env:Path"
-
-# fzf: Copy result to clipboard on Enter (in addition to normal output)
-$env:FZF_DEFAULT_OPTS = "--bind 'enter:execute-silent(powershell -nop -c Set-Clipboard {})+accept'"
-
-# Default editor 
-$env:EDITOR = "neovim"
-$env:VISUAL = "code"
 
 # ============================================================================
 # Module Management
@@ -39,9 +16,6 @@ foreach ($module in $requiredModules) {
     }
     Import-Module $module
 }
-
-# Cursor shape: use a line/beam cursor instead of block (must be after PSReadLine import)
-Set-PSReadLineOption -CursorStyle SteadyLine
 
 # Initialize zoxide
 Invoke-Expression (& { (zoxide init powershell | Out-String) })

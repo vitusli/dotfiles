@@ -319,7 +319,7 @@ config.scrollback_lines = 10000
 config.default_prog = { '/bin/zsh', '-l' }
 {{- end }}
 {{- if eq .chezmoi.os "windows" }}
-config.default_prog = { 'pwsh.exe', '-NoLogo' }
+config.default_prog = { 'wsl.exe', '-d', 'Ubuntu', '--cd', '~', 'zsh', '-l' }
 {{- end }}
 {{- if eq .chezmoi.os "linux" }}
 config.default_prog = { '/usr/bin/zsh', '-l' }

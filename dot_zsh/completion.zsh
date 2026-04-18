@@ -7,14 +7,19 @@ unsetopt CASE_GLOB
 unsetopt CASE_MATCH
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
-# Add Homebrew completions to FPATH
-FPATH="/opt/homebrew/share/zsh/site-functions:${FPATH}"
+# Add brew completions to FPATH (macOS + WSL Ubuntu)
+if [[ "$OSTYPE" == darwin* ]] || [[ -n "$WSL_DISTRO_NAME" ]]; then
+  if command -v brew >/dev/null 2>&1; then
+    BREW_PREFIX="$(brew --prefix 2>/dev/null)"
+    if [[ -n "$BREW_PREFIX" ]]; then
+      FPATH="$BREW_PREFIX/share/zsh/site-functions:${FPATH}"
+    fi
+  fi
+fi
 
-# Load completion system with smart cache invalidation
-autoload -Uz compinit
-if [[ /opt/homebrew/share/zsh/site-functions -nt ~/.zcompdump ]]; then
-  compinit
-else
+# Load completion system only when omz did not initialize it yet.
+if ! typeset -f _main_complete >/dev/null 2>&1; then
+  autoload -Uz compinit
   compinit -C
 fi
 
@@ -27,10 +32,6 @@ fi
 if command -v chezmoi &>/dev/null; then
   source <(chezmoi completion zsh)
 fi
-
-# Load zsh plugins
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Configure completion menu
 zstyle ':completion:*' menu select

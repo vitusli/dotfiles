@@ -16,12 +16,18 @@ shared
 .zshrc
 Library
 Library/**
-run_once_before_install-deps-brew.sh.tmpl
-run_once_after_setup-lazyvim.sh.tmpl
 run_onchange_after_deploy-shared-apps.sh.tmpl
 {{- end }}
 
 {{- if eq .chezmoi.os "darwin" }}
+AppData
+Documents
+run_onchange_after_deploy-shared-apps.ps1.tmpl
+{{- end }}
+
+{{- if eq .chezmoi.os "linux" }}
+.aerospace.toml
+.config/karabiner
 AppData
 Documents
 run_onchange_after_deploy-shared-apps.ps1.tmpl

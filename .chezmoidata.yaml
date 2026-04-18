@@ -23,7 +23,7 @@ abbreviations:
     j: "just"
     l: "lazygit"
     n: "nvim ."
-    py: "uv run python"
+    u: "uv run python"
     "..": "cd .."
     "...": "cd ../.."
 
@@ -46,7 +46,7 @@ abbreviations:
     usdview: "PYTHONPATH=/opt/local/USD/lib/python PATH=/opt/local/USD/bin:$PATH python3.11 /opt/local/USD/bin/usdview"
 
   # ---------------------------------------------------------------------------
-  # Windows}} only
+  # Windows only
   # ---------------------------------------------------------------------------
   windows:
     ahk: 'Get-Process | Where-Object {$_.Name -like "*AutoHotkey*"} | Stop-Process -Force; Start-Process "C:\Users\Vitus\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\macish.ahk"'
@@ -66,10 +66,15 @@ abbreviations:
     sl: "scoop list"
 
   # ---------------------------------------------------------------------------
-  # Linux only
+  # WSL only
   # ---------------------------------------------------------------------------
   linux:
-    f: "fzf | wl-copy"
+    ai: "apt install"
+    as: "apt search"
+    au: "apt remove"
+    aup: "apt upgrade"
+    ll: "ls -la"
+    f: "fzf | clip.exe"
     rl: "source ~/.zshrc"
     v: "source .venv/bin/activate"
 

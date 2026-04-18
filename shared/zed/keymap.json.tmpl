@@ -62,10 +62,8 @@
   {
     "bindings": {
 {{- if eq .chezmoi.os "windows" }}
-      "ctrl-1": "editor::ToggleFocus",
+      "ctrl-1": "editor::ToggleFocus"
 {{- end }}
-      "{{ $mod }}-i": "agent::ToggleFocus",
-      "{{ $mod }}-shift-j": "terminal_panel::ToggleFocus"
     }
   }
 ]

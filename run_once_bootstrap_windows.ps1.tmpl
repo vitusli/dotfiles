@@ -1,0 +1,15 @@
+{{- if eq .chezmoi.os "windows" -}}
+$ErrorActionPreference = "Stop"
+
+$sourceDir = chezmoi source-path
+
+& "$sourceDir\bootstrap\install_scoop.ps1"
+& "$sourceDir\bootstrap\apps_scoop.ps1"
+& "$sourceDir\bootstrap\apps_winget.ps1"
+& "$sourceDir\bootstrap\repos.ps1"
+& "$sourceDir\bootstrap\vscode_extensions.ps1"
+& "$sourceDir\bootstrap\windows_bloatware.ps1"
+& "$sourceDir\bootstrap\windows_hardening.ps1"
+& "$sourceDir\bootstrap\windows_registry.ps1"
+& "$sourceDir\bootstrap\windows_services.ps1"
+{{- end -}}
