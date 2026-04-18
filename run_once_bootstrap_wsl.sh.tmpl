@@ -7,21 +7,7 @@ if [[ -z "${WSL_DISTRO_NAME:-}" ]]; then
   exit 0
 fi
 
-export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
-
-CHEZMOI_BIN="$(command -v chezmoi || true)"
-if [[ -z "$CHEZMOI_BIN" && -x "$HOME/bin/chezmoi" ]]; then
-  CHEZMOI_BIN="$HOME/bin/chezmoi"
-elif [[ -z "$CHEZMOI_BIN" && -x "$HOME/.local/bin/chezmoi" ]]; then
-  CHEZMOI_BIN="$HOME/.local/bin/chezmoi"
-fi
-
-if [[ -z "$CHEZMOI_BIN" ]]; then
-  echo "chezmoi not found in PATH or common install locations"
-  exit 1
-fi
-
-SOURCE_DIR="$($CHEZMOI_BIN source-path)"
+SOURCE_DIR="{{ .chezmoi.sourceDir }}"
 
 "$SOURCE_DIR/bootstrap/install_wsl_toolchain.sh"
 "$SOURCE_DIR/bootstrap/install_brew.sh"
