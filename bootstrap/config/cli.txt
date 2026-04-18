@@ -18,6 +18,8 @@ pyright #brew
 restic #brew
 starship #brew
 tree-sitter-cli #brew
+zsh-autosuggestions #brew
+zsh-syntax-highlighting #brew
 wandelbotsgmbh/wandelbots/nova #brew
 olets/tap/zsh-abbr #brew
 

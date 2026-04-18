@@ -10,11 +10,23 @@ export VISUAL="zed"
 # EXTERNAL TOOLS
 # ============================================================================
 
-# zoxide - smarter directory jumping
-eval "$(zoxide init zsh)"
+# zoxide - smarter directory jumping (cached)
+_zoxide_cache="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zoxide-init.zsh"
+if [[ ! -f "$_zoxide_cache" ]] || [[ "$(command -v zoxide)" -nt "$_zoxide_cache" ]]; then
+  mkdir -p "${_zoxide_cache:h}"
+  zoxide init zsh >"$_zoxide_cache" 2>/dev/null
+fi
+[[ -f "$_zoxide_cache" ]] && source "$_zoxide_cache"
+unset _zoxide_cache
 
-# fzf - fuzzy finder
-source <(fzf --zsh)
+# fzf - fuzzy finder (cached)
+_fzf_cache="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/fzf-init.zsh"
+if [[ ! -f "$_fzf_cache" ]] || [[ "$(command -v fzf)" -nt "$_fzf_cache" ]]; then
+  mkdir -p "${_fzf_cache:h}"
+  fzf --zsh >"$_fzf_cache" 2>/dev/null
+fi
+[[ -f "$_fzf_cache" ]] && source "$_fzf_cache"
+unset _fzf_cache
 
 # ============================================================================
 # LOAD MODULAR CONFIG
@@ -34,4 +46,11 @@ done
 # zle-keymap-select and zle-line-init in vim-mode.zsh win because zle -N
 # called after starship would re-register them, but we call starship last
 # so it cannot overwrite ours.
-eval "$(starship init zsh)"
+# starship (cached)
+_starship_cache="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/starship-init.zsh"
+if [[ ! -f "$_starship_cache" ]] || [[ "$(command -v starship)" -nt "$_starship_cache" ]]; then
+  mkdir -p "${_starship_cache:h}"
+  starship init zsh >"$_starship_cache" 2>/dev/null
+fi
+[[ -f "$_starship_cache" ]] && source "$_starship_cache"
+unset _starship_cache

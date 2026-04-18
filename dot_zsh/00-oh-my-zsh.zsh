@@ -1,23 +1,21 @@
 # ============================================================================
-# OH-MY-ZSH + FZF CLIPBOARD BINDING
+# ZSH PLUGINS (no Oh-My-Zsh overhead)
 # ============================================================================
 
-# oh-my-zsh
-export ZSH="$HOME/.oh-my-zsh"
-export ZSH_THEME=""
-
-plugins=(
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-)
-
-# Ensure external omz plugins exist on macOS and WSL Ubuntu.
-if [[ -d "$ZSH" ]] && command -v git >/dev/null 2>&1; then
-  export ZSH_CUSTOM="${ZSH_CUSTOM:-$ZSH/custom}"
-  [[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]] || git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions" >/dev/null 2>&1
-  [[ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]] || git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" >/dev/null 2>&1
+# zsh-autosuggestions
+if [[ "$OSTYPE" == darwin* ]]; then
+  _zas="/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+else
+  _zas="/home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
+[[ -f "$_zas" ]] && source "$_zas"
+unset _zas
 
-if [[ -r "$ZSH/oh-my-zsh.sh" ]]; then
-  source "$ZSH/oh-my-zsh.sh"
+# zsh-syntax-highlighting
+if [[ "$OSTYPE" == darwin* ]]; then
+  _zsh_hl="/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+else
+  _zsh_hl="/home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
+[[ -f "$_zsh_hl" ]] && source "$_zsh_hl"
+unset _zsh_hl
