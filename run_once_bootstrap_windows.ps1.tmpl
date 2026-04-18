@@ -1,7 +1,23 @@
 {{- if eq .chezmoi.os "windows" -}}
 $ErrorActionPreference = "Stop"
 
-$sourceDir = chezmoi source-path
+$env:Path = "$HOME\bin;$HOME\.local\bin;$env:Path"
+
+$chezmoi = Get-Command chezmoi -ErrorAction SilentlyContinue
+if (-not $chezmoi -and (Test-Path "$HOME\bin\chezmoi.exe")) {
+	$chezmoiPath = "$HOME\bin\chezmoi.exe"
+}
+elseif (-not $chezmoi -and (Test-Path "$HOME\.local\bin\chezmoi.exe")) {
+	$chezmoiPath = "$HOME\.local\bin\chezmoi.exe"
+}
+elseif ($chezmoi) {
+	$chezmoiPath = $chezmoi.Source
+}
+else {
+	throw "chezmoi not found in PATH or common install locations"
+}
+
+$sourceDir = & $chezmoiPath source-path
 
 & "$sourceDir\bootstrap\install_scoop.ps1"
 & "$sourceDir\bootstrap\apps_scoop.ps1"
