@@ -3,9 +3,9 @@ set -euo pipefail
 
 NVIM_CONFIG="$HOME/.config/nvim"
 
-if [[ -d "$NVIM_CONFIG" ]]; then
-  echo "LazyVim already exists at $NVIM_CONFIG, skipping"
-  exit 0
+if [[ -e "$NVIM_CONFIG" ]]; then
+  rm -rf "$NVIM_CONFIG.bak"
+  mv "$NVIM_CONFIG" "$NVIM_CONFIG.bak"
 fi
 
 if ! command -v git >/dev/null 2>&1; then
