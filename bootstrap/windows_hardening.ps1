@@ -1,6 +1,13 @@
 # Windows Hardening Script
 # Disables system components that can't be removed via normal uninstall
 
+# Check if running with admin privileges
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "This script requires administrator privileges. Restarting with elevated privileges..."
+    Start-Process -FilePath PowerShell.exe -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    exit
+}
+
 Write-Host "Windows Hardening..." -ForegroundColor Cyan
 
 # Components to disable by renaming the executable
