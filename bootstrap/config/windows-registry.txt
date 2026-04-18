@@ -92,3 +92,13 @@ $accPath = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Accessibility"; i
 
 # Disable Office Key (Win+Ctrl+Alt+Shift opens Microsoft 365)
 if (!(Test-Path "HKCU:\Software\Classes\ms-officeapp\Shell\Open\Command")) { New-Item -Path "HKCU:\Software\Classes\ms-officeapp\Shell\Open\Command" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\Software\Classes\ms-officeapp\Shell\Open\Command" -Name "(Default)" -Type String -Value "rundll32" -Force
+
+# No Sounds (in Theme settings)
+# 1) Select the built-in "No Sounds" scheme
+if (!(Test-Path "HKCU:\AppEvents\Schemes")) { New-Item -Path "HKCU:\AppEvents\Schemes" -Force | Out-Null }; Set-ItemProperty -Path "HKCU:\AppEvents\Schemes" -Name "(Default)" -Type String -Value ".None" -Force
+# 2) Clear all currently assigned event sounds for the current user
+Get-ChildItem "HKCU:\AppEvents\Schemes\Apps" -Recurse -ErrorAction SilentlyContinue |
+    Where-Object { $_.PSChildName -eq ".Current" } |
+    ForEach-Object { Set-ItemProperty -Path $_.PSPath -Name "(Default)" -Type String -Value "" -Force }
+# 3) Disable "Play Windows Startup sound"
+if (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\BootAnimation")) { New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\BootAnimation" -Force | Out-Null }; Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\BootAnimation" -Name "DisableStartupSound" -Type DWORD -Value 1 -Force

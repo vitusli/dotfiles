@@ -69,6 +69,7 @@ abbreviations:
   # WSL only
   # ---------------------------------------------------------------------------
   linux:
+    w: "cd /mnt/c/Users/Vitus"
     ai: "apt install"
     as: "apt search"
     au: "apt remove"

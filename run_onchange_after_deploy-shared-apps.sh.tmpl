@@ -1,4 +1,4 @@
-{{- if ne .chezmoi.os "windows" -}}
+{{- if eq .chezmoi.os "darwin" -}}
 
 #!/bin/bash
 
@@ -13,6 +13,11 @@
 set -euo pipefail
 
 SOURCE_DIR="{{ .chezmoi.sourceDir }}"
+
+if [[ -n "${WSL_DISTRO_NAME:-}" ]]; then
+    echo "Skipping shared app deployment on WSL."
+    exit 0
+fi
 
 echo "Deploying shared app configs for {{ .chezmoi.os }}..."
 

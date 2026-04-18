@@ -80,14 +80,21 @@ if ($ZenApp) {
     $src = Join-Path $SourceDir "{{ $.special_apps.zen.source }}/{{ .src }}"
     if (Test-Path $src) {
         try {
-            gsudo powershell -NoProfile -Command "New-Item -Path '$ZenTarget' -ItemType Directory -Force | Out-Null; Copy-Item -Path '$src' -Destination (Join-Path '$ZenTarget' '{{ .dst }}') -Force"
+            # Try creating directory and copying with current user first
+            New-Item -Path $ZenTarget -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
+            Copy-Item -Path $src -Destination (Join-Path $ZenTarget "{{ .dst }}") -Force -ErrorAction Stop
             Write-Host "  ✓ zen → $ZenTarget"
         } catch {
+            # If failed, try with gsudo for admin rights
             if (Get-Command gsudo -ErrorAction SilentlyContinue) {
-                Write-Host "  ✗ zen: $_"
+                try {
+                    gsudo powershell -NoProfile -Command "New-Item -Path '$ZenTarget' -ItemType Directory -Force | Out-Null; Copy-Item -Path '$src' -Destination (Join-Path '$ZenTarget' '{{ .dst }}') -Force" -ErrorAction Stop
+                    Write-Host "  ✓ zen → $ZenTarget (with admin rights)"
+                } catch {
+                    Write-Host "  ✗ zen: $_"
+                }
             } else {
-                Write-Host "  ⚠ zen: gsudo not found. Install with: scoop install gsudo"
-                Write-Host "      Manual: gsudo Copy-Item '$src' '$(Join-Path $ZenTarget '{{ .dst }}')' -Force"
+                Write-Host "  ⚠ zen: Cannot write to $ZenTarget. Install gsudo with: scoop install gsudo"
             }
         }
     }
