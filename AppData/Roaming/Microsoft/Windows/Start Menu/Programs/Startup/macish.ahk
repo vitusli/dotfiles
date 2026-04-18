@@ -134,8 +134,8 @@ ResetAltS() {
 #!^+-::FancyWM("DecreaseHeight")
 
 ; Desktop switching (Win+Alt+Ctrl+I/O)
-#!^i::FancyWM("SwitchToLeftDesktop")
-#!^o::FancyWM("SwitchToRightDesktop")
+#!^[::FancyWM("SwitchToLeftDesktop")
+#!^]::FancyWM("SwitchToRightDesktop")
 #!^d::FancyWM("SwitchToPreviousDesktop")
 
 ; Move window to desktop
