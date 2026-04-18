@@ -41,8 +41,8 @@ outer.top =        [{ monitor.main = 5 }, { monitor.secondary = 14 }, 5]
 
 ctrl-alt-cmd-slash = ['mode service']
 
-ctrl-alt-cmd-i = 'workspace --no-stdin prev'
-ctrl-alt-cmd-o = 'workspace --no-stdin next'
+ctrl-alt-cmd-leftSquareBracket = 'workspace --no-stdin prev'
+ctrl-alt-cmd-rightSquareBracket = 'workspace --no-stdin next'
 ctrl-alt-cmd-minus = ['resize smart -200']
 ctrl-alt-cmd-equal = ['resize smart +200']
 
