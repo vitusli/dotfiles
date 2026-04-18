@@ -16,6 +16,7 @@ ffmpeg #brew
 lf #brew
 pyright #brew
 restic #brew
+starship #brew
 tree-sitter-cli #brew
 wandelbotsgmbh/wandelbots/nova #brew
 olets/tap/zsh-abbr #brew
