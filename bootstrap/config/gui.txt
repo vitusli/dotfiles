@@ -1,9 +1,5 @@
 # GUI Apps
 
-ableton-live-suite #brew
-
-adobe-acrobat-reader #brew
-
 aerospace #brew
 
 affinity #brew
@@ -16,9 +12,8 @@ bridge #brew
 
 darktable #brew
 
-figma #brew
-
-9P1741LKHQS9 #winget #fancyWM
+#fancywm
+9P1741LKHQS9 #winget
 
 google-drive #brew
 
@@ -31,10 +26,6 @@ keeweb #brew
 KeeWeb.KeeWeb #winget
 
 marta #brew
-
-microsoft-outlook #brew
-
-microsoft-teams #brew
 
 obsidian #scoop #brew
 
@@ -49,8 +40,6 @@ qlmarkdown #brew
 
 raycast #brew
 Raycast.Raycast #winget
-
-rhino-app #brew
 
 sf-symbols #brew
 
@@ -74,4 +63,3 @@ ZedIndustries.Zed #winget
 zen #brew
 Zen-Team.Zen-Browser #winget
 
-zotero #brew
