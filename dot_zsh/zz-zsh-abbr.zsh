@@ -2,9 +2,11 @@
 # ZSH-ABBR
 # ============================================================================
 
-if command -v brew >/dev/null 2>&1; then
-  BREW_PREFIX="$(brew --prefix 2>/dev/null)"
-  if [[ -n "$BREW_PREFIX" ]] && [[ -r "$BREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh" ]]; then
-    source "$BREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh"
-  fi
+# Hardcode prefix to avoid slow `brew --prefix` subprocess on every shell start
+if [[ "$OSTYPE" == darwin* ]]; then
+  _abbr="/opt/homebrew/share/zsh-abbr/zsh-abbr.zsh"
+else
+  _abbr="/home/linuxbrew/.linuxbrew/share/zsh-abbr/zsh-abbr.zsh"
 fi
+[[ -f "$_abbr" ]] && source "$_abbr"
+unset _abbr
