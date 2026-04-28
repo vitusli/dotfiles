@@ -2,10 +2,11 @@
 # Format: repo|destination_parent
 
 vitusli/codespace|~ #wsl #macos
+
 vitusli/vtools_dev|~/dev #wsl #macos
 vitusli/blender_usd|~/dev #wsl #macos
-
-vitusli/extensions|~/blender #macos #windows
+vitusli/scene-tree|~/dev #wsl #macos
+vitusli/blender-extensions-dev|~/blender #macos #wsl
 
 vitusli/zmk-config|~/Documents #wsl #macos
 vitusli/obsidian|~/Documents #windows #macos
