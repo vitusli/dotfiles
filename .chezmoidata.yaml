@@ -22,7 +22,6 @@ abbreviations:
     g: "git"
     j: "just"
     l: "lazygit"
-    n: "nvim ."
     u: "uv run python"
     "..": "cd .."
     "...": "cd ../.."
@@ -32,6 +31,7 @@ abbreviations:
   # ---------------------------------------------------------------------------
   darwin:
     backup: "restic -r /Volumes/TOSHIBA\\ EXT/restic-for-t7 --verbose backup /Volumes/T7\\ Shield"
+    n: "nvim ."
     bi: "brew install"
     bs: "brew search"
     bu: "brew uninstall"
@@ -70,6 +70,7 @@ abbreviations:
   # ---------------------------------------------------------------------------
   linux:
     w: "cd /mnt/c/Users/Vitus"
+    n: "nvim ."
     ai: "apt install"
     as: "apt search"
     au: "apt remove"
