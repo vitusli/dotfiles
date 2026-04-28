@@ -84,7 +84,7 @@ abbreviations:
 # Shared App Paths
 # =============================================================================
 # Defines where shared configs should be deployed per OS
-# Paths are relative to $HOME (or %USERPROFILE% on Windows)
+# Paths are relative to $HOME (or %USERPROFILE% on Windows) unless absolute
 
 shared_apps:
   vscode:
@@ -111,15 +111,20 @@ shared_apps:
       - { src: "keymap.json.tmpl", dst: "keymap.json", template: true }
       - { src: "private_settings.json.tmpl", dst: "settings.json", template: true }
 
+  zen:
+    source: "shared/zen"
+    target:
+      windows: "C:/Program Files/Zen Browser/distribution"
+    files:
+      - { src: "policies.json", dst: "policies.json", template: false }
+
 # =============================================================================
 # Special Apps (non-standard deployment)
 # =============================================================================
 # These require special handling and are not part of the generic loop
 
 special_apps:
-  # Zen needs special handling on both macOS and Windows:
-  # - macOS: deploys into app bundle + re-signing
-  # - Windows: app path varies (LOCALAPPDATA, Scoop, etc.)
+  # Zen on macOS deploys into the app bundle and needs re-signing.
   zen:
     source: "shared/zen"
     files:

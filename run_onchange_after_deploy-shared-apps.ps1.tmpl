@@ -12,6 +12,15 @@ $ErrorActionPreference = "Stop"
 
 $SourceDir = "{{ .chezmoi.sourceDir }}"
 
+function Invoke-ElevatedPowerShell {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$CommandText
+    )
+
+    gsudo { Invoke-Expression $args[0] } -args $CommandText
+}
+
 Write-Host "Deploying shared app configs for windows..."
 
 # =============================================================================
@@ -22,22 +31,55 @@ Write-Host "Deploying shared app configs for windows..."
 {{ $target := index $config.target "windows" -}}
 {{ if $target -}}
 # --- {{ $app }} ---
-$TargetDir = Join-Path $env:USERPROFILE "{{ $target }}"
-New-Item -Path $TargetDir -ItemType Directory -Force | Out-Null
+$TargetDir = if ([System.IO.Path]::IsPathRooted("{{ $target }}")) { "{{ $target }}" } else { Join-Path $env:USERPROFILE "{{ $target }}" }
+
+try {
+    New-Item -Path $TargetDir -ItemType Directory -Force -ErrorAction Stop | Out-Null
+} catch {
+    if ([System.IO.Path]::IsPathRooted("{{ $target }}") -and (Get-Command gsudo -ErrorAction SilentlyContinue)) {
+        Invoke-ElevatedPowerShell -CommandText "New-Item -Path '$TargetDir' -ItemType Directory -Force | Out-Null"
+    } else {
+        throw
+    }
+}
 
 {{ range $config.files -}}
 {{ if .template -}}
 $src = Join-Path $SourceDir "{{ $config.source }}/{{ .src }}"
 if (Test-Path $src) {
     $dst = Join-Path $TargetDir "{{ .dst }}"
-    chezmoi execute-template --file $src --output $dst
+    try {
+        chezmoi execute-template --file $src --output $dst
+    } catch {
+        if ([System.IO.Path]::IsPathRooted("{{ $target }}") -and (Get-Command gsudo -ErrorAction SilentlyContinue)) {
+            $rendered = chezmoi execute-template --file $src
+            $tmp = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+            Set-Content -Path $tmp -Value $rendered -Encoding UTF8
+            try {
+                Invoke-ElevatedPowerShell -CommandText "Copy-Item -LiteralPath '$tmp' -Destination '$dst' -Force"
+            } finally {
+                Remove-Item -Path $tmp -Force -ErrorAction SilentlyContinue
+            }
+        } else {
+            throw
+        }
+    }
 } else {
     Write-Host "  ⚠ Source not found: {{ $config.source }}/{{ .src }}"
 }
 {{ else -}}
 $src = Join-Path $SourceDir "{{ $config.source }}/{{ .src }}"
 if (Test-Path $src) {
-    Copy-Item -Path $src -Destination (Join-Path $TargetDir "{{ .dst }}") -Force
+    $dst = Join-Path $TargetDir "{{ .dst }}"
+    try {
+        Copy-Item -Path $src -Destination $dst -Force -ErrorAction Stop
+    } catch {
+        if ([System.IO.Path]::IsPathRooted("{{ $target }}") -and (Get-Command gsudo -ErrorAction SilentlyContinue)) {
+            Invoke-ElevatedPowerShell -CommandText "Copy-Item -LiteralPath '$src' -Destination '$dst' -Force"
+        } else {
+            throw
+        }
+    }
 } else {
     Write-Host "  ⚠ Source not found: {{ $config.source }}/{{ .src }}"
 }
@@ -58,49 +100,6 @@ if (Test-Path $src) {
 Write-Host "  ✓ {{ $app }} → $TargetDir"
 
 {{ end -}}
-{{ end -}}
-
-# =============================================================================
-# Special Apps
-# =============================================================================
-
-{{ if .special_apps.zen -}}
-# --- zen ---
-$ScoopRoot = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $env:USERPROFILE "scoop" }
-$ZenPaths = @(
-    "C:\Program Files\Zen Browser"
-    Join-Path $ScoopRoot "apps\zen-browser\current"
-)
-$ZenApp = $ZenPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
-
-if ($ZenApp) {
-    $ZenTarget = Join-Path $ZenApp "distribution"
-{{- range .special_apps.zen.files }}
-    $src = Join-Path $SourceDir "{{ $.special_apps.zen.source }}/{{ .src }}"
-    if (Test-Path $src) {
-        try {
-            # Try creating directory and copying with current user first
-            New-Item -Path $ZenTarget -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
-            Copy-Item -Path $src -Destination (Join-Path $ZenTarget "{{ .dst }}") -Force -ErrorAction Stop
-            Write-Host "  ✓ zen → $ZenTarget"
-        } catch {
-            # If failed, try with gsudo for admin rights
-            if (Get-Command gsudo -ErrorAction SilentlyContinue) {
-                try {
-                    gsudo powershell -NoProfile -Command "New-Item -Path '$ZenTarget' -ItemType Directory -Force | Out-Null; Copy-Item -Path '$src' -Destination (Join-Path '$ZenTarget' '{{ .dst }}') -Force" -ErrorAction Stop
-                    Write-Host "  ✓ zen → $ZenTarget (with admin rights)"
-                } catch {
-                    Write-Host "  ✗ zen: $_"
-                }
-            } else {
-                Write-Host "  ⚠ zen: Cannot write to $ZenTarget. Install gsudo with: scoop install gsudo"
-            }
-        }
-    }
-{{- end }}
-} else {
-    Write-Host "  ⊘ zen (not installed, skipping)"
-}
 {{ end -}}
 
 Write-Host "Shared app deployment complete!"
