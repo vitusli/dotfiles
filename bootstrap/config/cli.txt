@@ -11,7 +11,7 @@ serie #brew
 uv #brew
 zoxide #scoop #brew 
 neovim #brew 
-
+syncthing #brew #scoop
 ffmpeg #brew
 lf #brew
 pyright #brew
