@@ -8,6 +8,9 @@
     }
   },
   "disable_ai": true,
+{{- if eq .chezmoi.os "windows" }}
+  "auto_update": false,
+{{- end }}
   "tab_bar": {
     "show": true
   },

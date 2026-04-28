@@ -109,7 +109,7 @@ shared_apps:
       windows: "AppData/Roaming/Zed"
     files:
       - { src: "keymap.json.tmpl", dst: "keymap.json", template: true }
-      - { src: "private_settings.json", dst: "settings.json", template: false }
+      - { src: "private_settings.json.tmpl", dst: "settings.json", template: true }
 
 # =============================================================================
 # Special Apps (non-standard deployment)

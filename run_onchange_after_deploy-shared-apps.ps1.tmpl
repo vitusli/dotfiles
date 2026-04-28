@@ -5,7 +5,7 @@
 # shared/vscode/keybindings.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/vscode/keybindings.json.tmpl") | sha256sum }}
 # shared/vscode/settings.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/vscode/settings.json.tmpl") | sha256sum }}
 # shared/zed/keymap.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/zed/keymap.json.tmpl") | sha256sum }}
-# shared/zed/private_settings.json: {{ include (joinPath .chezmoi.sourceDir "shared/zed/private_settings.json") | sha256sum }}
+# shared/zed/private_settings.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/zed/private_settings.json.tmpl") | sha256sum }}
 # shared/zen/policies.json: {{ include (joinPath .chezmoi.sourceDir "shared/zen/policies.json") | sha256sum }}
 
 $ErrorActionPreference = "Stop"
@@ -29,9 +29,8 @@ New-Item -Path $TargetDir -ItemType Directory -Force | Out-Null
 {{ if .template -}}
 $src = Join-Path $SourceDir "{{ $config.source }}/{{ .src }}"
 if (Test-Path $src) {
-    $content = Get-Content -Path $src -Raw -Encoding UTF8
-    $rendered = $content | chezmoi execute-template
-    Set-Content -Path (Join-Path $TargetDir "{{ .dst }}") -Value $rendered -Encoding UTF8 -NoNewline
+    $dst = Join-Path $TargetDir "{{ .dst }}"
+    chezmoi execute-template --file $src --output $dst
 } else {
     Write-Host "  ⚠ Source not found: {{ $config.source }}/{{ .src }}"
 }
