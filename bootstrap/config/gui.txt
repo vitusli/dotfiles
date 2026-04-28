@@ -17,6 +17,8 @@ darktable #brew
 
 google-drive #brew
 
+ghostty@tip @brew
+
 karabiner-elements #brew
 
 keepassxc #brew
