@@ -5,6 +5,8 @@ shared
 {{- if eq .chezmoi.os "windows" }}
 .aerospace.toml
 .config/karabiner
+.config/ghostty
+.config/ghostty/**
 .config/lf
 .config/nvim
 .config/starship.toml
@@ -27,8 +29,12 @@ run_onchange_after_deploy-shared-apps.ps1.tmpl
 
 {{- if eq .chezmoi.os "linux" }}
 .aerospace.toml
+.config/ghostty
+.config/ghostty/**
 .config/karabiner
 AppData
 Documents
+Library
+Library/**
 run_onchange_after_deploy-shared-apps.ps1.tmpl
 {{- end }}
