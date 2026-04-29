@@ -59,9 +59,7 @@ wezterm #scoop #brew
 
 windows-app #brew
 
-zed #brew
-ZedIndustries.Zed #winget
+zed #brew #scoop
 
 zen #brew
 Zen-Team.Zen-Browser #winget
-
