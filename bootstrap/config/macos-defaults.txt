@@ -198,8 +198,8 @@ defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false
 defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 
 # Disable Mail animations
-defaults write com.apple.mail DisableSendAnimations -bool true
-defaults write com.apple.mail DisableReplyAnimations -bool true
+# defaults write com.apple.mail DisableSendAnimations -bool true  # sandboxed, can't write
+# defaults write com.apple.mail DisableReplyAnimations -bool true  # sandboxed, can't write
 
 # Don't prompt for Time Machine on new drives
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true

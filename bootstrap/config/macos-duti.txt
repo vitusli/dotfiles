@@ -12,8 +12,5 @@ dev.zed.Zed|.yaml
 dev.zed.Zed|.yml
 dev.zed.Zed|.zsh
 dev.zed.Zed|public.plain-text
-app.zen-browser.zen|http
-app.zen-browser.zen|https
 dev.zed.Zed|.txt
-org.yanex.marta|public.folder
 com.apple.Preview|com.pixar.universal-scene-description
