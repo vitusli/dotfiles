@@ -5,7 +5,7 @@ vitusli/codespace|~ #wsl #macos
 
 vitusli/vtools_dev|~/dev #wsl #macos
 vitusli/blender_usd|~/dev #wsl #macos
-vitusli/scene-tree|~/dev #wsl #macos
+vitusli/scene_tree|~/dev #wsl #macos
 vitusli/blender-extensions-dev|~/blender #macos #wsl
 
 vitusli/zmk-config|~/Documents #wsl #macos

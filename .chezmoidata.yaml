@@ -22,7 +22,6 @@ abbreviations:
     g: "git"
     j: "just"
     l: "lazygit"
-    n: "nvim ."
     u: "uv run python"
     "..": "cd .."
     "...": "cd ../.."
@@ -32,6 +31,7 @@ abbreviations:
   # ---------------------------------------------------------------------------
   darwin:
     backup: "restic -r /Volumes/TOSHIBA\\ EXT/restic-for-t7 --verbose backup /Volumes/T7\\ Shield"
+    n: "nvim ."
     bi: "brew install"
     bs: "brew search"
     bu: "brew uninstall"
@@ -75,6 +75,7 @@ abbreviations:
     bup: "brew upgrade"
     bl: "brew list"
     w: "cd /mnt/c/Users/Vitus"
+    n: "nvim ."
     ai: "apt install"
     as: "apt search"
     au: "apt remove"
@@ -88,7 +89,7 @@ abbreviations:
 # Shared App Paths
 # =============================================================================
 # Defines where shared configs should be deployed per OS
-# Paths are relative to $HOME (or %USERPROFILE% on Windows)
+# Paths are relative to $HOME (or %USERPROFILE% on Windows) unless absolute
 
 shared_apps:
   vscode:
@@ -113,7 +114,14 @@ shared_apps:
       windows: "AppData/Roaming/Zed"
     files:
       - { src: "keymap.json.tmpl", dst: "keymap.json", template: true }
-      - { src: "private_settings.json", dst: "settings.json", template: false }
+      - { src: "private_settings.json.tmpl", dst: "settings.json", template: true }
+
+  zen:
+    source: "shared/zen"
+    target:
+      windows: "C:/Program Files/Zen Browser/distribution"
+    files:
+      - { src: "policies.json", dst: "policies.json", template: false }
 
 # =============================================================================
 # Special Apps (non-standard deployment)
@@ -121,9 +129,7 @@ shared_apps:
 # These require special handling and are not part of the generic loop
 
 special_apps:
-  # Zen needs special handling on both macOS and Windows:
-  # - macOS: deploys into app bundle + re-signing
-  # - Windows: app path varies (LOCALAPPDATA, Scoop, etc.)
+  # Zen on macOS deploys into the app bundle and needs re-signing.
   zen:
     source: "shared/zen"
     files:

@@ -8,6 +8,13 @@
     }
   },
   "disable_ai": true,
+{{- if eq .chezmoi.os "windows" }}
+  "project_panel": {
+    "dock": "left"
+  },
+  "cli_default_open_behavior": "new_window",
+  "auto_update": false,
+{{- end }}
   "tab_bar": {
     "show": true
   },
