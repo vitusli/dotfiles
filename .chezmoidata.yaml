@@ -69,6 +69,11 @@ abbreviations:
   # WSL only
   # ---------------------------------------------------------------------------
   linux:
+    bi: "brew install"
+    bs: "brew search"
+    bu: "brew uninstall"
+    bup: "brew upgrade"
+    bl: "brew list"
     w: "cd /mnt/c/Users/Vitus"
     ai: "apt install"
     as: "apt search"
