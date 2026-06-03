@@ -1,5 +1,6 @@
 {
   "global": {
+    "check_for_updates_on_startup": false,
     "show_profile_name_in_menu_bar": true
   },
   "profiles": [
@@ -213,10 +214,10 @@
         }
       ],
       "name": "􀂮",
-      "selected": false,
       "virtual_hid_keyboard": {
         "keyboard_type_v2": "ansi"
-      }
+      },
+      "selected": false
     },
     {
       "complex_modifications": {
@@ -770,10 +771,10 @@
         }
       ],
       "name": "􀂿",
+      "selected": true,
       "virtual_hid_keyboard": {
         "keyboard_type_v2": "ansi"
-      },
-      "selected": true
+      }
     }
   ]
 }
