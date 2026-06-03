@@ -63,7 +63,7 @@ background-opacity = 1.0
 background-blur-radius = 20
 
 # macOS specific
-macos-option-as-alt = true
+macos-option-as-alt = false
 # macos-titlebar-style = hidden
 
 # ==========================
