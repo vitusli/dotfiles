@@ -10,6 +10,7 @@ abbreviations:
   # ---------------------------------------------------------------------------
   universal:
     o: "opencode"
+    oo: "codex"
     c: "chezmoi"
     ca: "chezmoi apply"
     da: "cd $HOME/Documents/obsidian/Diplomarbeit && just build"
