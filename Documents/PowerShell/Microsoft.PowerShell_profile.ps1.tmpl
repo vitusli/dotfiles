@@ -4,6 +4,17 @@ $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
 $env:Path = "$machinePath;$userPath"
 $env:Path = "{{ .chezmoi.homeDir }}\scoop\apps\mingw\current\bin;{{ .chezmoi.homeDir }}\scoop\shims;$env:Path"
 
+# OpenUSD tools
+$usd = 'A:\Tools\OpenUSD\25.08.71e038c1'
+if (Test-Path -LiteralPath $usd) {
+    $env:USDROOT = $usd
+    $env:USD_INSTALL_DIR = $usd
+    $env:PXR_MTLX_STDLIB_SEARCH_PATHS = "$usd\libraries"
+    $env:PXR_USD_WINDOWS_DLL_PATH = "$usd\pip-packages\PySide6;$usd\pip-packages\shiboken6;$usd\python;$usd\pip-packages\bin;$usd\lib;$usd\plugin\usd;$usd\bin"
+    $env:PYTHONPATH = "$usd\pip-packages;$usd\lib\python"
+    $env:Path = "$usd\python;$usd\pip-packages\bin;$usd\lib;$usd\plugin\usd;$usd\bin;$usd\scripts;$env:Path;$usd\bin;$usd\plugin\usd;$usd\lib"
+}
+
 # ============================================================================
 # Module Management
 # ============================================================================
@@ -61,4 +72,3 @@ Set-PSReadLineKeyHandler -Key 'Enter' -ScriptBlock {
 
 # gsudo module (enables `gsudo !!` to elevate last command)
 Import-Module gsudoModule -ErrorAction SilentlyContinue
-
