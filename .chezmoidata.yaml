@@ -52,7 +52,7 @@ abbreviations:
   windows:
     ahk: 'Get-Process | Where-Object {$_.Name -like "*AutoHotkey*"} | Stop-Process -Force; Start-Process "C:\Users\Vitus\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\macish.ahk"'
     f: "fzf | clip.exe"
-    ov: "A:\\isaac-sim\\isaac-sim.bat"
+    ov: "A:\\isaac-sim-6-0\\isaac-sim.bat"
     rl: ". $PROFILE"
     v: ".venv\\Scripts\\Activate.ps1"
     ws: "winget search"
@@ -110,7 +110,11 @@ shared_apps:
       windows: "AppData/Roaming/Zed"
     files:
       - { src: "keymap.json.tmpl", dst: "keymap.json", template: true }
-      - { src: "private_settings.json.tmpl", dst: "settings.json", template: true }
+      - {
+          src: "private_settings.json.tmpl",
+          dst: "settings.json",
+          template: true,
+        }
 
   zen:
     source: "shared/zen"
