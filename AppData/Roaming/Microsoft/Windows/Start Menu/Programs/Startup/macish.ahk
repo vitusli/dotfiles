@@ -109,16 +109,16 @@ ResetAltS() {
 #!^l::FancyWM("MoveFocusRight")
 
 ; Move window (Ctrl+Shift+H/J/K/L)
-^+h::FancyWM("MoveLeft")
-^+j::FancyWM("MoveDown")
-^+k::FancyWM("MoveUp")
-^+l::FancyWM("MoveRight")
+^+h::FancyWM("SwapLeft")
+^+j::FancyWM("SwapDown")
+^+k::FancyWM("SwapUp")
+^+l::FancyWM("SwapRight")
 
 ; Swap window (Win+Alt+Ctrl+Shift+H/J/K/L)
-#!^+h::FancyWM("SwapLeft")
-#!^+j::FancyWM("SwapDown")
-#!^+k::FancyWM("SwapUp")
-#!^+l::FancyWM("SwapRight")
+#!^+h::FancyWM("MoveLeft")
+#!^+j::FancyWM("MoveDown")
+#!^+k::FancyWM("MoveUp")
+#!^+l::FancyWM("MoveRight")
 
 ; Panel management
 #!^Space::FancyWM("CreateStackPanel")
