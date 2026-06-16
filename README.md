@@ -26,6 +26,12 @@ One-time bootstrap:
 Manual invocation via chezmoi execute-template:
 
 macOS
+
+Install Apple's Command Line Tools first. Homebrew needs them on a fresh Mac:
+```bash
+xcode-select --install
+```
+
 ```bash
 chezmoi execute-template < ~/.local/share/chezmoi/run_once_bootstrap_macos.sh.tmpl | bash
 ```
