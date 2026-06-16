@@ -1,6 +1,6 @@
 # GUI Apps
 
-aerospace #brew
+nikitabobko/tap/aerospace #brew
 
 affinity #brew
 
