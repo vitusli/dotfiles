@@ -55,8 +55,6 @@ Microsoft.VisualStudioCode #winget
 
 vlc #brew
 
-wezterm #scoop #brew
-
 windows-app #brew
 
 zed #brew #scoop

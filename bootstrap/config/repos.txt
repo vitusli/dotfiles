@@ -3,10 +3,10 @@
 
 vitusli/codespace|~ #wsl #macos
 
-vitusli/vtools_dev|~/dev #wsl #macos
-vitusli/blender_usd|~/dev #wsl #macos
-vitusli/scene_tree|~/dev #wsl #macos
-vitusli/blender-extensions-dev|~/blender #macos #wsl
+vitusli/vtools_dev|~/dev #windows #macos
+vitusli/blender_usd|~/dev #windows #macos
+vitusli/scene_tree|~/dev #windows #macos
+vitusli/blender-extensions-dev|~/blender #macos #windows
 
 vitusli/zmk-config|~/Documents #wsl #macos
 vitusli/obsidian|~/Documents #windows #macos

@@ -7,7 +7,6 @@ shared
 .config/karabiner
 .config/ghostty
 .config/ghostty/**
-.config/lf
 .config/nvim
 .config/starship.toml
 .config/zsh-abbr

@@ -13,16 +13,13 @@ zoxide #scoop #brew
 neovim #brew 
 syncthing #brew #scoop
 ffmpeg #brew
-lf #brew
-pyright #brew
 restic #brew
-starship #brew
 tinymist #brew #scoop
 tree-sitter-cli #brew
 zsh-autosuggestions #brew
 zsh-syntax-highlighting #brew
-wandelbotsgmbh/wandelbots/nova #brew
 olets/tap/zsh-abbr #brew
+wandelbotsgmbh/wandelbots/nova #brew
 
 Microsoft.PowerShell #winget
 gsudo #scoop
