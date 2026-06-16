@@ -8,7 +8,6 @@ shared
 .config/ghostty
 .config/ghostty/**
 .config/nvim
-.config/starship.toml
 .config/zsh-abbr
 .hushlogin
 .zprofile
