@@ -87,7 +87,7 @@ echo "  ✓ {{ $app }} → $TARGET_DIR"
 ZEN_APP="/Applications/Zen.app"
 if [ -d "$ZEN_APP" ]; then
     ZEN_TARGET="$ZEN_APP/Contents/Resources/distribution"
-    mkdir -p "$ZEN_TARGET"
+    mkdir -p "$ZEN_TARGET" 2>/dev/null || true
 
 {{- range .special_apps.zen.files }}
     if [ -f "$SOURCE_DIR/{{ $.special_apps.zen.source }}/{{ .src }}" ]; then

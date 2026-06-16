@@ -14,5 +14,9 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   CASKS=$(awk '/^#/||!NF{next}/#brew/{print $1}' "$CONFIG_DIR/gui.txt")
 fi
 
-[[ -n "$PKGS" ]] && brew install $PKGS || true
-[[ -n "$CASKS" ]] && brew install --cask $CASKS || true
+for pkg in $PKGS; do
+  brew install "$pkg" || true
+done
+for cask in $CASKS; do
+  brew install --cask "$cask" || true
+done

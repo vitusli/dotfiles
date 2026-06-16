@@ -16,6 +16,7 @@ ffmpeg #brew
 restic #brew
 tinymist #brew #scoop
 tree-sitter-cli #brew
+mas #brew
 zsh-autosuggestions #brew
 zsh-syntax-highlighting #brew
 olets/tap/zsh-abbr #brew

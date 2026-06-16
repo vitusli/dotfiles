@@ -48,7 +48,7 @@ done
 # so it cannot overwrite ours.
 # starship (cached)
 _starship_cache="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/starship-init.zsh"
-if [[ ! -f "$_starship_cache" ]] || [[ "$(command -v starship)" -nt "$_starship_cache" ]]; then
+if [[ ! -s "$_starship_cache" ]] || [[ "$(command -v starship)" -nt "$_starship_cache" ]]; then
   mkdir -p "${_starship_cache:h}"
   starship init zsh >"$_starship_cache" 2>/dev/null
 fi
