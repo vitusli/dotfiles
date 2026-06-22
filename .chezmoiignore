@@ -3,16 +3,19 @@ README.md
 shared
 
 {{- if eq .chezmoi.os "windows" }}
+.config/starship.toml
 .aerospace.toml
 .config/karabiner
 .config/ghostty
 .config/ghostty/**
 .config/nvim
 .config/zsh-abbr
+dot_config/zsh-abbr
 .hushlogin
 .zprofile
 .zsh/**
 .zsh
+dot_zsh/
 .zshrc
 Library
 Library/**
