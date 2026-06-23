@@ -48,8 +48,6 @@ sf-symbols #brew
 slack #brew
 SlackTechnologies.Slack #winget
 
-Toggl.TogglTrack #winget
-
 visual-studio-code #brew
 Microsoft.VisualStudioCode #winget
 
@@ -57,7 +55,7 @@ vlc #brew
 
 windows-app #brew
 
-zed #brew #scoop
+zed #brew 
 
 zen #brew
 Zen-Team.Zen-Browser #winget

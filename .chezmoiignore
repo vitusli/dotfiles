@@ -3,6 +3,7 @@ README.md
 shared
 
 {{- if eq .chezmoi.os "windows" }}
+.config/starship.toml
 .aerospace.toml
 .config/karabiner
 .config/ghostty
