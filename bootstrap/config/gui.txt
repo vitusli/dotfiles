@@ -55,7 +55,8 @@ vlc #brew
 
 windows-app #brew
 
-zed #brew 
+zed #brew
+ZedIndustries.Zed #winget
 
 zen #brew
 Zen-Team.Zen-Browser #winget
