@@ -2,6 +2,9 @@
 # PATH CONFIGURATION
 # ============================================================================
 
+# Building USD tools (MaterialX, usdview etc)
+export PATH="/Users/vituspacholleck/.pixi/bin:$PATH"
+
 # Rustup (Homebrew keg-only)
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
