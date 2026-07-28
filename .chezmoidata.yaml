@@ -58,7 +58,7 @@ abbreviations:
     ws: "winget search"
     wi: "winget install"
     wu: "winget uninstall"
-    wup: "winget update"
+    wup: "winget upgrade --all --accept-package-agreements --include-unknown"
     wl: "winget list"
     ss: "scoop-search"
     si: "scoop install"
