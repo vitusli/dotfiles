@@ -7,7 +7,6 @@ git #brew #scoop
 just #brew
 lazygit #brew
 opencode #brew 
-serie #brew
 uv #brew
 zoxide #scoop #brew 
 neovim #brew 
@@ -15,7 +14,6 @@ syncthing #brew #scoop
 ffmpeg #brew
 restic #brew
 tinymist #brew #scoop
-tree-sitter-cli #brew
 mas #brew
 zsh-autosuggestions #brew
 zsh-syntax-highlighting #brew
