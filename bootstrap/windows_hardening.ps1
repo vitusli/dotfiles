@@ -20,7 +20,7 @@ $disableList = @(
 
 foreach ($component in $disableList) {
     $exePath = $component.Path
-    $disabledPath = "$exePath.FUCK_OFF"
+    $disabledPath = "$exePath.LETGO"
 
     if (Test-Path $exePath) {
         Write-Host "Disabling $($component.Name)..." -ForegroundColor Yellow
