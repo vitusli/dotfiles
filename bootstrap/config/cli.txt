@@ -1,15 +1,15 @@
 # CLI Packages
 
-chezmoi #scoop #brew 
+chezmoi #scoop #brew
 fzf #scoop #brew
 gh #brew #scoop
 git #brew #scoop
 just #brew
 lazygit #brew
-opencode #brew 
+opencode #brew
 uv #brew
-zoxide #scoop #brew 
-neovim #brew 
+zoxide #scoop #brew
+neovim #brew
 syncthing #brew #scoop
 ffmpeg #brew
 restic #brew
@@ -21,6 +21,7 @@ olets/tap/zsh-abbr #brew
 wandelbotsgmbh/wandelbots/nova #brew
 
 Microsoft.PowerShell #winget
+Microsoft.VisualStudio.2022.BuildTools #winget
 gsudo #scoop
 scoop-completion #scoop
 scoop-search #scoop
