@@ -1,17 +1,45 @@
 {{- if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
-set -euo pipefail
+set -uo pipefail
 
 SOURCE_DIR="{{ .chezmoi.sourceDir }}"
+FAILURES=()
 
-"$SOURCE_DIR/bootstrap/install_brew.sh"
-"$SOURCE_DIR/bootstrap/apps_brew.sh"
-"$SOURCE_DIR/bootstrap/setup_lazyvim.sh"
-"$SOURCE_DIR/bootstrap/vscode_extensions.sh"
-"$SOURCE_DIR/bootstrap/macos_defaults.sh"
-"$SOURCE_DIR/bootstrap/macos_duti.sh"
-"$SOURCE_DIR/bootstrap/macos_mas.sh"
-"$SOURCE_DIR/bootstrap/setup_github.sh"
-"$SOURCE_DIR/bootstrap/repos.sh"
-"$SOURCE_DIR/bootstrap/macos_marta.sh"
+run_step() {
+  local label="$1"
+  local script="$2"
+
+  echo "→ $label"
+  if "$script"; then
+    echo "✓ $label"
+  else
+    local rc=$?
+    echo "✗ $label (exit $rc)"
+    FAILURES+=("$label (exit $rc)")
+  fi
+  echo
+}
+
+run_step "Install Homebrew" "$SOURCE_DIR/bootstrap/install_brew.sh"
+run_step "Install apps (brew)" "$SOURCE_DIR/bootstrap/apps_brew.sh"
+run_step "Install oh-my-zsh" "$SOURCE_DIR/bootstrap/install_oh_my_zsh.sh"
+run_step "Setup SSH" "$SOURCE_DIR/bootstrap/ssh_setup.sh"
+run_step "Setup LazyVim" "$SOURCE_DIR/bootstrap/setup_lazyvim.sh"
+run_step "Install VS Code extensions" "$SOURCE_DIR/bootstrap/vscode_extensions.sh"
+run_step "Apply macOS defaults" "$SOURCE_DIR/bootstrap/macos_defaults.sh"
+run_step "Apply duti defaults" "$SOURCE_DIR/bootstrap/macos_duti.sh"
+run_step "Install MAS apps" "$SOURCE_DIR/bootstrap/macos_mas.sh"
+run_step "Setup GitHub" "$SOURCE_DIR/bootstrap/setup_github.sh"
+run_step "Clone/sync repos" "$SOURCE_DIR/bootstrap/repos.sh"
+run_step "Setup Marta launcher" "$SOURCE_DIR/bootstrap/macos_marta.sh"
+
+if (( ${#FAILURES[@]} > 0 )); then
+  echo "Bootstrap completed with errors:"
+  for failure in "${FAILURES[@]}"; do
+    echo "  - $failure"
+  done
+  exit 1
+fi
+
+echo "Bootstrap completed successfully."
 {{- end -}}

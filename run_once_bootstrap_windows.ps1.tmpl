@@ -2,14 +2,50 @@
 $ErrorActionPreference = "Stop"
 
 $sourceDir = "{{ .chezmoi.sourceDir }}"
+$failures = New-Object System.Collections.Generic.List[string]
 
-& "$sourceDir\bootstrap\install_scoop.ps1"
-& "$sourceDir\bootstrap\apps_scoop.ps1"
-& "$sourceDir\bootstrap\apps_winget.ps1"
-& "$sourceDir\bootstrap\repos.ps1"
-& "$sourceDir\bootstrap\vscode_extensions.ps1"
-& "$sourceDir\bootstrap\windows_bloatware.ps1"
-& "$sourceDir\bootstrap\windows_hardening.ps1"
-& "$sourceDir\bootstrap\windows_registry.ps1"
-& "$sourceDir\bootstrap\windows_services.ps1"
+function Run-Step {
+    param(
+        [Parameter(Mandatory = $true)][string]$Label,
+        [Parameter(Mandatory = $true)][string]$ScriptPath
+    )
+
+    Write-Host "→ $Label"
+    try {
+        & $ScriptPath
+
+        if ($LASTEXITCODE -ne $null -and $LASTEXITCODE -ne 0) {
+            throw "exit $LASTEXITCODE"
+        }
+
+        Write-Host "✓ $Label"
+    }
+    catch {
+        $failures.Add("$Label ($_)")
+        Write-Host "✗ $Label ($_)" -ForegroundColor Red
+    }
+
+    Write-Host ""
+}
+
+Run-Step -Label "Install Scoop" -ScriptPath "$sourceDir\bootstrap\install_scoop.ps1"
+Run-Step -Label "Install apps (Scoop)" -ScriptPath "$sourceDir\bootstrap\apps_scoop.ps1"
+Run-Step -Label "Install apps (winget)" -ScriptPath "$sourceDir\bootstrap\apps_winget.ps1"
+Run-Step -Label "Setup SSH" -ScriptPath "$sourceDir\bootstrap\ssh_setup.ps1"
+Run-Step -Label "Clone/sync repos" -ScriptPath "$sourceDir\bootstrap\repos.ps1"
+Run-Step -Label "Install VS Code extensions" -ScriptPath "$sourceDir\bootstrap\vscode_extensions.ps1"
+Run-Step -Label "Remove bloatware" -ScriptPath "$sourceDir\bootstrap\windows_bloatware.ps1"
+Run-Step -Label "Apply hardening" -ScriptPath "$sourceDir\bootstrap\windows_hardening.ps1"
+Run-Step -Label "Apply registry tweaks" -ScriptPath "$sourceDir\bootstrap\windows_registry.ps1"
+Run-Step -Label "Configure services" -ScriptPath "$sourceDir\bootstrap\windows_services.ps1"
+
+if ($failures.Count -gt 0) {
+    Write-Host "Bootstrap completed with errors:" -ForegroundColor Yellow
+    foreach ($failure in $failures) {
+        Write-Host "  - $failure" -ForegroundColor Yellow
+    }
+    exit 1
+}
+
+Write-Host "Bootstrap completed successfully." -ForegroundColor Green
 {{- end -}}
