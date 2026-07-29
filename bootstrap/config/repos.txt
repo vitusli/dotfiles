@@ -4,9 +4,9 @@
 vitusli/codespace|~ #wsl #macos
 
 vitusli/vtools_dev|~/dev #windows #macos
-vitusli/blender_usd|~/dev #windows #macos
-vitusli/scene_tree|~/dev #windows #macos
-vitusli/blender-extensions-dev|~/blender #macos #windows
+vitusli/gaffer-macos|~/dev #macos
+vitusli/usdtweak-macos|~/dev #macos
+vitusli/quiltix-macos|~/dev #macos
+vitusli/zmk-config|~/dev #macos
 
-vitusli/zmk-config|~/Documents #wsl #macos
 vitusli/obsidian|~/Documents #windows #macos
