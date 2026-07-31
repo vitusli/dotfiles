@@ -114,24 +114,4 @@ shared_apps:
           template: true,
         }
 
-  zen:
-    source: "shared/zen"
-    target:
-      windows: "C:/Program Files/Zen Browser/distribution"
-    files:
-      - { src: "policies.json", dst: "policies.json", template: false }
-
-# =============================================================================
-# Special Apps (non-standard deployment)
-# =============================================================================
-# These require special handling and are not part of the generic loop
-
-special_apps:
-  # Zen on macOS deploys into the app bundle and needs re-signing.
-  zen:
-    source: "shared/zen"
-    files:
-      - { src: "policies.json", dst: "policies.json" }
-    restart_after: true
-
 

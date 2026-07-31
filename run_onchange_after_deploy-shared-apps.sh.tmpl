@@ -8,7 +8,7 @@
 # shared/vscode/settings.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/vscode/settings.json.tmpl") | sha256sum }}
 # shared/zed/keymap.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/zed/keymap.json.tmpl") | sha256sum }}
 # shared/zed/private_settings.json.tmpl: {{ include (joinPath .chezmoi.sourceDir "shared/zed/private_settings.json.tmpl") | sha256sum }}
-# shared/zen/policies.json: {{ include (joinPath .chezmoi.sourceDir "shared/zen/policies.json") | sha256sum }}
+
 
 set -euo pipefail
 
@@ -77,32 +77,7 @@ echo "  ✓ {{ $app }} → $TARGET_DIR"
 {{ end -}}
 {{ end -}}
 
-# =============================================================================
-# Special Apps
-# =============================================================================
 
-{{ if .special_apps.zen -}}
-# --- zen ---
-{{ if eq .chezmoi.os "darwin" -}}
-ZEN_APP="/Applications/Zen.app"
-if [ -d "$ZEN_APP" ]; then
-    ZEN_TARGET="$ZEN_APP/Contents/Resources/distribution"
-    mkdir -p "$ZEN_TARGET" 2>/dev/null || true
-
-{{- range .special_apps.zen.files }}
-    if [ -f "$SOURCE_DIR/{{ $.special_apps.zen.source }}/{{ .src }}" ]; then
-        cp "$SOURCE_DIR/{{ $.special_apps.zen.source }}/{{ .src }}" "$ZEN_TARGET/{{ .dst }}" 2>/dev/null || \
-            echo "  ⚠ zen: Permission denied. Run with sudo to deploy to $ZEN_TARGET"
-    fi
-{{- end }}
-    echo "  ✓ zen → $ZEN_TARGET"
-else
-    echo "  ⊘ zen (not installed, skipping)"
-fi
-{{ else -}}
-echo "  ⊘ zen (not supported on this OS)"
-{{ end -}}
-{{ end -}}
 
 echo "Shared app deployment complete!"
 {{ end -}}
