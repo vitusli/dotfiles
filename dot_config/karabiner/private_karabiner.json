@@ -1,6 +1,6 @@
 {
     "global": {
-        "check_for_updates_on_startup": false,
+        "check_for_updates": false,
         "show_in_menu_bar": false
     },
     "profiles": [
@@ -119,7 +119,13 @@
                     "ignore": false,
                     "ignore_vendor_events": true,
                     "mouse_flip_horizontal_wheel": true,
-                    "mouse_flip_vertical_wheel": true
+                    "mouse_flip_vertical_wheel": true,
+                    "simple_modifications": [
+                        {
+                            "from": { "pointing_button": "button5" },
+                            "to": [{ "pointing_button": "button3" }]
+                        }
+                    ]
                 },
                 {
                     "identifiers": { "is_keyboard": true },
