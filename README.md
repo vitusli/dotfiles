@@ -14,17 +14,9 @@ With chezmoi installed
 chezmoi init --apply --verbose vitusli
 ```
 
-## Bootstrap
-
-Run from your chezmoi source directory (`~/.local/share/chezmoi`):
-
-One-time bootstrap:
-- `run_once_bootstrap_macos.sh.tmpl`
-- `run_once_bootstrap_wsl.sh.tmpl`
+## macOs Bootstrap
 
 Manual invocation via chezmoi execute-template:
-
-macOS
 
 Install Apple's Command Line Tools first. Homebrew needs them on a fresh Mac:
 ```bash
@@ -34,12 +26,6 @@ xcode-select --install
 ```bash
 chezmoi execute-template < ~/.local/share/chezmoi/run_once_bootstrap_macos.sh.tmpl | bash
 ```
-
-WSL (Ubuntu)
-```bash
-chezmoi execute-template < ~/.local/share/chezmoi/run_once_bootstrap_wsl.sh.tmpl | bash
-```
-
 ## Update
 
 local
