@@ -1,9 +1,3 @@
-# Add scoop to PATH
-$machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
-$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-$env:Path = "$machinePath;$userPath"
-$env:Path = "{{ .chezmoi.homeDir }}\scoop\apps\mingw\current\bin;{{ .chezmoi.homeDir }}\scoop\shims;$env:Path"
-
 # OpenUSD tools
 $usd = 'A:\Tools\OpenUSD\25.08.71e038c1'
 if (Test-Path -LiteralPath $usd) {
@@ -19,7 +13,7 @@ if (Test-Path -LiteralPath $usd) {
 # Module Management
 # ============================================================================
 # Automatically install and import required modules
-$requiredModules = @('PSReadLine', 'PSFzf')
+$requiredModules = @('PSReadLine')
 foreach ($module in $requiredModules) {
     if (-not (Get-Module -ListAvailable -Name $module)) {
         Write-Host "Installing $module..."

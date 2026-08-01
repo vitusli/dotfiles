@@ -5,9 +5,6 @@
 # Used by templates to generate zsh-abbr, PowerShell, etc.
 
 abbreviations:
-  # ---------------------------------------------------------------------------
-  # Universal - all systems
-  # ---------------------------------------------------------------------------
   universal:
     o: "opencode"
     ca: "chezmoi apply"
@@ -19,24 +16,15 @@ abbreviations:
     "..": "cd .."
     "...": "cd ../.."
 
-  # ---------------------------------------------------------------------------
-  # macOS only
-  # ---------------------------------------------------------------------------
   darwin:
     backup: "restic -r /Volumes/TOSHIBA\\ EXT/restic-for-t7 --verbose backup /Volumes/T7\\ Shield"
     ll: "ls -la"
     rl: "source ~/.zshrc"
 
-  # ---------------------------------------------------------------------------
-  # Windows only
-  # ---------------------------------------------------------------------------
   windows:
     ov: "A:\\isaac-sim-6-0-1\\isaac-sim.bat"
     rl: ". $PROFILE"
 
-  # ---------------------------------------------------------------------------
-  # WSL only
-  # ---------------------------------------------------------------------------
   linux:
     home: "cd /mnt/c/Users/Vitus"
     ll: "ls -la"
@@ -74,5 +62,3 @@ shared_apps:
           dst: "settings.json",
           template: true,
         }
-
-
