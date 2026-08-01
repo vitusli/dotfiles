@@ -10,20 +10,12 @@ abbreviations:
   # ---------------------------------------------------------------------------
   universal:
     o: "opencode"
-    oo: "codex"
-    c: "chezmoi"
     ca: "chezmoi apply"
-    da: "cd $HOME/Documents/obsidian/Diplomarbeit && just build"
     e: "exit"
-    go: "git checkout"
+    n: "nvim ."
     p: "git pull"
     P: "git push"
-    ga: "git add -A"
-    gc: "git commit -m"
-    g: "git"
-    j: "just"
     l: "lazygit"
-    u: "uv run python"
     "..": "cd .."
     "...": "cd ../.."
 
@@ -32,54 +24,23 @@ abbreviations:
   # ---------------------------------------------------------------------------
   darwin:
     backup: "restic -r /Volumes/TOSHIBA\\ EXT/restic-for-t7 --verbose backup /Volumes/T7\\ Shield"
-    n: "nvim ."
-    bi: "brew install"
-    bs: "brew search"
-    bu: "brew uninstall"
-    bup: "brew upgrade"
-    bl: "brew list"
-    copyid: "nova config view 2>&1 | tee >(awk '/^virtualid:/ {print $2}' | pbcopy)"
-    copyip: "nova config view 2>&1 | tee >(awk '/^host:/ {print $2}' | pbcopy)"
-    f: "fzf | pbcopy"
     ll: "ls -la"
     rl: "source ~/.zshrc"
-    v: "source .venv/bin/activate"
-    usdview: "PYTHONPATH=/opt/local/USD/lib/python PATH=/opt/local/USD/bin:$PATH python3.11 /opt/local/USD/bin/usdview"
 
   # ---------------------------------------------------------------------------
   # Windows only
   # ---------------------------------------------------------------------------
   windows:
-    ahk: 'Get-Process | Where-Object {$_.Name -like "*AutoHotkey*"} | Stop-Process -Force; Start-Process "C:\Users\Vitus\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\macish.ahk"'
-    f: "fzf | clip.exe"
-    ov: "A:\\isaac-sim-6-0\\isaac-sim.bat"
+    ov: "A:\\isaac-sim-6-0-1\\isaac-sim.bat"
     rl: ". $PROFILE"
-    v: ".venv\\Scripts\\Activate.ps1"
-    ws: "winget search"
-    wi: "winget install"
-    wu: "winget uninstall"
-    wup: "winget upgrade --all --accept-package-agreements --include-unknown"
-    wl: "winget list"
-    ss: "scoop-search"
-    si: "scoop install"
-    su: "scoop uninstall"
-    sup: "scoop update"
-    sl: "scoop list"
 
   # ---------------------------------------------------------------------------
   # WSL only
   # ---------------------------------------------------------------------------
   linux:
-    w: "cd /mnt/c/Users/Vitus"
-    n: "nvim ."
-    ai: "apt install"
-    as: "apt search"
-    au: "apt remove"
-    aup: "apt upgrade"
+    home: "cd /mnt/c/Users/Vitus"
     ll: "ls -la"
-    f: "fzf | clip.exe"
     rl: "source ~/.zshrc"
-    v: "source .venv/bin/activate"
 
 # =============================================================================
 # Shared App Paths
