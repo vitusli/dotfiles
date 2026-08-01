@@ -12,9 +12,6 @@ bridge #brew
 
 darktable #brew
 
-#fancywm
-9P1741LKHQS9 #winget
-
 google-drive #brew
 
 ghostty@tip @brew
@@ -25,7 +22,6 @@ keepassxc #brew
 KeePassXCTeam.KeePassXC #winget
 
 keeweb #brew
-KeeWeb.KeeWeb #winget
 
 marta #brew
 

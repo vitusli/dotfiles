@@ -10,11 +10,6 @@
         "when": "github.copilot.activated && github.copilot.extensionUnification.activated"
     },
     {
-        "key": "{{ $mod }}+i",
-        "command": "workbench.action.chat.openagent",
-        "when": "!chatSetupDisabled && !chatSetupHidden"
-    },
-    {
         "key": "{{ $mod }}+l",
         "command": "workbench.action.chat.attachSelection",
         "when": "chatIsEnabled && editorTextFocus"
@@ -23,11 +18,6 @@
         "key": "{{ $mod }}+l",
         "command": "workbench.action.terminal.chat.addTerminalSelection",
         "when": "chatIsEnabled && terminalFocus && (terminalHasBeenCreated || terminalProcessSupported)"
-    },
-    {
-        "key": "shift+tab",
-        "command": "workbench.action.chat.toggleAgentMode",
-        "when": "chatIsEnabled && !chatSessionRequestInProgress"
     },
 
     // Terminal

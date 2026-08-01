@@ -1,7 +1,6 @@
 # CLI Packages
 
 chezmoi #scoop #brew
-fzf #scoop #brew
 gh #brew #scoop
 git #brew #scoop
 just #brew
@@ -10,18 +9,16 @@ opencode #brew
 uv #brew
 zoxide #scoop #brew
 neovim #brew
+starship #brew
 syncthing #brew #scoop
 ffmpeg #brew
 restic #brew
-tinymist #brew #scoop
 mas #brew
-zsh-autosuggestions #brew
+sh-autosuggetions #brew
 zsh-syntax-highlighting #brew
 olets/tap/zsh-abbr #brew
 wandelbotsgmbh/wandelbots/nova #brew
 
 Microsoft.PowerShell #winget
 Microsoft.VisualStudio.2022.BuildTools #winget
-gsudo #scoop
-scoop-completion #scoop
 scoop-search #scoop
