@@ -31,7 +31,6 @@ run_step "Apply duti defaults" "$SOURCE_DIR/bootstrap/macos_duti.sh"
 run_step "Install MAS apps" "$SOURCE_DIR/bootstrap/macos_mas.sh"
 run_step "Setup GitHub" "$SOURCE_DIR/bootstrap/setup_github.sh"
 run_step "Clone/sync repos" "$SOURCE_DIR/bootstrap/repos.sh"
-run_step "Setup Marta launcher" "$SOURCE_DIR/bootstrap/macos_marta.sh"
 
 if (( ${#FAILURES[@]} > 0 )); then
   echo "Bootstrap completed with errors:"
