@@ -1,1 +1,0 @@
-Get-Content "$PSScriptRoot/config/cli.txt", "$PSScriptRoot/config/gui.txt" | Where-Object { $_ -match '#winget' } | ForEach-Object { (-split $_)[0] } | ForEach-Object { winget install $_ --accept-package-agreements --accept-source-agreements --silent }

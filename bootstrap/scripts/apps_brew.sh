@@ -2,7 +2,7 @@
 set -euo pipefail
 command -v brew >/dev/null
 
-CONFIG_DIR="$(dirname "$0")/config"
+CONFIG_DIR="$(dirname "$0")/../config"
 
 # cli packages (git blacklisted on linux)
 PKGS=$(awk '/^#/||!NF{next}/#brew/{print $1}' "$CONFIG_DIR/cli.txt" \

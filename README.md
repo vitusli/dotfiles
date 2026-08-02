@@ -2,7 +2,7 @@
 
 Cross-platform dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 
-## Dotfiles Setup
+## Package installation and Dotfiles Setup
 
 Without a chezmoi installation, unix only
 ```bash
@@ -24,7 +24,7 @@ xcode-select --install
 ```
 
 ```bash
-chezmoi execute-template < ~/.local/share/chezmoi/run_once_bootstrap_macos.sh.tmpl | bash
+chezmoi execute-template < ~/.local/share/chezmoi/bootstrap/bootstrap_macos.sh.tmpl | bash
 ```
 ## Update
 

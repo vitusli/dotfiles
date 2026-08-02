@@ -3,7 +3,7 @@ set -euo pipefail
 
 echo "Setting macOS default apps via duti..."
 
-CONFIG_FILE="$(dirname "$0")/config/macos-duti.txt"
+CONFIG_FILE="$(dirname "$0")/../config/macos-duti.txt"
 
 if ! command -v duti >/dev/null 2>&1; then
 	if command -v brew >/dev/null 2>&1; then

@@ -1,0 +1,43 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -uo pipefail
+
+SOURCE_DIR="{{ .chezmoi.sourceDir }}"
+FAILURES=()
+
+run_step() {
+  local label="$1"
+  local script="$2"
+
+  echo "→ $label"
+  if "$script"; then
+    echo "✓ $label"
+  else
+    local rc=$?
+    echo "✗ $label (exit $rc)"
+    FAILURES+=("$label (exit $rc)")
+  fi
+  echo
+}
+
+run_step "Install Homebrew" "$SOURCE_DIR/bootstrap/scripts/install_brew.sh"
+run_step "Install apps (brew)" "$SOURCE_DIR/bootstrap/scripts/apps_brew.sh"
+run_step "Setup SSH" "$SOURCE_DIR/bootstrap/scripts/ssh_setup.sh"
+run_step "Setup LazyVim" "$SOURCE_DIR/bootstrap/scripts/setup_lazyvim.sh"
+run_step "Install VS Code extensions" "$SOURCE_DIR/bootstrap/scripts/vscode_extensions.sh"
+run_step "Apply macOS defaults" "$SOURCE_DIR/bootstrap/scripts/macos_defaults.sh"
+run_step "Apply duti defaults" "$SOURCE_DIR/bootstrap/scripts/macos_duti.sh"
+run_step "Install MAS apps" "$SOURCE_DIR/bootstrap/scripts/macos_mas.sh"
+run_step "Setup GitHub" "$SOURCE_DIR/bootstrap/scripts/setup_github.sh"
+run_step "Clone/sync repos" "$SOURCE_DIR/bootstrap/scripts/repos.sh"
+
+if (( ${#FAILURES[@]} > 0 )); then
+  echo "Bootstrap completed with errors:"
+  for failure in "${FAILURES[@]}"; do
+    echo "  - $failure"
+  done
+  exit 1
+fi
+
+echo "Bootstrap completed successfully."
+{{- end -}}
