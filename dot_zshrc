@@ -3,8 +3,8 @@
 # ============================================================================
 
 # Default editors
-export EDITOR="vim"
-export VISUAL="zed"
+export EDITOR="nvim"
+#export VISUAL="zed"
 
 # ============================================================================
 # EXTERNAL TOOLS
