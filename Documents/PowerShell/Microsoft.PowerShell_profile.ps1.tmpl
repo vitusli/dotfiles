@@ -9,6 +9,8 @@ if (Test-Path -LiteralPath $usd) {
     $env:Path = "$usd\python;$usd\pip-packages\bin;$usd\lib;$usd\plugin\usd;$usd\bin;$usd\scripts;$env:Path;$usd\bin;$usd\plugin\usd;$usd\lib"
 }
 
+$env:EDITOR = "vim"
+
 # ============================================================================
 # Module Management
 # ============================================================================
