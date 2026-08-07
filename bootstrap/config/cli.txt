@@ -1,6 +1,7 @@
 # CLI Packages
 
 chezmoi #scoop #brew
+fzf #brew #scoop
 gh #brew #scoop
 git #brew #scoop
 just #brew
