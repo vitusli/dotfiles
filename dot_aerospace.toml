@@ -91,10 +91,16 @@ ctrl-alt-cmd-l = ['exec-and-forget aerospace move right --boundaries all-monitor
 esc = ['mode main']
 
 # Window detection rules
+
 [[on-window-detected]]
 if.app-name-regex-substring = 'Blender'
 if.window-title-regex-substring = 'Preferences'
 run = 'layout floating'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Reminders'
+run = 'layout floating'
+
 
 #this are no commands, they are rules (main or secondary)
 [workspace-to-monitor-force-assignment]
