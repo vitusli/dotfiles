@@ -2,24 +2,13 @@
 #SingleInstance Force
 SendMode("Input")
 
-FancyWM(action) {
-    RunWait(format("fancywm.exe --action {}", action), , "Hide")
-}
-
 ;; Disable Language Switching
 #Space::Return
 
-
-
-;;LWin::LCtrl
-;;LCtrl::LWin
-;;RWin::RCtrl
-;;RCtrl::RWin
-
 ;; ======= Caps Lock Remapping =======
 ;; deactivate capslock completely
-SetCapsLockState("AlwaysOff")
-CapsLock::Return  ; Block CapsLock key completely
+;; SetCapsLockState("AlwaysOff")
+;; CapsLock::Return  ; Block CapsLock key completely
 
 ;; ======= Special Character Shortcuts =======
 ; öüäß keys - Variables to track key presses
@@ -57,32 +46,6 @@ global AltS_Pressed := false
 +!a::Send("Ä")  ; Alt + Shift + a
 +!o::Send("Ö")  ; Alt + Shift + o
 +!s::Send("ẞ")  ; Alt + Shift + s
-
-;; ======= Text Editing Shortcuts =======
-; Alt + Backspace: Lösche ein Wort
-!Backspace:: {
-    Send("^+{Left}")  ; Markiere das vorherige Wort
-    Send("{Del}")     ; Lösche die Markierung
-}
-
-; Ctrl + Backspace: Lösche die gesamte Zeile
-^Backspace:: {
-    Send("{Home}")    ; Bewege den Cursor an den Anfang der Zeile
-    Send("+{Down}")   ; Markiere die gesamte Zeile (inklusive Zeilenumbruch)
-    Send("{Del}")     ; Lösche die Markierung
-}
-
-; Alt + h: Ctrl + Left (ein Wort nach links)
-!h::Send("^{Left}")
-
-; Alt + l: Ctrl + Right (ein Wort nach rechts)
-!l::Send("^{Right}")
-
-; Alt + Shift + h: Ctrl + Shift + Left (markiere ein Wort nach links)
-+!h::Send("^+{Left}")
-
-; Alt + Shift + l: Ctrl + Shift + Right (markiere ein Wort nach rechts)
-+!l::Send("^+{Right}")
 
 ;; ======= Reset Timer Functions =======
 ResetAltU() {
