@@ -5,13 +5,13 @@ fzf #brew #scoop
 gh #brew #scoop
 git #brew #scoop
 just #brew
-lazygit #brew
+lazygit #brew #winget
 opencode #brew
 uv #brew
-zoxide #scoop #brew
+zoxide #winget #brew
 neovim #brew
 starship #brew
-syncthing #brew #scoop
+syncthing #brew #winget
 ffmpeg #brew
 restic #brew
 mas #brew
@@ -20,6 +20,6 @@ zsh-syntax-highlighting #brew
 olets/tap/zsh-abbr #brew
 wandelbotsgmbh/wandelbots/nova #brew
 
-Microsoft.PowerShell #winget
 Microsoft.VisualStudio.2022.BuildTools #winget
 scoop-search #scoop
+vim #scoop

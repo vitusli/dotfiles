@@ -12,7 +12,10 @@ bridge #brew
 
 darktable #brew
 
+font-powerline-symbols #brew
+
 google-drive #brew
+Google.GoogleDrive #winget
 
 ghostty@tip @brew
 
@@ -56,3 +59,4 @@ ZedIndustries.Zed #winget
 
 zen #brew
 Zen-Team.Zen-Browser #winget
+
