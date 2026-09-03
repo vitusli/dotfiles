@@ -3,7 +3,10 @@
 config-version = 2
 
 # You can use it to add commands that run after AeroSpace startup.
-after-startup-command = ['mode main']
+after-startup-command = [
+    'mode main',
+    'layout --workspace 1 --root h_accordion',
+]
 
 start-at-login = true
 auto-reload-config = true
@@ -19,23 +22,23 @@ accordion-padding = 20
 default-root-container-layout = 'accordion'
 
 # Possible values: horizontal|vertical|auto
-default-root-container-orientation = 'vertical'
+default-root-container-orientation = 'horizontal'
 
 key-mapping.preset = 'qwerty'
 
-persistent-workspaces = ["1", "2"]
+persistent-workspaces = ["1"]
 
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 on-focus-changed = ['move-mouse window-lazy-center']
 
 
 [gaps]
-inner.horizontal = 5
-inner.vertical =   5
-outer.left =       5
-outer.right =      5
-outer.bottom =     5
-outer.top =        [{ monitor.main = 5 }, { monitor.secondary = 14 }, 5]
+inner.horizontal = 0
+inner.vertical =   0
+outer.left =       0
+outer.right =      0
+outer.bottom =     0
+outer.top =        [{ monitor.main = 0 }, { monitor.secondary = 0 }, 0]
 
 
 [mode.main.binding] # 'main' binding mode must be always presented
@@ -104,5 +107,7 @@ run = 'layout floating'
 
 #this are no commands, they are rules (main or secondary)
 [workspace-to-monitor-force-assignment]
-1 = 'main'
+1 = 'secondary'
 2 = 'secondary'
+
+# vllt wird jetzt ein workspace 3 auf main erstellt ... idk
