@@ -6,6 +6,7 @@ config-version = 2
 after-startup-command = [
     'mode main',
     'layout --workspace 1 --root h_accordion',
+    'layout --workspace 2 --root h_accordion',
 ]
 
 start-at-login = true
@@ -26,7 +27,7 @@ default-root-container-orientation = 'horizontal'
 
 key-mapping.preset = 'qwerty'
 
-persistent-workspaces = ["1"]
+persistent-workspaces = ["1", "2"]
 
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 on-focus-changed = ['move-mouse window-lazy-center']
