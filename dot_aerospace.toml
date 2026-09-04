@@ -108,6 +108,4 @@ run = 'layout floating'
 #this are no commands, they are rules (main or secondary)
 [workspace-to-monitor-force-assignment]
 1 = 'secondary'
-2 = 'secondary'
-
-# vllt wird jetzt ein workspace 3 auf main erstellt ... idk
+2 = 'main'
