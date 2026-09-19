@@ -15,6 +15,7 @@ abbreviations:
     l: "lazygit"
     "..": "cd .."
     "...": "cd ../.."
+    "lld": "lsd --tree --depth 1"
 
   darwin:
     backup: "restic -r /Volumes/TOSHIBA\\ EXT/restic-for-t7 --verbose backup /Volumes/T7\\ Shield"
