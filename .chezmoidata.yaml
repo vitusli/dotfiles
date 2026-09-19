@@ -50,16 +50,3 @@ shared_apps:
           dst: "keybindings.json",
           template: true,
         }
-
-  zed:
-    source: "shared/zed"
-    target:
-      darwin: ".config/zed"
-      windows: "AppData/Roaming/Zed"
-    files:
-      - { src: "keymap.json.tmpl", dst: "keymap.json", template: true }
-      - {
-          src: "private_settings.json.tmpl",
-          dst: "settings.json",
-          template: true,
-        }
