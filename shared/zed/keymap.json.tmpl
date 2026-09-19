@@ -7,57 +7,8 @@
     "bindings": {
       "g s a": "vim::PushAddSurrounds",
       "g s d": "vim::PushDeleteSurrounds",
-      "g s r": "vim::PushChangeSurrounds"
+      "g s r": "vim::PushChangeSurrounds",
+      "{{ $mod }}-1": "workspace::FocusCenterPane"
     }
   },
-{{- if eq .chezmoi.os "windows" }}
-  {
-    "context": "vim_mode == normal || vim_mode == insert || vim_mode == visual",
-    "bindings": {
-      "ctrl-1": "editor::ToggleFocus",
-      "ctrl-b": "workspace::ToggleLeftDock",
-      "ctrl-j": "terminal_panel::ToggleFocus",
-      "ctrl-w": "pane::CloseActiveItem"
-    }
-  },
-  {
-    "context": "vim_mode == normal",
-    "bindings": {
-      "ctrl-p": "file_finder::Toggle"
-    }
-  },
-  {
-    "context": "vim_mode == insert",
-    "bindings": {
-      "ctrl-v": "editor::Paste"
-    }
-  },
-  {
-    "context": "Editor && vim_mode == insert",
-    "bindings": {
-      "ctrl-p": "file_finder::Toggle"
-    }
-  },
-  {
-    "context": "Terminal",
-    "bindings": {
-      "ctrl-b": "workspace::ToggleLeftDock",
-      "ctrl-p": "file_finder::Toggle",
-      "ctrl-w": "pane::CloseActiveItem"
-    }
-  },
-  {
-    "context": "ProjectPanel",
-    "bindings": {
-      "ctrl-p": "file_finder::Toggle"
-    }
-  },
-{{- end }}
-  {
-    "bindings": {
-{{- if eq .chezmoi.os "windows" }}
-      "ctrl-1": "editor::ToggleFocus"
-{{- end }}
-    }
-  }
 ]
