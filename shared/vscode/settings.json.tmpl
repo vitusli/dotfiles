@@ -9,10 +9,7 @@
     "explorer.confirmDragAndDrop": false,
 
     // Extensions
-    "extensions.experimental.affinity": {
-        "vscodevim.vim": 1
-    },
-    "extensions.ignoreRecommendations": true,
+    "extensions.ignoreRecommendations": false,
 
     // Files
     "files.autoSave": "afterDelay",
@@ -21,39 +18,9 @@
     // Git
     "git.openRepositoryInParentFolders": "always",
 
-    // GitHub Copilot
-    "github.copilot.enable": {
-        "*": true,
-        "plaintext": true,
-        "markdown": true,
-        "scminput": false
-    },
-
     // Vim
-    "vim.leader": "<space>",
-    "vim.surround": true,
     "vim.useSystemClipboard": true,
     "vim.useCtrlKeys": true,
-    "vim.normalModeKeyBindings": [
-        {
-            "before": ["g", "s", "a"],
-            "after": ["y", "s"]
-        },
-        {
-            "before": ["g", "s", "r"],
-            "after": ["c", "s"]
-        },
-        {
-            "before": ["g", "s", "d"],
-            "after": ["d", "s"]
-        }
-    ],
-    "vim.visualModeKeyBindingsNonRecursive": [
-        {
-            "before": ["g", "s", "a"],
-            "after": ["S"]
-        }
-    ],
 
     // Security
     "security.workspace.trust.untrustedFiles": "open",
@@ -63,23 +30,6 @@
     "settingsSync.ignoredExtensions": [],
     "settingsSync.ignoredSettings": [],
 
-    // Terminal
-{{- if eq .chezmoi.os "windows" }}
-    "terminal.integrated.shellIntegration.enabled": false,
-    "terminal.integrated.defaultProfile.windows": "PowerShell",
-    "terminal.integrated.profiles.windows": {
-        "PowerShell": {
-            "path": "pwsh.exe",
-            "icon": "terminal-powershell",
-            "args": []
-        }
-    },
-    "terminal.integrated.commandsToSkipShell": [
-        "workbench.action.terminal.kill",
-        "workbench.action.terminal.killActiveTab",
-        "workbench.action.chat.openagent"
-    ],
-{{- end }}
     "terminal.integrated.suggest.enabled": false,
     "terminal.integrated.initialHint": false,
 
@@ -93,7 +43,7 @@
     "window.autoDetectColorScheme": true,
     "workbench.preferredLightColorTheme": "Light Modern",
     "workbench.preferredDarkColorTheme": "Dark Modern",
-    "workbench.colorTheme": "Cursor Dark Midnight",
+    "workbench.colorTheme": "Light Modern",
     "workbench.activityBar.location": "top",
     "workbench.layoutControl.enabled": false,
     "workbench.startupEditor": "none",

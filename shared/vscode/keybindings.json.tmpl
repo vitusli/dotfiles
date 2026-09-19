@@ -21,12 +21,6 @@
     },
 
     // Terminal
-{{- if ne .chezmoi.os "darwin" }}
-    {
-        "key": "{{ $mod }}+j",
-        "command": "workbench.action.terminal.toggleTerminal"
-    },
-{{- end }}
     {
         "key": "{{ $mod }}+n",
         "command": "workbench.action.terminal.new",
@@ -50,46 +44,12 @@
         "command": "workbench.action.toggleMaximizedAuxiliaryBar"
     },
     {
-        "key": "{{ $mod }}+k =",
-        "command": "cSpell.addWordToWorkspaceDictionary"
-    },
-    {
-        "key": "{{ $mod }}+k a",
+        "key": "{{ $mod }}+k c",
         "command": "workbench.action.alignQuickInputCenter"
     },
     {
         "key": "{{ $mod }}+k g",
         "command": "git-graph.view"
-    },
-{{- if ne .chezmoi.os "darwin" }}
-    {
-        "key": "{{ $mod }}+w",
-        "command": "workbench.action.closeActiveEditor",
-        "when": "editorIsOpen"
-    },
-    {
-        "key": "{{ $mod }}+w",
-        "command": "workbench.action.closeWindow",
-        "when": "!editorIsOpen"
-    },
-{{- end }}
-
-    // Tab Navigation (Browser-style)
-    {
-        "key": "{{ $mod }}+1",
-        "command": "workbench.action.openEditorAtIndex1"
-    },
-    {
-        "key": "{{ $mod }}+2",
-        "command": "workbench.action.openEditorAtIndex2"
-    },
-    {
-        "key": "{{ $mod }}+3",
-        "command": "workbench.action.openEditorAtIndex3"
-    },
-    {
-        "key": "{{ $mod }}+4",
-        "command": "workbench.action.openEditorAtIndex4"
     },
 
     // Editor Group Navigation
