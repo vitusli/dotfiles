@@ -23,6 +23,7 @@ abbreviations:
     backup: "restic -r /Volumes/TOSHIBA\\ EXT/restic-for-t7 --verbose backup /Volumes/T7\\ Shield"
     ll: "ls -la"
     rl: "source ~/.zshrc"
+    venv: "source .venv/bin/activate"
 
   windows:
     ov: "A:\\isaac-sim-6-0-1\\isaac-sim.bat"
