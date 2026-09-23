@@ -2,6 +2,7 @@
 
 chezmoi #scoop #brew
 fzf #brew #scoop
+fd #brew
 gh #brew #scoop
 git #brew #scoop
 just #brew
