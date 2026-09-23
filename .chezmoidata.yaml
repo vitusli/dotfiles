@@ -16,7 +16,7 @@ abbreviations:
     l: "lazygit"
     "..": "cd .."
     "...": "cd ../.."
-    lld: "lsd --tree --depth 1 -a"
+    lld: "lsd --tree -a --depth 2"
     c: "codex"
     cc: "claude"
 
