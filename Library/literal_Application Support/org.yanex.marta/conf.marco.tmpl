@@ -67,30 +67,29 @@ keyBindings {
         src "{{ .chezmoi.homeDir }}/Library/CloudStorage/OneDrive-WandelbotsGmbH/Asset-Library"
     }
 
-    "shift+o" {
-        id "core.open.directory"
-        src "{{ .chezmoi.homeDir }}/Documents"
-    }
-
-
-    "shift+b" {
-        id "core.open.directory"
-        src "{{ .chezmoi.homeDir }}/blender"
-    }
-
     "shift+d" {
         id "core.open.directory"
         src "{{ .chezmoi.homeDir }}/dev"
-    }
-
-    "shift+l" {
-        id "core.open.directory"
-        src "{{ .chezmoi.homeDir }}/Downloads"
     }
     
     "shift+c" {
         id "core.open.directory"
         src "{{ .chezmoi.homeDir }}/codespace"
+    }
+
+    "cmd+shift+d" {
+        id "core.open.directory"
+        src "{{ .chezmoi.homeDir }}/Desktop"
+    }
+
+    "cmd+shift+o" {
+        id "core.open.directory"
+        src "{{ .chezmoi.homeDir }}/Documents"
+    }
+
+    "cmd+opt+l" {
+        id "core.open.directory"
+        src "{{ .chezmoi.homeDir }}/Downloads"
     }
 
 }
