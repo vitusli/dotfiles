@@ -57,20 +57,6 @@
                         ]
                     },
                     {
-                        "description": "hold escape for fn",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "escape",
-                                    "modifiers": { "optional": ["any"] }
-                                },
-                                "to": [{ "key_code": "fn" }],
-                                "to_if_alone": [{ "key_code": "escape" }],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "manipulators": [
                             {
                                 "description": "Hyperkey",
