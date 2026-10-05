@@ -7,7 +7,7 @@ gh #brew #scoop
 git #brew #scoop
 just #brew
 lazygit #brew #winget
-opencode #brew
+claude-code #brew
 uv #brew
 zoxide #winget #brew
 neovim #brew

@@ -49,6 +49,8 @@ sf-symbols #brew
 slack #brew
 SlackTechnologies.Slack #winget
 
+syncthing #brew
+
 visual-studio-code #brew
 Microsoft.VisualStudioCode #winget
 
