@@ -105,6 +105,10 @@ run = 'layout floating'
 if.app-name-regex-substring = 'Reminders'
 run = 'layout floating'
 
+[[on-window-detected]]
+if.app-name-regex-substring = 'Obsidian'
+run = 'layout floating'
+
 
 #this are no commands, they are rules (main or secondary)
 [workspace-to-monitor-force-assignment]
