@@ -2,6 +2,8 @@
 # PATH CONFIGURATION
 # ============================================================================
 
+export PATH="$PATH:/usr/sbin:/sbin"
+
 # Building USD tools (MaterialX, usdview etc)
 export PATH="/Users/vituspacholleck/.pixi/bin:$PATH"
 
