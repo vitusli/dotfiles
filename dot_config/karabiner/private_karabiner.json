@@ -73,6 +73,25 @@
                                 "type": "basic"
                             }
                         ]
+                    },
+                    {
+                        "description": "Isaac Sim WebRTC Client: left Cmd -> Ctrl",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.electron\\.isaacsim-webrtc-streaming-client$"],
+                                        "type": "frontmost_application_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "left_command",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "to": [{ "key_code": "left_control" }],
+                                "type": "basic"
+                            }
+                        ]
                     }
                 ]
             },
