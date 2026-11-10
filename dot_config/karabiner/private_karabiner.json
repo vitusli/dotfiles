@@ -77,10 +77,70 @@
                     {
                         "description": "Isaac Sim WebRTC Client: Cmd <-> Ctrl (links und rechts)",
                         "manipulators": [
-                            { "conditions": [{ "bundle_identifiers": ["^com\\.electron\\.isaacsim-webrtc-streaming-client$"], "type": "frontmost_application_if" }], "from": { "key_code": "left_command", "modifiers": { "optional": ["any"] } }, "to": [{ "key_code": "left_control" }], "type": "basic" },
-                            { "conditions": [{ "bundle_identifiers": ["^com\\.electron\\.isaacsim-webrtc-streaming-client$"], "type": "frontmost_application_if" }], "from": { "key_code": "left_control", "modifiers": { "optional": ["any"] } }, "to": [{ "key_code": "left_command" }], "type": "basic" },
-                            { "conditions": [{ "bundle_identifiers": ["^com\\.electron\\.isaacsim-webrtc-streaming-client$"], "type": "frontmost_application_if" }], "from": { "key_code": "right_command", "modifiers": { "optional": ["any"] } }, "to": [{ "key_code": "right_control" }], "type": "basic" },
-                            { "conditions": [{ "bundle_identifiers": ["^com\\.electron\\.isaacsim-webrtc-streaming-client$"], "type": "frontmost_application_if" }], "from": { "key_code": "right_control", "modifiers": { "optional": ["any"] } }, "to": [{ "key_code": "right_command" }], "type": "basic" }
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^com\\.electron\\.isaacsim-webrtc-streaming-client$"
+                                        ],
+                                        "type": "frontmost_application_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "left_command",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "to": [{ "key_code": "left_control" }],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^com\\.electron\\.isaacsim-webrtc-streaming-client$"
+                                        ],
+                                        "type": "frontmost_application_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "left_control",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "to": [{ "key_code": "left_command" }],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^com\\.electron\\.isaacsim-webrtc-streaming-client$"
+                                        ],
+                                        "type": "frontmost_application_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "right_command",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "to": [{ "key_code": "right_control" }],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^com\\.electron\\.isaacsim-webrtc-streaming-client$"
+                                        ],
+                                        "type": "frontmost_application_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "right_control",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "to": [{ "key_code": "right_command" }],
+                                "type": "basic"
+                            }
                         ]
                     }
                 ]
@@ -145,6 +205,10 @@
                         {
                             "from": { "pointing_button": "button5" },
                             "to": [{ "pointing_button": "button3" }]
+                        },
+                        {
+                            "from": { "pointing_button": "button3" },
+                            "to": [{ "apple_vendor_keyboard_key_code": "mission_control" }]
                         }
                     ]
                 }
