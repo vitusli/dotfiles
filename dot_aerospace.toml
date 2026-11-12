@@ -106,6 +106,10 @@ if.app-name-regex-substring = 'Reminders'
 run = 'layout floating'
 
 [[on-window-detected]]
+if.app-name-regex-substring = 'Finder'
+run = 'layout floating'
+
+[[on-window-detected]]
 if.app-name-regex-substring = 'Obsidian'
 run = 'layout floating'
 
