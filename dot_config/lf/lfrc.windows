@@ -30,6 +30,8 @@ set ratios 1:1
 map k up
 map j down
 map h updir
+map <backspace> updir
+map <backspace2> updir
 map l :setfilter; open
 map <enter> :setfilter; open
 
@@ -64,7 +66,6 @@ map L $lazygit
 
 # Bookmarks
 map ~ cd ~
-map W :cd ~/Downloads; filter
 
 map d :echo "Cut is disabled"
 map / filter

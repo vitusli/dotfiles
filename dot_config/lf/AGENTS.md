@@ -38,8 +38,8 @@ Der Hauptzweck: Wer per SSH auf einer Windows-Maschine ist, soll einen Dateimana
 ## Bewusste Abweichungen von Marta
 
 - `x`/`c` schneiden aus bzw. kopieren, eingefügt wird mit `p`. In Marta gehen sie direkt ins andere Panel, lf hat nur eins.
-- Cmd-Shortcuts aus Marta (Desktop, Documents, Downloads, Terminal) kommen im Terminal nicht an. Downloads liegt deshalb auf `W`.
-- Lesezeichen-Sprünge (`P`, `A`, `D`, `C`, `W`) starten danach den Filter.
+- Martas Verzeichnis-Shortcuts mit Cmd (Desktop, Documents, Downloads) gibt es bewusst nicht. Ctrl als Ersatz geht nicht sauber, weil Shift bei Ctrl-Kombinationen verloren geht (Ctrl+Shift+D kommt als `<c-d>` an). Keine Ersatztasten.
+- Lesezeichen-Sprünge (`~`, `P`, `A`, `D`, `C`) sind exakt Martas Shift-Tasten und starten danach den Filter. Unter Windows gibt es nur `~`.
 - Enter öffnet Dateien in nvim, `l` öffnet sie mit der Standard-App (wie Marta).
 
 ## Fallstricke
