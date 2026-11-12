@@ -69,7 +69,7 @@ map W :cd ~/Downloads; filter
 map d :echo "Cut is disabled"
 map / filter
 # Enter in filter mode: accept filter and open the selection; elsewhere plain Enter
-cmap <enter> &if ($env:lf_mode -eq 'filter' -and $env:f) { lf -remote ('send ' + $env:id + ' :cmd-enter; setfilter; open') } else { lf -remote ('send ' + $env:id + ' cmd-enter') }
+cmap <enter> &if ($env:lf_mode -eq 'filter' -and $env:f) { lf -remote ('send ' + $env:id + ' :cmd-enter; setfilter; open') } elseif ($env:lf_mode -eq 'filter') { lf -remote ('send ' + $env:id + ' :cmd-enter; setfilter') } else { lf -remote ('send ' + $env:id + ' cmd-enter') }
 
 # ============================================================================
 # COMMANDS
@@ -80,5 +80,5 @@ cmd open $if (Get-Command nvim -ErrorAction SilentlyContinue) { nvim $env:f } el
 cmd touch &New-Item -ItemType File -Path
 cmd mkdir &New-Item -ItemType Directory -Path
 
-cmd yank-path $[Console]::Write([char]27 + ']52;c;' + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($env:f)) + [char]7)
-cmd yank-dirname $[Console]::Write([char]27 + ']52;c;' + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($PWD.Path)) + [char]7)
+cmd yank-path &$b = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($env:f)); lf -remote ('send ' + $env:id + ' tty-write ''' + [char]27 + ']52;c;' + $b + [char]7 + ''''); lf -remote ('send ' + $env:id + ' echo ''Copied: ' + $env:f + '''')
+cmd yank-dirname &$b = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($PWD.Path)); lf -remote ('send ' + $env:id + ' tty-write ''' + [char]27 + ']52;c;' + $b + [char]7 + ''''); lf -remote ('send ' + $env:id + ' echo ''Copied: ' + $PWD.Path + '''')

@@ -65,9 +65,8 @@ map Y yank-dirname
 # Toggle hidden files
 map H set hidden!
 
-# Open with (fzf)
-map o open-with
-map O open-with-dir
+# Open with (Marta: cmd+enter; ctrl here). Lists the apps macOS offers for the item
+map <c-enter> open-with
 
 # Reveal in Finder (Marta: cmd+alt+r)
 map <c-r> &open -R "$f"
@@ -96,6 +95,8 @@ map / filter
 cmap <enter> &{{
     if [ "$lf_mode" = filter ] && [ -n "$f" ]; then
         lf -remote "send $id :cmd-enter; setfilter; open-nvim"
+    elif [ "$lf_mode" = filter ]; then
+        lf -remote "send $id :cmd-enter; setfilter"
     else
         lf -remote "send $id cmd-enter"
     fi
@@ -127,14 +128,16 @@ cmd open-nvim ${{
 }}
 
 # Like Marta core.trash: confirm, then move to macOS Trash
-cmd trash ${{
+cmd trash %{{
     # $fx is empty right after startup; `trash ""` would trash the cwd
     [ -n "$fx" ] || exit 0
-    printf "Move %s item(s) to Trash? [y/N]\n" "$(printf '%s\n' "$fx" | wc -l | tr -d ' ')"
+    lf -remote "send $id echo Move $(printf '%s
+' "$fx" | wc -l | tr -d ' ') item(s) to Trash? [y/N]"
     read -r ans
-    [ "$ans" = "y" ] || exit 0
-    printf '%s\n' "$fx" | while IFS= read -r p; do [ -e "$p" ] && trash "$p"; done
-    lf -remote "send $id :unselect; reload"
+    [ "$ans" = "y" ] || { lf -remote "send $id echo"; exit 0; }
+    printf '%s
+' "$fx" | while IFS= read -r p; do [ -e "$p" ] && trash "$p"; done
+    lf -remote "send $id :unselect; reload; echo"
 }}
 
 cmd touch %{{
@@ -152,37 +155,35 @@ cmd mkdir %{{
 }}
 
 cmd open-with ${{
-    app=$(printf "Visual Studio Code\nFinder (reveal)\n%s" "$(find /Applications ~/Applications -maxdepth 2 -name "*.app" 2>/dev/null | sed 's|.*/||;s|\.app$||')" | fzf --prompt="Open with: ")
-    [ -z "$app" ] && exit
-    case "$app" in
-        "Finder (reveal)") open -R "$f" ;;
-        *) open -a "$app" "$f" ;;
-    esac
-}}
-
-cmd open-with-dir ${{
-    app=$(printf "Visual Studio Code\nFinder\nMarta\n%s" "$(find /Applications ~/Applications -maxdepth 2 -name "*.app" 2>/dev/null | sed 's|.*/||;s|\.app$||')" | fzf --prompt="Open directory with: ")
-    [ -z "$app" ] && exit
-    case "$app" in
-        "Finder") open "$PWD" ;;
-        *) open -a "$app" "$PWD" ;;
-    esac
+    apps=$(osascript -l JavaScript -e 'ObjC.import("AppKit"); function run(argv) { const a = $.NSWorkspace.sharedWorkspace.URLsForApplicationsToOpenURL($.NSURL.fileURLWithPath(argv[0])); const r = []; for (let i = 0; i < a.count; i++) r.push(a.objectAtIndex(i).path.js); return r.join("
+"); }' "$f")
+    choice=$({ printf '%s
+' "$apps"; echo "/Applications/Visual Studio Code.app"; } | awk 'NF && !seen[$0]++ { n = $0; sub(/.*\//, "", n); sub(/\.app$/, "", n); print n "	" $0 }' | { cat; printf 'Finder (reveal)	reveal
+'; } | fzf --prompt="Open with: " --delimiter='	' --with-nth=1)
+    [ -n "$choice" ] || exit 0
+    app=${choice#*	}
+    if [ "$app" = reveal ]; then
+        open -R "$f"
+    else
+        printf '%s
+' "$fx" | while IFS= read -r p; do open -a "$app" "$p"; done
+    fi
 }}
 
 # Yank path to clipboard - macOS
-cmd yank-path ${{
+cmd yank-path &{{
     printf "%s" "$f" | pbcopy
     lf -remote "send $id echo Copied: $f"
 }}
 
 # Yank directory path to clipboard - macOS
-cmd yank-dirname ${{
+cmd yank-dirname &{{
     printf "%s" "$PWD" | pbcopy
     lf -remote "send $id echo Copied: $PWD"
 }}
 
 # Toggle executable permission
-cmd toggle-executable ${{
+cmd toggle-executable &{{
     if [ -x "$f" ]; then
         chmod -x "$f"
         lf -remote "send $id echo Removed executable: $f"

@@ -41,9 +41,12 @@ Der Hauptzweck: Wer per SSH auf einer Windows-Maschine ist, soll einen Dateimana
 - Cmd-Shortcuts aus Marta (Desktop, Documents, Downloads, Terminal) kommen im Terminal nicht an. Downloads liegt deshalb auf `W`.
 - Lesezeichen-Sprünge (`P`, `A`, `D`, `C`, `W`) starten danach den Filter.
 - Enter öffnet Dateien in nvim, `l` öffnet sie mit der Standard-App (wie Marta).
+- Ctrl+Enter statt Martas Cmd+Enter (`core.open.with`): fzf-Liste der Apps, die macOS für das Element anbietet (per JXA, `NSWorkspace.URLsForApplicationsToOpenURL`), plus VS Code und „Finder (reveal)". Bewusst überall Ctrl, kein Cmd. Funktioniert, weil lf den Kitty-Tastaturmodus aushandelt und Herdr Ctrl+Enter dann als `<c-enter>` schickt.
 
 ## Fallstricke
 
 - `map X cmd1; cmd2` ohne führendes `:` beendet das `map` am `;`, und `cmd2` läuft beim Start von lf. Mehrere Befehle immer als `map X :cmd1; cmd2`.
 - Direkt nach dem Start (ca. 1–2 s) sind `$f`/`$fx` leer. `/usr/bin/trash ""` verschiebt dann das aktuelle Verzeichnis in den Papierkorb, deshalb prüft `cmd trash` auf leeres `$fx`.
-- Prompts in `%`-Befehlen (shell-pipe) erscheinen erst nach der Eingabe. Für Eingaben `push :befehl<space>` nutzen, für Ja/Nein-Fragen `$`-Befehle.
+- Prompts in `%`-Befehlen (shell-pipe) erscheinen erst nach der Eingabe. Für Eingaben `push :befehl<space>` nutzen. Für Ja/Nein-Fragen die Frage vorher per `lf -remote "send $id echo …"` in die Statuszeile schreiben und dann `read` (siehe `cmd trash`), so bleibt lf ohne Bildschirmwechsel stehen.
+- Ein eigenes `cmd delete` übergeht lfs Rückfrage, deshalb hat Trash einen eigenen Befehl.
+- `$`-Befehle verlassen lfs Oberfläche (Bildschirm flackert). Nur für Programme nutzen, die das Terminal brauchen (nvim, lazygit, fzf), sonst `&` oder `%`.
