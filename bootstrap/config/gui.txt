@@ -19,7 +19,7 @@ font-jetbrains-mono-nerd-font #brew
 google-drive #brew
 Google.GoogleDrive #winget
 
-ghostty@tip @brew
+herdr #brew
 
 karabiner-elements #brew
 
