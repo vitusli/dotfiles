@@ -47,9 +47,6 @@ map G bottom
 # Go to path (Marta: \ -> core.go)
 map \\ push :cd<space>
 
-# Quick Look (Marta: Space -> core.preview)
-map <space> quicklook
-
 # File operations
 map r rename
 map f push :touch<space>
@@ -95,6 +92,15 @@ map d :echo "Cut is disabled"
 # Filter (classic lf filter)
 map / filter
 
+# Enter in filter mode: accept filter and open the selection; elsewhere plain Enter
+cmap <enter> &{{
+    if [ "$lf_mode" = filter ] && [ -n "$f" ]; then
+        lf -remote "send $id :cmd-enter; setfilter; open-nvim"
+    else
+        lf -remote "send $id cmd-enter"
+    fi
+}}
+
 # Toggle executable permission (Shift+X)
 map X toggle-executable
 
@@ -117,14 +123,6 @@ cmd open-nvim ${{
         lf -remote "send $id open"
     else
         nvim "$f"
-    fi
-}}
-
-cmd quicklook &{{
-    if pgrep -x qlmanage >/dev/null; then
-        pkill -x qlmanage
-    else
-        qlmanage -p "$f" >/dev/null 2>&1
     fi
 }}
 

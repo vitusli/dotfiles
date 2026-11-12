@@ -44,9 +44,6 @@ map G bottom
 # Go to path (Marta: \ -> core.go)
 map \\ push :cd<space>
 
-# Marta: Space -> preview. No Quick Look over SSH, so toggle the preview pane
-map <space> set preview!
-
 map r rename
 map f push :touch<space>
 map n push :mkdir<space>
@@ -71,6 +68,8 @@ map W :cd ~/Downloads; filter
 
 map d :echo "Cut is disabled"
 map / filter
+# Enter in filter mode: accept filter and open the selection; elsewhere plain Enter
+cmap <enter> &if ($env:lf_mode -eq 'filter' -and $env:f) { lf -remote ('send ' + $env:id + ' :cmd-enter; setfilter; open') } else { lf -remote ('send ' + $env:id + ' cmd-enter') }
 
 # ============================================================================
 # COMMANDS

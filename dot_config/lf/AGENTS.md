@@ -30,7 +30,6 @@ Der Hauptzweck: Wer per SSH auf einer Windows-Maschine ist, soll einen Dateimana
 - Shell ist Windows PowerShell 5.1 (`powershell`), weil `pwsh` nicht überall installiert ist. Shell-Befehle immer **einzeilig** schreiben, mehrzeilige `cmd`-Blöcke funktionieren unter Windows nicht zuverlässig. Dateivariablen heißen `$env:f`, `$env:fx`, `$env:id`.
 - Keybindings so weit wie möglich identisch zur macOS-`lfrc` halten. Wenn sich dort eine Taste ändert, hier mitziehen.
 - Unterschiede zu macOS, weil über SSH keine GUI da ist:
-  - Space schaltet die Vorschau-Spalte um (kein Quick Look).
   - Ctrl+X löscht **endgültig** mit lfs eigener Rückfrage. Über SSH gibt es keinen Papierkorb (getestet: Datei war weg, nicht im Papierkorb).
   - `y`/`Y` kopieren per OSC 52 in die Zwischenablage des lokalen Rechners (kommt durch ConPTY/OpenSSH durch).
   - Kein Reveal in Explorer, kein VS Code, kein Open-with.
