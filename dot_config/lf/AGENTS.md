@@ -41,7 +41,6 @@ Der Hauptzweck: Wer per SSH auf einer Windows-Maschine ist, soll einen Dateimana
 - Cmd-Shortcuts aus Marta (Desktop, Documents, Downloads, Terminal) kommen im Terminal nicht an. Downloads liegt deshalb auf `W`.
 - Lesezeichen-Sprünge (`P`, `A`, `D`, `C`, `W`) starten danach den Filter.
 - Enter öffnet Dateien in nvim, `l` öffnet sie mit der Standard-App (wie Marta).
-- Ctrl+Enter statt Martas Cmd+Enter (`core.open.with`): fzf-Liste der Apps, die macOS für das Element anbietet (per JXA, `NSWorkspace.URLsForApplicationsToOpenURL`), plus VS Code und „Finder (reveal)". Bewusst überall Ctrl, kein Cmd. Funktioniert, weil lf den Kitty-Tastaturmodus aushandelt und Herdr Ctrl+Enter dann als `<c-enter>` schickt.
 
 ## Fallstricke
 
