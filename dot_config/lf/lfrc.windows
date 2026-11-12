@@ -1,0 +1,85 @@
+# ============================================================================
+# LF CONFIG FOR WINDOWS (over SSH) - Marta-like, see AGENTS.md
+# Copied manually to %APPDATA%\lf\lfrc, not deployed by chezmoi.
+# Shell commands must stay single-line (multi-line cmds are unreliable on Windows).
+# ============================================================================
+
+set shell powershell
+set shellopts -NoProfile
+set shellflag -Command
+
+# Basic Settings
+set hidden false
+set ignorecase true
+set icons true
+set incfilter
+set watch true
+
+# Marta columns: size + modified
+set info size:time
+set infotimefmtnew "_2 Jan 15:04"
+set infotimefmtold "_2 Jan 2006"
+
+set promptfmt "%d"
+set ratios 1:1
+
+# ============================================================================
+# KEY BINDINGS (same as macOS lfrc)
+# ============================================================================
+
+map k up
+map j down
+map h updir
+map l :setfilter; open
+map <enter> :setfilter; open
+
+map K :toggle; up
+map J :toggle; down
+
+map <esc> :unselect; clear; setfilter
+
+map g top
+map G bottom
+
+# Go to path (Marta: \ -> core.go)
+map \\ push :cd<space>
+
+# Marta: Space -> preview. No Quick Look over SSH, so toggle the preview pane
+map <space> set preview!
+
+map r rename
+map f push :touch<space>
+map n push :mkdir<space>
+# No recycle bin over SSH: permanent delete with lf's own confirmation
+map <c-x> delete
+
+map x cut
+map c copy
+map p paste
+
+# Copies to the local clipboard via OSC 52
+map y yank-path
+map Y yank-dirname
+
+map H set hidden!
+
+map L $lazygit
+
+# Bookmarks
+map ~ cd ~
+map W :cd ~/Downloads; filter
+
+map d :echo "Cut is disabled"
+map / filter
+
+# ============================================================================
+# COMMANDS
+# ============================================================================
+
+cmd open $if (Get-Command nvim -ErrorAction SilentlyContinue) { nvim $env:f } else { Get-Content -LiteralPath $env:f | more; [void][Console]::ReadKey($true) }
+
+cmd touch &New-Item -ItemType File -Path
+cmd mkdir &New-Item -ItemType Directory -Path
+
+cmd yank-path $[Console]::Write([char]27 + ']52;c;' + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($env:f)) + [char]7)
+cmd yank-dirname $[Console]::Write([char]27 + ']52;c;' + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($PWD.Path)) + [char]7)
