@@ -6,7 +6,6 @@
 
 abbreviations:
   universal:
-    o: "opencode"
     ca: "chezmoi apply"
     j: "just"
     e: "exit"
@@ -17,8 +16,7 @@ abbreviations:
     "..": "cd .."
     "...": "cd ../.."
     lld: "lsd --tree -a --depth"
-    c: "codex"
-    cc: "claude"
+    c: "claude"
 
   darwin:
     backup: "restic -r /Volumes/TOSHIBA\\ EXT/restic-for-t7 --verbose backup /Volumes/T7\\ Shield"
